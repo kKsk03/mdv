@@ -1,0 +1,10 @@
+.mdv-button {
+  font-family: var(--mdv-sys-typescale-font-family);
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mdv-button {
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,18 @@
+@import 'tailwindcss';
+@import '../src/styles/theme.css';
+@import '../src/styles/styles.css';
+
+.playground-control {
+  min-height: 2.75rem;
+  border: 1px solid var(--mdv-sys-color-outline);
+  border-radius: var(--mdv-sys-shape-corner-small);
+  background-color: var(--mdv-sys-color-surface-container-low);
+  padding: 0.625rem 0.875rem;
+  color: var(--mdv-sys-color-on-surface);
+  font: inherit;
+}
+
+.playground-control:focus-visible {
+  outline: 2px solid var(--mdv-sys-color-primary);
+  outline-offset: 2px;
+}

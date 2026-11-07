@@ -1,0 +1,79 @@
+@import './fonts.css';
+@import './tokens.css';
+@import './typography.css';
+
+@source '../components';
+
+@theme inline {
+  --color-mdv-primary: var(--mdv-sys-color-primary);
+  --color-mdv-on-primary: var(--mdv-sys-color-on-primary);
+  --color-mdv-primary-container: var(--mdv-sys-color-primary-container);
+  --color-mdv-on-primary-container: var(--mdv-sys-color-on-primary-container);
+  --color-mdv-secondary: var(--mdv-sys-color-secondary);
+  --color-mdv-on-secondary: var(--mdv-sys-color-on-secondary);
+  --color-mdv-secondary-container: var(--mdv-sys-color-secondary-container);
+  --color-mdv-on-secondary-container: var(--mdv-sys-color-on-secondary-container);
+  --color-mdv-tertiary: var(--mdv-sys-color-tertiary);
+  --color-mdv-on-tertiary: var(--mdv-sys-color-on-tertiary);
+  --color-mdv-tertiary-container: var(--mdv-sys-color-tertiary-container);
+  --color-mdv-on-tertiary-container: var(--mdv-sys-color-on-tertiary-container);
+  --color-mdv-error: var(--mdv-sys-color-error);
+  --color-mdv-on-error: var(--mdv-sys-color-on-error);
+  --color-mdv-error-container: var(--mdv-sys-color-error-container);
+  --color-mdv-on-error-container: var(--mdv-sys-color-on-error-container);
+  --color-mdv-background: var(--mdv-sys-color-background);
+  --color-mdv-on-background: var(--mdv-sys-color-on-background);
+  --color-mdv-surface: var(--mdv-sys-color-surface);
+  --color-mdv-on-surface: var(--mdv-sys-color-on-surface);
+  --color-mdv-surface-variant: var(--mdv-sys-color-surface-variant);
+  --color-mdv-on-surface-variant: var(--mdv-sys-color-on-surface-variant);
+  --color-mdv-surface-dim: var(--mdv-sys-color-surface-dim);
+  --color-mdv-surface-bright: var(--mdv-sys-color-surface-bright);
+  --color-mdv-surface-container-lowest: var(--mdv-sys-color-surface-container-lowest);
+  --color-mdv-surface-container-low: var(--mdv-sys-color-surface-container-low);
+  --color-mdv-surface-container: var(--mdv-sys-color-surface-container);
+  --color-mdv-surface-container-high: var(--mdv-sys-color-surface-container-high);
+  --color-mdv-surface-container-highest: var(--mdv-sys-color-surface-container-highest);
+  --color-mdv-surface-tint: var(--mdv-sys-color-surface-tint);
+  --color-mdv-outline: var(--mdv-sys-color-outline);
+  --color-mdv-outline-variant: var(--mdv-sys-color-outline-variant);
+  --color-mdv-inverse-surface: var(--mdv-sys-color-inverse-surface);
+  --color-mdv-inverse-on-surface: var(--mdv-sys-color-inverse-on-surface);
+  --color-mdv-inverse-primary: var(--mdv-sys-color-inverse-primary);
+  --color-mdv-scrim: var(--mdv-sys-color-scrim);
+  --color-mdv-shadow: var(--mdv-sys-color-shadow);
+  --color-mdv-primary-fixed: var(--mdv-sys-color-primary-fixed);
+  --color-mdv-primary-fixed-dim: var(--mdv-sys-color-primary-fixed-dim);
+  --color-mdv-on-primary-fixed: var(--mdv-sys-color-on-primary-fixed);
+  --color-mdv-on-primary-fixed-variant: var(--mdv-sys-color-on-primary-fixed-variant);
+  --color-mdv-secondary-fixed: var(--mdv-sys-color-secondary-fixed);
+  --color-mdv-secondary-fixed-dim: var(--mdv-sys-color-secondary-fixed-dim);
+  --color-mdv-on-secondary-fixed: var(--mdv-sys-color-on-secondary-fixed);
+  --color-mdv-on-secondary-fixed-variant: var(--mdv-sys-color-on-secondary-fixed-variant);
+  --color-mdv-tertiary-fixed: var(--mdv-sys-color-tertiary-fixed);
+  --color-mdv-tertiary-fixed-dim: var(--mdv-sys-color-tertiary-fixed-dim);
+  --color-mdv-on-tertiary-fixed: var(--mdv-sys-color-on-tertiary-fixed);
+  --color-mdv-on-tertiary-fixed-variant: var(--mdv-sys-color-on-tertiary-fixed-variant);
+
+  --radius-mdv-none: var(--mdv-sys-shape-corner-none);
+  --radius-mdv-extra-small: var(--mdv-sys-shape-corner-extra-small);
+  --radius-mdv-small: var(--mdv-sys-shape-corner-small);
+  --radius-mdv-medium: var(--mdv-sys-shape-corner-medium);
+  --radius-mdv-large: var(--mdv-sys-shape-corner-large);
+  --radius-mdv-extra-large: var(--mdv-sys-shape-corner-extra-large);
+  --radius-mdv-full: var(--mdv-sys-shape-corner-full);
+
+  --shadow-mdv-elevation-0: var(--mdv-sys-elevation-level-0);
+  --shadow-mdv-elevation-1: var(--mdv-sys-elevation-level-1);
+  --shadow-mdv-elevation-2: var(--mdv-sys-elevation-level-2);
+  --shadow-mdv-elevation-3: var(--mdv-sys-elevation-level-3);
+  --shadow-mdv-elevation-4: var(--mdv-sys-elevation-level-4);
+  --shadow-mdv-elevation-5: var(--mdv-sys-elevation-level-5);
+
+  --ease-mdv-standard: var(--mdv-sys-motion-easing-standard);
+  --ease-mdv-standard-accelerate: var(--mdv-sys-motion-easing-standard-accelerate);
+  --ease-mdv-standard-decelerate: var(--mdv-sys-motion-easing-standard-decelerate);
+  --ease-mdv-emphasized: var(--mdv-sys-motion-easing-emphasized);
+  --ease-mdv-emphasized-accelerate: var(--mdv-sys-motion-easing-emphasized-accelerate);
+  --ease-mdv-emphasized-decelerate: var(--mdv-sys-motion-easing-emphasized-decelerate);
+}

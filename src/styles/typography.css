@@ -1,0 +1,164 @@
+/*
+ * Material 3 baseline tokens adapted from Material Web's v0.192 design tokens.
+ * Copyright 2023 Google LLC. SPDX-License-Identifier: Apache-2.0
+ * MDV uses its own CSS variable names and Tailwind mappings.
+ */
+
+:where(:root) {
+  --mdv-sys-typescale-font-family:
+    'Roboto', 'Noto Sans SC', 'Microsoft YaHei UI', 'Microsoft YaHei', system-ui, sans-serif;
+
+  --mdv-sys-typescale-display-large-size: 3.5625rem;
+  --mdv-sys-typescale-display-large-line-height: 4rem;
+  --mdv-sys-typescale-display-large-weight: 400;
+  --mdv-sys-typescale-display-large-tracking: -0.015625rem;
+
+  --mdv-sys-typescale-display-medium-size: 2.8125rem;
+  --mdv-sys-typescale-display-medium-line-height: 3.25rem;
+  --mdv-sys-typescale-display-medium-weight: 400;
+  --mdv-sys-typescale-display-medium-tracking: 0rem;
+
+  --mdv-sys-typescale-display-small-size: 2.25rem;
+  --mdv-sys-typescale-display-small-line-height: 2.75rem;
+  --mdv-sys-typescale-display-small-weight: 400;
+  --mdv-sys-typescale-display-small-tracking: 0rem;
+
+  --mdv-sys-typescale-headline-large-size: 2rem;
+  --mdv-sys-typescale-headline-large-line-height: 2.5rem;
+  --mdv-sys-typescale-headline-large-weight: 400;
+  --mdv-sys-typescale-headline-large-tracking: 0rem;
+
+  --mdv-sys-typescale-headline-medium-size: 1.75rem;
+  --mdv-sys-typescale-headline-medium-line-height: 2.25rem;
+  --mdv-sys-typescale-headline-medium-weight: 400;
+  --mdv-sys-typescale-headline-medium-tracking: 0rem;
+
+  --mdv-sys-typescale-headline-small-size: 1.5rem;
+  --mdv-sys-typescale-headline-small-line-height: 2rem;
+  --mdv-sys-typescale-headline-small-weight: 400;
+  --mdv-sys-typescale-headline-small-tracking: 0rem;
+
+  --mdv-sys-typescale-title-large-size: 1.375rem;
+  --mdv-sys-typescale-title-large-line-height: 1.75rem;
+  --mdv-sys-typescale-title-large-weight: 400;
+  --mdv-sys-typescale-title-large-tracking: 0rem;
+
+  --mdv-sys-typescale-title-medium-size: 1rem;
+  --mdv-sys-typescale-title-medium-line-height: 1.5rem;
+  --mdv-sys-typescale-title-medium-weight: 500;
+  --mdv-sys-typescale-title-medium-tracking: 0.009375rem;
+
+  --mdv-sys-typescale-title-small-size: 0.875rem;
+  --mdv-sys-typescale-title-small-line-height: 1.25rem;
+  --mdv-sys-typescale-title-small-weight: 500;
+  --mdv-sys-typescale-title-small-tracking: 0.00625rem;
+
+  --mdv-sys-typescale-body-large-size: 1rem;
+  --mdv-sys-typescale-body-large-line-height: 1.5rem;
+  --mdv-sys-typescale-body-large-weight: 400;
+  --mdv-sys-typescale-body-large-tracking: 0.03125rem;
+
+  --mdv-sys-typescale-body-medium-size: 0.875rem;
+  --mdv-sys-typescale-body-medium-line-height: 1.25rem;
+  --mdv-sys-typescale-body-medium-weight: 400;
+  --mdv-sys-typescale-body-medium-tracking: 0.015625rem;
+
+  --mdv-sys-typescale-body-small-size: 0.75rem;
+  --mdv-sys-typescale-body-small-line-height: 1rem;
+  --mdv-sys-typescale-body-small-weight: 400;
+  --mdv-sys-typescale-body-small-tracking: 0.025rem;
+
+  --mdv-sys-typescale-label-large-size: 0.875rem;
+  --mdv-sys-typescale-label-large-line-height: 1.25rem;
+  --mdv-sys-typescale-label-large-weight: 500;
+  --mdv-sys-typescale-label-large-tracking: 0.00625rem;
+
+  --mdv-sys-typescale-label-medium-size: 0.75rem;
+  --mdv-sys-typescale-label-medium-line-height: 1rem;
+  --mdv-sys-typescale-label-medium-weight: 500;
+  --mdv-sys-typescale-label-medium-tracking: 0.03125rem;
+
+  --mdv-sys-typescale-label-small-size: 0.6875rem;
+  --mdv-sys-typescale-label-small-line-height: 1rem;
+  --mdv-sys-typescale-label-small-weight: 500;
+  --mdv-sys-typescale-label-small-tracking: 0.03125rem;
+}
+
+@theme inline {
+  --font-mdv: var(--mdv-sys-typescale-font-family);
+
+  --text-mdv-display-large: var(--mdv-sys-typescale-display-large-size);
+  --text-mdv-display-large--line-height: var(--mdv-sys-typescale-display-large-line-height);
+  --text-mdv-display-large--font-weight: var(--mdv-sys-typescale-display-large-weight);
+  --text-mdv-display-large--letter-spacing: var(--mdv-sys-typescale-display-large-tracking);
+
+  --text-mdv-display-medium: var(--mdv-sys-typescale-display-medium-size);
+  --text-mdv-display-medium--line-height: var(--mdv-sys-typescale-display-medium-line-height);
+  --text-mdv-display-medium--font-weight: var(--mdv-sys-typescale-display-medium-weight);
+  --text-mdv-display-medium--letter-spacing: var(--mdv-sys-typescale-display-medium-tracking);
+
+  --text-mdv-display-small: var(--mdv-sys-typescale-display-small-size);
+  --text-mdv-display-small--line-height: var(--mdv-sys-typescale-display-small-line-height);
+  --text-mdv-display-small--font-weight: var(--mdv-sys-typescale-display-small-weight);
+  --text-mdv-display-small--letter-spacing: var(--mdv-sys-typescale-display-small-tracking);
+
+  --text-mdv-headline-large: var(--mdv-sys-typescale-headline-large-size);
+  --text-mdv-headline-large--line-height: var(--mdv-sys-typescale-headline-large-line-height);
+  --text-mdv-headline-large--font-weight: var(--mdv-sys-typescale-headline-large-weight);
+  --text-mdv-headline-large--letter-spacing: var(--mdv-sys-typescale-headline-large-tracking);
+
+  --text-mdv-headline-medium: var(--mdv-sys-typescale-headline-medium-size);
+  --text-mdv-headline-medium--line-height: var(--mdv-sys-typescale-headline-medium-line-height);
+  --text-mdv-headline-medium--font-weight: var(--mdv-sys-typescale-headline-medium-weight);
+  --text-mdv-headline-medium--letter-spacing: var(--mdv-sys-typescale-headline-medium-tracking);
+
+  --text-mdv-headline-small: var(--mdv-sys-typescale-headline-small-size);
+  --text-mdv-headline-small--line-height: var(--mdv-sys-typescale-headline-small-line-height);
+  --text-mdv-headline-small--font-weight: var(--mdv-sys-typescale-headline-small-weight);
+  --text-mdv-headline-small--letter-spacing: var(--mdv-sys-typescale-headline-small-tracking);
+
+  --text-mdv-title-large: var(--mdv-sys-typescale-title-large-size);
+  --text-mdv-title-large--line-height: var(--mdv-sys-typescale-title-large-line-height);
+  --text-mdv-title-large--font-weight: var(--mdv-sys-typescale-title-large-weight);
+  --text-mdv-title-large--letter-spacing: var(--mdv-sys-typescale-title-large-tracking);
+
+  --text-mdv-title-medium: var(--mdv-sys-typescale-title-medium-size);
+  --text-mdv-title-medium--line-height: var(--mdv-sys-typescale-title-medium-line-height);
+  --text-mdv-title-medium--font-weight: var(--mdv-sys-typescale-title-medium-weight);
+  --text-mdv-title-medium--letter-spacing: var(--mdv-sys-typescale-title-medium-tracking);
+
+  --text-mdv-title-small: var(--mdv-sys-typescale-title-small-size);
+  --text-mdv-title-small--line-height: var(--mdv-sys-typescale-title-small-line-height);
+  --text-mdv-title-small--font-weight: var(--mdv-sys-typescale-title-small-weight);
+  --text-mdv-title-small--letter-spacing: var(--mdv-sys-typescale-title-small-tracking);
+
+  --text-mdv-body-large: var(--mdv-sys-typescale-body-large-size);
+  --text-mdv-body-large--line-height: var(--mdv-sys-typescale-body-large-line-height);
+  --text-mdv-body-large--font-weight: var(--mdv-sys-typescale-body-large-weight);
+  --text-mdv-body-large--letter-spacing: var(--mdv-sys-typescale-body-large-tracking);
+
+  --text-mdv-body-medium: var(--mdv-sys-typescale-body-medium-size);
+  --text-mdv-body-medium--line-height: var(--mdv-sys-typescale-body-medium-line-height);
+  --text-mdv-body-medium--font-weight: var(--mdv-sys-typescale-body-medium-weight);
+  --text-mdv-body-medium--letter-spacing: var(--mdv-sys-typescale-body-medium-tracking);
+
+  --text-mdv-body-small: var(--mdv-sys-typescale-body-small-size);
+  --text-mdv-body-small--line-height: var(--mdv-sys-typescale-body-small-line-height);
+  --text-mdv-body-small--font-weight: var(--mdv-sys-typescale-body-small-weight);
+  --text-mdv-body-small--letter-spacing: var(--mdv-sys-typescale-body-small-tracking);
+
+  --text-mdv-label-large: var(--mdv-sys-typescale-label-large-size);
+  --text-mdv-label-large--line-height: var(--mdv-sys-typescale-label-large-line-height);
+  --text-mdv-label-large--font-weight: var(--mdv-sys-typescale-label-large-weight);
+  --text-mdv-label-large--letter-spacing: var(--mdv-sys-typescale-label-large-tracking);
+
+  --text-mdv-label-medium: var(--mdv-sys-typescale-label-medium-size);
+  --text-mdv-label-medium--line-height: var(--mdv-sys-typescale-label-medium-line-height);
+  --text-mdv-label-medium--font-weight: var(--mdv-sys-typescale-label-medium-weight);
+  --text-mdv-label-medium--letter-spacing: var(--mdv-sys-typescale-label-medium-tracking);
+
+  --text-mdv-label-small: var(--mdv-sys-typescale-label-small-size);
+  --text-mdv-label-small--line-height: var(--mdv-sys-typescale-label-small-line-height);
+  --text-mdv-label-small--font-weight: var(--mdv-sys-typescale-label-small-weight);
+  --text-mdv-label-small--letter-spacing: var(--mdv-sys-typescale-label-small-tracking);
+}

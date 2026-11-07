@@ -1,0 +1,293 @@
+/*
+ * Material 3 baseline tokens adapted from Material Web's v0.192 design tokens.
+ * Copyright 2023 Google LLC. SPDX-License-Identifier: Apache-2.0
+ * MDV uses its own CSS variable names and Tailwind mappings.
+ */
+
+:where(:root, [data-mdv-theme], [data-mdv-color-scheme]) {
+  --mdv-sys-color-primary: light-dark(
+    var(--mdv-dynamic-light-color-primary, #6750a4),
+    var(--mdv-dynamic-dark-color-primary, #d0bcff)
+  );
+  --mdv-sys-color-on-primary: light-dark(
+    var(--mdv-dynamic-light-color-on-primary, #ffffff),
+    var(--mdv-dynamic-dark-color-on-primary, #381e72)
+  );
+  --mdv-sys-color-primary-container: light-dark(
+    var(--mdv-dynamic-light-color-primary-container, #eaddff),
+    var(--mdv-dynamic-dark-color-primary-container, #4f378b)
+  );
+  --mdv-sys-color-on-primary-container: light-dark(
+    var(--mdv-dynamic-light-color-on-primary-container, #21005d),
+    var(--mdv-dynamic-dark-color-on-primary-container, #eaddff)
+  );
+  --mdv-sys-color-secondary: light-dark(
+    var(--mdv-dynamic-light-color-secondary, #625b71),
+    var(--mdv-dynamic-dark-color-secondary, #ccc2dc)
+  );
+  --mdv-sys-color-on-secondary: light-dark(
+    var(--mdv-dynamic-light-color-on-secondary, #ffffff),
+    var(--mdv-dynamic-dark-color-on-secondary, #332d41)
+  );
+  --mdv-sys-color-secondary-container: light-dark(
+    var(--mdv-dynamic-light-color-secondary-container, #e8def8),
+    var(--mdv-dynamic-dark-color-secondary-container, #4a4458)
+  );
+  --mdv-sys-color-on-secondary-container: light-dark(
+    var(--mdv-dynamic-light-color-on-secondary-container, #1d192b),
+    var(--mdv-dynamic-dark-color-on-secondary-container, #e8def8)
+  );
+  --mdv-sys-color-tertiary: light-dark(
+    var(--mdv-dynamic-light-color-tertiary, #7d5260),
+    var(--mdv-dynamic-dark-color-tertiary, #efb8c8)
+  );
+  --mdv-sys-color-on-tertiary: light-dark(
+    var(--mdv-dynamic-light-color-on-tertiary, #ffffff),
+    var(--mdv-dynamic-dark-color-on-tertiary, #492532)
+  );
+  --mdv-sys-color-tertiary-container: light-dark(
+    var(--mdv-dynamic-light-color-tertiary-container, #ffd8e4),
+    var(--mdv-dynamic-dark-color-tertiary-container, #633b48)
+  );
+  --mdv-sys-color-on-tertiary-container: light-dark(
+    var(--mdv-dynamic-light-color-on-tertiary-container, #31111d),
+    var(--mdv-dynamic-dark-color-on-tertiary-container, #ffd8e4)
+  );
+  --mdv-sys-color-error: light-dark(
+    var(--mdv-dynamic-light-color-error, #b3261e),
+    var(--mdv-dynamic-dark-color-error, #f2b8b5)
+  );
+  --mdv-sys-color-on-error: light-dark(
+    var(--mdv-dynamic-light-color-on-error, #ffffff),
+    var(--mdv-dynamic-dark-color-on-error, #601410)
+  );
+  --mdv-sys-color-error-container: light-dark(
+    var(--mdv-dynamic-light-color-error-container, #f9dedc),
+    var(--mdv-dynamic-dark-color-error-container, #8c1d18)
+  );
+  --mdv-sys-color-on-error-container: light-dark(
+    var(--mdv-dynamic-light-color-on-error-container, #410e0b),
+    var(--mdv-dynamic-dark-color-on-error-container, #f9dedc)
+  );
+  --mdv-sys-color-background: light-dark(
+    var(--mdv-dynamic-light-color-background, #fef7ff),
+    var(--mdv-dynamic-dark-color-background, #141218)
+  );
+  --mdv-sys-color-on-background: light-dark(
+    var(--mdv-dynamic-light-color-on-background, #1d1b20),
+    var(--mdv-dynamic-dark-color-on-background, #e6e0e9)
+  );
+  --mdv-sys-color-surface: light-dark(
+    var(--mdv-dynamic-light-color-surface, #fef7ff),
+    var(--mdv-dynamic-dark-color-surface, #141218)
+  );
+  --mdv-sys-color-on-surface: light-dark(
+    var(--mdv-dynamic-light-color-on-surface, #1d1b20),
+    var(--mdv-dynamic-dark-color-on-surface, #e6e0e9)
+  );
+  --mdv-sys-color-surface-variant: light-dark(
+    var(--mdv-dynamic-light-color-surface-variant, #e7e0ec),
+    var(--mdv-dynamic-dark-color-surface-variant, #49454f)
+  );
+  --mdv-sys-color-on-surface-variant: light-dark(
+    var(--mdv-dynamic-light-color-on-surface-variant, #49454f),
+    var(--mdv-dynamic-dark-color-on-surface-variant, #cac4d0)
+  );
+  --mdv-sys-color-surface-dim: light-dark(
+    var(--mdv-dynamic-light-color-surface-dim, #ded8e1),
+    var(--mdv-dynamic-dark-color-surface-dim, #141218)
+  );
+  --mdv-sys-color-surface-bright: light-dark(
+    var(--mdv-dynamic-light-color-surface-bright, #fef7ff),
+    var(--mdv-dynamic-dark-color-surface-bright, #3b383e)
+  );
+  --mdv-sys-color-surface-container-lowest: light-dark(
+    var(--mdv-dynamic-light-color-surface-container-lowest, #ffffff),
+    var(--mdv-dynamic-dark-color-surface-container-lowest, #0f0d13)
+  );
+  --mdv-sys-color-surface-container-low: light-dark(
+    var(--mdv-dynamic-light-color-surface-container-low, #f7f2fa),
+    var(--mdv-dynamic-dark-color-surface-container-low, #1d1b20)
+  );
+  --mdv-sys-color-surface-container: light-dark(
+    var(--mdv-dynamic-light-color-surface-container, #f3edf7),
+    var(--mdv-dynamic-dark-color-surface-container, #211f26)
+  );
+  --mdv-sys-color-surface-container-high: light-dark(
+    var(--mdv-dynamic-light-color-surface-container-high, #ece6f0),
+    var(--mdv-dynamic-dark-color-surface-container-high, #2b2930)
+  );
+  --mdv-sys-color-surface-container-highest: light-dark(
+    var(--mdv-dynamic-light-color-surface-container-highest, #e6e0e9),
+    var(--mdv-dynamic-dark-color-surface-container-highest, #36343b)
+  );
+  --mdv-sys-color-surface-tint: light-dark(
+    var(--mdv-dynamic-light-color-surface-tint, #6750a4),
+    var(--mdv-dynamic-dark-color-surface-tint, #d0bcff)
+  );
+  --mdv-sys-color-outline: light-dark(
+    var(--mdv-dynamic-light-color-outline, #79747e),
+    var(--mdv-dynamic-dark-color-outline, #938f99)
+  );
+  --mdv-sys-color-outline-variant: light-dark(
+    var(--mdv-dynamic-light-color-outline-variant, #cac4d0),
+    var(--mdv-dynamic-dark-color-outline-variant, #49454f)
+  );
+  --mdv-sys-color-inverse-surface: light-dark(
+    var(--mdv-dynamic-light-color-inverse-surface, #322f35),
+    var(--mdv-dynamic-dark-color-inverse-surface, #e6e0e9)
+  );
+  --mdv-sys-color-inverse-on-surface: light-dark(
+    var(--mdv-dynamic-light-color-inverse-on-surface, #f5eff7),
+    var(--mdv-dynamic-dark-color-inverse-on-surface, #322f35)
+  );
+  --mdv-sys-color-inverse-primary: light-dark(
+    var(--mdv-dynamic-light-color-inverse-primary, #d0bcff),
+    var(--mdv-dynamic-dark-color-inverse-primary, #6750a4)
+  );
+  --mdv-sys-color-scrim: light-dark(
+    var(--mdv-dynamic-light-color-scrim, #000000),
+    var(--mdv-dynamic-dark-color-scrim, #000000)
+  );
+  --mdv-sys-color-shadow: light-dark(
+    var(--mdv-dynamic-light-color-shadow, #000000),
+    var(--mdv-dynamic-dark-color-shadow, #000000)
+  );
+  --mdv-sys-color-primary-fixed: light-dark(
+    var(--mdv-dynamic-light-color-primary-fixed, #eaddff),
+    var(--mdv-dynamic-dark-color-primary-fixed, #eaddff)
+  );
+  --mdv-sys-color-primary-fixed-dim: light-dark(
+    var(--mdv-dynamic-light-color-primary-fixed-dim, #d0bcff),
+    var(--mdv-dynamic-dark-color-primary-fixed-dim, #d0bcff)
+  );
+  --mdv-sys-color-on-primary-fixed: light-dark(
+    var(--mdv-dynamic-light-color-on-primary-fixed, #21005d),
+    var(--mdv-dynamic-dark-color-on-primary-fixed, #21005d)
+  );
+  --mdv-sys-color-on-primary-fixed-variant: light-dark(
+    var(--mdv-dynamic-light-color-on-primary-fixed-variant, #4f378b),
+    var(--mdv-dynamic-dark-color-on-primary-fixed-variant, #4f378b)
+  );
+  --mdv-sys-color-secondary-fixed: light-dark(
+    var(--mdv-dynamic-light-color-secondary-fixed, #e8def8),
+    var(--mdv-dynamic-dark-color-secondary-fixed, #e8def8)
+  );
+  --mdv-sys-color-secondary-fixed-dim: light-dark(
+    var(--mdv-dynamic-light-color-secondary-fixed-dim, #ccc2dc),
+    var(--mdv-dynamic-dark-color-secondary-fixed-dim, #ccc2dc)
+  );
+  --mdv-sys-color-on-secondary-fixed: light-dark(
+    var(--mdv-dynamic-light-color-on-secondary-fixed, #1d192b),
+    var(--mdv-dynamic-dark-color-on-secondary-fixed, #1d192b)
+  );
+  --mdv-sys-color-on-secondary-fixed-variant: light-dark(
+    var(--mdv-dynamic-light-color-on-secondary-fixed-variant, #4a4458),
+    var(--mdv-dynamic-dark-color-on-secondary-fixed-variant, #4a4458)
+  );
+  --mdv-sys-color-tertiary-fixed: light-dark(
+    var(--mdv-dynamic-light-color-tertiary-fixed, #ffd8e4),
+    var(--mdv-dynamic-dark-color-tertiary-fixed, #ffd8e4)
+  );
+  --mdv-sys-color-tertiary-fixed-dim: light-dark(
+    var(--mdv-dynamic-light-color-tertiary-fixed-dim, #efb8c8),
+    var(--mdv-dynamic-dark-color-tertiary-fixed-dim, #efb8c8)
+  );
+  --mdv-sys-color-on-tertiary-fixed: light-dark(
+    var(--mdv-dynamic-light-color-on-tertiary-fixed, #31111d),
+    var(--mdv-dynamic-dark-color-on-tertiary-fixed, #31111d)
+  );
+  --mdv-sys-color-on-tertiary-fixed-variant: light-dark(
+    var(--mdv-dynamic-light-color-on-tertiary-fixed-variant, #633b48),
+    var(--mdv-dynamic-dark-color-on-tertiary-fixed-variant, #633b48)
+  );
+
+  --mdv-sys-elevation-level-0: none;
+  --mdv-sys-elevation-level-1:
+    0 1px 2px 0 color-mix(in srgb, var(--mdv-sys-color-shadow) 30%, transparent),
+    0 1px 3px 1px color-mix(in srgb, var(--mdv-sys-color-shadow) 15%, transparent);
+  --mdv-sys-elevation-level-2:
+    0 1px 2px 0 color-mix(in srgb, var(--mdv-sys-color-shadow) 30%, transparent),
+    0 2px 6px 2px color-mix(in srgb, var(--mdv-sys-color-shadow) 15%, transparent);
+  --mdv-sys-elevation-level-3:
+    0 1px 3px 0 color-mix(in srgb, var(--mdv-sys-color-shadow) 30%, transparent),
+    0 4px 8px 3px color-mix(in srgb, var(--mdv-sys-color-shadow) 15%, transparent);
+  --mdv-sys-elevation-level-4:
+    0 2px 3px 0 color-mix(in srgb, var(--mdv-sys-color-shadow) 30%, transparent),
+    0 6px 10px 4px color-mix(in srgb, var(--mdv-sys-color-shadow) 15%, transparent);
+  --mdv-sys-elevation-level-5:
+    0 4px 4px 0 color-mix(in srgb, var(--mdv-sys-color-shadow) 30%, transparent),
+    0 8px 12px 6px color-mix(in srgb, var(--mdv-sys-color-shadow) 15%, transparent);
+}
+
+:where(:root) {
+  color-scheme: light;
+  --mdv-sys-shape-corner-none: 0;
+  --mdv-sys-shape-corner-extra-small: 4px;
+  --mdv-sys-shape-corner-small: 8px;
+  --mdv-sys-shape-corner-medium: 12px;
+  --mdv-sys-shape-corner-large: 16px;
+  --mdv-sys-shape-corner-extra-large: 28px;
+  --mdv-sys-shape-corner-full: 9999px;
+  --mdv-sys-motion-duration-short-1: 50ms;
+  --mdv-sys-motion-duration-short-2: 100ms;
+  --mdv-sys-motion-duration-short-3: 150ms;
+  --mdv-sys-motion-duration-short-4: 200ms;
+  --mdv-sys-motion-duration-medium-1: 250ms;
+  --mdv-sys-motion-duration-medium-2: 300ms;
+  --mdv-sys-motion-duration-medium-3: 350ms;
+  --mdv-sys-motion-duration-medium-4: 400ms;
+  --mdv-sys-motion-duration-long-1: 450ms;
+  --mdv-sys-motion-duration-long-2: 500ms;
+  --mdv-sys-motion-duration-long-3: 550ms;
+  --mdv-sys-motion-duration-long-4: 600ms;
+  --mdv-sys-motion-duration-extra-long-1: 700ms;
+  --mdv-sys-motion-duration-extra-long-2: 800ms;
+  --mdv-sys-motion-duration-extra-long-3: 900ms;
+  --mdv-sys-motion-duration-extra-long-4: 1000ms;
+  --mdv-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --mdv-sys-motion-easing-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
+  --mdv-sys-motion-easing-standard-decelerate: cubic-bezier(0, 0, 0, 1);
+  --mdv-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --mdv-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --mdv-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+}
+
+:where([data-mdv-theme='light']) {
+  color-scheme: light;
+}
+
+:where([data-mdv-theme='dark']) {
+  color-scheme: dark;
+}
+
+:where([data-mdv-theme='system']) {
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :where([data-mdv-theme='system']) {
+    color-scheme: dark;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(:root) {
+    --mdv-sys-motion-duration-short-1: 0.01ms;
+    --mdv-sys-motion-duration-short-2: 0.01ms;
+    --mdv-sys-motion-duration-short-3: 0.01ms;
+    --mdv-sys-motion-duration-short-4: 0.01ms;
+    --mdv-sys-motion-duration-medium-1: 0.01ms;
+    --mdv-sys-motion-duration-medium-2: 0.01ms;
+    --mdv-sys-motion-duration-medium-3: 0.01ms;
+    --mdv-sys-motion-duration-medium-4: 0.01ms;
+    --mdv-sys-motion-duration-long-1: 0.01ms;
+    --mdv-sys-motion-duration-long-2: 0.01ms;
+    --mdv-sys-motion-duration-long-3: 0.01ms;
+    --mdv-sys-motion-duration-long-4: 0.01ms;
+    --mdv-sys-motion-duration-extra-long-1: 0.01ms;
+    --mdv-sys-motion-duration-extra-long-2: 0.01ms;
+    --mdv-sys-motion-duration-extra-long-3: 0.01ms;
+    --mdv-sys-motion-duration-extra-long-4: 0.01ms;
+  }
+}
