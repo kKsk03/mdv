@@ -12,7 +12,32 @@
   font: inherit;
 }
 
-.playground-control:focus-visible {
+.playground-control:focus-visible,
+.playground-nav-item:focus-visible {
   outline: 2px solid var(--mdv-sys-color-primary);
   outline-offset: 2px;
+}
+
+.playground-nav-item {
+  display: flex;
+  min-height: 3rem;
+  width: 100%;
+  align-items: center;
+  border-radius: var(--mdv-sys-shape-corner-full);
+  padding: 0.75rem 1rem;
+  color: var(--mdv-sys-color-on-surface-variant);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .playground-nav-item:hover {
+    background-color: var(--mdv-sys-color-surface-container-high);
+  }
+}
+
+.playground-nav-item[aria-current='page'] {
+  background-color: var(--mdv-sys-color-secondary-container);
+  color: var(--mdv-sys-color-on-secondary-container);
 }

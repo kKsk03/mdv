@@ -23,6 +23,7 @@
     "dist",
     "src/components",
     "src/styles",
+    "COMPONENTS.md",
     "THIRD_PARTY_NOTICES.md"
   ],
   "sideEffects": [
