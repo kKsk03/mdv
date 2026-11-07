@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { onBeforeUnmount, ref, useTemplateRef } from 'vue'
 import { MdvButton } from '@/index'
+import ButtonPlayground from './ButtonPlayground.vue'
 import { applyMdvColorScheme, createMdvColorScheme } from '@/dynamic-color'
 import type { MdvColorRole } from '@/dynamic-color'
-import type { MdvButtonVariant } from '@/components/button.types'
 
 const preview = useTemplateRef<HTMLElement>('preview')
 const theme = ref<'light' | 'dark' | 'system'>('light')
 const seed = ref('#6750a4')
 const activeSeed = ref<string | null>(null)
 const seedError = ref('')
-const showDisabled = ref(false)
 const showMotion = ref(false)
 let cleanupScheme: (() => void) | undefined
 
@@ -18,14 +17,6 @@ const comparisonThemes = [
   { value: 'light', label: '浅色' },
   { value: 'dark', label: '深色' },
 ] as const
-
-const variants: { name: string; value: MdvButtonVariant }[] = [
-  { name: '填充', value: 'filled' },
-  { name: '色调', value: 'tonal' },
-  { name: '描边', value: 'outlined' },
-  { name: '提升', value: 'elevated' },
-  { name: '文本', value: 'text' },
-]
 
 const swatches: { background: MdvColorRole; foreground: MdvColorRole }[] = [
   { background: 'primary', foreground: 'on-primary' },
@@ -119,9 +110,9 @@ onBeforeUnmount(() => cleanupScheme?.())
     <div class="mx-auto max-w-6xl space-y-10">
       <header class="border-b border-mdv-outline-variant pb-6">
         <p class="text-mdv-label-large text-mdv-primary">MDV / 开发预览</p>
-        <h1 class="mt-2 text-mdv-headline-large">主题基础</h1>
+        <h1 class="mt-2 text-mdv-headline-large">组件与主题</h1>
         <p class="mt-2 text-mdv-body-medium text-mdv-on-surface-variant">
-          调整主题和种子色，检查颜色角色、排版与局部覆盖。
+          调整主题和种子色，对照按钮的样式与交互，再检查颜色角色、排版与局部覆盖。
         </p>
       </header>
 
@@ -171,6 +162,8 @@ onBeforeUnmount(() => cleanupScheme?.())
         </p>
       </section>
 
+      <ButtonPlayground />
+
       <section aria-labelledby="colors-title">
         <h2 id="colors-title" class="mb-5 text-mdv-title-large">浅色与深色对照</h2>
         <div class="grid gap-5 lg:grid-cols-2">
@@ -216,34 +209,6 @@ onBeforeUnmount(() => cleanupScheme?.())
                 </div>
               </dl>
             </details>
-          </article>
-        </div>
-      </section>
-
-      <section aria-labelledby="button-variants-title">
-        <div class="mb-5 flex flex-wrap items-center justify-between gap-4">
-          <h2 id="button-variants-title" class="text-mdv-title-large">Button 工程骨架</h2>
-          <label class="inline-flex items-center gap-2 text-mdv-body-medium">
-            <input v-model="showDisabled" class="size-4 accent-mdv-primary" type="checkbox" />
-            显示禁用状态
-          </label>
-        </div>
-        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <article
-            v-for="variant in variants"
-            :key="variant.value"
-            class="flex min-h-36 flex-col justify-between gap-4 rounded-mdv-medium border border-mdv-outline-variant p-5"
-          >
-            <div>
-              <h3 class="text-mdv-title-medium">{{ variant.name }}</h3>
-              <p class="mt-1 text-mdv-body-small text-mdv-on-surface-variant">
-                variant="{{ variant.value }}"
-              </p>
-            </div>
-            <div class="flex flex-wrap items-center gap-3">
-              <MdvButton :variant="variant.value">保存</MdvButton>
-              <MdvButton v-if="showDisabled" :variant="variant.value" disabled>禁用</MdvButton>
-            </div>
           </article>
         </div>
       </section>

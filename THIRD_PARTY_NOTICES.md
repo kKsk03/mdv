@@ -17,7 +17,9 @@ MDV 将 v0.192 设计令牌中的默认颜色、排版、圆角和动效数值�
 - 来源：https://github.com/material-foundation/material-color-utilities
 - 软件包许可声明：Copyright 2021 Google LLC；各源码文件保留其对应版权声明。
 - 许可：Apache License 2.0
-- 使用位置：`src/dynamic-color.ts`；算法随独立的 `mdv/dynamic-color` 入口构建。
+- 使用位置：`src/dynamic-color.ts` 和 `src/components/button-color.ts`；完整主题算法随 `mdv/dynamic-color` 入口构建，Button 使用 HCT／TonalPalette 生成局部种子色。
+
+`src/styles/tokens.css` 中 success／warning／info 的默认配色由该算法生成，分别使用 #2e7d32、#b26a00 和 #0277bd 种子色，采用 Tonal Spot／2021 primary 色系。它们属于 MDV 的扩展语义角色。
 
 ## Roboto
 

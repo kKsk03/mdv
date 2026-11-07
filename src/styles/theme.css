@@ -21,6 +21,18 @@
   --color-mdv-on-error: var(--mdv-sys-color-on-error);
   --color-mdv-error-container: var(--mdv-sys-color-error-container);
   --color-mdv-on-error-container: var(--mdv-sys-color-on-error-container);
+  --color-mdv-success: var(--mdv-sys-color-success);
+  --color-mdv-on-success: var(--mdv-sys-color-on-success);
+  --color-mdv-success-container: var(--mdv-sys-color-success-container);
+  --color-mdv-on-success-container: var(--mdv-sys-color-on-success-container);
+  --color-mdv-warning: var(--mdv-sys-color-warning);
+  --color-mdv-on-warning: var(--mdv-sys-color-on-warning);
+  --color-mdv-warning-container: var(--mdv-sys-color-warning-container);
+  --color-mdv-on-warning-container: var(--mdv-sys-color-on-warning-container);
+  --color-mdv-info: var(--mdv-sys-color-info);
+  --color-mdv-on-info: var(--mdv-sys-color-on-info);
+  --color-mdv-info-container: var(--mdv-sys-color-info-container);
+  --color-mdv-on-info-container: var(--mdv-sys-color-on-info-container);
   --color-mdv-background: var(--mdv-sys-color-background);
   --color-mdv-on-background: var(--mdv-sys-color-on-background);
   --color-mdv-surface: var(--mdv-sys-color-surface);

@@ -69,6 +69,19 @@
     var(--mdv-dynamic-light-color-on-error-container, #410e0b),
     var(--mdv-dynamic-dark-color-on-error-container, #f9dedc)
   );
+  /* MDV 扩展语义色：固定色相，不参与全局品牌种子色替换。 */
+  --mdv-sys-color-success: light-dark(#3c6939, #a1d39a);
+  --mdv-sys-color-on-success: light-dark(#ffffff, #0a390f);
+  --mdv-sys-color-success-container: light-dark(#bcf0b4, #245024);
+  --mdv-sys-color-on-success-container: light-dark(#245024, #bcf0b4);
+  --mdv-sys-color-warning: light-dark(#855317, #fcb974);
+  --mdv-sys-color-on-warning: light-dark(#ffffff, #492900);
+  --mdv-sys-color-warning-container: light-dark(#ffdcbd, #693c00);
+  --mdv-sys-color-on-warning-container: light-dark(#693c00, #ffdcbd);
+  --mdv-sys-color-info: light-dark(#31628d, #9dcbfb);
+  --mdv-sys-color-on-info: light-dark(#ffffff, #003355);
+  --mdv-sys-color-info-container: light-dark(#cfe5ff, #124a73);
+  --mdv-sys-color-on-info-container: light-dark(#124a73, #cfe5ff);
   --mdv-sys-color-background: light-dark(
     var(--mdv-dynamic-light-color-background, #fef7ff),
     var(--mdv-dynamic-dark-color-background, #141218)
