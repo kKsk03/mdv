@@ -23,6 +23,7 @@ const maxCachedSeeds = 64
 const iconStyles = new WeakMap<Readonly<CSSProperties>, Readonly<CSSProperties>>()
 const checkboxStyles = new WeakMap<Readonly<CSSProperties>, Readonly<CSSProperties>>()
 const radioStyles = new WeakMap<Readonly<CSSProperties>, Readonly<CSSProperties>>()
+const switchStyles = new WeakMap<Readonly<CSSProperties>, Readonly<CSSProperties>>()
 
 /** Checkbox 复用纯配色计算，仅暴露自身的强调色与图形色变量。 */
 export function resolveCheckboxColor(color: unknown): Readonly<CSSProperties> | undefined {
@@ -52,6 +53,24 @@ export function resolveRadioColor(color: unknown): Readonly<CSSProperties> | und
     '--mdv-radio-color': colors['--mdv-button-color'],
   })
   radioStyles.set(colors, style)
+  return style
+}
+
+/** Switch 复用纯配色计算，仅暴露自身的轨道、手柄与图形变量。 */
+export function resolveSwitchColor(color: unknown): Readonly<CSSProperties> | undefined {
+  const colors = resolveButtonColor(color)
+  if (!colors) return undefined
+
+  const cached = switchStyles.get(colors)
+  if (cached) return cached
+
+  const style = Object.freeze({
+    '--mdv-switch-color': colors['--mdv-button-color'],
+    '--mdv-switch-on-color': colors['--mdv-button-on-color'],
+    '--mdv-switch-container-color': colors['--mdv-button-container-color'],
+    '--mdv-switch-on-container-color': colors['--mdv-button-on-container-color'],
+  })
+  switchStyles.set(colors, style)
   return style
 }
 

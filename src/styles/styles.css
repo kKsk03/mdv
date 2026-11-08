@@ -1,6 +1,7 @@
 @import './text-field.css';
 @import './checkbox.css';
 @import './radio.css';
+@import './switch.css';
 
 .mdv-icon {
   display: inline-block;

@@ -7,6 +7,7 @@ import IconPlayground from './IconPlayground.vue'
 import TextFieldPlayground from './TextFieldPlayground.vue'
 import CheckboxPlayground from './CheckboxPlayground.vue'
 import RadioPlayground from './RadioPlayground.vue'
+import SwitchPlayground from './SwitchPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -45,6 +46,12 @@ const pages = [
     label: 'Radio 单选框',
     description: '对照单选互斥、键盘导航、配色、标签和原生表单行为。',
     component: RadioPlayground,
+  },
+  {
+    id: 'switch',
+    label: 'Switch 开关',
+    description: '对照开关状态、图标、标签位置、配色和原生表单行为。',
+    component: SwitchPlayground,
   },
   {
     id: 'theme',

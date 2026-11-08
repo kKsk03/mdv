@@ -1,0 +1,350 @@
+/*
+ * Material 3 Switch geometry and state layers.
+ * The native checkbox remains the form and keyboard control; these rules draw its local surface.
+ */
+.mdv-switch {
+  --mdv-switch-color: var(--mdv-sys-color-primary);
+  --mdv-switch-on-color: var(--mdv-sys-color-on-primary);
+  --mdv-switch-container-color: var(--mdv-sys-color-primary-container);
+  --mdv-switch-on-container-color: var(--mdv-sys-color-on-primary-container);
+  --mdv-switch-track-color: var(--mdv-sys-color-surface-container-highest);
+  --mdv-switch-outline-color: var(--mdv-sys-color-outline);
+  --mdv-switch-thumb-color: var(--mdv-sys-color-outline);
+  --mdv-switch-icon-color: var(--mdv-sys-color-surface-container-highest);
+  --mdv-switch-state-color: var(--mdv-sys-color-on-surface);
+  --mdv-switch-interaction-thumb-color: var(--mdv-sys-color-on-surface-variant);
+  --mdv-switch-handle-offset: 20px;
+  --mdv-switch-motion-duration: var(--mdv-sys-motion-duration-medium-2);
+  --mdv-switch-motion-easing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  display: inline-flex;
+  box-sizing: border-box;
+  min-width: 56px;
+  max-width: 100%;
+  flex-direction: column;
+  vertical-align: top;
+  color: var(--mdv-sys-color-on-surface);
+  font-family: var(--mdv-sys-typescale-font-family);
+  font-size: var(--mdv-sys-typescale-body-large-size);
+  font-weight: var(--mdv-sys-typescale-body-large-weight);
+  line-height: var(--mdv-sys-typescale-body-large-line-height);
+  letter-spacing: var(--mdv-sys-typescale-body-large-tracking);
+}
+
+.mdv-switch--selected {
+  --mdv-switch-track-color: var(--mdv-switch-color);
+  --mdv-switch-outline-color: var(--mdv-switch-color);
+  --mdv-switch-thumb-color: var(--mdv-switch-on-color);
+  --mdv-switch-icon-color: var(--mdv-switch-on-container-color);
+  --mdv-switch-state-color: var(--mdv-switch-color);
+  --mdv-switch-interaction-thumb-color: var(--mdv-switch-container-color);
+}
+
+.mdv-switch:dir(rtl) {
+  --mdv-switch-handle-offset: -20px;
+}
+
+.mdv-switch--error {
+  --mdv-switch-color: var(--mdv-sys-color-error);
+  --mdv-switch-on-color: var(--mdv-sys-color-on-error);
+  --mdv-switch-container-color: var(--mdv-sys-color-error-container);
+  --mdv-switch-on-container-color: var(--mdv-sys-color-on-error-container);
+  --mdv-switch-outline-color: var(--mdv-sys-color-error);
+  --mdv-switch-state-color: var(--mdv-sys-color-error);
+}
+
+.mdv-switch__row {
+  display: grid;
+  min-width: 0;
+  min-height: 48px;
+  grid-template-columns: 56px minmax(0, 1fr);
+  align-items: start;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mdv-switch--label-start .mdv-switch__row {
+  grid-template-columns: minmax(0, 1fr) 56px;
+}
+
+.mdv-switch__control {
+  position: relative;
+  display: grid;
+  width: 56px;
+  height: 48px;
+  place-items: center;
+}
+
+.mdv-switch--label-start .mdv-switch__control {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.mdv-switch__input {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: inherit;
+  appearance: none;
+}
+
+.mdv-switch__state {
+  position: relative;
+  width: 52px;
+  height: 32px;
+  grid-area: 1 / 1;
+}
+
+.mdv-switch__track {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  border: 2px solid var(--mdv-switch-outline-color);
+  border-radius: var(--mdv-sys-shape-corner-full);
+  background: var(--mdv-switch-track-color);
+  transition:
+    border-color var(--mdv-sys-motion-duration-short-2) linear,
+    background-color var(--mdv-sys-motion-duration-short-2) linear;
+}
+
+/* A 32px carrier keeps the handle centred at 16px / 36px independently of its size. */
+.mdv-switch__handle {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  transform: translateX(0);
+  transition: transform var(--mdv-switch-motion-duration) var(--mdv-switch-motion-easing);
+}
+
+.mdv-switch:where(.mdv-switch--selected, :has(.mdv-switch__input:checked)) .mdv-switch__handle {
+  transform: translateX(var(--mdv-switch-handle-offset));
+}
+
+.mdv-switch__state-layer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--mdv-switch-state-color);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition:
+    opacity var(--mdv-sys-motion-duration-short-2) linear,
+    background-color var(--mdv-sys-motion-duration-short-2) linear;
+}
+
+.mdv-switch__thumb {
+  position: relative;
+  display: flex;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--mdv-switch-thumb-color);
+  color: var(--mdv-switch-icon-color);
+  transition:
+    width var(--mdv-sys-motion-duration-medium-1) var(--mdv-sys-motion-easing-standard),
+    height var(--mdv-sys-motion-duration-medium-1) var(--mdv-sys-motion-easing-standard),
+    background-color var(--mdv-sys-motion-duration-short-2) linear,
+    color var(--mdv-sys-motion-duration-short-2) linear;
+}
+
+.mdv-switch:where(.mdv-switch--selected, :has(.mdv-switch__input:checked)) .mdv-switch__thumb,
+.mdv-switch__thumb:has(.mdv-switch__icon) {
+  width: 24px;
+  height: 24px;
+}
+
+.mdv-switch__icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.mdv-switch__icon > :is(svg, img) {
+  width: 100%;
+  height: 100%;
+}
+
+.mdv-switch__state::after {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  bottom: -4px;
+  left: -4px;
+  border: 3px solid var(--mdv-sys-color-secondary);
+  border-radius: var(--mdv-sys-shape-corner-full);
+  content: '';
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--mdv-sys-motion-duration-short-2) linear;
+}
+
+@media (hover: hover) {
+  .mdv-switch__row:hover .mdv-switch__state-layer {
+    opacity: 0.08;
+  }
+
+  .mdv-switch__row:hover .mdv-switch__thumb {
+    background: var(--mdv-switch-interaction-thumb-color);
+  }
+}
+
+.mdv-switch__input:focus-visible ~ .mdv-switch__state::after {
+  opacity: 1;
+}
+
+.mdv-switch__input:focus-visible ~ .mdv-switch__state .mdv-switch__state-layer,
+.mdv-switch__row:active .mdv-switch__state-layer {
+  opacity: 0.12;
+}
+
+.mdv-switch__input:focus-visible ~ .mdv-switch__state .mdv-switch__thumb,
+.mdv-switch__row:active .mdv-switch__thumb {
+  background: var(--mdv-switch-interaction-thumb-color);
+}
+
+.mdv-switch:not(:has(.mdv-switch__input:disabled)) .mdv-switch__row:active .mdv-switch__thumb {
+  width: 28px;
+  height: 28px;
+  transition-duration: var(--mdv-sys-motion-duration-short-2);
+  transition-timing-function: linear;
+}
+
+.mdv-switch__label {
+  min-width: 0;
+  padding-block: 12px;
+  padding-inline: 4px 12px;
+  overflow-wrap: anywhere;
+}
+
+.mdv-switch--label-start .mdv-switch__label {
+  grid-column: 1;
+  grid-row: 1;
+  padding-inline: 12px 4px;
+  text-align: end;
+}
+
+.mdv-switch__supporting {
+  min-width: 0;
+  padding-inline: 56px 4px;
+  color: var(--mdv-sys-color-on-surface-variant);
+  font-size: var(--mdv-sys-typescale-body-small-size);
+  font-weight: var(--mdv-sys-typescale-body-small-weight);
+  line-height: var(--mdv-sys-typescale-body-small-line-height);
+  letter-spacing: var(--mdv-sys-typescale-body-small-tracking);
+  overflow-wrap: anywhere;
+}
+
+.mdv-switch--label-start .mdv-switch__supporting {
+  padding-inline: 4px 56px;
+  text-align: end;
+}
+
+.mdv-switch--error .mdv-switch__supporting {
+  color: var(--mdv-sys-color-error);
+}
+
+.mdv-switch:has(.mdv-switch__input:disabled) {
+  --mdv-switch-track-color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 12%, transparent);
+  --mdv-switch-outline-color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 38%, transparent);
+  --mdv-switch-thumb-color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 38%, transparent);
+  --mdv-switch-icon-color: var(--mdv-sys-color-surface);
+  --mdv-switch-state-color: transparent;
+  --mdv-switch-interaction-thumb-color: var(--mdv-switch-thumb-color);
+
+  color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 38%, transparent);
+}
+
+.mdv-switch--selected:has(.mdv-switch__input:disabled) {
+  --mdv-switch-thumb-color: var(--mdv-sys-color-surface);
+  --mdv-switch-icon-color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 38%, transparent);
+}
+
+.mdv-switch:has(.mdv-switch__input:disabled)
+  :is(.mdv-switch__handle, .mdv-switch__track, .mdv-switch__thumb) {
+  transition: none;
+}
+
+.mdv-switch:has(.mdv-switch__input:disabled) .mdv-switch__row {
+  cursor: not-allowed;
+}
+
+.mdv-switch:has(.mdv-switch__input:disabled) .mdv-switch__state-layer,
+.mdv-switch:has(.mdv-switch__input:disabled) .mdv-switch__state::after {
+  visibility: hidden;
+}
+
+.mdv-switch:has(.mdv-switch__input:disabled) .mdv-switch__supporting {
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mdv-switch *,
+  .mdv-switch *::before,
+  .mdv-switch *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .mdv-switch {
+    --mdv-switch-color: CanvasText;
+    --mdv-switch-on-color: Canvas;
+    --mdv-switch-container-color: Highlight;
+    --mdv-switch-on-container-color: HighlightText;
+    --mdv-switch-track-color: Canvas;
+    --mdv-switch-outline-color: CanvasText;
+    --mdv-switch-thumb-color: CanvasText;
+    --mdv-switch-icon-color: Canvas;
+
+    color: CanvasText;
+  }
+
+  .mdv-switch__track,
+  .mdv-switch__thumb {
+    forced-color-adjust: none;
+  }
+
+  .mdv-switch:has(.mdv-switch__input:disabled) {
+    --mdv-switch-color: GrayText;
+    --mdv-switch-outline-color: GrayText;
+    --mdv-switch-thumb-color: GrayText;
+
+    color: GrayText;
+  }
+
+  .mdv-switch:has(.mdv-switch__input:disabled) .mdv-switch__track,
+  .mdv-switch:has(.mdv-switch__input:disabled) .mdv-switch__thumb {
+    opacity: 1;
+  }
+
+  .mdv-switch__state-layer {
+    visibility: hidden;
+  }
+
+  .mdv-switch__supporting {
+    color: inherit;
+  }
+}

@@ -583,3 +583,72 @@ const plan = ref<string | number | null>(null)
 单选圆点、40px 状态层和 48px 命中区使用 MD3 几何；hover 使用 8% 状态层，focus／pressed 使用 12% 状态层。支持浅色／深色、语义色、十六进制种子色、RTL、reduced-motion 与 forced-colors。已提供行为、SSR、hydration 测试和独立开发预览；当前约定范围已完成本地检查与开发预览验收。新版本包消费另行验证。
 
 公共类型：`MdvRadioValue`、`MdvRadioModelValue`、`MdvRadioColor`、`MdvRadioOrientation`，均可从 mdv 主入口导入。
+
+## MdvSwitch
+
+`MdvSwitch` 是基于原生 `input[type="checkbox"]` 的二值开关。可见轨道遵循 Material 3 的 52 × 32 px 规格，外层控制区保持至少 48 px 的触控命中高度；标签、辅助文字、原生表单和校验语义由组件统一关联。未选中且无图标时手柄为 16px；选中或当前状态带图标时为 24px，按下时为 28px。选中手柄距轨道外沿 4px，RTL 时镜像排列；平移使用轻微回弹，手柄尺寸独立过渡。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvSwitch } from 'mdv'
+
+const enabled = ref(false)
+</script>
+
+<template>
+  <MdvSwitch
+    v-model="enabled"
+    label="接收通知"
+    supporting-text="接收重要提醒。"
+    name="notifications"
+    value="enabled"
+  />
+</template>
+```
+
+### MdvSwitch 属性
+
+| Prop／模型 | 类型／说明 | 默认值 |
+| --- | --- | --- |
+| `modelValue`／`v-model` | `boolean`；开启或关闭 | `false` |
+| `label` | 可点击的标签文字；默认插槽优先 | `''` |
+| `supportingText` | 辅助说明；错误报告后按错误优先级显示 | `''` |
+| `error`／`errorText` | 业务错误及说明；与原生 validity 分开 | `false`／`''` |
+| `disabled`／`required` | 原生禁用／必选约束 | `false` |
+| `color` | 主题／语义色或 `#RGB`／`#RRGGBB` 种子色 | `primary` |
+| `labelPosition` | `start` 或 `end` | `end` |
+| `value` | 原生表单提交值 | `'on'` |
+
+`id`、`name`、`form`、`value`、`required`、ARIA、`data-*` 和原生事件会透传到实际的 `input[type="checkbox"]`；`class`、`style`、`dir` 和 `lang` 属于组件外层。没有可见标签时，必须提供 `aria-label` 或 `aria-labelledby`。`labelPosition="start"` 只改变视觉排列，不改变原生表单和阅读顺序。
+
+### 图标与状态
+
+默认开启时显示内置的 Material Symbols 勾，关闭时不显示图标，无需额外安装图标集或提供插槽。通过具名插槽可自定义对应状态：
+
+```vue
+<MdvSwitch v-model="enabled" label="同步">
+  <template #unselected-icon><MdvIcon :icon="close" size="16" /></template>
+</MdvSwitch>
+```
+
+可用插槽为 `selected-icon` 和 `unselected-icon`，只渲染与当前状态对应的图标。上例保留默认开启勾，并在关闭时显示叉；提供 `selected-icon` 可替换默认勾，提供显式空插槽则隐藏默认勾：
+
+```vue
+<MdvSwitch v-model="enabled" label="纯圆点开关">
+  <template #selected-icon />
+</MdvSwitch>
+```
+
+自定义插槽（包括空插槽）优先于内置图标。图标区域为 16px，尺寸变化不缩放图标；图形表示状态，组件不会把业务名称转换成图标。组件不提供 `indeterminate`、`size`、`density`、`variant`、`loading` 或 `readonly` API。颜色优先级为禁用、错误、自定义 `color`、默认主题色；未选中状态保持 surface／outline 中性色。
+
+### 表单、校验与公开方法
+
+- `required`、`checkValidity()`、`reportValidity()` 和 `setCustomValidity()` 使用原生约束；首次渲染不会自动显示 required 错误。
+- 原生 `form.reset()` 恢复组件创建时的模型值，支持外部 `form` 关联、`fieldset disabled` 和 SSR hydration 前的用户点击。
+- `focus(options?)` 与 `blur()` 通过模板 ref 操作实际 input。
+- `error`／`errorText` 只表达业务状态；原生 invalid 报告后才显示原生错误，值恢复有效时回到 `supportingText`。
+
+Switch 的状态层、选中移动、hover／focus／pressed、reduced-motion、forced-colors 和 RTL 样式限定在组件自身。已提供行为、SSR、hydration 测试及独立 playground；当前约定范围已完成本地检查与开发预览验收，真实包消费另行安排。
+
+公共类型：`MdvSwitchColor`、`MdvSwitchLabelPosition`，均可从 mdv 主入口导入。
