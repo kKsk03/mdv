@@ -3,7 +3,11 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import type { CSSProperties } from 'vue'
-import { resolveButtonColor, resolveIconButtonColor } from '../components/button-color'
+import {
+  resolveButtonColor,
+  resolveCheckboxColor,
+  resolveIconButtonColor,
+} from '../components/button-color'
 import { createMdvColorScheme } from '../dynamic-color'
 
 function readPair(value: unknown): [string, string] {
@@ -45,6 +49,21 @@ function contrastRatios(style: Readonly<CSSProperties>): number[] {
 }
 
 describe('button color resolution', () => {
+  it.each(['success', '#06C'])(
+    'shares the %s seed and theme roles with Checkbox without leaking button variables',
+    (color) => {
+      const button = resolveButtonColor(color)
+      const checkbox = resolveCheckboxColor(color)
+      expect(checkbox).toBeDefined()
+      expect(Object.isFrozen(checkbox)).toBe(true)
+      expect(resolveCheckboxColor(color)).toBe(checkbox)
+      expect(checkbox?.['--mdv-checkbox-color']).toBe(button?.['--mdv-button-color'])
+      expect(checkbox?.['--mdv-checkbox-on-color']).toBe(button?.['--mdv-button-on-color'])
+      expect(checkbox?.['--mdv-button-color']).toBeUndefined()
+      expect(resolveCheckboxColor('#invalid')).toBeUndefined()
+    },
+  )
+
   it.each(['success', '#06C'])(
     'shares the %s color roles across both button kinds with separate CSS variables',
     (color) => {

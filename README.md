@@ -3,7 +3,7 @@
 一个以 Vue 3、TypeScript 和 Tailwind CSS v4 构建的 Material Design 3 组件库。
 Tailwind 工具类由使用方安装并编译；本项目提供组件、主题入口和必要的普通 CSS。
 
-项目目前处于早期开发阶段。主题、字体、动态配色与 MdvButton 已完成本地验收及真实安装包消费验证；MdvIconButton 与 MdvIcon 已完成本地检查与开发预览验收，真实包消费另行验证。MdvTextField 已实现，待检查与开发预览验收。正式文档站计划在独立仓库建设；本仓库使用 playground 调试组件。
+项目目前处于早期开发阶段。主题、字体、动态配色与 MdvButton 已完成本地验收及真实安装包消费验证；MdvIconButton、MdvIcon、MdvTextField 与 MdvCheckbox 已完成本地检查与开发预览验收，真实包消费另行验证。正式文档站计划在独立仓库建设；本仓库使用 playground 调试组件。
 
 ## 本地开发
 
@@ -48,6 +48,7 @@ pnpm build
 - [MdvIconButton 图标按钮](./COMPONENTS.md#mdviconbutton)
 - [MdvIcon 图标](./COMPONENTS.md#mdvicon)
 - [MdvTextField 文本框](./COMPONENTS.md#mdvtextfield)
+- [MdvCheckbox 复选框](./COMPONENTS.md#mdvcheckbox)
 
 ## 主题与排版
 
@@ -77,7 +78,7 @@ pnpm build
 
 ## 种子色动态配色
 
-完整主题生成和 DOM 应用从独立入口导入。Button 和 IconButton 的局部种子色能力共用 HCT／TonalPalette 基础算法，因此组件入口会包含相应计算代码；它不导入这里的完整主题生成与 DOM 管理逻辑。预设色直接引用 CSS 变量，自定义种子色按规范化色号复用有容量上限的计算结果。
+完整主题生成和 DOM 应用从独立入口导入。Button、IconButton 和 Checkbox 的局部种子色能力共用 HCT／TonalPalette 基础算法，因此组件入口会包含相应计算代码；它不导入这里的完整主题生成与 DOM 管理逻辑。预设色直接引用 CSS 变量，自定义种子色按规范化色号复用有容量上限的计算结果。
 
 ```ts
 import { applyMdvColorScheme, createMdvColorScheme } from 'mdv/dynamic-color'

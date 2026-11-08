@@ -31,6 +31,16 @@ MDV 按现行官方规格整理 CSS 数值并用 AndroidX 的尺寸／颜色令�
 
 MDV 用 Vue 与原生 input／textarea 实现自己的标签布局、描边缺口、值绑定和表单行为；未引入 Material Web 运行时。聚焦指示线按现行官网的 3dp 令牌实现，不沿用旧版 2dp 数值。
 
+## Material 3 复选框规格、令牌与状态标记
+
+- 规格来源：https://m3.material.io/components/checkbox/specs
+- 令牌与动画依据：https://github.com/material-components/material-web/tree/main/tokens/versions/v0_192 及 `checkbox/internal/_checkbox.scss`。
+- 版权：Copyright 2022, 2023 Google LLC
+- 许可：Apache License 2.0
+- 使用位置：`src/styles/checkbox.css` 的尺寸、颜色角色、状态透明度、动效及两段状态标记的几何。
+
+MDV 用 Vue 与原生 checkbox 实现自己的模型、标签、辅助说明、校验和表单生命周期；勾线／横线由 CSS 状态标记表达，尺寸及动画几何依据官方实现整理。未引入 Material Web 运行时或外部图标请求。下文保留 Apache License 2.0 原文。
+
 ## Material Symbols 图标数据
 
 - 来源：https://github.com/google/material-design-icons

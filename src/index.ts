@@ -2,6 +2,12 @@ export { default as MdvButton } from './components/MdvButton.vue'
 export { default as MdvIconButton } from './components/MdvIconButton.vue'
 export { default as MdvIcon } from './components/MdvIcon.vue'
 export { default as MdvTextField } from './components/MdvTextField.vue'
+export { default as MdvCheckbox } from './components/MdvCheckbox.vue'
+export type {
+  MdvCheckboxColor,
+  MdvCheckboxModelValue,
+  MdvCheckboxValue,
+} from './components/checkbox.types'
 export type {
   MdvTextFieldModelModifiers,
   MdvTextFieldType,

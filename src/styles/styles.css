@@ -1,4 +1,5 @@
 @import './text-field.css';
+@import './checkbox.css';
 
 .mdv-icon {
   display: inline-block;

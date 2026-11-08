@@ -6,6 +6,7 @@
 - [MdvIconButton 图标按钮](#mdviconbutton)
 - [MdvIcon 图标](#mdvicon)
 - [MdvTextField 文本框](#mdvtextfield)
+- [MdvCheckbox 复选框](#mdvcheckbox)
 
 ## MdvButton
 
@@ -395,4 +396,110 @@ const field = useTemplateRef<InstanceType<typeof MdvTextField>>('field')
 field.value?.focus({ preventScroll: true })
 ```
 
-公共类型：`MdvTextFieldVariant`、`MdvTextFieldType`、`MdvTextFieldValue`、`MdvTextFieldModelModifiers`。SSR 使用 Vue 稳定 ID 关联标签与描述；已提供行为、SSR 和 hydration 测试，当前实现仍待本轮检查与真实浏览器验收。自动填充和密码管理器的实际表现需要在目标浏览器中验证。
+公共类型：`MdvTextFieldVariant`、`MdvTextFieldType`、`MdvTextFieldValue`、`MdvTextFieldModelModifiers`。SSR 使用 Vue 稳定 ID 关联标签与描述；已提供行为、SSR 和 hydration 测试，当前约定范围已完成本地检查与开发预览验收。自动填充和密码管理器的实际表现需要在目标浏览器中验证。
+
+## MdvCheckbox
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvCheckbox } from 'mdv'
+import type { MdvCheckboxValue } from 'mdv'
+
+const accepted = ref(false)
+const channels = ref<MdvCheckboxValue[]>(['email'])
+</script>
+
+<template>
+  <MdvCheckbox v-model="accepted" label="接受服务条款" name="terms" value="accepted" required />
+  <fieldset>
+    <legend>通知方式</legend>
+    <MdvCheckbox v-model="channels" value="email" name="channel" label="邮件通知" />
+    <MdvCheckbox v-model="channels" value="sms" name="channel" label="短信通知" />
+  </fieldset>
+</template>
+```
+
+| Prop／模型 | 类型／说明 | 默认值 |
+| --- | --- | --- |
+| `modelValue`／`v-model` | `boolean \| (string \| number)[]` | `false` |
+| `value` | 数组成员与原生表单提交值，`string \| number` | `'on'` |
+| `indeterminate`／`v-model:indeterminate` | 半选状态，横线优先于勾显示 | `false` |
+| `label` | 可点击的标签文字 | `''` |
+| `supportingText` | 标签下方的辅助说明 | `''` |
+| `error` | 外部业务错误状态 | `false` |
+| `errorText` | 错误状态下优先显示的说明 | `''` |
+| `disabled`／`required` | 原生禁用／本项必选约束 | `false` |
+| `color` | 主题／语义色或十六进制种子色 | `'primary'` |
+
+方框 18px、圆角 2px、状态层 40px；组件实际保留 48 × 48px 的控件点击区域。标签默认在后，长中文、英文和连续标识符可以换行，控件对齐标签首行；`dir="rtl"` 同时作用于布局和输入。相邻标签使用 on-surface，不随选中颜色变化；禁用时使用禁用文字色。
+
+默认插槽替换 `label`，适合加入强调文字或链接。点击标签与控件区域均可切换；标签中的原生链接、按钮等独立交互元素保持自身行为。辅助说明位于标签下方，不属于切换区域。没有可见标签时，必须用 `aria-label`／`aria-labelledby` 为实际输入提供名称。
+
+### 模型、半选与事件
+
+布尔模型表示单个选项；数组模型按 `value` 是否存在决定选中状态，数字 `1` 与字符串 `'1'` 分开处理。添加／删除成员时生成新数组，保留其他成员与顺序，不修改传入数组。多个 Checkbox 可以绑定同一个数组；组的标题和语义使用 `fieldset`／`legend`。
+
+半选是独立状态：`indeterminate` 为 true 时显示横线并向辅助技术表达 mixed。激活半选项会请求清除半选并选中；之后再激活才取消选中，不在三种状态间循环。可通过 `v-model:indeterminate` 同步，也可用计算属性从子项推导：
+
+```vue
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import { MdvCheckbox } from 'mdv'
+import type { MdvCheckboxModelValue } from 'mdv'
+
+const options = ['email', 'sms']
+const selected = ref<string[]>(['email'])
+const allSelected = computed(() => selected.value.length === options.length)
+const partlySelected = computed(() => selected.value.length > 0 && !allSelected.value)
+
+function toggleAll(value: MdvCheckboxModelValue) {
+  selected.value = value === true ? [...options] : []
+}
+</script>
+
+<template>
+  <fieldset>
+    <legend>通知方式</legend>
+    <MdvCheckbox
+      :model-value="allSelected"
+      :indeterminate="partlySelected"
+      label="全选"
+      @update:model-value="toggleAll"
+    />
+    <MdvCheckbox v-for="option in options" :key="option" v-model="selected" :value="option" :label="option" />
+  </fieldset>
+</template>
+```
+
+`update:modelValue` 传入布尔值或新数组，`update:indeterminate` 传入布尔值。一次原生激活的 input／change 不会重复提交同一个模型更新。`@click`、`@input`、`@change`、`@focus`、`@blur`、`@invalid` 等监听获得实际 input 的原生事件；程序赋值与 reset 不伪造 input／change。取消 click 的默认动作不会提交模型更新。受控 v-model 未接受更新时，实际 input 会恢复父级状态。
+
+Tab／Shift+Tab 移动焦点，空格切换；Enter 保持所在原生表单的行为。勾线与半选横线平滑过渡，按压圆角不变；hover／focus 状态层和涟漪独立叠加。系统减少动态效果时关闭组件动画；forced-colors 下保留可辨识的边框、图形与键盘焦点。
+
+### 配色与错误
+
+`color` 支持 `primary`、`secondary`、`tertiary`、`success`、`warning`、`error`、`info`，以及 `#RGB`／`#RRGGBB` 种子色。预设引用当前作用域的主题令牌；种子色沿用 Button 的 HCT／TonalPalette 浅深色计算和缓存，不直接把原色号作为选中填充，也不修改全局主题。无效颜色回退到 primary，开发环境给出提示。
+
+禁用表现优先于错误，错误优先于自定义颜色。`color="error"` 仅采用红色系，不表示校验失败；`error` 表达业务错误并设置 `aria-invalid`。`errorText` 单独存在不开启错误状态；有错误时文字优先级为 errorText、已报告的原生校验消息、supportingText。外部描述与内部辅助／错误说明的 ARIA ID 自动合并，动态说明使用礼貌播报。
+
+### 原生表单与重置
+
+`id`、`name`、`form`、ARIA、`data-*`、原生监听等透传到实际 `input[type="checkbox"]`；`class`／`style` 属于最外层。checked／indeterminate 由模型管理，不使用原生 `checked`／`defaultChecked` 属性竞争控制。
+
+FormData 只包含有 name、选中且未禁用的控件，值取自 value；数字提交时由原生表单转为字符串。未选中项不提交，半选本身不会增加独立的提交值：是否提交仍取决于底层 checked。相同 name 可以提交多个值，通过 `FormData.getAll()` 读取。外部 form 关联和祖先 fieldset disabled 按原生规则工作，包括首个 legend 内控件的禁用例外。
+
+`required` 表示**当前这一项必须选中**，不会自动变成同名组“至少选一个”。首次展示不会自动报红；提交或显式校验触发 invalid 后显示原生错误，更正后恢复辅助文字。`error` 本身不阻止原生提交；需要原生约束时使用 required 或 setCustomValidity。
+
+`form.reset()` 恢复组件创建时的模型和半选状态，并同步 v-model；数组基线保留独立快照。程序修改模型不改变重置基线，取消 reset 时不恢复。reset 隐藏已报告的原生错误，但不清除使用方的 error／errorText 或原生自定义约束；后者用 setCustomValidity('') 清除。同步在 reset 默认动作后的微任务执行，读取最终 Vue／DOM 状态时等待 nextTick。
+
+### 公开方法与类型
+
+| 方法 | 行为 |
+| --- | --- |
+| `focus(options?: FocusOptions)` | 聚焦实际输入，支持 preventScroll |
+| `blur()` | 移除输入焦点 |
+| `checkValidity(): boolean` | 检查原生约束，失败触发 invalid |
+| `reportValidity(): boolean` | 检查约束并显示浏览器的校验反馈 |
+| `setCustomValidity(message: string)` | 设置原生自定义错误；空字符串解除 |
+
+公共类型：`MdvCheckboxValue`、`MdvCheckboxModelValue`、`MdvCheckboxColor`，均可从 mdv 主入口导入。已提供行为、SSR 与 hydration 测试及独立开发预览；当前约定范围已完成本地检查与开发预览验收。新版本包消费另行验证。

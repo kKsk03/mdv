@@ -21,6 +21,23 @@ const presetStyles = new Map<ColorPreset, Readonly<CSSProperties>>(
 const seedStyles = new Map<string, Readonly<CSSProperties>>()
 const maxCachedSeeds = 64
 const iconStyles = new WeakMap<Readonly<CSSProperties>, Readonly<CSSProperties>>()
+const checkboxStyles = new WeakMap<Readonly<CSSProperties>, Readonly<CSSProperties>>()
+
+/** Checkbox 复用纯配色计算，仅暴露自身的强调色与图形色变量。 */
+export function resolveCheckboxColor(color: unknown): Readonly<CSSProperties> | undefined {
+  const colors = resolveButtonColor(color)
+  if (!colors) return undefined
+
+  const cached = checkboxStyles.get(colors)
+  if (cached) return cached
+
+  const style = Object.freeze({
+    '--mdv-checkbox-color': colors['--mdv-button-color'],
+    '--mdv-checkbox-on-color': colors['--mdv-button-on-color'],
+  })
+  checkboxStyles.set(colors, style)
+  return style
+}
 
 /** 两类按钮共享种子色计算和缓存，各自使用独立的局部 CSS 变量。 */
 export function resolveIconButtonColor(color: unknown): Readonly<CSSProperties> | undefined {

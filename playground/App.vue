@@ -5,6 +5,7 @@ import ButtonPlayground from './ButtonPlayground.vue'
 import IconButtonPlayground from './IconButtonPlayground.vue'
 import IconPlayground from './IconPlayground.vue'
 import TextFieldPlayground from './TextFieldPlayground.vue'
+import CheckboxPlayground from './CheckboxPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -31,6 +32,12 @@ const pages = [
     label: 'TextField 文本框',
     description: '对照填充与描边外观、输入状态、图标、校验和原生表单行为。',
     component: TextFieldPlayground,
+  },
+  {
+    id: 'checkbox',
+    label: 'Checkbox 复选框',
+    description: '对照三种选择状态、配色、标签、数组多选和原生表单行为。',
+    component: CheckboxPlayground,
   },
   {
     id: 'theme',
