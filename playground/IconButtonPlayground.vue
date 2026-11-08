@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { computed, defineComponent, h, ref } from 'vue'
-import type { PropType } from 'vue'
-import { MdvIconButton } from '@/index'
+import { computed, ref } from 'vue'
+import favorite from '@iconify-icons/material-symbols/favorite'
+import favoriteOutline from '@iconify-icons/material-symbols/favorite-outline'
+import openInNew from '@iconify-icons/material-symbols/open-in-new'
+import save from '@iconify-icons/material-symbols/save'
+import { MdvIcon, MdvIconButton } from '@/index'
 import type {
   MdvIconButtonColor,
   MdvIconButtonShape,
@@ -9,25 +12,6 @@ import type {
   MdvIconButtonVariant,
   MdvIconButtonWidth,
 } from '@/index'
-
-// Material Icons 的官方 SVG，仅用于开发预览，不是组件库的图标 API。
-const paths = {
-  favorite:
-    'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',
-  favoriteOutline:
-    'M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z',
-  external:
-    'M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z',
-  save: 'M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z',
-}
-const PreviewIcon = defineComponent({
-  name: 'IconButtonPreviewSvg',
-  props: { name: { type: String as PropType<keyof typeof paths>, default: 'favorite' } },
-  setup: (props) => () =>
-    h('svg', { viewBox: '0 0 24 24', fill: 'currentColor', focusable: 'false' }, [
-      h('path', { d: paths[props.name] }),
-    ]),
-})
 
 const variants: MdvIconButtonVariant[] = ['filled', 'tonal', 'outlined', 'standard']
 const sizes: {
@@ -191,7 +175,7 @@ function applySeed() {
                   aria-label="收藏"
                   @click="clickCount++"
                 >
-                  <PreviewIcon />
+                  <MdvIcon :icon="favorite" />
                 </MdvIconButton>
                 <span class="text-mdv-label-medium">普通按钮</span>
               </div>
@@ -208,8 +192,8 @@ function applySeed() {
                   aria-label="收藏"
                   @click="clickCount++"
                 >
-                  <template #default><PreviewIcon name="favoriteOutline" /></template>
-                  <template #selected><PreviewIcon /></template>
+                  <template #default><MdvIcon :icon="favoriteOutline" /></template>
+                  <template #selected><MdvIcon :icon="favorite" /></template>
                 </MdvIconButton>
                 <span class="text-mdv-label-medium">
                   切换 · {{ selected[variant] ? '已选中' : '未选中' }}
@@ -253,7 +237,7 @@ function applySeed() {
                     :color="color"
                     :aria-label="`收藏，${item.value}，${itemWidth}`"
                   >
-                    <PreviewIcon />
+                    <MdvIcon :icon="favorite" />
                   </MdvIconButton>
                   <span class="text-mdv-label-medium whitespace-nowrap">
                     {{ item.widths[index] }} × {{ item.height }}
@@ -303,11 +287,9 @@ function applySeed() {
                   :aria-label="`收藏，${variant}，${state.label}`"
                 >
                   <template #default>
-                    <PreviewIcon
-                      :name="state.selected === false ? 'favoriteOutline' : 'favorite'"
-                    />
+                    <MdvIcon :icon="state.selected === false ? favoriteOutline : favorite" />
                   </template>
-                  <template #selected><PreviewIcon /></template>
+                  <template #selected><MdvIcon :icon="favorite" /></template>
                 </MdvIconButton>
               </td>
             </tr>
@@ -349,8 +331,8 @@ function applySeed() {
                     :selected="isSelected"
                     :aria-label="`收藏，${sample.label}，${variant}`"
                   >
-                    <template #default><PreviewIcon name="favoriteOutline" /></template>
-                    <template #selected><PreviewIcon /></template>
+                    <template #default><MdvIcon :icon="favoriteOutline" /></template>
+                    <template #selected><MdvIcon :icon="favorite" /></template>
                   </MdvIconButton>
                 </div>
               </td>
@@ -375,7 +357,7 @@ function applySeed() {
             aria-label="收藏"
           >
             <template #default="slot">
-              <PreviewIcon :name="slot.selected ? 'favorite' : 'favoriteOutline'" />
+              <MdvIcon :icon="slot.selected ? favorite : favoriteOutline" />
             </template>
           </MdvIconButton>
           <span class="text-mdv-body-medium"
@@ -410,7 +392,7 @@ function applySeed() {
             :aria-label="`按钮 ${index}`"
             @click="lastTouch = `按钮 ${index}`"
           >
-            <PreviewIcon />
+            <MdvIcon :icon="favorite" />
           </MdvIconButton>
         </div>
       </div>
@@ -430,13 +412,13 @@ function applySeed() {
             rel="noopener noreferrer"
             aria-label="在新标签页打开图标按钮规范"
           >
-            <PreviewIcon name="external" />
+            <MdvIcon :icon="openInNew" />
           </MdvIconButton>
           <span class="text-mdv-label-medium">原生链接</span>
         </div>
         <div class="grid justify-items-center gap-2">
           <MdvIconButton href="https://m3.material.io/" disabled aria-label="不可用链接">
-            <PreviewIcon name="external" />
+            <MdvIcon :icon="openInNew" />
           </MdvIconButton>
           <span class="text-mdv-label-medium">禁用链接</span>
         </div>
@@ -453,7 +435,7 @@ function applySeed() {
               '--mdv-icon-button-icon-size': '28px',
             }"
           >
-            <PreviewIcon name="save" />
+            <MdvIcon :icon="save" />
           </MdvIconButton>
         </div>
       </div>
@@ -467,13 +449,13 @@ function applySeed() {
           表单文字
           <input name="message" class="playground-control" value="修改后可检查重置" />
         </label>
-        <MdvIconButton type="submit" aria-label="提交表单"
-          ><PreviewIcon name="save"
-        /></MdvIconButton>
+        <MdvIconButton type="submit" aria-label="提交表单"><MdvIcon :icon="save" /></MdvIconButton>
         <MdvIconButton type="reset" variant="outlined" aria-label="重置表单"
-          ><PreviewIcon name="save"
+          ><MdvIcon :icon="save"
         /></MdvIconButton>
-        <MdvIconButton aria-label="普通按钮，不提交表单"><PreviewIcon /></MdvIconButton>
+        <MdvIconButton aria-label="普通按钮，不提交表单"
+          ><MdvIcon :icon="favorite"
+        /></MdvIconButton>
         <p role="status">提交 {{ submitCount }} 次，重置 {{ resetCount }} 次</p>
       </form>
       <p class="mt-4 text-mdv-body-small text-mdv-on-surface-variant">

@@ -1,3 +1,11 @@
+.mdv-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
 .mdv-button {
   --mdv-button-height: 40px;
   --mdv-button-space: 16px;

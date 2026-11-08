@@ -27,7 +27,7 @@ export default defineConfig(({ command }) => ({
           },
           rolldownOptions: {
             // 配色算法需参与打包：其 0.4.0 源码包含 Node 无法直接解析的无扩展名导入。
-            external: ['vue'],
+            external: ['vue', '@iconify/vue/offline'],
             treeshake: {
               // 算法包仅计算并导出数据；移除未用模块，避免其聚合出口带入完整主题逻辑。
               moduleSideEffects: [

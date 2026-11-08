@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { MdvButton } from '@/index'
+import add from '@iconify-icons/material-symbols/add'
+import chevronRight from '@iconify-icons/material-symbols/chevron-right'
+import chevronLeft from '@iconify-icons/material-symbols/chevron-left'
+import openInNew from '@iconify-icons/material-symbols/open-in-new'
+import { MdvButton, MdvIcon } from '@/index'
 import type { MdvButtonColor, MdvButtonShape, MdvButtonSize, MdvButtonVariant } from '@/index'
 
 const previewSize = ref<MdvButtonSize>('s')
@@ -198,15 +202,11 @@ function applyButtonSeed() {
               @click="clickCount++"
             >
               <template v-if="showLeading" #leading>
-                <svg viewBox="0 0 24 24" fill="currentColor" focusable="false">
-                  <path d="M11 3h2v8h8v2h-8v8h-2v-8H3v-2h8z" />
-                </svg>
+                <MdvIcon :icon="add" />
               </template>
               {{ variant.label }}
               <template v-if="showTrailing" #trailing>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" focusable="false">
-                  <path d="m9 5 7 7-7 7" stroke-width="2" />
-                </svg>
+                <MdvIcon :icon="chevronRight" />
               </template>
             </MdvButton>
           </div>
@@ -375,9 +375,7 @@ function applyButtonSeed() {
                   @click="clickCount++"
                 >
                   <template #leading>
-                    <svg viewBox="0 0 24 24" fill="currentColor" focusable="false">
-                      <path d="M11 3h2v8h8v2h-8v8h-2v-8H3v-2h8z" />
-                    </svg>
+                    <MdvIcon :icon="add" />
                   </template>
                   Label
                 </MdvButton>
@@ -438,15 +436,11 @@ function applyButtonSeed() {
                 @click="clickCount++"
               >
                 <template #leading>
-                  <svg viewBox="0 0 24 24" fill="currentColor" focusable="false">
-                    <path d="M11 3h2v8h8v2h-8v8h-2v-8H3v-2h8z" />
-                  </svg>
+                  <MdvIcon :icon="add" />
                 </template>
                 保存
                 <template #trailing>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" focusable="false">
-                    <path d="m9 5 7 7-7 7" stroke-width="2" />
-                  </svg>
+                  <MdvIcon :icon="chevronRight" />
                 </template>
               </MdvButton>
             </div>
@@ -549,9 +543,7 @@ function applyButtonSeed() {
         >
           官方规范（新标签页）
           <template #trailing>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" focusable="false">
-              <path d="M14 4h6v6M20 4 10 14M10 4H4v16h16v-6" stroke-width="2" />
-            </svg>
+            <MdvIcon :icon="openInNew" />
           </template>
         </MdvButton>
         <MdvButton variant="link" href="#button-link-destination" disabled @click="clickCount++">
@@ -596,9 +588,7 @@ function applyButtonSeed() {
       <div class="mt-4 flex flex-wrap gap-4">
         <MdvButton :color="previewColor" :loading="showLoading" lang="ar">
           <template #leading>
-            <svg viewBox="0 0 24 24" fill="currentColor" focusable="false">
-              <path d="M11 3h2v8h8v2h-8v8h-2v-8H3v-2h8z" />
-            </svg>
+            <MdvIcon :icon="add" />
           </template>
           إضافة عنصر
         </MdvButton>
@@ -611,9 +601,7 @@ function applyButtonSeed() {
         >
           متابعة
           <template #trailing>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" focusable="false">
-              <path d="m15 5-7 7 7 7" stroke-width="2" />
-            </svg>
+            <MdvIcon :icon="chevronLeft" />
           </template>
         </MdvButton>
       </div>

@@ -1,6 +1,6 @@
 # 第三方来源与许可
 
-本文件随 MDV 源码和 npm 包提供，记录当前实际使用的第三方令牌、算法、字体和示例图标。
+本文件随 MDV 源码和 npm 包提供，记录当前实际使用的第三方令牌、算法、字体、图标和渲染器。
 
 ## Material Web 设计令牌
 
@@ -21,15 +21,48 @@ MDV 将 v0.192 设计令牌中的默认颜色、排版、圆角和动效数值�
 
 MDV 按现行官方规格整理 CSS 数值并用 AndroidX 的尺寸／颜色令牌核对；未引入 Compose 实现或依赖。按压保持圆角不变是 MDV 的交互选择。
 
-## Material Icons 示例 SVG
+## Material Symbols 图标数据
 
 - 来源：https://github.com/google/material-design-icons
+- 数据分发：`@iconify-icons/material-symbols`，当前以 2.0.9 为资源基线；https://github.com/iconify/icon-sets
 - 版权：Copyright Google LLC
 - 许可：Apache License 2.0
-- 使用资源：favorite、favorite_border、open_in_new、save 的 24px Material Icons SVG。
-- 使用位置：`playground/IconButtonPlayground.vue` 与 `COMPONENTS.md` 示例。
+- 使用资源：Material Symbols 的本地 SVG 数据，包括 favorite、home、save、search 等预览图形及其填充／风格变体。
+- 使用位置：`playground/` 的组件预览、`src/__tests__/MdvIcon*` 和 `COMPONENTS.md` 示例。
 
-示例保留官方路径，删除不可见背景路径，使用 currentColor、viewBox 和不可聚焦设置适配按钮。图标只用于开发预览与使用示例，未捆绑整套图标资源或新增图标运行时依赖。
+Iconify 分发包提供可单独导入的图标数据，原始图形版权与许可归上游 Google。该包是本仓库的开发依赖；MDV 组件主入口不导入或注册整套数据。使用方按自己的静态导入分发实际图形，并保留相应许可。
+
+## Iconify Vue 渲染器
+
+- 软件包：`@iconify/vue`，当前以 5.0.5 为实现基线。
+- 来源：https://github.com/iconify/iconify
+- 版权：Copyright (c) 2020-PRESENT Vjacheslav Trushkin
+- 许可：MIT License
+- 使用位置：`src/components/MdvIcon.vue` 使用 `@iconify/vue/offline`，类型来自同一出口。构建将该入口保留为正常运行依赖，不将图标 API 加载器引入 MDV。
+
+```text
+MIT License
+
+Copyright (c) 2020-PRESENT Vjacheslav Trushkin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
 
 ## Material Color Utilities
 

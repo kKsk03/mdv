@@ -4,6 +4,7 @@
 
 - [MdvButton 按钮](#mdvbutton)
 - [MdvIconButton 图标按钮](#mdviconbutton)
+- [MdvIcon 图标](#mdvicon)
 
 ## MdvButton
 
@@ -104,10 +105,14 @@ primary／secondary／tertiary／error 引用当前主题角色。success／warn
 
 基于 [M3 Icon buttons](https://m3.material.io/components/icon-buttons/specs)，提供普通操作与受控切换两种行为。默认 filled／s／default width／round。
 
+下面通过 `MdvIcon` 组合图标，先按 [图标接入说明](#mdvicon) 安装数据包。
+
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvIconButton } from 'mdv'
+import { MdvIcon, MdvIconButton } from 'mdv'
+import favorite from '@iconify-icons/material-symbols/favorite'
+import favoriteOutline from '@iconify-icons/material-symbols/favorite-outline'
 
 const selected = ref(false)
 const loading = ref(false)
@@ -116,24 +121,16 @@ const loading = ref(false)
 <template>
   <MdvIconButton v-model:selected="selected" :loading="loading" aria-label="收藏">
     <template #default>
-      <svg viewBox="0 0 24 24" fill="currentColor" focusable="false">
-        <path
-          d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"
-        />
-      </svg>
+      <MdvIcon :icon="favoriteOutline" />
     </template>
     <template #selected>
-      <svg viewBox="0 0 24 24" fill="currentColor" focusable="false">
-        <path
-          d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-        />
-      </svg>
+      <MdvIcon :icon="favorite" />
     </template>
   </MdvIconButton>
 </template>
 ```
 
-示例 SVG 来自 Material Icons，许可见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)。实际使用时可换成自己的 SVG 或图标组件，不需要安装整套图标字体。
+示例图形来自 Material Symbols，许可见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)。插槽仍接受自己的 SVG 或图标组件。
 
 | Prop | 类型／可选值 | 默认值 |
 | --- | --- | --- |
@@ -164,8 +161,7 @@ const loading = ref(false)
 ```vue
 <MdvIconButton v-model:selected="selected" aria-label="收藏">
   <template #default="{ selected: isSelected }">
-    <!-- 使用项目自己的图标组件，组件名仅作示意。 -->
-    <YourHeartIcon :filled="isSelected" />
+    <MdvIcon :icon="isSelected ? favorite : favoriteOutline" />
   </template>
 </MdvIconButton>
 ```
@@ -217,3 +213,63 @@ const loading = ref(false)
 `class`、`style`、`id`、`form`、`name`、`value`、ARIA、原生事件透传到根节点。不声明自定义 click 事件或额外 expose 方法；按钮保留原生 Enter／空格／表单行为，链接使用原生 Enter。
 
 公共类型可从 `mdv` 导入：`MdvIconButtonVariant`、`MdvIconButtonColor`、`MdvIconButtonSize`、`MdvIconButtonWidth`、`MdvIconButtonShape`、`MdvIconButtonType`。
+
+## MdvIcon
+
+使用 Google Material Symbols 图形和本地 SVG 数据，渲染由 `@iconify/vue/offline` 提供。图标同步输出为 `<svg>`，不请求图标 API 或字体 CDN。`MdvIcon` 随 MDV 提供；使用 Material Symbols 的应用另行安装图标数据包：
+
+```sh
+pnpm add @iconify-icons/material-symbols
+```
+
+每个图标从自己的子路径导入。MDV 不导入或注册整套图标集合，应用构建工具按实际导入处理产物。
+
+```vue
+<script setup lang="ts">
+import { MdvButton, MdvIcon } from 'mdv'
+import homeOutline from '@iconify-icons/material-symbols/home-outline'
+import save from '@iconify-icons/material-symbols/save'
+</script>
+
+<template>
+  <span class="inline-flex items-center gap-2 text-mdv-primary">
+    <MdvIcon :icon="homeOutline" />
+    首页
+  </span>
+  <MdvIcon :icon="homeOutline" :size="32" color="#006c4c" aria-label="首页" />
+  <MdvButton>
+    <template #leading><MdvIcon :icon="save" /></template>
+    保存
+  </MdvButton>
+</template>
+```
+
+| Prop | 类型 | 默认值 |
+| --- | --- | --- |
+| `icon` | `MdvIconData`；本地 Iconify SVG 数据对象，必填 | 无 |
+| `size` | `MdvIconSize`，即 `number \| string` | 独立使用 24px；按钮插槽内跟随容器 |
+| `color` | `string`，CSS 颜色 | 继承 `currentColor` |
+
+`icon` 接收导入的数据对象，不接收 `"material-symbols:home"` 等字符串名称。也可使用其他图标集或自有的 Iconify 格式数据，至少包含 SVG `body`，可提供 `width`、`height` 等数据字段。只传入可信的数据，组件不负责清洗 SVG。无效输入保留空的图标盒子，开发环境提示；不会尝试联网补取。
+
+默认图标盒子为 24×24px。数字 `size` 按 px 处理；字符串支持 `1em`、`2rem`、`var(--my-icon-size)` 等 CSS 长度。在 `MdvButton` 前后插槽或 `MdvIconButton` 中省略 `size`，由按钮的官方尺寸规则控制图标。显式传入 `size` 可覆盖容器填充大小，但不会自动扩大按钮或图标容器；自定义时需一起考虑可用空间。
+
+图形默认使用 `currentColor`，跟随文字色、按钮颜色、禁用态和当前主题。`color` 直接使用 CSS 颜色，也支持 `var(--mdv-sys-color-error)`；它不执行种子色计算，也不把 `success` 等名称转换为语义色。需要使用语义色时传入相应 CSS 变量。用户 `style` 优先于 `size` 和 `color`，支持对象、字符串或数组；可用 `class` 覆盖默认样式，尺寸覆盖建议使用 `size` 或 `style`。
+
+推荐以 Material Symbols 的 **Outlined 风格、400 字重**为基线。风格与填充由导入资源决定，例如：
+
+| 风格 | 空心 | 实心 |
+| --- | --- | --- |
+| Outlined | `favorite-outline` | `favorite` |
+| Rounded | `favorite-outline-rounded` | `favorite-rounded` |
+| Sharp | `favorite-outline-sharp` | `favorite-sharp` |
+
+上表名称都是 `@iconify-icons/material-symbols/` 后的单图标子路径。空心／实心切换时更换 `icon` 数据，也可使用 `MdvIconButton` 的默认／selected 插槽。这里使用静态 SVG，不提供可变字体的 `FILL`、`wght`、`GRAD`、`opsz` 轴，也不会随尺寸自动换用另一份光学轮廓。
+
+图标默认是装饰内容，设置 `aria-hidden="true"`、`focusable="false"`，不会自行加入 Tab 顺序。独立表达含义的图标使用 `aria-label` 或 `aria-labelledby`，组件会保留 `role="img"` 并解除默认隐藏；显式传入的 `aria-hidden` 优先。引用的标签元素由应用保证存在。
+
+在带文字的按钮内保持图标装饰语义；只有图标的操作使用 `MdvIconButton`，把名称提供给按钮。图标的 `@click` 和原生属性可以透传，但图标本身不提供按钮的键盘或表单行为。`title` 可按原生属性透传，不替代可访问名称或 Tooltip。
+
+`class`、`style`、`id`、ARIA、`data-*` 和原生事件透传至根 SVG；没有自定义事件、插槽或额外 expose 方法。数据中的原始图形坐标保留在 `viewBox` 内。Material Symbols 的纯路径数据可在 SSR 首屏同步输出；本轮提供了 SSR／hydration 测试，执行结果仍待验收。自定义数据若含渐变、裁剪或内部 ID，需要在自己的 SSR 页面额外验证引用与 hydration，当前不承诺覆盖全部自定义 SVG。
+
+公共类型可从 `mdv` 导入：`MdvIconData`、`MdvIconSize`。渲染器作为 MDV 的正常依赖提供；整套 Material Symbols 数据仅用于本仓库开发，使用方按需安装数据包。
