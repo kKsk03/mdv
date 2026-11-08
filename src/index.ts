@@ -6,6 +6,15 @@ export { default as MdvCheckbox } from './components/MdvCheckbox.vue'
 export { default as MdvRadio } from './components/MdvRadio.vue'
 export { default as MdvRadioGroup } from './components/MdvRadioGroup.vue'
 export { default as MdvSwitch } from './components/MdvSwitch.vue'
+export { default as MdvSlider } from './components/MdvSlider.vue'
+export type {
+  MdvSliderColor,
+  MdvSliderModelValue,
+  MdvSliderOrientation,
+  MdvSliderSize,
+  MdvSliderThumb,
+  MdvSliderVariant,
+} from './components/slider.types'
 export type {
   MdvRadioColor,
   MdvRadioModelValue,

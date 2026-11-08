@@ -8,6 +8,8 @@
 - [MdvTextField 文本框](#mdvtextfield)
 - [MdvCheckbox 复选框](#mdvcheckbox)
 - [MdvRadio 单选框](#mdvradio)
+- [MdvSwitch 开关](#mdvswitch)
+- [MdvSlider 滑块](#mdvslider)
 
 ## MdvButton
 
@@ -652,3 +654,91 @@ const enabled = ref(false)
 Switch 的状态层、选中移动、hover／focus／pressed、reduced-motion、forced-colors 和 RTL 样式限定在组件自身。已提供行为、SSR、hydration 测试及独立 playground；当前约定范围已完成本地检查与开发预览验收，真实包消费另行安排。
 
 公共类型：`MdvSwitchColor`、`MdvSwitchLabelPosition`，均可从 mdv 主入口导入。
+
+## MdvSlider
+
+按现行 [Material 3 Slider 规格](https://m3.material.io/components/sliders/specs)实现标准、中心与范围滑块。当前约定范围已完成类型、单测、lint、格式、构建与开发预览验收；真实包消费另行安排。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvSlider } from 'mdv'
+import type { MdvSliderModelValue } from 'mdv'
+
+const volume = ref<MdvSliderModelValue>(40)
+const exposure = ref<MdvSliderModelValue>(0)
+const price = ref<MdvSliderModelValue>([20, 80])
+const percent = (value: number) => `${value}%`
+</script>
+
+<template>
+  <MdvSlider v-model="volume" label="音量" value-indicator :format-value="percent" />
+  <MdvSlider v-model="exposure" variant="centered" :min="-100" :max="100" label="曝光偏移" />
+  <MdvSlider v-model="price" variant="range" name="price" label="价格区间" :step="10" stops value-indicator />
+</template>
+```
+
+### MdvSlider 属性
+
+| Prop／模型 | 类型／说明 | 默认值 |
+| --- | --- | --- |
+| `modelValue`／`v-model` | standard／centered 使用 `number`，range 使用 `[number, number]` | standard 从 min 开始；centered 从中心开始；range 为 `[min, max]` |
+| `variant` | `standard`／`centered`／`range` | `standard` |
+| `min`／`max` | 有限的上下界，max 不小于 min | `0`／`100` |
+| `step` | 正数步长，以 min 为起点；支持小数 | `1` |
+| `centerValue` | centered 的高亮起点，须位于上下界内 | `0` |
+| `stops` | 绘制中间刻度，手柄通过短动画移动到有效档位 | `false` |
+| `size` | `xs`／`s`／`m`／`l`／`xl` | `xs` |
+| `orientation` | `horizontal`／`vertical` | `horizontal` |
+| `valueIndicator` | 连续滑块按压时显示；有刻度时拖动或按住稍久显示；键盘聚焦时立即显示 | `false` |
+| `formatValue` | `(value: number) => string`，同时用于提示与 aria-valuetext | 普通数字文字 |
+| `label` | 可见标签；默认插槽优先 | `''` |
+| `supportingText` | 与原生控件关联的辅助说明 | `''` |
+| `disabled` | 禁用交互和表单提交 | `false` |
+| `color` | 主题／语义色或 `#RGB`／`#RRGGBB` 种子色 | `primary` |
+| `startAriaLabel`／`endAriaLabel` | range 两个手柄的独立无障碍名称 | 从标签与“下限／上限”组合 |
+
+五档轨道厚度为 16／24／40／56／96px，手柄长度为 44／44／52／68／108px；手柄常态厚度 4px，键盘聚焦与按压时为 2px。指针松开后恢复常态厚度并隐藏提示，保留原生焦点，随后可直接使用方向键继续调整并恢复键盘焦点反馈。横向填充所在容器；竖向初始整体高度 240px，可通过 style 调整。竖向由下向上增加，横向跟随继承的 dir；range 建议优先使用横向。
+
+轨道朝向手柄的一侧使用 2px 小内角，在最小值或最大值处同样保持。远离手柄的外端保留对应尺寸的圆角；轨道段逐渐缩短时，外圆角随可用长度收缩，避免到达端点时突然变成大圆头。
+
+省略模型时采用对应默认值，不在挂载时额外发出模型更新；首次用户操作后更新。传入数值会在显示、交互和表单值中限制到有效范围并对齐步长，程序传入的原始变量不会被静默改写。range 显示时整理为升序；用户更新始终发出新的升序二元组，不修改传入数组。两个手柄可相等，不能穿越；重合后可向两侧拖动或通过 Tab 分别操作。
+
+max 始终可选；上下界差值不能被 step 整除时，最后一格较短，例如 `min=0 max=10 step=3` 可选择 0、3、6、9、10。步长很细时中间刻度会按容器长度稀疏绘制，最多约 100 个；可选数值精度仍由 step 决定。stops 关闭时保留未激活轨道的端点圆点，拖动视觉平滑跟随指针，模型仍按步长更新，释放时对齐最终有效值。
+
+stops 开启时，手柄及轨道在拖动、点击和键盘切换档位时保留短移动过渡；连续拖动直接跟随指针。模型与事件即时更新，不等待动画结束；系统启用 reduced-motion 时关闭过渡。
+
+启用 valueIndicator 后，有刻度的滑块快速点击只更新档位，不弹数值提示；沿滑动方向开始拖动，或按住约 200ms 后显示，松开或取消即隐藏。连续滑块和键盘焦点仍即时显示提示。提示时机不影响模型、input／change 事件或无障碍数值报告。
+
+### 插槽、提示与组合
+
+- 默认插槽：自定义可见标签。
+- `leading`／`trailing`：轨道外侧的文字、图标或操作按钮；按钮需自行提供可访问名称。
+- `inset-icon="{ value }"`：standard 且 size 为 m／l／xl 时可用。固定在轨道起点附近，随所在轨道切换颜色；手柄经过时淡出避让，并在原位恢复。RTL 时位于右侧，竖向时位于底端附近；极窄空间容纳不下时隐藏。
+
+```vue
+<MdvSlider v-model="volume" size="m" label="音量" value-indicator>
+  <template #inset-icon="{ value }">
+    <MdvIcon :icon="value === 0 ? volumeOff : volumeUp" />
+  </template>
+</MdvSlider>
+```
+
+图标通过现有 MdvIcon 与本地图形数据组合，示例需自行导入所用图标。数值提示不拦截操作；范围模式一次只显示活动手柄的提示。formatValue 应返回能独立读懂的单位文字，例如“40%”或“¥80”；没有可见 label 时须提供 aria-label／aria-labelledby，或为 range 提供两个独立名称。
+
+精确输入可组合 MdvTextField，共享同一变量；将输入框放在滑块之后，让键盘可以紧接着访问。leading／trailing 可组合 MdvIconButton 修改同一变量。
+
+### 交互、事件与原生表单
+
+- `update:modelValue` 实时报告用户选取的有效数值；相同值不重复提交模型更新。
+- `@input`／`@change`／`@focus`／`@blur` 及原生监听接收实际 range input 的 Event。指针拖动产生实时 input，释放且最终值与起点不同时产生一次 change；键盘每次有效步进产生 input 与 change。程序赋值和 reset 不伪造这些事件。
+- pointercancel、丢失指针捕获或离开 KeepAlive 页面时结束拖动，保留最后已报告值，不额外发出 change；卸载清理监听。
+- Tab 访问手柄，范围模式两个手柄分别可聚焦；方向键增减一步，Home／End 到当前手柄允许边界，PageUp／PageDown 或空格配合方向键调整十步。横向左右键按 RTL 反向，上下键保持上增下减。
+- class／style／dir／lang 属于组件外层；id、name、form、ARIA、data-* 和原生监听属于实际 range input。range 的第二个 id 在首个 id 后加 `-end`。type／value／defaultValue、原生步长与边界由组件管理；不使用它们竞争控制模型。
+- 底层采用原生 `input[type=range]`，内部 `step="any"` 避免双手柄动态边界改变浏览器步长基准；数值吸附与键盘步长统一由组件管理。range 始终有值，组件不提供 required／readonly 和空值必填校验。
+- 有 name 且未禁用时参加 FormData。range 同名提交两个字符串，依次为下限和上限，可用 `FormData.getAll(name)` 读取；不传 name 不生成隐式字段。支持外部 form、fieldset disabled 与首个 legend 例外。
+- 原生 reset 恢复组件创建时的独立模型快照，按当前 min／max／step 整理并同步 v-model；程序赋值不改变基线，取消 reset 时保留当前值。同步发生在 reset 默认动作后的微任务中，读取 Vue 更新后结果时等待 nextTick。
+
+公开方法为 `focus(options?, thumb?)` 与 `blur()`；thumb 为 `'start'` 或 `'end'`，默认 start，普通模式忽略 end。SSR 输出原生数值与稳定 ID；hydration 前用户改值保留的自动化用例已随本轮单测通过。
+
+公共类型：`MdvSliderModelValue`、`MdvSliderVariant`、`MdvSliderSize`、`MdvSliderOrientation`、`MdvSliderColor`、`MdvSliderThumb`。

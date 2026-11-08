@@ -8,6 +8,7 @@ import TextFieldPlayground from './TextFieldPlayground.vue'
 import CheckboxPlayground from './CheckboxPlayground.vue'
 import RadioPlayground from './RadioPlayground.vue'
 import SwitchPlayground from './SwitchPlayground.vue'
+import SliderPlayground from './SliderPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -52,6 +53,12 @@ const pages = [
     label: 'Switch 开关',
     description: '对照开关状态、图标、标签位置、配色和原生表单行为。',
     component: SwitchPlayground,
+  },
+  {
+    id: 'slider',
+    label: 'Slider 滑块',
+    description: '对照单值、中心与范围滑块，检查尺寸、拖动、键盘、配色和表单。',
+    component: SliderPlayground,
   },
   {
     id: 'theme',

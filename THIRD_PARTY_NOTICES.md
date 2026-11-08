@@ -41,6 +41,16 @@ MDV 用 Vue 与原生 input／textarea 实现自己的标签布局、描边缺�
 
 MDV 用 Vue 与原生 checkbox 实现自己的模型、标签、辅助说明、校验和表单生命周期；勾线／横线由 CSS 状态标记表达，尺寸及动画几何依据官方实现整理。未引入 Material Web 运行时或外部图标请求。下文保留 Apache License 2.0 原文。
 
+## Material 3 Slider 规格与令牌
+
+- 规格来源：https://m3.material.io/components/sliders/specs 、https://m3.material.io/components/sliders/guidelines 与 accessibility 页面。
+- 默认 XS 令牌交叉核对：https://github.com/androidx/androidx/blob/androidx-main/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/SliderTokens.kt
+- 令牌版权：Copyright 2022 The Android Open Source Project
+- 令牌许可：Apache License 2.0
+- 使用位置：`src/styles/slider.css` 的五档尺寸、颜色角色、缺口、手柄反馈与禁用状态数值。
+
+MDV 根据现行官方表格与尺寸图整理 CSS 数值，采用自己的 Vue、原生 range 与指针事件实现；未引入 Compose 或其他 Slider 运行时。下文保留 Apache License 2.0 原文。
+
 ## Material Symbols 图标数据
 
 - 来源：https://github.com/google/material-design-icons
