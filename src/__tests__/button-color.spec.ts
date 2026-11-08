@@ -3,7 +3,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import type { CSSProperties } from 'vue'
-import { resolveButtonColor } from '../components/button-color'
+import { resolveButtonColor, resolveIconButtonColor } from '../components/button-color'
 import { createMdvColorScheme } from '../dynamic-color'
 
 function readPair(value: unknown): [string, string] {
@@ -45,6 +45,24 @@ function contrastRatios(style: Readonly<CSSProperties>): number[] {
 }
 
 describe('button color resolution', () => {
+  it.each(['success', '#06C'])(
+    'shares the %s color roles across both button kinds with separate CSS variables',
+    (color) => {
+      const button = resolveButtonColor(color)
+      const icon = resolveIconButtonColor(color)
+
+      expect(button).toBeDefined()
+      expect(icon).toBeDefined()
+      expect(Object.isFrozen(icon)).toBe(true)
+      expect(resolveIconButtonColor(color)).toBe(icon)
+      for (const role of ['color', 'on-color', 'container-color', 'on-container-color']) {
+        expect(icon?.[`--mdv-icon-button-${role}`]).toBe(button?.[`--mdv-button-${role}`])
+        expect(icon?.[`--mdv-button-${role}`]).toBeUndefined()
+      }
+      expect(resolveIconButtonColor('#invalid')).toBeUndefined()
+    },
+  )
+
   it('keeps preset colors as theme references for inherited and locally overridden themes', () => {
     const style = resolveButtonColor('error')
 

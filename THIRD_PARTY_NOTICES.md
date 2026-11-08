@@ -1,6 +1,6 @@
 # 第三方来源与许可
 
-本文件随 MDV 源码和 npm 包提供，记录当前实际使用的第三方令牌、算法和字体。
+本文件随 MDV 源码和 npm 包提供，记录当前实际使用的第三方令牌、算法、字体和示例图标。
 
 ## Material Web 设计令牌
 
@@ -11,13 +11,33 @@
 
 MDV 将 v0.192 设计令牌中的默认颜色、排版、圆角和动效数值整理为自己的 CSS 变量与 Tailwind 映射，并增加主题作用域、动态配色、阴影和减少动态效果规则；未将 Material Web 组件纳入运行时依赖。
 
+## Material 3 图标按钮规格与令牌
+
+- 规格来源：https://m3.material.io/components/icon-buttons/specs
+- 令牌交叉核对：https://github.com/androidx/androidx/tree/androidx-main/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens
+- 令牌版权：Copyright 2022 The Android Open Source Project
+- 令牌许可：Apache License 2.0
+- 使用位置：`src/styles/styles.css` 的图标按钮尺寸、宽度、圆角、颜色角色与状态透明度。
+
+MDV 按现行官方规格整理 CSS 数值并用 AndroidX 的尺寸／颜色令牌核对；未引入 Compose 实现或依赖。按压保持圆角不变是 MDV 的交互选择。
+
+## Material Icons 示例 SVG
+
+- 来源：https://github.com/google/material-design-icons
+- 版权：Copyright Google LLC
+- 许可：Apache License 2.0
+- 使用资源：favorite、favorite_border、open_in_new、save 的 24px Material Icons SVG。
+- 使用位置：`playground/IconButtonPlayground.vue` 与 `COMPONENTS.md` 示例。
+
+示例保留官方路径，删除不可见背景路径，使用 currentColor、viewBox 和不可聚焦设置适配按钮。图标只用于开发预览与使用示例，未捆绑整套图标资源或新增图标运行时依赖。
+
 ## Material Color Utilities
 
 - 软件包：`@material/material-color-utilities`，当前以 0.4.0 为实现基线。
 - 来源：https://github.com/material-foundation/material-color-utilities
 - 软件包许可声明：Copyright 2021 Google LLC；各源码文件保留其对应版权声明。
 - 许可：Apache License 2.0
-- 使用位置：`src/dynamic-color.ts` 和 `src/components/button-color.ts`；完整主题算法随 `mdv/dynamic-color` 入口构建，Button 使用 HCT／TonalPalette 生成局部种子色。
+- 使用位置：`src/dynamic-color.ts` 和 `src/components/button-color.ts`；完整主题算法随 `mdv/dynamic-color` 入口构建，Button 与 IconButton 共用 HCT／TonalPalette 生成局部种子色。
 
 `src/styles/tokens.css` 中 success／warning／info 的默认配色由该算法生成，分别使用 #2e7d32、#b26a00 和 #0277bd 种子色，采用 Tonal Spot／2021 primary 色系。它们属于 MDV 的扩展语义角色。
 

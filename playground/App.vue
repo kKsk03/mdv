@@ -2,6 +2,7 @@
 import { onBeforeUnmount, ref, shallowRef, useTemplateRef } from 'vue'
 import { applyMdvColorScheme, createMdvColorScheme } from '@/dynamic-color'
 import ButtonPlayground from './ButtonPlayground.vue'
+import IconButtonPlayground from './IconButtonPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -10,6 +11,12 @@ const pages = [
     label: 'Button 按钮',
     description: '对照按钮的变体、尺寸、状态与交互。',
     component: ButtonPlayground,
+  },
+  {
+    id: 'icon-button',
+    label: 'IconButton 图标按钮',
+    description: '对照图标按钮的尺寸、宽度、选中形状、配色与原生行为。',
+    component: IconButtonPlayground,
   },
   {
     id: 'theme',

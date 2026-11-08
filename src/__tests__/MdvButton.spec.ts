@@ -126,6 +126,26 @@ describe('MdvButton', () => {
     expect(onClick).toHaveBeenCalledTimes(2)
   })
 
+  it('keeps the shared ripple centered on the ordinary button and clears it on disable', async () => {
+    const wrapper = mount(MdvButton, { slots: { default: '保存' } })
+    const button = wrapper.get('button')
+    const bounds = vi
+      .spyOn(button.element, 'getBoundingClientRect')
+      .mockReturnValue(new DOMRect(0, 0, 120, 40))
+    try {
+      await button.trigger('keydown', { key: 'Enter' })
+      const wave = wrapper.get<HTMLElement>('.mdv-button__ripple-wave').element
+      expect(wave.style.left).toBe('60px')
+      expect(wave.style.top).toBe('20px')
+      expect(button.text()).toBe('保存')
+
+      await wrapper.setProps({ disabled: true })
+      expect(wrapper.find('.mdv-button__ripple').exists()).toBe(false)
+    } finally {
+      bounds.mockRestore()
+    }
+  })
+
   it('keeps link styling independent of native link semantics', async () => {
     const wrapper = mount(MdvButton, {
       props: { variant: 'link' },

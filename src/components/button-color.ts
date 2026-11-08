@@ -20,6 +20,25 @@ const presetStyles = new Map<ColorPreset, Readonly<CSSProperties>>(
 // 只缓存局部种子色的四组角色；限制容量，避免长期编辑色号时无限增长。
 const seedStyles = new Map<string, Readonly<CSSProperties>>()
 const maxCachedSeeds = 64
+const iconStyles = new WeakMap<Readonly<CSSProperties>, Readonly<CSSProperties>>()
+
+/** 两类按钮共享种子色计算和缓存，各自使用独立的局部 CSS 变量。 */
+export function resolveIconButtonColor(color: unknown): Readonly<CSSProperties> | undefined {
+  const colors = resolveButtonColor(color)
+  if (!colors) return undefined
+
+  const cached = iconStyles.get(colors)
+  if (cached) return cached
+
+  const style = Object.freeze({
+    '--mdv-icon-button-color': colors['--mdv-button-color'],
+    '--mdv-icon-button-on-color': colors['--mdv-button-on-color'],
+    '--mdv-icon-button-container-color': colors['--mdv-button-container-color'],
+    '--mdv-icon-button-on-container-color': colors['--mdv-button-on-container-color'],
+  })
+  iconStyles.set(colors, style)
+  return style
+}
 
 /** 按钮内部配色；纯计算，无 DOM、主题监听或全局主题写入。 */
 export function resolveButtonColor(color: unknown): Readonly<CSSProperties> | undefined {

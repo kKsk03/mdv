@@ -226,7 +226,8 @@
   --mdv-button-current-icons: 1;
 }
 
-.mdv-button__ripple {
+.mdv-button__ripple,
+.mdv-icon-button__ripple {
   position: absolute;
   z-index: 0;
   inset: 0;
@@ -235,7 +236,8 @@
   pointer-events: none;
 }
 
-.mdv-button__ripple-wave {
+.mdv-button__ripple-wave,
+.mdv-icon-button__ripple-wave {
   position: absolute;
   border-radius: 50%;
   background-color: currentColor;
@@ -244,7 +246,8 @@
   animation: mdv-button-ripple 450ms var(--mdv-sys-motion-easing-standard) forwards;
 }
 
-.mdv-button__ripple--released {
+.mdv-button__ripple--released,
+.mdv-icon-button__ripple--released {
   animation: mdv-button-ripple-fade 200ms linear forwards;
 }
 
@@ -320,18 +323,272 @@
   }
 }
 
+.mdv-icon-button {
+  --mdv-icon-button-height: 40px;
+  --mdv-icon-button-width: var(--mdv-icon-button-height);
+  --mdv-icon-button-narrow-width: 32px;
+  --mdv-icon-button-wide-width: 52px;
+  --mdv-icon-button-icon-size: 24px;
+  --mdv-icon-button-stroke: 1px;
+  --mdv-icon-button-square-radius: var(--mdv-sys-shape-corner-medium);
+  --mdv-icon-button-round-radius: calc(
+    min(var(--mdv-icon-button-width), var(--mdv-icon-button-height)) / 2
+  );
+  --mdv-icon-button-radius: var(--mdv-icon-button-round-radius);
+  --mdv-icon-button-color: var(--mdv-sys-color-primary);
+  --mdv-icon-button-on-color: var(--mdv-sys-color-on-primary);
+  --mdv-icon-button-container-color: var(--mdv-sys-color-secondary-container);
+  --mdv-icon-button-on-container-color: var(--mdv-sys-color-on-secondary-container);
+  --mdv-icon-button-background: transparent;
+  --mdv-icon-button-foreground: var(--mdv-sys-color-on-surface-variant);
+  --mdv-icon-button-outline: transparent;
+  --mdv-icon-button-selected-background: transparent;
+  --mdv-icon-button-selected-foreground: var(--mdv-icon-button-color);
+
+  /* 命中区本身占位；48px 以下的可见容器由内边距居中，不向相邻控件扩张。 */
+  position: relative;
+  box-sizing: border-box;
+  width: max(48px, var(--mdv-icon-button-width));
+  height: max(48px, var(--mdv-icon-button-height));
+  min-width: 48px;
+  min-height: 48px;
+  flex: none;
+  border: 0;
+  padding-block: max(0px, (48px - var(--mdv-icon-button-height)) / 2);
+  padding-inline: max(0px, (48px - var(--mdv-icon-button-width)) / 2);
+  background: transparent;
+  color: var(--mdv-icon-button-foreground);
+  font: inherit;
+  line-height: 1;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mdv-icon-button--xs {
+  --mdv-icon-button-height: 32px;
+  --mdv-icon-button-narrow-width: 28px;
+  --mdv-icon-button-wide-width: 40px;
+  --mdv-icon-button-icon-size: 20px;
+}
+
+.mdv-icon-button--m {
+  --mdv-icon-button-height: 56px;
+  --mdv-icon-button-narrow-width: 48px;
+  --mdv-icon-button-wide-width: 72px;
+  --mdv-icon-button-square-radius: var(--mdv-sys-shape-corner-large);
+}
+
+.mdv-icon-button--l {
+  --mdv-icon-button-height: 96px;
+  --mdv-icon-button-narrow-width: 64px;
+  --mdv-icon-button-wide-width: 128px;
+  --mdv-icon-button-icon-size: 32px;
+  --mdv-icon-button-stroke: 2px;
+  --mdv-icon-button-square-radius: var(--mdv-sys-shape-corner-extra-large);
+}
+
+.mdv-icon-button--xl {
+  --mdv-icon-button-height: 136px;
+  --mdv-icon-button-narrow-width: 104px;
+  --mdv-icon-button-wide-width: 184px;
+  --mdv-icon-button-icon-size: 40px;
+  --mdv-icon-button-stroke: 3px;
+  --mdv-icon-button-square-radius: var(--mdv-sys-shape-corner-extra-large);
+}
+
+.mdv-icon-button--narrow-width {
+  --mdv-icon-button-width: var(--mdv-icon-button-narrow-width);
+}
+
+.mdv-icon-button--wide-width {
+  --mdv-icon-button-width: var(--mdv-icon-button-wide-width);
+}
+
+.mdv-icon-button--square,
+.mdv-icon-button--round:where(.mdv-icon-button--selected) {
+  --mdv-icon-button-radius: var(--mdv-icon-button-square-radius);
+}
+
+.mdv-icon-button--square:where(.mdv-icon-button--selected) {
+  --mdv-icon-button-radius: var(--mdv-icon-button-round-radius);
+}
+
+.mdv-icon-button--filled {
+  --mdv-icon-button-background: var(--mdv-icon-button-color);
+  --mdv-icon-button-foreground: var(--mdv-icon-button-on-color);
+  --mdv-icon-button-selected-background: var(--mdv-icon-button-color);
+  --mdv-icon-button-selected-foreground: var(--mdv-icon-button-on-color);
+}
+
+.mdv-icon-button--filled:where(.mdv-icon-button--toggle):not(.mdv-icon-button--selected) {
+  --mdv-icon-button-background: var(--mdv-sys-color-surface-container);
+  --mdv-icon-button-foreground: var(--mdv-sys-color-on-surface-variant);
+}
+
+.mdv-icon-button--tonal {
+  --mdv-icon-button-background: var(--mdv-icon-button-container-color);
+  --mdv-icon-button-foreground: var(--mdv-icon-button-on-container-color);
+  --mdv-icon-button-selected-background: var(--mdv-sys-color-secondary);
+  --mdv-icon-button-selected-foreground: var(--mdv-sys-color-on-secondary);
+}
+
+.mdv-icon-button--outlined {
+  --mdv-icon-button-outline: var(--mdv-sys-color-outline-variant);
+  --mdv-icon-button-selected-background: var(--mdv-sys-color-inverse-surface);
+  --mdv-icon-button-selected-foreground: var(--mdv-sys-color-inverse-on-surface);
+}
+
+.mdv-icon-button--colored:where(.mdv-icon-button--tonal) {
+  --mdv-icon-button-selected-background: var(--mdv-icon-button-color);
+  --mdv-icon-button-selected-foreground: var(--mdv-icon-button-on-color);
+}
+
+.mdv-icon-button--colored:where(.mdv-icon-button--outlined) {
+  --mdv-icon-button-foreground: var(--mdv-icon-button-color);
+  --mdv-icon-button-outline: var(--mdv-icon-button-color);
+  --mdv-icon-button-selected-background: var(--mdv-icon-button-container-color);
+  --mdv-icon-button-selected-foreground: var(--mdv-icon-button-on-container-color);
+}
+
+.mdv-icon-button--colored:where(.mdv-icon-button--standard):not(.mdv-icon-button--toggle) {
+  --mdv-icon-button-foreground: var(--mdv-icon-button-color);
+}
+
+.mdv-icon-button--selected {
+  --mdv-icon-button-background: var(--mdv-icon-button-selected-background);
+  --mdv-icon-button-foreground: var(--mdv-icon-button-selected-foreground);
+  --mdv-icon-button-outline: transparent;
+}
+
+.mdv-icon-button.mdv-icon-button--disabled {
+  --mdv-icon-button-foreground: color-mix(
+    in srgb,
+    var(--mdv-sys-color-on-surface) 38%,
+    transparent
+  );
+
+  cursor: not-allowed;
+}
+
+.mdv-icon-button.mdv-icon-button--disabled:where(
+    .mdv-icon-button--filled,
+    .mdv-icon-button--tonal,
+    .mdv-icon-button--outlined.mdv-icon-button--selected
+  ) {
+  --mdv-icon-button-background: color-mix(
+    in srgb,
+    var(--mdv-sys-color-on-surface) 10%,
+    transparent
+  );
+}
+
+.mdv-icon-button.mdv-icon-button--disabled:where(.mdv-icon-button--outlined):not(
+    .mdv-icon-button--selected
+  ) {
+  --mdv-icon-button-outline: var(--mdv-sys-color-outline-variant);
+}
+
+.mdv-icon-button__surface {
+  position: relative;
+  display: grid;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  border: var(--mdv-icon-button-stroke) solid var(--mdv-icon-button-outline);
+  border-radius: var(--mdv-icon-button-radius);
+  background-color: var(--mdv-icon-button-background);
+  transition: border-radius var(--mdv-sys-motion-duration-medium-2)
+    var(--mdv-sys-motion-easing-standard);
+}
+
+.mdv-icon-button__surface::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  background-color: currentColor;
+  content: '';
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--mdv-sys-motion-duration-short-2) var(--mdv-sys-motion-easing-standard);
+}
+
+@media (hover: hover) {
+  .mdv-icon-button:not(.mdv-icon-button--disabled):hover .mdv-icon-button__surface::before {
+    opacity: 0.08;
+  }
+}
+
+.mdv-icon-button:not(.mdv-icon-button--disabled):focus-visible {
+  outline: none;
+}
+
+.mdv-icon-button:not(.mdv-icon-button--disabled):focus-visible .mdv-icon-button__surface {
+  outline: 3px solid var(--mdv-icon-button-color);
+  outline-offset: 2px;
+}
+
+.mdv-icon-button:not(.mdv-icon-button--disabled):focus-visible .mdv-icon-button__surface::before,
+.mdv-icon-button:not(.mdv-icon-button--disabled):active .mdv-icon-button__surface::before {
+  opacity: 0.1;
+}
+
+.mdv-icon-button__icon,
+.mdv-icon-button__spinner {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  width: var(--mdv-icon-button-icon-size);
+  height: var(--mdv-icon-button-icon-size);
+  grid-area: 1 / 1;
+  pointer-events: none;
+}
+
+.mdv-icon-button__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--mdv-icon-button-icon-size);
+  line-height: 1;
+}
+
+.mdv-icon-button__icon > :is(svg, img) {
+  width: 100%;
+  height: 100%;
+}
+
+.mdv-icon-button__icon--hidden {
+  visibility: hidden;
+}
+
+.mdv-icon-button__spinner {
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: mdv-button-spin 800ms linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mdv-button,
-  .mdv-button::before {
+  .mdv-button::before,
+  .mdv-icon-button__surface,
+  .mdv-icon-button__surface::before {
     transition-duration: 0.01ms !important;
   }
 
-  .mdv-button__spinner {
+  .mdv-button__spinner,
+  .mdv-icon-button__spinner {
     animation: none;
   }
 
   .mdv-button__ripple-wave,
-  .mdv-button__ripple--released {
+  .mdv-button__ripple--released,
+  .mdv-icon-button__ripple-wave,
+  .mdv-icon-button__ripple--released {
     animation-duration: 0.01ms;
   }
 }
@@ -355,5 +612,37 @@
 
   .mdv-button__spinner {
     forced-color-adjust: none;
+  }
+
+  .mdv-icon-button {
+    color: ButtonText;
+  }
+
+  .mdv-icon-button__surface {
+    border-color: ButtonText;
+    background-color: Canvas;
+    forced-color-adjust: none;
+  }
+
+  .mdv-icon-button--selected {
+    color: HighlightText;
+  }
+
+  .mdv-icon-button--selected .mdv-icon-button__surface {
+    border-color: Highlight;
+    background-color: Highlight;
+  }
+
+  .mdv-icon-button--disabled {
+    color: GrayText;
+  }
+
+  .mdv-icon-button--disabled .mdv-icon-button__surface {
+    border-color: GrayText;
+    background-color: Canvas;
+  }
+
+  .mdv-icon-button:not(.mdv-icon-button--disabled):focus-visible .mdv-icon-button__surface {
+    outline-color: Highlight;
   }
 }

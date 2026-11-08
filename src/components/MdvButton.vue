@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, ref, useAttrs, watch } from 'vue'
+import { computed, useAttrs, watch } from 'vue'
 import type { VNode } from 'vue'
 import { resolveButtonColor } from './button-color'
+import { useButtonRipple } from './button-ripple'
 import type {
   MdvButtonColor,
   MdvButtonShape,
@@ -71,23 +72,10 @@ if (import.meta.env.DEV) {
   )
 }
 
-interface ButtonRipple {
-  x: number
-  y: number
-  size: number
-  key: number
-  released: boolean
-}
-
-const ripple = ref<ButtonRipple | null>(null)
-let rippleKey = 0
-
-watch(
-  () => props.disabled,
-  (disabled) => {
-    if (disabled) ripple.value = null
-  },
-)
+const { ripple, showRipple, releaseRipple, finishRipple } = useButtonRipple({
+  disabled: () => props.disabled,
+  isLink: () => isLink.value,
+})
 
 function rootAttrs() {
   const result = { ...attrs }
@@ -117,44 +105,6 @@ function preventDisabledLinkActivation(event: Event) {
     event.preventDefault()
     event.stopImmediatePropagation()
   }
-}
-
-function showRipple(event: PointerEvent | KeyboardEvent) {
-  if (props.disabled || event.defaultPrevented) return
-  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
-
-  const keyboard = event.type === 'keydown'
-  if (keyboard) {
-    const { key, repeat } = event as KeyboardEvent
-    if (repeat || (key !== 'Enter' && (key !== ' ' || isLink.value))) return
-  } else {
-    const pointer = event as PointerEvent
-    if (pointer.button !== 0 || pointer.isPrimary === false) return
-  }
-
-  const bounds = (event.currentTarget as HTMLElement).getBoundingClientRect()
-  const x = keyboard
-    ? bounds.width / 2
-    : Math.max(0, Math.min(bounds.width, (event as PointerEvent).clientX - bounds.left))
-  const y = keyboard
-    ? bounds.height / 2
-    : Math.max(0, Math.min(bounds.height, (event as PointerEvent).clientY - bounds.top))
-  const size = Math.hypot(Math.max(x, bounds.width - x), Math.max(y, bounds.height - y)) * 2
-
-  ripple.value = { x, y, size, key: ++rippleKey, released: false }
-}
-
-function releaseRipple(event: Event) {
-  if (event.type === 'keyup') {
-    const key = (event as KeyboardEvent).key
-    if (key !== 'Enter' && key !== ' ') return
-  }
-
-  if (ripple.value) ripple.value.released = true
-}
-
-function finishRipple(event: AnimationEvent) {
-  if (event.animationName === 'mdv-button-ripple-fade') ripple.value = null
 }
 </script>
 
