@@ -21,16 +21,26 @@ MDV 将 v0.192 设计令牌中的默认颜色、排版、圆角和动效数值�
 
 MDV 按现行官方规格整理 CSS 数值并用 AndroidX 的尺寸／颜色令牌核对；未引入 Compose 实现或依赖。按压保持圆角不变是 MDV 的交互选择。
 
+## Material 3 文本框规格与令牌
+
+- 规格来源：https://m3.material.io/components/text-fields/specs
+- 令牌与行为交叉核对：https://github.com/material-components/material-web/tree/main/textfield 及其 `tokens/versions/v0_192`、`field` 目录。
+- 令牌版权：Copyright 2023 Google LLC
+- 令牌许可：Apache License 2.0
+- 使用位置：`src/styles/text-field.css` 的标准尺寸、排版、颜色角色、形状和状态数值。
+
+MDV 用 Vue 与原生 input／textarea 实现自己的标签布局、描边缺口、值绑定和表单行为；未引入 Material Web 运行时。聚焦指示线按现行官网的 3dp 令牌实现，不沿用旧版 2dp 数值。
+
 ## Material Symbols 图标数据
 
 - 来源：https://github.com/google/material-design-icons
 - 数据分发：`@iconify-icons/material-symbols`，当前以 2.0.9 为资源基线；https://github.com/iconify/icon-sets
 - 版权：Copyright Google LLC
 - 许可：Apache License 2.0
-- 使用资源：Material Symbols 的本地 SVG 数据，包括 favorite、home、save、search 等预览图形及其填充／风格变体。
-- 使用位置：`playground/` 的组件预览、`src/__tests__/MdvIcon*` 和 `COMPONENTS.md` 示例。
+- 使用资源：Material Symbols 的本地 SVG 数据，包括 favorite、home、save、search 等预览图形及其填充／风格变体；文本框内置动作使用 close、visibility、visibility-off。
+- 使用位置：`src/components/MdvTextField.vue` 的内置动作、`playground/` 的组件预览、组件测试和 `COMPONENTS.md` 示例。
 
-Iconify 分发包提供可单独导入的图标数据，原始图形版权与许可归上游 Google。该包是本仓库的开发依赖；MDV 组件主入口不导入或注册整套数据。使用方按自己的静态导入分发实际图形，并保留相应许可。
+Iconify 分发包提供可单独导入的图标数据，原始图形版权与许可归上游 Google。该包是本仓库的开发依赖；文本框只导入三个固定图形并随组件构建，MDV 不导入或注册整套数据。使用方无需为文本框内置动作安装图标集；自定义图标按自己的静态导入分发，并保留相应许可。
 
 ## Iconify Vue 渲染器
 

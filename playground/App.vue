@@ -4,6 +4,7 @@ import { applyMdvColorScheme, createMdvColorScheme } from '@/dynamic-color'
 import ButtonPlayground from './ButtonPlayground.vue'
 import IconButtonPlayground from './IconButtonPlayground.vue'
 import IconPlayground from './IconPlayground.vue'
+import TextFieldPlayground from './TextFieldPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -24,6 +25,12 @@ const pages = [
     label: 'Icon 图标',
     description: '查看本地图标、风格、尺寸、颜色与按钮组合。',
     component: IconPlayground,
+  },
+  {
+    id: 'text-field',
+    label: 'TextField 文本框',
+    description: '对照填充与描边外观、输入状态、图标、校验和原生表单行为。',
+    component: TextFieldPlayground,
   },
   {
     id: 'theme',

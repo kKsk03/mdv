@@ -5,6 +5,7 @@
 - [MdvButton 按钮](#mdvbutton)
 - [MdvIconButton 图标按钮](#mdviconbutton)
 - [MdvIcon 图标](#mdvicon)
+- [MdvTextField 文本框](#mdvtextfield)
 
 ## MdvButton
 
@@ -273,3 +274,125 @@ import save from '@iconify-icons/material-symbols/save'
 `class`、`style`、`id`、ARIA、`data-*` 和原生事件透传至根 SVG；没有自定义事件、插槽或额外 expose 方法。数据中的原始图形坐标保留在 `viewBox` 内。Material Symbols 的纯路径数据可在 SSR 首屏同步输出；本轮提供了 SSR／hydration 测试，执行结果仍待验收。自定义数据若含渐变、裁剪或内部 ID，需要在自己的 SSR 页面额外验证引用与 hydration，当前不承诺覆盖全部自定义 SVG。
 
 公共类型可从 `mdv` 导入：`MdvIconData`、`MdvIconSize`。渲染器作为 MDV 的正常依赖提供；整套 Material Symbols 数据仅用于本仓库开发，使用方按需安装数据包。
+
+## MdvTextField
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvTextField } from 'mdv'
+
+const name = ref('')
+const password = ref('')
+const notes = ref('')
+const quantity = ref<string | number>('')
+</script>
+
+<template>
+  <MdvTextField v-model="name" label="姓名" name="name" autocomplete="name" required clearable :maxlength="20" supporting-text="用于公开显示" />
+  <MdvTextField v-model="password" label="密码" type="password" autocomplete="new-password" password-toggle />
+  <MdvTextField v-model="notes" variant="filled" label="备注" multiline :rows="4" full-width />
+  <MdvTextField v-model.number="quantity" label="数量" type="number" min="0" step="1" />
+</template>
+```
+
+| Prop | 类型／说明 | 默认值 |
+| --- | --- | --- |
+| `modelValue`／`v-model` | `string \| number` | `''` |
+| `modelModifiers` | Vue 自动传入的 `trim`／`number`／`lazy` 标记 | `{}` |
+| `variant` | `outlined`、`filled` | `outlined` |
+| `type` | `text`、`password`、`email`、`tel`、`url`、`search`、`number`；单行时生效 | `text` |
+| `label` | 浮动标签 | `''` |
+| `placeholder` | 原生占位提示，避免与未浮动标签重叠 | `''` |
+| `supportingText` | 辅助说明 | `''` |
+| `error` | 业务错误状态 | `false` |
+| `errorText` | 错误状态下优先显示的说明，替换辅助文字 | `''` |
+| `prefixText`／`suffixText` | 仅展示的前缀／后缀，不计入输入值 | `''` |
+| `multiline` | 改用原生 `textarea` | `false` |
+| `rows` | 多行输入的初始行数 | `3` |
+| `disabled`／`readonly`／`required` | 对应原生输入属性 | `false` |
+| `clearable` | 有内容且可编辑时提供清除操作 | `false` |
+| `passwordToggle` | `type="password"` 单行输入提供显隐操作 | `false` |
+| `showCount` | 显示当前字数；省略时有合法 `maxlength` 才显示字数／上限 | 不提供 |
+| `fullWidth` | 占满父容器可用宽度 | `false` |
+
+单行输入默认容器高度 56px、输入排版 16px／24px、浮动标签与辅助文字 12px／16px、图标 24px。普通边线为 1px，聚焦按现行官网令牌使用 3px；线宽变化不改变布局。填充外观只有上方圆角，描边外观四角为 4px。默认宽度 280px 是 MDV 的布局默认值，可通过外层 `style` 调整，也可用 `full-width`；默认最大宽度不会超过父容器。
+
+聚焦、有值或浏览器自动填充时标签浮动。描边外观使用透明背景和真实边框缺口；缺口直接开合，标签保留上浮／收回过渡。点击框内边缘或留白也可聚焦，插槽中的独立交互元素保留自身操作。
+
+多行输入从整个框的角落原生竖向缩放。textarea 的滚动区域从边框内缘开始，文字仍保留原有上边距；textarea 跨过尾部操作列，滚动条使用细宽度、主题 outline 色和透明轨道，仅在本组件内生效。滚动条与缩放手柄贴近框缘并位于边线内侧，聚焦时随边线加粗向内移动；尾部操作的触控范围留在滚动条内侧。Filled 多行底部同样预留完整的缩放区域，避免滚动条与手柄重叠。图标、前后缀与尾部操作保持顶部对齐，辅助文字和计数位于框外。`rows` 决定初始行数，禁用时关闭拖动；类型选择器、自动增高和富文本不在该组件范围内。
+
+### 值、事件与原生属性
+
+默认绑定字符串，包括 `type="number"`。需要数值时明确使用 `v-model.number`，空输入仍是 `''`，非空值按 Vue 常用的 `parseFloat` 规则转换，无法转换时保留字符串。`.trim` 去除绑定值首尾空白，编辑时保留原始文本至 change／失焦；`.lazy` 等原生 change 再提交绑定值。中文拼音组合过程中不提交中间字符。清除操作立即提交空字符串，包括 `.lazy`。
+
+`update:modelValue` 的参数为处理后的 `string | number`；常用 `@input`、`@change`、`@focus`、`@blur`、组合输入和 `@invalid` 监听获得实际 input／textarea 的原生事件，`event.target` 是该控件。程序赋值不伪造 input／change；内置清除会派发一次原生 input，不派发 change。不要使用 `value`／`defaultValue` 与 `v-model` 竞争控制内容。
+
+`id`、`name`、`form`、`autocomplete`、`inputmode`、`maxlength`、`min`、`max`、`step`、`pattern`、ARIA、`data-*` 和原生监听透传到实际控件，按浏览器支持的输入类型生效；`class`／`style` 属于最外层。`dir`／`lang` 同时用于外层布局与控件。提供 `label` 时自动关联；省略可见标签时必须自行提供 `aria-label`／`aria-labelledby`，placeholder 不能代替名称。
+
+辅助文字、计数与调用方 `aria-describedby` 自动合并，保留外部描述。错误时设置 `aria-invalid` 并关联错误文字；辅助说明变化使用礼貌播报，计数不会每输入一个字就强制播报。前后缀是装饰内容，重要单位请同时在标签或辅助说明中说明。长标签在可用空间内省略，辅助说明允许换行。
+
+`maxlength` 和计数遵循原生 UTF-16 长度规则，表情可能占两位；它们不是按可见字形分组计数。`show-count="false"` 在模板中应写作 `:show-count="false"`。`maxlength` 对 `type="number"` 的原生输入限制不生效，数值约束使用 min／max／step。
+
+### 图标、清除与密码
+
+`leading`／`trailing` 插槽接收装饰图标或操作控件。图标推荐 `MdvIcon`；自定义操作使用 `MdvIconButton`，提供可访问名称，表单中保留 `type="button"`。自定义 `trailing` 接管整个尾部区域，即使同时设置 clearable／passwordToggle，也不再渲染内置动作。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import search from '@iconify-icons/material-symbols/search'
+import { MdvIcon, MdvTextField } from 'mdv'
+
+const query = ref('')
+</script>
+
+<template>
+  <MdvTextField v-model="query" label="搜索" type="search" clearable>
+    <template #leading><MdvIcon :icon="search" /></template>
+  </MdvTextField>
+</template>
+```
+
+自定义图标的数据包需按 [MdvIcon 接入说明](#mdvicon) 安装；文本框内置的三个图标已随组件构建，无需额外安装图标集或请求网络。
+
+清除操作只在有内容、未禁用、非只读且不在组合输入时显示；为尾部动作预留位置，清空后焦点回到输入框。密码切换保留值、焦点与选区，按钮名称在“显示密码”／“隐藏密码”间切换并提供 `aria-pressed`；只读密码仍可显隐，禁用时不可操作。内置动作名称当前为中文。自定义插槽动作的禁用、名称和行为由使用方负责。
+
+### 表单与校验
+
+使用原生 input／textarea，所以 `FormData`、Enter 提交、浏览器自动填充、外部 `form` 关联及 disabled／readonly 语义按浏览器规则工作。disabled 输入不参与提交；readonly 输入仍提交。祖先 `fieldset disabled` 会沿用原生禁用规则。
+
+必填、格式等原生约束首次展示时不自动标红，提交或调用原生检查方法触发 invalid 后才显示错误；更正后恢复辅助说明。错误文字优先级为 `errorText`、已报告的原生校验消息、`supportingText`，原生消息语言由浏览器决定。`errorText` 单独存在不开启错误状态，业务错误由 `error` 控制。`error` 只表达业务状态，不会自动阻止原生表单提交；业务提交拦截由应用处理，或通过 `setCustomValidity()` 纳入原生校验。
+
+```vue
+<form @submit.prevent="save">
+  <MdvTextField v-model="email" label="邮箱" name="email" type="email" required />
+  <MdvButton type="submit">保存</MdvButton>
+  <MdvButton type="reset" variant="outlined">重置</MdvButton>
+</form>
+```
+
+原生 reset 将字段与绑定值恢复到**组件创建时的 modelValue**，清理已报告的错误显示；若应用取消 reset，字段保持当前值。程序写入新值不会改变重置基线。reset 不清除调用方持有的 `error`／`errorText`，也不清除原生自定义校验消息；后者用 `setCustomValidity('')` 主动移除。表单 reset 事件后的绑定同步在微任务执行，需要读取 Vue 更新后状态时等待 `nextTick()`。
+
+### 公开方法与类型
+
+通过模板 ref 调用以下方法：
+
+| 方法 | 原生行为 |
+| --- | --- |
+| `focus(options?: FocusOptions)` | 聚焦实际控件，支持 preventScroll |
+| `blur()` | 移除输入焦点 |
+| `select()` | 选中全部文字；仅在原生类型支持时生效 |
+| `checkValidity(): boolean` | 检查原生约束，失败触发 invalid |
+| `reportValidity(): boolean` | 检查约束并显示浏览器的校验反馈 |
+| `setCustomValidity(message: string)` | 设置自定义原生校验；空字符串解除 |
+
+```ts
+import { useTemplateRef } from 'vue'
+import { MdvTextField } from 'mdv'
+
+const field = useTemplateRef<InstanceType<typeof MdvTextField>>('field')
+field.value?.focus({ preventScroll: true })
+```
+
+公共类型：`MdvTextFieldVariant`、`MdvTextFieldType`、`MdvTextFieldValue`、`MdvTextFieldModelModifiers`。SSR 使用 Vue 稳定 ID 关联标签与描述；已提供行为、SSR 和 hydration 测试，当前实现仍待本轮检查与真实浏览器验收。自动填充和密码管理器的实际表现需要在目标浏览器中验证。
