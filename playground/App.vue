@@ -6,6 +6,7 @@ import IconButtonPlayground from './IconButtonPlayground.vue'
 import IconPlayground from './IconPlayground.vue'
 import TextFieldPlayground from './TextFieldPlayground.vue'
 import CheckboxPlayground from './CheckboxPlayground.vue'
+import RadioPlayground from './RadioPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -38,6 +39,12 @@ const pages = [
     label: 'Checkbox 复选框',
     description: '对照三种选择状态、配色、标签、数组多选和原生表单行为。',
     component: CheckboxPlayground,
+  },
+  {
+    id: 'radio',
+    label: 'Radio 单选框',
+    description: '对照单选互斥、键盘导航、配色、标签和原生表单行为。',
+    component: RadioPlayground,
   },
   {
     id: 'theme',

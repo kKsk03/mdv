@@ -1,0 +1,342 @@
+/*
+ * 部分令牌与状态标记几何依据 Material Web 整理。
+ * Copyright 2022, 2023 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+.mdv-radio,
+.mdv-radio-group {
+  --mdv-radio-color: var(--mdv-sys-color-primary);
+  --mdv-radio-active-color: var(--mdv-radio-color);
+  --mdv-radio-outline-color: var(--mdv-sys-color-on-surface-variant);
+  --mdv-radio-state-color: var(--mdv-sys-color-on-surface);
+  --mdv-radio-pressed-color: var(--mdv-radio-active-color);
+  --mdv-radio-motion-duration: var(--mdv-sys-motion-duration-short-3);
+  --mdv-radio-motion-easing: var(--mdv-sys-motion-easing-emphasized-accelerate);
+
+  box-sizing: border-box;
+  color: var(--mdv-sys-color-on-surface);
+  font-family: var(--mdv-sys-typescale-font-family);
+  font-size: var(--mdv-sys-typescale-body-large-size);
+  font-weight: var(--mdv-sys-typescale-body-large-weight);
+  line-height: var(--mdv-sys-typescale-body-large-line-height);
+  letter-spacing: var(--mdv-sys-typescale-body-large-tracking);
+}
+
+.mdv-radio {
+  display: inline-flex;
+  min-width: 48px;
+  max-width: 100%;
+  flex-direction: column;
+  vertical-align: top;
+}
+
+.mdv-radio-group {
+  display: grid;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  vertical-align: top;
+}
+
+.mdv-radio-group__label {
+  margin: 0 0 4px;
+  color: var(--mdv-sys-color-on-surface);
+  font-size: var(--mdv-sys-typescale-label-large-size);
+  font-weight: var(--mdv-sys-typescale-label-large-weight);
+  line-height: var(--mdv-sys-typescale-label-large-line-height);
+  letter-spacing: var(--mdv-sys-typescale-label-large-tracking);
+}
+
+.mdv-radio-group__options {
+  display: grid;
+  min-width: 0;
+  justify-items: start;
+  gap: 4px;
+}
+
+.mdv-radio-group--horizontal .mdv-radio-group__options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 4px 16px;
+}
+
+.mdv-radio-group__supporting {
+  min-width: 0;
+  padding-inline-start: 48px;
+  color: var(--mdv-sys-color-on-surface-variant);
+  font-size: var(--mdv-sys-typescale-body-small-size);
+  font-weight: var(--mdv-sys-typescale-body-small-weight);
+  line-height: var(--mdv-sys-typescale-body-small-line-height);
+  letter-spacing: var(--mdv-sys-typescale-body-small-tracking);
+  overflow-wrap: anywhere;
+}
+
+.mdv-radio--selected {
+  --mdv-radio-outline-color: var(--mdv-radio-active-color);
+  --mdv-radio-state-color: var(--mdv-radio-active-color);
+  --mdv-radio-motion-duration: var(--mdv-sys-motion-duration-medium-3);
+  --mdv-radio-motion-easing: var(--mdv-sys-motion-easing-emphasized-decelerate);
+}
+
+.mdv-radio--error,
+.mdv-radio-group--error {
+  --mdv-radio-active-color: var(--mdv-sys-color-error);
+  --mdv-radio-outline-color: var(--mdv-sys-color-error);
+  --mdv-radio-state-color: var(--mdv-sys-color-error);
+  --mdv-radio-pressed-color: var(--mdv-sys-color-error);
+}
+
+.mdv-radio--error .mdv-radio__supporting,
+.mdv-radio-group--error .mdv-radio-group__supporting {
+  color: var(--mdv-sys-color-error);
+}
+
+.mdv-radio__row {
+  display: grid;
+  min-width: 0;
+  min-height: 48px;
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: start;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mdv-radio__control {
+  position: relative;
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+}
+
+.mdv-radio__input {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: inherit;
+  appearance: none;
+}
+
+.mdv-radio__state {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  grid-area: 1 / 1;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.mdv-radio__state::before {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--mdv-radio-state-color);
+  content: '';
+  opacity: 0;
+  transition: opacity var(--mdv-sys-motion-duration-short-2) linear;
+}
+
+.mdv-radio__control::after {
+  position: absolute;
+  inset: 2px;
+  box-sizing: border-box;
+  border: 3px solid var(--mdv-sys-color-secondary);
+  border-radius: 50%;
+  content: '';
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mdv-radio__control:has(.mdv-radio__input:focus-visible)::after {
+  opacity: 1;
+}
+
+.mdv-radio:where(:has(.mdv-radio__input:focus)),
+.mdv-radio-group:where(:has(.mdv-radio__input:focus)) {
+  --mdv-radio-outline-color: var(--mdv-sys-color-on-surface);
+}
+
+@media (hover: hover) {
+  .mdv-radio:where(:has(.mdv-radio__row:hover)) {
+    --mdv-radio-outline-color: var(--mdv-sys-color-on-surface);
+  }
+
+  .mdv-radio__row:hover .mdv-radio__state::before {
+    opacity: 0.08;
+  }
+}
+
+.mdv-radio__input:focus-visible ~ .mdv-radio__state::before,
+.mdv-radio__row:active .mdv-radio__state::before {
+  opacity: 0.12;
+}
+
+.mdv-radio__container {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  grid-area: 1 / 1;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.mdv-radio__outline,
+.mdv-radio__dot {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.mdv-radio__outline {
+  box-sizing: border-box;
+  border: 2px solid var(--mdv-radio-outline-color);
+  transition: border-color var(--mdv-radio-motion-duration) var(--mdv-radio-motion-easing);
+}
+
+.mdv-radio__dot {
+  inset: 5px;
+  background: var(--mdv-radio-active-color);
+  opacity: 0;
+  transform: scale(0.6);
+  transition-property: transform, opacity;
+  transition-duration: var(--mdv-radio-motion-duration), var(--mdv-sys-motion-duration-short-1);
+  transition-timing-function: var(--mdv-radio-motion-easing), linear;
+}
+
+.mdv-radio--selected .mdv-radio__dot {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.mdv-radio--selected .mdv-radio__outline {
+  border-color: var(--mdv-radio-active-color);
+}
+
+.mdv-radio__ripple {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  color: var(--mdv-radio-pressed-color);
+}
+
+.mdv-radio__ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.12;
+  transform: translate(-50%, -50%) scale(0);
+  animation: mdv-button-ripple 450ms var(--mdv-sys-motion-easing-standard) forwards;
+}
+
+.mdv-radio__ripple--released {
+  animation: mdv-button-ripple-fade var(--mdv-sys-motion-duration-short-4) linear forwards;
+}
+
+.mdv-radio__label {
+  min-width: 0;
+  padding-block: 12px;
+  padding-inline-end: 4px;
+  overflow-wrap: anywhere;
+}
+
+.mdv-radio__supporting {
+  min-width: 0;
+  padding-inline-start: 48px;
+  color: var(--mdv-sys-color-on-surface-variant);
+  font-size: var(--mdv-sys-typescale-body-small-size);
+  font-weight: var(--mdv-sys-typescale-body-small-weight);
+  line-height: var(--mdv-sys-typescale-body-small-line-height);
+  letter-spacing: var(--mdv-sys-typescale-body-small-tracking);
+  overflow-wrap: anywhere;
+}
+
+.mdv-radio:has(.mdv-radio__input:disabled),
+.mdv-radio-group:disabled {
+  --mdv-radio-outline-color: var(--mdv-sys-color-on-surface);
+  --mdv-radio-active-color: var(--mdv-sys-color-on-surface);
+  --mdv-radio-state-color: var(--mdv-sys-color-on-surface);
+  --mdv-radio-pressed-color: var(--mdv-sys-color-on-surface);
+
+  color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 38%, transparent);
+}
+
+.mdv-radio:has(.mdv-radio__input:disabled) .mdv-radio__row {
+  cursor: not-allowed;
+}
+
+.mdv-radio:has(.mdv-radio__input:disabled) .mdv-radio__dot,
+.mdv-radio:has(.mdv-radio__input:disabled) .mdv-radio__outline {
+  opacity: 0.38;
+}
+
+.mdv-radio:has(.mdv-radio__input:disabled) .mdv-radio__state,
+.mdv-radio:has(.mdv-radio__input:disabled) .mdv-radio__control::after {
+  visibility: hidden;
+}
+
+.mdv-radio:has(.mdv-radio__input:disabled) .mdv-radio__supporting {
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mdv-radio *,
+  .mdv-radio *::before,
+  .mdv-radio-group *,
+  .mdv-radio-group *::before {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .mdv-radio,
+  .mdv-radio-group {
+    --mdv-radio-active-color: CanvasText;
+    --mdv-radio-outline-color: CanvasText;
+    --mdv-radio-state-color: CanvasText;
+
+    color: CanvasText;
+  }
+
+  .mdv-radio__container {
+    forced-color-adjust: none;
+  }
+
+  .mdv-radio__control::after {
+    border-color: Highlight;
+  }
+
+  .mdv-radio:has(.mdv-radio__input:disabled),
+  .mdv-radio-group:disabled {
+    --mdv-radio-active-color: GrayText;
+    --mdv-radio-outline-color: GrayText;
+    --mdv-radio-state-color: GrayText;
+
+    color: GrayText;
+  }
+
+  .mdv-radio:has(.mdv-radio__input:disabled) .mdv-radio__dot,
+  .mdv-radio:has(.mdv-radio__input:disabled) .mdv-radio__outline {
+    opacity: 1;
+  }
+
+  .mdv-radio__state {
+    visibility: hidden;
+  }
+
+  .mdv-radio__supporting,
+  .mdv-radio-group__supporting {
+    color: inherit;
+  }
+}

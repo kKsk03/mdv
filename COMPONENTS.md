@@ -7,6 +7,7 @@
 - [MdvIcon 图标](#mdvicon)
 - [MdvTextField 文本框](#mdvtextfield)
 - [MdvCheckbox 复选框](#mdvcheckbox)
+- [MdvRadio 单选框](#mdvradio)
 
 ## MdvButton
 
@@ -503,3 +504,82 @@ FormData 只包含有 name、选中且未禁用的控件，值取自 value；数
 | `setCustomValidity(message: string)` | 设置原生自定义错误；空字符串解除 |
 
 公共类型：`MdvCheckboxValue`、`MdvCheckboxModelValue`、`MdvCheckboxColor`，均可从 mdv 主入口导入。已提供行为、SSR 与 hydration 测试及独立开发预览；当前约定范围已完成本地检查与开发预览验收。新版本包消费另行验证。
+
+## MdvRadio
+
+`MdvRadio` 是单个 Material 3 单选项，`MdvRadioGroup` 是用于互斥、键盘导航和组级校验的便利容器。组容器使用原生 `fieldset`／`legend`，不把官方 Radio Button 扩展成一套选项配置 API。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvRadio, MdvRadioGroup } from 'mdv'
+
+const plan = ref<string | number | null>(null)
+</script>
+
+<template>
+  <MdvRadioGroup
+    v-model="plan"
+    name="plan"
+    label="选择套餐"
+    supporting-text="请选择一个套餐。"
+    required
+  >
+    <MdvRadio value="basic" label="基础版" />
+    <MdvRadio value="pro" label="专业版" />
+    <MdvRadio value="enterprise" label="企业版" />
+  </MdvRadioGroup>
+</template>
+```
+
+### MdvRadio 属性
+
+| Prop／模型 | 类型／说明 | 默认值 |
+| --- | --- | --- |
+| `modelValue`／`v-model` | `string \| number \| null`；选中项的值 | `null` |
+| `value` | 当前选项的值，数字和字符串严格区分 | 必填 |
+| `label` | 可点击的标签文字 | `''` |
+| `supportingText` | 单独使用时显示的辅助说明 | `''` |
+| `error`／`errorText` | 单独使用时的业务错误及说明 | `false`／`''` |
+| `disabled`／`required` | 原生禁用／必选约束 | `false` |
+| `color` | 主题／语义色或十六进制种子色 | `primary` |
+
+单独使用时可以像原生 radio 一样传入 `name`：
+
+```vue
+<MdvRadio v-model="plan" name="plan" value="basic" label="基础版" />
+<MdvRadio v-model="plan" name="plan" value="pro" label="专业版" />
+```
+
+`id`、`name`、`form`、ARIA、`data-*` 和原生事件透传到实际 `input[type="radio"]`；`class`／`style` 属于组件外层。没有可见标签时，必须使用 `aria-label` 或 `aria-labelledby`。
+
+### MdvRadioGroup 属性
+
+| Prop／模型 | 类型／说明 | 默认值 |
+| --- | --- | --- |
+| `modelValue`／`v-model` | `string \| number \| null` | `null` |
+| `name` | 传给组内原生 radio 的表单名称 | 未设置 |
+| `label` | `legend` 文字 | `''` |
+| `supportingText` | 组级辅助说明 | `''` |
+| `error`／`errorText` | 组级业务错误及说明 | `false`／`''` |
+| `disabled`／`required` | 禁用整组／至少选择一项 | `false` |
+| `color` | 组级默认主题／语义色或种子色 | 未设置 |
+| `orientation` | `vertical` 或 `horizontal` | `vertical` |
+
+组内 `MdvRadio` 会继承组的 `color` 和 `disabled`。子项仍可以用自己的 `disabled` 或 `color` 覆盖。`supportingText`、`error`、`errorText` 和 `required` 主要由组管理；这样错误说明只出现一次，也符合“这一组选一个”的校验语义。
+
+`name` 不传时，组仍由 Vue 管理互斥和键盘行为，但不会为表单生成隐式字段。需要使用 `FormData` 时应显式传入 `name`。传入 `name` 后，选中的 radio 按原生规则提交，未选中项和 disabled 项不会提交。
+
+### 交互、键盘与校验
+
+- `Tab` 进入当前选中项；没有选中项时进入第一个可用项。
+- `ArrowUp`／`ArrowLeft` 选择前一项，`ArrowDown`／`ArrowRight` 选择后一项；方向键会跳过 disabled 项并循环。
+- `Home`／`End` 移到第一项／最后一项，`Space` 选择当前焦点项。
+- 组内每次选择只产生一个 `update:modelValue`；数字 `1` 与字符串 `'1'` 分开处理。
+- `required` 只在调用原生校验、提交或 `reportValidity()` 后显示错误，更正后恢复辅助说明。
+- `focus()`、`blur()`、`checkValidity()`、`reportValidity()` 和 `setCustomValidity()` 可通过模板 ref 使用。
+- 支持原生 `FormData`、外部 `form`、`fieldset disabled`、首个 `legend` 例外和 `form.reset()`。
+
+单选圆点、40px 状态层和 48px 命中区使用 MD3 几何；hover 使用 8% 状态层，focus／pressed 使用 12% 状态层。支持浅色／深色、语义色、十六进制种子色、RTL、reduced-motion 与 forced-colors。已提供行为、SSR、hydration 测试和独立开发预览；当前约定范围已完成本地检查与开发预览验收。新版本包消费另行验证。
+
+公共类型：`MdvRadioValue`、`MdvRadioModelValue`、`MdvRadioColor`、`MdvRadioOrientation`，均可从 mdv 主入口导入。

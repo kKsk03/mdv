@@ -22,6 +22,7 @@ const seedStyles = new Map<string, Readonly<CSSProperties>>()
 const maxCachedSeeds = 64
 const iconStyles = new WeakMap<Readonly<CSSProperties>, Readonly<CSSProperties>>()
 const checkboxStyles = new WeakMap<Readonly<CSSProperties>, Readonly<CSSProperties>>()
+const radioStyles = new WeakMap<Readonly<CSSProperties>, Readonly<CSSProperties>>()
 
 /** Checkbox 复用纯配色计算，仅暴露自身的强调色与图形色变量。 */
 export function resolveCheckboxColor(color: unknown): Readonly<CSSProperties> | undefined {
@@ -36,6 +37,21 @@ export function resolveCheckboxColor(color: unknown): Readonly<CSSProperties> | 
     '--mdv-checkbox-on-color': colors['--mdv-button-on-color'],
   })
   checkboxStyles.set(colors, style)
+  return style
+}
+
+/** Radio 复用纯配色计算，仅暴露自身的强调色变量。 */
+export function resolveRadioColor(color: unknown): Readonly<CSSProperties> | undefined {
+  const colors = resolveButtonColor(color)
+  if (!colors) return undefined
+
+  const cached = radioStyles.get(colors)
+  if (cached) return cached
+
+  const style = Object.freeze({
+    '--mdv-radio-color': colors['--mdv-button-color'],
+  })
+  radioStyles.set(colors, style)
   return style
 }
 

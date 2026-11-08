@@ -3,6 +3,14 @@ export { default as MdvIconButton } from './components/MdvIconButton.vue'
 export { default as MdvIcon } from './components/MdvIcon.vue'
 export { default as MdvTextField } from './components/MdvTextField.vue'
 export { default as MdvCheckbox } from './components/MdvCheckbox.vue'
+export { default as MdvRadio } from './components/MdvRadio.vue'
+export { default as MdvRadioGroup } from './components/MdvRadioGroup.vue'
+export type {
+  MdvRadioColor,
+  MdvRadioModelValue,
+  MdvRadioOrientation,
+  MdvRadioValue,
+} from './components/radio.types'
 export type {
   MdvCheckboxColor,
   MdvCheckboxModelValue,
