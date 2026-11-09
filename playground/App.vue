@@ -10,6 +10,7 @@ import RadioPlayground from './RadioPlayground.vue'
 import SwitchPlayground from './SwitchPlayground.vue'
 import SliderPlayground from './SliderPlayground.vue'
 import ChipPlayground from './ChipPlayground.vue'
+import SegmentedButtonPlayground from './SegmentedButtonPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -66,6 +67,12 @@ const pages = [
     label: 'Chip 纸片',
     description: '对照四类纸片、选择与删除、键盘导航、图标、配色和布局。',
     component: ChipPlayground,
+  },
+  {
+    id: 'segmented-button',
+    label: 'SegmentedButton 分段按钮',
+    description: '对照单多选、选中图标、密度、逐项键盘导航和原生表单行为。',
+    component: SegmentedButtonPlayground,
   },
   {
     id: 'theme',

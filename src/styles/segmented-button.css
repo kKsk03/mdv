@@ -1,0 +1,358 @@
+.mdv-segmented-button {
+  --mdv-segmented-button-height: 40px;
+
+  display: inline-grid;
+  min-width: 0;
+  max-width: 100%;
+  vertical-align: middle;
+  font-family: var(--mdv-sys-typescale-font-family);
+  font-size: var(--mdv-sys-typescale-label-large-size);
+  font-weight: var(--mdv-sys-typescale-label-large-weight);
+  line-height: var(--mdv-sys-typescale-label-large-line-height);
+  letter-spacing: var(--mdv-sys-typescale-label-large-tracking);
+}
+
+.mdv-segmented-button--full-width {
+  display: grid;
+  width: 100%;
+}
+
+.mdv-segmented-button__viewport {
+  min-width: 0;
+  margin-inline: -5px;
+  overflow: auto;
+  padding: 1px 5px;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--mdv-sys-color-outline) transparent;
+}
+
+.mdv-segmented-button__items {
+  display: grid;
+  width: max-content;
+  min-width: 100%;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+}
+
+.mdv-segmented-button__item {
+  --mdv-segmented-button-foreground: var(--mdv-sys-color-on-surface);
+  --mdv-segmented-button-background: transparent;
+  --mdv-segmented-button-stroke: var(--mdv-sys-color-outline);
+  --mdv-segmented-button-content-shift: 13px;
+
+  position: relative;
+  display: grid;
+  box-sizing: border-box;
+  min-width: 48px;
+  min-height: 48px;
+  align-items: center;
+  justify-items: center;
+  border-radius: 0;
+  padding-inline: 12px;
+  color: var(--mdv-segmented-button-foreground);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mdv-segmented-button__item[hidden] {
+  display: none;
+}
+
+.mdv-segmented-button__item:dir(rtl) {
+  --mdv-segmented-button-content-shift: -13px;
+}
+
+/* 焦点环独立于分段表面，中间项也保留小圆角。 */
+.mdv-segmented-button__item::after {
+  position: absolute;
+  z-index: 3;
+  inset-block-start: 50%;
+  inset-inline: -5px;
+  box-sizing: border-box;
+  height: calc(var(--mdv-segmented-button-height) + 10px);
+  border: 3px solid var(--mdv-sys-color-secondary);
+  border-radius: var(--mdv-sys-shape-corner-extra-small);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.mdv-segmented-button__item:has(.mdv-segmented-button__input:not(:disabled):focus-visible)::after {
+  content: '';
+}
+
+.mdv-segmented-button__item:nth-child(1 of .mdv-segmented-button__item:not([hidden])) {
+  border-start-start-radius: 9999px;
+  border-end-start-radius: 9999px;
+}
+
+.mdv-segmented-button__item:nth-child(1 of .mdv-segmented-button__item:not([hidden]))::after {
+  border-start-start-radius: calc(var(--mdv-segmented-button-height) / 2 + 5px);
+  border-end-start-radius: calc(var(--mdv-segmented-button-height) / 2 + 5px);
+}
+
+.mdv-segmented-button__item:nth-last-child(1 of .mdv-segmented-button__item:not([hidden])) {
+  border-start-end-radius: 9999px;
+  border-end-end-radius: 9999px;
+}
+
+.mdv-segmented-button__item:nth-last-child(1 of .mdv-segmented-button__item:not([hidden]))::after {
+  border-start-end-radius: calc(var(--mdv-segmented-button-height) / 2 + 5px);
+  border-end-end-radius: calc(var(--mdv-segmented-button-height) / 2 + 5px);
+}
+
+.mdv-segmented-button__item--selected {
+  --mdv-segmented-button-foreground: var(--mdv-sys-color-on-secondary-container);
+  --mdv-segmented-button-background: var(--mdv-sys-color-secondary-container);
+}
+
+.mdv-segmented-button__input {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: inherit;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.mdv-segmented-button__input:focus-visible {
+  outline: none;
+}
+
+.mdv-segmented-button__surface {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline: 0;
+  height: var(--mdv-segmented-button-height);
+  border-radius: inherit;
+  background-color: var(--mdv-segmented-button-background);
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: background-color var(--mdv-sys-motion-duration-short-4)
+    var(--mdv-sys-motion-easing-standard);
+}
+
+.mdv-segmented-button__surface::before,
+.mdv-segmented-button__surface::after {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  border-radius: inherit;
+  content: '';
+  pointer-events: none;
+}
+
+.mdv-segmented-button__surface::before {
+  background-color: currentColor;
+  opacity: 0;
+  transition: opacity var(--mdv-sys-motion-duration-short-2) var(--mdv-sys-motion-easing-standard);
+}
+
+.mdv-segmented-button__surface::after {
+  z-index: 1;
+  border: 1px solid var(--mdv-segmented-button-stroke);
+}
+
+/* 相邻段只由前一段绘制分隔线，避免两个 1px 边框叠成 2px。 */
+.mdv-segmented-button__item:not(:nth-child(1 of .mdv-segmented-button__item:not([hidden])))
+  .mdv-segmented-button__surface::after {
+  border-inline-start-width: 0;
+}
+
+@media (hover: hover) {
+  .mdv-segmented-button__input:not(:disabled):hover ~ .mdv-segmented-button__surface::before {
+    opacity: 0.08;
+  }
+}
+
+.mdv-segmented-button__input:not(:disabled):is(:active, :focus-visible)
+  ~ .mdv-segmented-button__surface::before {
+  opacity: 0.1;
+}
+
+.mdv-segmented-button__content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.mdv-segmented-button__item--has-label:is(
+    .mdv-segmented-button__item--has-leading,
+    .mdv-segmented-button__item--show-selected-icon
+  )
+  .mdv-segmented-button__content {
+  grid-template-columns: 18px auto;
+  column-gap: 8px;
+}
+
+.mdv-segmented-button__icon {
+  display: inline-grid;
+  width: 18px;
+  height: 18px;
+  grid-area: 1 / 1;
+  place-items: center;
+  transition:
+    opacity var(--mdv-sys-motion-duration-short-3) var(--mdv-sys-motion-easing-standard),
+    transform var(--mdv-sys-motion-duration-short-4) var(--mdv-sys-motion-easing-standard);
+}
+
+.mdv-segmented-button__icon > :is(svg, img) {
+  width: 100%;
+  height: 100%;
+}
+
+.mdv-segmented-button__label {
+  grid-area: 1 / 1;
+  white-space: nowrap;
+  transition: transform var(--mdv-sys-motion-duration-short-4) var(--mdv-sys-motion-easing-standard);
+}
+
+.mdv-segmented-button__item--has-label:is(
+    .mdv-segmented-button__item--has-leading,
+    .mdv-segmented-button__item--show-selected-icon
+  )
+  .mdv-segmented-button__label {
+  grid-column: 2;
+}
+
+.mdv-segmented-button__check {
+  opacity: 0;
+  transform: scale(0.75);
+}
+
+.mdv-segmented-button__item--selected .mdv-segmented-button__check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.mdv-segmented-button__item--selected.mdv-segmented-button__item--has-label.mdv-segmented-button__item--show-selected-icon
+  .mdv-segmented-button__leading {
+  opacity: 0;
+  transform: scale(0.75);
+}
+
+/* 提前保留选中图标所需宽度，未选中的纯文字仍以分段中心对齐。 */
+.mdv-segmented-button__item--has-label.mdv-segmented-button__item--show-selected-icon:not(
+    .mdv-segmented-button__item--has-leading
+  ):not(.mdv-segmented-button__item--selected)
+  .mdv-segmented-button__label {
+  transform: translateX(calc(-1 * var(--mdv-segmented-button-content-shift)));
+}
+
+/* 纯图标项保留原图形，选中时在旁边增加勾，不替换原含义。 */
+.mdv-segmented-button__item--has-leading.mdv-segmented-button__item--show-selected-icon:not(
+    .mdv-segmented-button__item--has-label
+  )
+  .mdv-segmented-button__content {
+  grid-template-columns: 18px 18px;
+  column-gap: 8px;
+}
+
+.mdv-segmented-button__item--has-leading:not(.mdv-segmented-button__item--has-label)
+  .mdv-segmented-button__check {
+  grid-column: 2;
+}
+
+.mdv-segmented-button__item--has-leading.mdv-segmented-button__item--show-selected-icon:not(
+    .mdv-segmented-button__item--has-label
+  ):not(.mdv-segmented-button__item--selected)
+  .mdv-segmented-button__leading {
+  transform: translateX(var(--mdv-segmented-button-content-shift));
+}
+
+.mdv-segmented-button__ripple {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.mdv-segmented-button__ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  background-color: currentColor;
+  opacity: 0.1;
+  transform: translate(-50%, -50%) scale(0);
+  animation: mdv-button-ripple 450ms var(--mdv-sys-motion-easing-standard) forwards;
+}
+
+.mdv-segmented-button__ripple--released {
+  animation: mdv-button-ripple-fade 200ms linear forwards;
+}
+
+.mdv-segmented-button__item:has(.mdv-segmented-button__input:disabled) {
+  --mdv-segmented-button-foreground: color-mix(
+    in srgb,
+    var(--mdv-sys-color-on-surface) 38%,
+    transparent
+  );
+  --mdv-segmented-button-stroke: color-mix(
+    in srgb,
+    var(--mdv-sys-color-on-surface) 12%,
+    transparent
+  );
+
+  cursor: not-allowed;
+}
+
+.mdv-segmented-button__item--selected:has(.mdv-segmented-button__input:disabled) {
+  --mdv-segmented-button-background: color-mix(
+    in srgb,
+    var(--mdv-sys-color-on-surface) 12%,
+    transparent
+  );
+}
+
+.mdv-segmented-button__input:disabled
+  ~ .mdv-segmented-button__surface
+  .mdv-segmented-button__ripple {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mdv-segmented-button__surface,
+  .mdv-segmented-button__surface::before,
+  .mdv-segmented-button__label,
+  .mdv-segmented-button__icon {
+    transition: none;
+  }
+
+  .mdv-segmented-button__ripple {
+    display: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .mdv-segmented-button__item {
+    --mdv-segmented-button-foreground: ButtonText;
+    --mdv-segmented-button-background: Canvas;
+    --mdv-segmented-button-stroke: ButtonText;
+
+    forced-color-adjust: none;
+  }
+
+  .mdv-segmented-button__item--selected {
+    --mdv-segmented-button-foreground: HighlightText;
+    --mdv-segmented-button-background: Highlight;
+  }
+
+  .mdv-segmented-button__item:has(.mdv-segmented-button__input:disabled) {
+    --mdv-segmented-button-foreground: GrayText;
+    --mdv-segmented-button-background: Canvas;
+    --mdv-segmented-button-stroke: GrayText;
+  }
+
+  .mdv-segmented-button__item::after {
+    border-color: Highlight;
+  }
+}

@@ -9,6 +9,14 @@ export { default as MdvSwitch } from './components/MdvSwitch.vue'
 export { default as MdvSlider } from './components/MdvSlider.vue'
 export { default as MdvChip } from './components/MdvChip.vue'
 export { default as MdvChipSet } from './components/MdvChipSet.vue'
+export { default as MdvSegmentedButton } from './components/MdvSegmentedButton.vue'
+export { default as MdvSegmentedButtonItem } from './components/MdvSegmentedButtonItem.vue'
+export type {
+  MdvSegmentedButtonDensity,
+  MdvSegmentedButtonModelValue,
+  MdvSegmentedButtonSelection,
+  MdvSegmentedButtonValue,
+} from './components/segmented-button.types'
 export type {
   MdvChipColor,
   MdvChipSetModelValue,

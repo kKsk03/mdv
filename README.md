@@ -3,7 +3,7 @@
 一个以 Vue 3、TypeScript 和 Tailwind CSS v4 构建的 Material Design 3 组件库。
 Tailwind 工具类由使用方安装并编译；本项目提供组件、主题入口和必要的普通 CSS。
 
-项目目前处于早期开发阶段。主题、字体、动态配色与 MdvButton 已完成本地验收及真实安装包消费验证；MdvIconButton、MdvIcon、MdvTextField、MdvCheckbox、MdvRadio、MdvSwitch、MdvSlider、MdvChip 与 MdvChipSet 已完成当前约定范围的本地检查与开发预览验收，真实包消费另行验证。正式文档站计划在独立仓库建设；本仓库使用 playground 调试组件。
+项目目前处于早期开发阶段。主题、字体、动态配色与 MdvButton 已完成本地验收及真实安装包消费验证；MdvIconButton、MdvIcon、MdvTextField、MdvCheckbox、MdvRadio、MdvSwitch、MdvSlider、MdvChip、MdvChipSet、MdvSegmentedButton 与 MdvSegmentedButtonItem 已完成当前约定范围的本地检查与开发预览验收，真实包消费另行验证。正式文档站计划在独立仓库建设；本仓库使用 playground 调试组件。
 
 ## 本地开发
 
@@ -53,6 +53,7 @@ pnpm build
 - [MdvSwitch 开关](./COMPONENTS.md#mdvswitch)
 - [MdvSlider 滑块](./COMPONENTS.md#mdvslider)
 - [MdvChip 纸片与 MdvChipSet](./COMPONENTS.md#mdvchip)
+- [MdvSegmentedButton 分段按钮](./COMPONENTS.md#mdvsegmentedbutton)
 
 ## 主题与排版
 

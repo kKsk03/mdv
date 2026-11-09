@@ -61,16 +61,25 @@ MDV 根据现行官方表格与尺寸图整理 CSS 数值，采用自己的 Vue�
 
 MDV 自行实现 Vue 组件、组选择、键盘导航、独立删除操作及焦点恢复；未引入 Material Web 运行时。图形复用下述 Material Symbols 数据，下文保留 Apache License 2.0 原文。
 
+## Material 3 Segmented Button 规格与令牌
+
+- 规格来源：https://m3.material.io/components/segmented-buttons/specs 、https://m3.material.io/components/segmented-buttons/guidelines 与 accessibility 页面。
+- 数值依据：官网传统 Segmented Button 尺寸图与 `md.comp.outlined-segmented-button` 令牌表。
+- 版权：Copyright Google LLC
+- 使用位置：`src/styles/segmented-button.css` 的尺寸、颜色角色、状态透明度、描边、密度与焦点指示器。
+
+MDV 自行实现 Vue 组件、原生 radio／checkbox、组选择、键盘和表单生命周期；没有引入其他组件运行时。内置选中勾使用下述 Material Symbols 数据，遵循 Apache License 2.0。
+
 ## Material Symbols 图标数据
 
 - 来源：https://github.com/google/material-design-icons
 - 数据分发：`@iconify-icons/material-symbols`，当前以 2.0.9 为资源基线；https://github.com/iconify/icon-sets
 - 版权：Copyright Google LLC
 - 许可：Apache License 2.0
-- 使用资源：Material Symbols 的本地 SVG 数据，包括 favorite、home、save、search 等预览图形及其填充／风格变体；文本框内置动作使用 close、visibility、visibility-off，Chip 使用 check、close。
-- 使用位置：`src/components/MdvTextField.vue`、`src/components/MdvChip.vue` 的内置动作、`playground/` 的组件预览、组件测试和 `COMPONENTS.md` 示例。
+- 使用资源：Material Symbols 的本地 SVG 数据，包括 favorite、home、save、search 等预览图形及其填充／风格变体；文本框内置动作使用 close、visibility、visibility-off，Chip 使用 check、close，Segmented Button 使用 check。
+- 使用位置：`src/components/MdvTextField.vue`、`src/components/MdvChip.vue`、`src/components/MdvSegmentedButtonItem.vue` 的内置动作、`playground/` 的组件预览、组件测试和 `COMPONENTS.md` 示例。
 
-Iconify 分发包提供可单独导入的图标数据，原始图形版权与许可归上游 Google。该包是本仓库的开发依赖；文本框与 Chip 只导入各自固定图形并随组件构建，MDV 不导入或注册整套数据。使用方无需为内置动作安装图标集；自定义图标按自己的静态导入分发，并保留相应许可。
+Iconify 分发包提供可单独导入的图标数据，原始图形版权与许可归上游 Google。该包是本仓库的开发依赖；文本框、Chip 与 Segmented Button 只导入各自固定图形并随组件构建，MDV 不导入或注册整套数据。使用方无需为内置动作安装图标集；自定义图标按自己的静态导入分发，并保留相应许可。
 
 ## Iconify Vue 渲染器
 

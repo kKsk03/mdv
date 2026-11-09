@@ -4,6 +4,7 @@
 @import './switch.css';
 @import './slider.css';
 @import './chip.css';
+@import './segmented-button.css';
 
 .mdv-icon {
   display: inline-block;

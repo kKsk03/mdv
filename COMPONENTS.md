@@ -11,6 +11,7 @@
 - [MdvSwitch 开关](#mdvswitch)
 - [MdvSlider 滑块](#mdvslider)
 - [MdvChip 纸片与 MdvChipSet](#mdvchip)
+- [MdvSegmentedButton 分段按钮](#mdvsegmentedbutton)
 
 ## MdvButton
 
@@ -848,3 +849,114 @@ MdvChip 的 class／style／dir／lang／hidden 属于外层，id／ARIA／data-
 Chip 不生成隐式表单字段，组模型由业务提交；本轮没有 required、原生字段校验、表单 reset 或自动标签输入 API。菜单、标签编辑器和拖拽排序可在后续复合组件中组合。服务端使用稳定 ID 与一个初始入口；hydration 后整理组入口，并保留已经落在组内的用户焦点。
 
 公共类型：`MdvChipVariant`、`MdvChipColor`、`MdvChipValue`、`MdvChipSetSelection`、`MdvChipSetModelValue`。
+
+## MdvSegmentedButton
+
+此组件实现传统 Material 3 Segmented Button，用于在少量相关选项中进行单选或多选。已完成当前约定范围的本地项目检查与开发预览验收，真实包消费另行验证。M3 Expressive 推荐的 Connected Button Group 将作为后续独立组件讨论。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvSegmentedButton, MdvSegmentedButtonItem } from 'mdv'
+import type { MdvSegmentedButtonModelValue } from 'mdv'
+
+const period = ref<MdvSegmentedButtonModelValue>('week')
+const details = ref<MdvSegmentedButtonModelValue>(['summary'])
+</script>
+
+<template>
+  <MdvSegmentedButton v-model="period" aria-label="时间范围" name="period">
+    <MdvSegmentedButtonItem value="day" label="日" />
+    <MdvSegmentedButtonItem value="week" label="周" />
+    <MdvSegmentedButtonItem value="month" label="月" />
+  </MdvSegmentedButton>
+
+  <MdvSegmentedButton
+    v-model="details"
+    selection="multiple"
+    aria-label="显示内容"
+    name="details"
+  >
+    <MdvSegmentedButtonItem value="summary" label="摘要" />
+    <MdvSegmentedButtonItem value="image" label="图片" />
+    <MdvSegmentedButtonItem value="date" label="日期" />
+  </MdvSegmentedButton>
+</template>
+```
+
+### 组属性与选择规则
+
+| Prop／模型 | 类型／说明 | 默认值 |
+| --- | --- | --- |
+| `modelValue`／`v-model` | 单选为 `string`／`number`／`null`；多选为 `(string \| number)[]` | `null`，多选按空数组解释 |
+| `selection` | `single`／`multiple` | `single` |
+| `selectionRequired` | 阻止用户取消最后一项；不自动选择、不校验外部模型 | 单选 `true`，多选 `false` |
+| `disabled` | 禁用全部分段 | `false` |
+| `fullWidth` | 撑满可用宽度，所有分段等宽 | `false` |
+| `density` | `0`／`-1`／`-2`／`-3`，可见高度依次 40／36／32／28px | `0` |
+| `showSelectedIcon` | 显示内置勾或自定义选中图标 | `true` |
+| `name` | 组内原生字段的提交名称 | 不提供 |
+| `form` | 原生外部表单 ID | 不提供 |
+
+单选会替换当前值。显式设置 `:selection-required="false"` 后，再次点击选中项会清空为 `null`。多选每次产生新数组，不修改传入数组；设置 `selection-required` 后可以限制至少保留一项。数字与字符串严格区分，例如 `:value="1"` 和 `value="1"` 是两个不同选项。
+
+`selectionRequired` 是交互约束，不等于 HTML `required`。外部传入空值不会被擅自改写，挂载不发出默认选择事件；需要首屏有选中项时，请初始化模型。切换单多选模式时，也应由业务将模型调整为对应类型。删除选项不会自动清理业务模型。
+
+模型更新通过 `update:modelValue` 请求父级接受；父级拒绝更新时，原生 checked 和可见状态会恢复为当前模型。程序赋值不伪造 input／change 事件。
+
+### 分段属性、插槽与图标
+
+| Prop | 类型／说明 | 默认值 |
+| --- | --- | --- |
+| `value` | 组内唯一的 `string`／`number` 标识；必需 | 无 |
+| `label` | 可见文字，默认插槽优先 | `''` |
+| `disabled` | 禁用这一分段 | `false` |
+
+`MdvSegmentedButtonItem` 必须直接放在 `MdvSegmentedButton` 中，不另设逐项 selected 模型。默认插槽、`leading` 与 `selected-icon` 插槽均接收 `{ selected }`。
+
+- 纯文字项选中时显示前置勾；未选中文字仍居中。
+- 图标加文字时，`leading` 图形与选中勾在相同位置切换。
+- 纯图标项保留 leading 图形，再在旁边显示选中勾；请提供 `aria-label` 或 `aria-labelledby`。
+- `selected-icon` 替换内置勾；组上设置 `:show-selected-icon="false"` 可完全关闭选中图标。
+- 切换选中前已预留图标所需宽度，默认插槽只渲染一次。插槽内不要嵌套按钮、链接或输入框等交互控件。
+
+```vue
+<MdvSegmentedButton v-model="view" aria-label="显示方式">
+  <MdvSegmentedButtonItem value="list" label="列表">
+    <template #leading><MdvIcon :icon="listIcon" /></template>
+  </MdvSegmentedButtonItem>
+  <MdvSegmentedButtonItem value="grid" label="网格">
+    <template #leading><MdvIcon :icon="gridIcon" /></template>
+  </MdvSegmentedButtonItem>
+</MdvSegmentedButton>
+```
+
+以上图标变量使用 [MdvIcon](#mdvicon) 的本地图标数据，内置勾无需使用方安装图标集。
+
+### 外观与键盘
+
+建议每组 2～5 个相关选项，标签简短、单行排列。默认可见高度 40px、图标 18px、左右留白至少 12px、图文间距 8px；每段实际命中区域至少 48×48px，降低 density 也保留此目标。全组各段等宽，外端全圆角、内侧直边、分隔线 1px；按压不改变圆角。窄容器保留完整标签及命中区，通过局部水平滚动容纳内容。
+
+默认未选内容使用 on-surface，描边使用 outline，选中使用 secondary-container／on-secondary-container；颜色跟随 MDV 主题角色。hover 状态层 8%，focus／pressed 为 10%；键盘焦点环使用 secondary、3px 厚、偏移 2px，中间项使用 extra-small 小圆角，两端外侧贴合胶囊轮廓。每段独立涟漪，支持 RTL、reduced-motion 与 forced-colors。
+
+单选使用 radiogroup／原生 radio，多选使用 group／原生 checkbox。通过 `aria-label` 或 `aria-labelledby` 为组命名。首次从外部进入第一可用项，与选中位置无关，之后保留当前焦点入口。MDV 支持 Tab 在组内逐项移动。
+
+- Tab／Shift+Tab 按 DOM 顺序向后／向前移动焦点，不改变选中值；跳过禁用、hidden 与 inert 项，到边界时正常离开组。
+- 左右键按当前 DOM 顺序移动，RTL 反向；上下键也可导航。
+- Home／End 到第一／最后可用项，跳过禁用、hidden 与 inert 内容。
+- 单选导航同时选择，多选导航只移动焦点；Space／Enter 激活。
+- 导航会将目标滚入视野。删除当前聚焦项后，优先聚焦下一项，到末尾时退到前一项；尊重业务已经转移的外部焦点。
+
+### 原生表单、事件与公开方法
+
+组的原生属性和监听作用于组容器。Item 的 class／style／dir／lang／hidden 属于外层标签；id、ARIA、data-* 与原生监听属于 input。type、checked、value、tabindex、name／form 由组件及组管理；不要在 Item 上单独覆盖组的 name／form。
+
+`click`、`input`、`change`、键盘及焦点监听接收实际 DOM 事件。可在 click 或键盘监听中用 `preventDefault()` 取消激活或导航；祖先取消 click 也会被尊重。允许清空的单选再次点击选中项时，由组件取消 checked 并派发一次 input 和 change，以提供完整的变更通知。组件不发起表单提交。
+
+提供 name 后，FormData 仅包含已选中、可提交的字段；多选使用同名多条记录。原生字段值按 HTML 规则序列化为字符串，组模型仍保留原始类型。不提供 name 时不会生成内部字段名或额外提交项。支持组内表单、外部 form 关联和禁用 fieldset。
+
+原生 reset 恢复组件建立时的模型快照；多选快照使用独立数组。取消 reset 会保留当前值；reset 不派发 input／change。改变 form 关联或卸载时会清理旧 reset 监听。
+
+组和 Item 均公开 `focus(options?)` 与 `blur()`。组 focus 进入当前可用入口，blur 仅影响组内焦点；Item 只操作自身 input。服务端 ID 与初始 Tab 标记稳定，hydration 保留原生节点、已有焦点以及首屏已发生的原生选择。
+
+公共类型：`MdvSegmentedButtonValue`、`MdvSegmentedButtonModelValue`、`MdvSegmentedButtonSelection`、`MdvSegmentedButtonDensity`。
