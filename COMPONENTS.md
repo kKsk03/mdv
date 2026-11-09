@@ -13,6 +13,7 @@
 - [MdvChip 纸片与 MdvChipSet](#mdvchip)
 - [MdvSegmentedButton 分段按钮](#mdvsegmentedbutton)
 - [MdvCard 卡片](#mdvcard)
+- [MdvDivider 分割线](#mdvdivider)
 
 ## MdvButton
 
@@ -1071,3 +1072,102 @@ disabled 的按钮使用原生 disabled，并支持禁用 fieldset；禁用链�
 公开 `focus(options?)` 与 `blur()`，只操作卡片自己的主操作；静态卡片调用这两个方法不会移动焦点，禁用主操作不会被 focus() 聚焦。blur() 不影响其他元素的焦点。服务端使用稳定的名称关联与原生操作结构，hydration 保留内容节点及已经落在主操作上的焦点。
 
 公共类型：`MdvCardVariant`。
+
+## MdvDivider
+
+用于内容分组的 Material 3 分割线，提供横竖方向和三种缩进。当前约定范围已完成项目检查与真实浏览器预览验收；真实包消费另行验证。
+
+```vue
+<script setup lang="ts">
+import { MdvButton, MdvDivider } from 'mdv'
+</script>
+
+<template>
+  <div class="space-y-4">
+    <p>第一组内容</p>
+    <MdvDivider />
+    <p>第二组内容</p>
+    <MdvDivider variant="inset" />
+    <p>第三组内容</p>
+    <MdvDivider variant="middle-inset" />
+    <p>第四组内容</p>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <MdvButton variant="text">编辑</MdvButton>
+    <MdvDivider orientation="vertical" style="height: 32px; align-self: center" />
+    <MdvButton variant="text">分享</MdvButton>
+  </div>
+</template>
+```
+
+### 属性与尺寸
+
+| Prop | 类型／说明 | 默认值 |
+| --- | --- | --- |
+| `orientation` | `horizontal`／`vertical` | `horizontal` |
+| `variant` | `full-width`／`inset`／`middle-inset` | `full-width` |
+| `decorative` | 是否仅作为视觉装饰 | `true` |
+
+默认厚度 1px，颜色使用 `outline-variant`，线端为直角；浅色、深色和种子色配色跟随现有主题。没有 hover、pressed、选中、禁用或加载状态，也没有内置动画。强制颜色模式下使用系统 `CanvasText` 保持线条可见。
+
+| 缩进 | 水平分割线 | 竖向分割线 |
+| --- | --- | --- |
+| `full-width` | 两端 0，占满可用宽度 | 上下 0，拉伸至父布局提供的可用高度 |
+| `inset` | 起始端 16px，末端 0 | 顶部 16px，底部 0 |
+| `middle-inset` | 起始端和末端各 16px | 上下各 16px |
+
+水平缩进使用逻辑方向，RTL 下 `inset` 自动变为右侧缩进。竖向缩进是 MDV 将同一 API 沿线条方向映射的约定，不是另一组官方竖向尺寸令牌。缩进以外没有额外外边距；周围留白由使用处的 gap、padding 或 margin 管理。
+
+水平分割线适合普通块布局、纵向 flex 或 grid。它占满父容器的可用内容宽度，单端或双端缩进会从这段宽度中扣除，不要求外层裁切溢出。
+
+竖向分割线适合横向 flex 或 grid，通过自身的 `align-self: stretch` 适应所在行的高度；父级有 `items-center` 时仍可拉伸。它不会测量 DOM 或推测页面高度。单独放在普通块布局中时，应通过 class／style 指定高度；需要居中短线时同时覆盖 align-self，如上例所示。
+
+```vue
+<!-- 跟随这一行的内容高度。 -->
+<div class="grid grid-cols-[1fr_auto_1fr] gap-4">
+  <p>较短内容</p>
+  <MdvDivider orientation="vertical" />
+  <p>另一侧的内容可以更长，分割线随网格行高拉伸。</p>
+</div>
+
+<!-- 普通块布局中明确指定线长。 -->
+<MdvDivider orientation="vertical" style="height: 48px" />
+```
+
+### 装饰与语义
+
+官方将分割线视为装饰元素，因此默认渲染普通 div，并设置 `aria-hidden="true"`，不向辅助技术重复宣读每条视觉线。
+
+需要表达结构分隔时设置 `:decorative="false"`。此时根节点提供 `role="separator"` 和与实际方向一致的 `aria-orientation`，移除装饰性 aria-hidden；可通过原生属性设置名称或描述。
+
+```vue
+<MdvDivider :decorative="false" aria-label="内容与操作区" />
+<MdvDivider
+  orientation="vertical"
+  :decorative="false"
+  aria-labelledby="sidebar-heading"
+  style="height: 48px"
+/>
+```
+
+两种模式都不主动添加 tabindex、点击动作或焦点管理。它是非交互分隔线，不能用作可拖动分割面板；内容的标题、列表和分组仍应提供自身的结构语义。
+
+### 原生属性与样式覆盖
+
+class、style、id、dir、lang、hidden、ARIA、data-* 和原生监听均透传到唯一根节点。`role`、`aria-hidden`、`aria-orientation` 由 decorative 与 orientation 管理，优先于同名原生属性；切换模式和方向会同步更新这些属性。组件没有自定义事件、插槽或额外公开方法，服务端可直接渲染相同结构，不依赖浏览器测量。
+
+默认样式位于 CSS 的 components 层，可用 Tailwind 工具类覆盖，例如竖线的 `h-12`、`self-center` 或水平分割线的 `my-4`。也可使用原生 style，特殊颜色与厚度通过局部样式或主题变量控制，不增加 color／size 属性：
+
+```vue
+<!-- 水平厚度使用 height，竖向厚度使用 width。 -->
+<MdvDivider style="height: 2px; background-color: var(--mdv-sys-color-primary)" />
+<MdvDivider orientation="vertical" style="width: 2px; height: 48px" />
+
+<!-- 一组分割线的局部颜色角色。 -->
+<div style="--mdv-sys-color-outline-variant: var(--mdv-sys-color-primary)">
+  <MdvDivider />
+</div>
+```
+
+无需单独导入新样式或安装依赖，继续使用统一的 `mdv/theme`、`mdv/styles` 入口。公共类型：`MdvDividerOrientation`、`MdvDividerVariant`。

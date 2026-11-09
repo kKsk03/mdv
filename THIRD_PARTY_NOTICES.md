@@ -79,6 +79,15 @@ MDV 自行实现 Vue 组件、原生 radio／checkbox、组选择、键盘和表
 
 MDV 自行实现 Vue 内容插槽、原生按钮／链接主操作、禁用与焦点管理，复用现有主题和涟漪能力；未引入其他 Card 运行时或新依赖。
 
+## Material 3 Divider 规格与令牌
+
+- 规格来源：https://m3.material.io/components/divider/specs 、https://m3.material.io/components/divider/guidelines 与 accessibility 页面。
+- 数值依据：官网 Divider 令牌表及 Full-width、Inset、Middle-inset 尺寸图，默认厚度 1dp、outline-variant 色，单端或双端 16dp 缩进。
+- 版权：Copyright Google LLC
+- 使用位置：`src/styles/divider.css` 的厚度、颜色角色与水平缩进。
+
+MDV 自行实现 Vue 组件、装饰／separator 语义与逻辑方向布局；竖向缩进是沿线条方向映射的 MDV 约定，未引入其他 Divider 运行时或新依赖。
+
 ## Material Symbols 图标数据
 
 - 来源：https://github.com/google/material-design-icons

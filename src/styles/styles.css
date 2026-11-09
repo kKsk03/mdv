@@ -6,6 +6,7 @@
 @import './chip.css';
 @import './segmented-button.css';
 @import './card.css';
+@import './divider.css';
 
 .mdv-icon {
   display: inline-block;

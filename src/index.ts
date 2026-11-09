@@ -12,6 +12,8 @@ export { default as MdvChipSet } from './components/MdvChipSet.vue'
 export { default as MdvSegmentedButton } from './components/MdvSegmentedButton.vue'
 export { default as MdvSegmentedButtonItem } from './components/MdvSegmentedButtonItem.vue'
 export { default as MdvCard } from './components/MdvCard.vue'
+export { default as MdvDivider } from './components/MdvDivider.vue'
+export type { MdvDividerOrientation, MdvDividerVariant } from './components/divider.types'
 export type { MdvCardVariant } from './components/card.types'
 export type {
   MdvSegmentedButtonDensity,

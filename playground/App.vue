@@ -12,6 +12,7 @@ import SliderPlayground from './SliderPlayground.vue'
 import ChipPlayground from './ChipPlayground.vue'
 import SegmentedButtonPlayground from './SegmentedButtonPlayground.vue'
 import CardPlayground from './CardPlayground.vue'
+import DividerPlayground from './DividerPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -80,6 +81,12 @@ const pages = [
     label: 'Card 卡片',
     description: '对照三种外观、内容插槽、内部操作、整卡按钮与链接、禁用和拖动视觉。',
     component: CardPlayground,
+  },
+  {
+    id: 'divider',
+    label: 'Divider 分割线',
+    description: '对照横竖方向、三种缩进、RTL、主题、语义和卡片内组合。',
+    component: DividerPlayground,
   },
   {
     id: 'theme',

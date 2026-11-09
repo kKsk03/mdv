@@ -1,0 +1,55 @@
+/* 默认样式放在组件层，允许使用方的 Tailwind 工具类覆盖尺寸与间距。 */
+@layer components {
+  .mdv-divider {
+    display: block;
+    box-sizing: border-box;
+    min-inline-size: 0;
+    min-block-size: 0;
+    flex-shrink: 0;
+    align-self: stretch;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    background-color: var(--mdv-sys-color-outline-variant);
+  }
+
+  .mdv-divider[hidden] {
+    display: none;
+  }
+
+  .mdv-divider--horizontal {
+    /* auto 会扣除逻辑外边距，缩进时不以 100% 宽度撑出容器。 */
+    inline-size: auto;
+    block-size: 1px;
+  }
+
+  .mdv-divider--vertical {
+    inline-size: 1px;
+    block-size: auto;
+  }
+
+  .mdv-divider--horizontal.mdv-divider--inset {
+    margin-inline-start: 16px;
+  }
+
+  .mdv-divider--horizontal.mdv-divider--middle-inset {
+    margin-inline: 16px;
+  }
+
+  /* 竖向缩进沿线条方向映射，不引入额外的横向留白。 */
+  .mdv-divider--vertical.mdv-divider--inset {
+    margin-block-start: 16px;
+  }
+
+  .mdv-divider--vertical.mdv-divider--middle-inset {
+    margin-block: 16px;
+  }
+
+  @media (forced-colors: active) {
+    .mdv-divider {
+      background-color: CanvasText;
+      forced-color-adjust: none;
+    }
+  }
+}
