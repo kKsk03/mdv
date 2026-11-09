@@ -70,6 +70,15 @@ MDV 自行实现 Vue 组件、组选择、键盘导航、独立删除操作及�
 
 MDV 自行实现 Vue 组件、原生 radio／checkbox、组选择、键盘和表单生命周期；没有引入其他组件运行时。内置选中勾使用下述 Material Symbols 数据，遵循 Apache License 2.0。
 
+## Material 3 Card 规格与令牌
+
+- 规格来源：https://m3.material.io/components/cards/specs 、https://m3.material.io/components/cards/guidelines 与 accessibility 页面。
+- 数值依据：官网 Elevated、Filled、Outlined Card 的尺寸图及颜色、状态层、elevation 和焦点指示器令牌表。
+- 版权：Copyright Google LLC
+- 使用位置：`src/styles/card.css` 的颜色角色、圆角、留白、状态透明度、描边与阴影。
+
+MDV 自行实现 Vue 内容插槽、原生按钮／链接主操作、禁用与焦点管理，复用现有主题和涟漪能力；未引入其他 Card 运行时或新依赖。
+
 ## Material Symbols 图标数据
 
 - 来源：https://github.com/google/material-design-icons

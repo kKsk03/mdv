@@ -11,6 +11,7 @@ import SwitchPlayground from './SwitchPlayground.vue'
 import SliderPlayground from './SliderPlayground.vue'
 import ChipPlayground from './ChipPlayground.vue'
 import SegmentedButtonPlayground from './SegmentedButtonPlayground.vue'
+import CardPlayground from './CardPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -73,6 +74,12 @@ const pages = [
     label: 'SegmentedButton 分段按钮',
     description: '对照单多选、选中图标、密度、逐项键盘导航和原生表单行为。',
     component: SegmentedButtonPlayground,
+  },
+  {
+    id: 'card',
+    label: 'Card 卡片',
+    description: '对照三种外观、内容插槽、内部操作、整卡按钮与链接、禁用和拖动视觉。',
+    component: CardPlayground,
   },
   {
     id: 'theme',

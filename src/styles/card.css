@@ -1,0 +1,303 @@
+.mdv-card {
+  --mdv-card-background: var(--mdv-sys-color-surface);
+  --mdv-card-outline: transparent;
+  --mdv-card-rest-shadow: var(--mdv-sys-elevation-level-0);
+  --mdv-card-hover-shadow: var(--mdv-sys-elevation-level-1);
+  --mdv-card-dragged-shadow: var(--mdv-sys-elevation-level-3);
+  --mdv-card-shadow: var(--mdv-card-rest-shadow);
+  --mdv-card-state-opacity: 0;
+  --mdv-card-foreground: var(--mdv-sys-color-on-surface);
+  --mdv-card-supporting-color: var(--mdv-sys-color-on-surface-variant);
+
+  position: relative;
+  display: flex;
+  isolation: isolate;
+  box-sizing: border-box;
+  min-width: 0;
+  border-radius: var(--mdv-sys-shape-corner-medium);
+  background-color: var(--mdv-card-background);
+  color: var(--mdv-card-foreground);
+  box-shadow: var(--mdv-card-shadow);
+  font-family: var(--mdv-sys-typescale-font-family);
+  font-size: var(--mdv-sys-typescale-body-medium-size);
+  font-weight: var(--mdv-sys-typescale-body-medium-weight);
+  line-height: var(--mdv-sys-typescale-body-medium-line-height);
+  letter-spacing: var(--mdv-sys-typescale-body-medium-tracking);
+  overflow-wrap: anywhere;
+  transition:
+    background-color var(--mdv-sys-motion-duration-short-4) var(--mdv-sys-motion-easing-standard),
+    box-shadow var(--mdv-sys-motion-duration-short-4) var(--mdv-sys-motion-easing-standard);
+}
+
+.mdv-card[hidden] {
+  display: none;
+}
+
+.mdv-card--outlined {
+  --mdv-card-outline: var(--mdv-sys-color-outline-variant);
+}
+
+.mdv-card--filled {
+  --mdv-card-background: var(--mdv-sys-color-surface-container-highest);
+}
+
+.mdv-card--elevated {
+  --mdv-card-background: var(--mdv-sys-color-surface-container-low);
+  --mdv-card-rest-shadow: var(--mdv-sys-elevation-level-1);
+  --mdv-card-hover-shadow: var(--mdv-sys-elevation-level-2);
+  --mdv-card-dragged-shadow: var(--mdv-sys-elevation-level-4);
+}
+
+.mdv-card--interactive {
+  min-width: 48px;
+  min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mdv-card__surface {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  color: var(--mdv-sys-color-on-surface);
+  pointer-events: none;
+}
+
+.mdv-card__surface::before {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: currentColor;
+  content: '';
+  opacity: var(--mdv-card-state-opacity);
+  transition: opacity var(--mdv-sys-motion-duration-short-2) linear;
+}
+
+/* 描边不占布局空间，状态层和涟漪可以覆盖完整外形。 */
+.mdv-card__surface::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  box-sizing: border-box;
+  border: 1px solid var(--mdv-card-outline);
+  border-radius: inherit;
+  content: '';
+}
+
+.mdv-card__content {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  border-radius: inherit;
+}
+
+.mdv-card__header,
+.mdv-card__body,
+.mdv-card__actions {
+  min-width: 0;
+  padding: 16px;
+}
+
+.mdv-card__title {
+  margin: 0;
+  font-size: var(--mdv-sys-typescale-title-medium-size);
+  font-weight: var(--mdv-sys-typescale-title-medium-weight);
+  line-height: var(--mdv-sys-typescale-title-medium-line-height);
+  letter-spacing: var(--mdv-sys-typescale-title-medium-tracking);
+}
+
+.mdv-card__subtitle {
+  margin: 0;
+  color: var(--mdv-card-supporting-color);
+}
+
+.mdv-card__title + .mdv-card__subtitle {
+  margin-block-start: 4px;
+}
+
+.mdv-card__header + .mdv-card__body,
+.mdv-card__header + .mdv-card__actions,
+.mdv-card__body + .mdv-card__actions {
+  padding-block-start: 0;
+}
+
+.mdv-card__body {
+  color: var(--mdv-card-supporting-color);
+}
+
+.mdv-card__media {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.mdv-card__media:first-child {
+  border-start-start-radius: inherit;
+  border-start-end-radius: inherit;
+}
+
+.mdv-card__media:last-child {
+  border-end-start-radius: inherit;
+  border-end-end-radius: inherit;
+}
+
+.mdv-card__media > :is(img, picture, video),
+.mdv-card__media > picture > img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.mdv-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-block-start: auto;
+}
+
+/* 原生操作层与内容为兄弟节点，避免在 button 中嵌套标题、段落和媒体。 */
+.mdv-card__primary {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: inherit;
+  padding: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  appearance: none;
+}
+
+@media (hover: hover) {
+  .mdv-card--interactive:where(:has(> .mdv-card__primary:hover)) {
+    --mdv-card-shadow: var(--mdv-card-hover-shadow);
+    --mdv-card-state-opacity: 0.08;
+  }
+}
+
+.mdv-card:where(:has(> .mdv-card__primary:focus-visible, > .mdv-card__primary:active)) {
+  --mdv-card-shadow: var(--mdv-card-rest-shadow);
+  --mdv-card-state-opacity: 0.1;
+}
+
+.mdv-card:where(:has(> .mdv-card__primary:focus-visible)) {
+  outline: 3px solid var(--mdv-sys-color-secondary);
+  outline-offset: 2px;
+}
+
+.mdv-card--outlined:where(:has(> .mdv-card__primary:focus-visible)) {
+  --mdv-card-outline: var(--mdv-sys-color-on-surface);
+}
+
+.mdv-card:where(.mdv-card--dragged) {
+  --mdv-card-shadow: var(--mdv-card-dragged-shadow);
+  --mdv-card-state-opacity: 0.16;
+}
+
+.mdv-card:where(.mdv-card--disabled, :has(> .mdv-card__primary:disabled)) {
+  --mdv-card-foreground: color-mix(in srgb, var(--mdv-sys-color-on-surface) 38%, transparent);
+  --mdv-card-supporting-color: var(--mdv-card-foreground);
+  --mdv-card-state-opacity: 0;
+  --mdv-card-shadow: var(--mdv-card-rest-shadow);
+
+  outline: none;
+}
+
+.mdv-card--elevated:where(.mdv-card--disabled, :has(> .mdv-card__primary:disabled)) {
+  --mdv-card-background: color-mix(in srgb, var(--mdv-sys-color-surface) 38%, transparent);
+}
+
+.mdv-card--filled:where(.mdv-card--disabled, :has(> .mdv-card__primary:disabled)) {
+  --mdv-card-background: color-mix(in srgb, var(--mdv-sys-color-on-surface) 38%, transparent);
+}
+
+.mdv-card--outlined:where(.mdv-card--disabled, :has(> .mdv-card__primary:disabled)) {
+  --mdv-card-outline: color-mix(in srgb, var(--mdv-sys-color-outline) 12%, transparent);
+}
+
+.mdv-card__primary:disabled,
+.mdv-card--disabled > .mdv-card__primary {
+  cursor: not-allowed;
+}
+
+.mdv-card__ripple {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.mdv-card__ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  background-color: currentColor;
+  opacity: 0.1;
+  transform: translate(-50%, -50%) scale(0);
+  animation: mdv-button-ripple 450ms var(--mdv-sys-motion-easing-standard) forwards;
+}
+
+.mdv-card__ripple--released {
+  animation: mdv-button-ripple-fade 200ms linear forwards;
+}
+
+.mdv-card:where(.mdv-card--disabled, :has(> .mdv-card__primary:disabled)) .mdv-card__ripple {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mdv-card,
+  .mdv-card__surface,
+  .mdv-card__surface::before {
+    transition: none;
+  }
+
+  .mdv-card__ripple {
+    display: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .mdv-card {
+    --mdv-card-background: Canvas;
+    --mdv-card-foreground: CanvasText;
+    --mdv-card-supporting-color: CanvasText;
+    --mdv-card-outline: CanvasText;
+
+    box-shadow: none;
+  }
+
+  .mdv-card__surface {
+    forced-color-adjust: none;
+  }
+
+  .mdv-card__surface::before,
+  .mdv-card__ripple {
+    display: none;
+  }
+
+  .mdv-card:where(.mdv-card--disabled, :has(> .mdv-card__primary:disabled)) {
+    --mdv-card-background: Canvas;
+    --mdv-card-foreground: GrayText;
+    --mdv-card-supporting-color: GrayText;
+    --mdv-card-outline: GrayText;
+  }
+
+  .mdv-card:has(> .mdv-card__primary:focus-visible) {
+    outline-color: Highlight;
+  }
+}

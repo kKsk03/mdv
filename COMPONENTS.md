@@ -12,6 +12,7 @@
 - [MdvSlider 滑块](#mdvslider)
 - [MdvChip 纸片与 MdvChipSet](#mdvchip)
 - [MdvSegmentedButton 分段按钮](#mdvsegmentedbutton)
+- [MdvCard 卡片](#mdvcard)
 
 ## MdvButton
 
@@ -960,3 +961,113 @@ const details = ref<MdvSegmentedButtonModelValue>(['summary'])
 组和 Item 均公开 `focus(options?)` 与 `blur()`。组 focus 进入当前可用入口，blur 仅影响组内焦点；Item 只操作自身 input。服务端 ID 与初始 Tab 标记稳定，hydration 保留原生节点、已有焦点以及首屏已发生的原生选择。
 
 公共类型：`MdvSegmentedButtonValue`、`MdvSegmentedButtonModelValue`、`MdvSegmentedButtonSelection`、`MdvSegmentedButtonDensity`。
+
+## MdvCard
+
+提供 Material 3 的 Outlined、Filled 与 Elevated 三种外观，默认 Outlined。当前约定范围已通过本地项目检查与开发预览验收；真实包消费另行验证。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvButton, MdvCard } from 'mdv'
+
+const opens = ref(0)
+const saved = ref(false)
+</script>
+
+<template>
+  <!-- 静态容器：内部可以放按钮、链接和选择控件。 -->
+  <MdvCard title="周末旅行" subtitle="附近的目的地">
+    <p>沿湖边步道寻找一处适合停留的地方。</p>
+    <template #actions>
+      <MdvButton variant="text" @click="saved = !saved">
+        {{ saved ? '已收藏' : '收藏' }}
+      </MdvButton>
+    </template>
+  </MdvCard>
+
+  <!-- 整卡按钮：内容中不再嵌套其他操作。 -->
+  <MdvCard variant="filled" title="打开行程" clickable @click="opens++">
+    <p>整个表面均可点击。已打开 {{ opens }} 次。</p>
+  </MdvCard>
+
+  <!-- 整卡原生链接：保留中键、新标签页和复制地址等能力。 -->
+  <MdvCard
+    variant="elevated"
+    title="旅行指南"
+    href="/guide"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <p>打开完整指南。</p>
+  </MdvCard>
+</template>
+```
+
+### 属性
+
+| Prop | 类型／说明 | 默认值 |
+| --- | --- | --- |
+| `variant` | `outlined`／`filled`／`elevated` | `outlined` |
+| `title` | 内置标题；header 插槽存在时由插槽接管 | `''` |
+| `subtitle` | 内置副标题；header 插槽存在时由插槽接管 | `''` |
+| `clickable` | 开启整卡原生按钮操作 | `false` |
+| `href` | 提供地址时开启整卡原生链接，优先于 clickable；空字符串也生效 | 不提供 |
+| `disabled` | 禁用整卡主操作；静态卡片的子控件由各自 disabled 管理 | `false` |
+| `dragged` | 外部控制的拖动视觉 | `false` |
+
+卡片宽高由使用方布局和内容决定，没有尺寸档位或固定媒体比例。默认圆角 12px，文字与操作区域留白 16px；相邻文字区域不重复叠加纵向留白。标题使用 Title Medium，正文及副标题使用 Body Medium。需要其他标题级别或布局时使用插槽和应用样式。
+
+三种外观分别使用 surface／outline-variant、surface-container-highest、surface-container-low。静态卡片不增加整卡 hover 或涟漪；整卡主操作提供 hover、pressed、focus-visible 和涟漪，按压不改变圆角。hover 状态层为 8%，focus／pressed 为 10%；焦点环使用 secondary、3px 厚、外偏移 2px。
+
+Outlined／Filled 常态、聚焦和按压使用 elevation 0，hover 为 1，dragged 为 3；Elevated 对应为 1、2、4。dragged 状态层为 16%。禁用按变体分别处理背景、文字、描边与阴影，不使用整卡 opacity。所有外观跟随既有主题及动态配色，支持 reduced-motion、forced-colors 和 RTL。
+
+### 插槽与组合
+
+| 插槽 | 用途 |
+| --- | --- |
+| `header` | 接管内置 title／subtitle 区域，可放自定义标题、头像等 |
+| `media` | 图片、视频或其他媒体，默认不留内边距、不强制比例 |
+| 默认插槽 | 正文，默认留白 16px |
+| `actions` | 静态卡片内的独立操作；默认末端对齐、间隔 8px、空间不足时换行 |
+
+内容顺序是 header → media → 默认插槽 → actions，未提供的区域不渲染。媒体位于卡片首端或末端时，自动沿对应外角裁切；外部焦点环保留在裁切区域之外。图片默认占满媒体宽度并按自身比例显示，需要裁切或固定比例时由使用方设置。装饰图片应提供空 alt，有信息的图片提供相应替代文本。
+
+```vue
+<MdvCard variant="elevated">
+  <template #media>
+    <img src="/images/lake.jpg" alt="群山环绕的湖泊" />
+  </template>
+  <h3 class="text-mdv-title-large text-mdv-on-surface">湖畔小屋</h3>
+  <p class="mt-2">自然高度的正文与媒体。</p>
+  <template #actions>
+    <MdvButton variant="text">查看详情</MdvButton>
+  </template>
+</MdvCard>
+```
+
+静态卡片适合包含按钮、链接、输入和选择控件，也允许选择正文。整卡主操作卡片只有一个操作目标；不要在它的任何插槽中再放独立交互控件或带 controls 的媒体。开发环境会提示此类组合，应改用静态卡片及内部独立操作。
+
+`dragged` 只负责状态层与阴影，不添加 HTML draggable，不处理指针拖动、排序、滑动删除或自动选中。拖动生命周期和替代键盘操作由业务或后续专用能力管理。
+
+### 原生语义、名称与属性
+
+未开启 clickable 且未提供 href 时，卡片是普通 div 容器，不添加按钮角色或 Tab 入口。仅绑定 `@click` 不会自动开启整卡交互。需要 article、列表项或其他结构语义时，在外部按内容组织。
+
+clickable 使用原生 button，固定 `type="button"`，避免在表单中意外提交；href 使用原生 a，不默认新开页面，target、rel、download、hreflang、referrerpolicy 等按原生规则透传。组件不引入路由依赖。
+
+主操作在 DOM 中与内容为兄弟节点并覆盖整卡，避免把块级正文和媒体嵌套进 button。内置 title 通过稳定 ID 自动提供主操作的 aria-labelledby；显式 aria-label／aria-labelledby 优先。自定义 header、仅媒体或没有 title 的主操作卡片必须自行提供可访问名称；开发环境会提示缺失名称。默认 title 是段落，不擅自决定页面标题层级，语义标题可在 header 插槽中使用 h2／h3。
+
+交互卡片的属性分流如下：
+
+- id、class、style、dir、lang、hidden、inert 与 data-* 放在外层卡片容器，用于布局、主题与定位。
+- ARIA、tabindex、原生操作属性和原生事件监听放在内部主操作 button／a 上。type 始终由组件管理。
+- 静态卡片的原生属性和事件监听均位于外层 div。
+
+click、键盘、焦点及指针监听接收原始 DOM 事件，不重复派发 click。可以通过原生 `preventDefault()` 取消点击／导航；键盘激活遵循 button 的 Enter／Space 与链接的 Enter 规则。
+
+disabled 的按钮使用原生 disabled，并支持禁用 fieldset；禁用链接移除 href，保留 link 角色和名称，设置 aria-disabled、tabindex=-1 并阻止激活。恢复时还原链接属性和监听。disabled 不禁用静态卡片内部的按钮，也不对媒体整体降低透明度；内部控件和媒体效果按各自需要处理。
+
+公开 `focus(options?)` 与 `blur()`，只操作卡片自己的主操作；静态卡片调用这两个方法不会移动焦点，禁用主操作不会被 focus() 聚焦。blur() 不影响其他元素的焦点。服务端使用稳定的名称关联与原生操作结构，hydration 保留内容节点及已经落在主操作上的焦点。
+
+公共类型：`MdvCardVariant`。

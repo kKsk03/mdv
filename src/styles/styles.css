@@ -5,6 +5,7 @@
 @import './slider.css';
 @import './chip.css';
 @import './segmented-button.css';
+@import './card.css';
 
 .mdv-icon {
   display: inline-block;
