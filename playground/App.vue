@@ -9,6 +9,7 @@ import CheckboxPlayground from './CheckboxPlayground.vue'
 import RadioPlayground from './RadioPlayground.vue'
 import SwitchPlayground from './SwitchPlayground.vue'
 import SliderPlayground from './SliderPlayground.vue'
+import ChipPlayground from './ChipPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -59,6 +60,12 @@ const pages = [
     label: 'Slider 滑块',
     description: '对照单值、中心与范围滑块，检查尺寸、拖动、键盘、配色和表单。',
     component: SliderPlayground,
+  },
+  {
+    id: 'chip',
+    label: 'Chip 纸片',
+    description: '对照四类纸片、选择与删除、键盘导航、图标、配色和布局。',
+    component: ChipPlayground,
   },
   {
     id: 'theme',

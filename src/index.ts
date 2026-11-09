@@ -7,6 +7,15 @@ export { default as MdvRadio } from './components/MdvRadio.vue'
 export { default as MdvRadioGroup } from './components/MdvRadioGroup.vue'
 export { default as MdvSwitch } from './components/MdvSwitch.vue'
 export { default as MdvSlider } from './components/MdvSlider.vue'
+export { default as MdvChip } from './components/MdvChip.vue'
+export { default as MdvChipSet } from './components/MdvChipSet.vue'
+export type {
+  MdvChipColor,
+  MdvChipSetModelValue,
+  MdvChipSetSelection,
+  MdvChipValue,
+  MdvChipVariant,
+} from './components/chip.types'
 export type {
   MdvSliderColor,
   MdvSliderModelValue,

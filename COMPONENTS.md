@@ -10,6 +10,7 @@
 - [MdvRadio 单选框](#mdvradio)
 - [MdvSwitch 开关](#mdvswitch)
 - [MdvSlider 滑块](#mdvslider)
+- [MdvChip 纸片与 MdvChipSet](#mdvchip)
 
 ## MdvButton
 
@@ -742,3 +743,108 @@ stops 开启时，手柄及轨道在拖动、点击和键盘切换档位时保�
 公开方法为 `focus(options?, thumb?)` 与 `blur()`；thumb 为 `'start'` 或 `'end'`，默认 start，普通模式忽略 end。SSR 输出原生数值与稳定 ID；hydration 前用户改值保留的自动化用例已随本轮单测通过。
 
 公共类型：`MdvSliderModelValue`、`MdvSliderVariant`、`MdvSliderSize`、`MdvSliderOrientation`、`MdvSliderColor`、`MdvSliderThumb`。
+
+## MdvChip
+
+按 [Material 3 Chip 规格](https://m3.material.io/components/chips/specs)实现四类纸片及 MdvChipSet。当前约定范围已完成项目检查与开发预览验收；提供行为／SSR／hydration 用例和独立预览，真实安装包消费验证随发布准备安排。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvChip, MdvChipSet } from 'mdv'
+import type { MdvChipSetModelValue } from 'mdv'
+
+const filters = ref<MdvChipSetModelValue>(['image'])
+const tags = ref(['设计讨论', '发布准备'])
+</script>
+
+<template>
+  <MdvChipSet label="快捷操作">
+    <MdvChip label="查看指南" href="/guide" target="_blank" rel="noopener noreferrer" />
+    <MdvChip variant="suggestion" label="稍后回复" />
+  </MdvChipSet>
+
+  <MdvChipSet v-model="filters" selection="multiple" label="筛选内容">
+    <MdvChip variant="filter" value="image" label="图片" />
+    <MdvChip variant="filter" value="video" label="视频" />
+    <MdvChip variant="filter" value="recent" label="最近一周" />
+  </MdvChipSet>
+
+  <MdvChipSet label="任务标签">
+    <MdvChip
+      v-for="tag in tags"
+      :key="tag"
+      variant="input"
+      :label="tag"
+      @remove="tags = tags.filter(item => item !== tag)"
+    />
+  </MdvChipSet>
+</template>
+```
+
+### MdvChip 属性
+
+| Prop／模型 | 类型／说明 | 默认值 |
+| --- | --- | --- |
+| `variant` | `assist`／`filter`／`input`／`suggestion`，表示用途 | `assist` |
+| `label` | 标签及默认删除名称的来源；默认插槽优先显示 | `''` |
+| `elevated` | Assist、Filter、Suggestion 的抬升外观；Input 忽略此项 | `false` |
+| `selected`／`v-model:selected` | Filter／Input 的选中状态 | 未提供时内部从 `false` 开始 |
+| `selectable` | 点击主体请求切换选中；Assist／Suggestion 不参与选择 | Filter 为 `true`，Input 为 `false` |
+| `removable` | 显示并启用尾部删除；仅 Filter／Input 可用 | Input 为 `true`，Filter 为 `false` |
+| `removeOnly` | Input 整颗纸片只执行删除，合为一个焦点目标；须同时允许删除 | `false` |
+| `removeLabel` | 删除动作的独立可访问名称 | `删除${label}` |
+| `disabled` | 禁用主体和删除操作 | `false` |
+| `color` | 七种现有语义色或 `#RGB`／`#RRGGBB` 种子色 | 保留官方默认角色 |
+| `value` | `string`／`number`；在 ChipSet 的单多选模式中标识可选择的 Filter | 不提供 |
+| `href` | Assist／Suggestion 的原生链接地址 | 不提供 |
+
+Assist 执行上下文操作，Suggestion 提供建议；Filter 用来筛选，选中时显示前置勾；Input 表示已输入的标签、文件或联系人。Input 默认主体点击只执行外部业务操作；显式开启 `selectable` 后才自动请求切换选中，选中不自动增加 Filter 的勾。普通按钮固定使用 `type="button"`。
+
+独立 Filter 或可选择的 Input 可以绑定 `v-model:selected`。未提供 selected 时内部维护选中；显式传入 selected 后以传入值为准，`update:selected` 请求父级更新，父级拒绝时不会保留虚假的选中状态。使用方的原生 click 监听先于选择处理，可以通过 `preventDefault()` 取消这次选择。关闭 selectable 后仍可通过 selected 呈现业务管理的状态。
+
+`href` 为 Assist／Suggestion 启用 `<a>`；`target`、`rel`、`download` 等原生属性透传，不默认新开页。Filter／Input 忽略 href，并在开发环境提示。禁用链接移除地址，设置 link 语义、aria-disabled 与 tabindex，阻止激活；恢复后还原地址。
+
+### 内容、外观与删除
+
+- 默认插槽自定义标签，接收 `{ selected }`。
+- `leading` 提供前置图标，接收 `{ selected }`；Filter 选中后平滑切换为内置 Material Symbols 勾，预留区域随状态展开／收回。
+- `avatar` 仅供 Input 使用，优先于 leading，呈现 24px 圆形内容。
+- `trailing` 在可删除的 Chip 中替换关闭图形，删除按钮和事件仍由组件管理；在不可删除的 Filter／Input 中作为主体末端的装饰图标，例如菜单箭头。Assist／Suggestion 不提供尾部操作。
+- 图标和头像隐藏于辅助技术；插槽内使用 MdvIcon 或图片，不嵌套交互控件。
+
+优先使用简短标签。窄容器中标签单行省略，完整文字仍留在 DOM 中。复杂默认插槽应同时提供准确的 label 或 removeLabel，保证服务端已有明确删除名称；仅有插槽文字时，挂载后从实际文字补全名称，服务端回退“删除此项”。
+
+默认可见高度 32px、圆角 8px、图标 18px，使用现有 Label Large 排版。Assist／Filter／Suggestion 的文字侧为 16px、图标侧为 8px；Input 无前置内容时起始留白 12px，头像侧 4px，内容之间 8px。圆角不随选中或按压改变。
+
+交互区域占据实际布局空间，高度至少 48px。具有主操作与删除操作时，两者各自保留至少 48px 宽度，最小可见宽度 88px；尾端另有透明命中空间，使关闭图标到文字及可见边缘仍各为 8px。相邻 Chip 的交互区域不会相互覆盖，可见间距可能大于 8px。
+
+默认描边使用 outline-variant，Assist 文字使用 on-surface，其他类型使用 on-surface-variant；Filter／Input 选中使用 secondary-container 与 on-secondary-container。color 是 MDV 扩展：显式提供时用局部色系的主色、container 和 on-container，种子色沿用现有 HCT 计算及缓存，不改写全局主题。
+
+hover 状态层为 8%，focus／pressed 为 10%。抬升款常态为 elevation 1（1dp），hover 为 elevation 2（3dp），focus／pressed 回到 elevation 1；普通已选中 Filter hover 时为 elevation 1。禁用内容按 on-surface 38%、适用的描边／容器按 12% 分别处理。支持键盘焦点环、涟漪、reduced-motion 和 forced-colors。
+
+独立删除按钮使用 18px 图标和居中的 24px 圆形状态层；删除焦点环贴着该圆形区域绘制，实际点击区域仍为 48px。
+
+`remove` 接收原始 MouseEvent 或 KeyboardEvent，只表示删除请求，由使用方修改数据。点击关闭按钮不会触发主体 click 或切换选中；组件不会自行删除节点。聚焦 Input 主体或关闭按钮时，可用 Delete／Backspace 请求删除；重复按键与 Ctrl／Alt／Meta 组合不重复请求。removeOnly 开启后，整颗 Input 只有一个可访问名称与焦点目标。
+
+### MdvChipSet
+
+| Prop／模型 | 类型／说明 | 默认值 |
+| --- | --- | --- |
+| `selection` | `none`／`single`／`multiple` | `none` |
+| `modelValue`／`v-model` | single 为 `string`／`number`／`null`，multiple 为相应数组 | 未选，显示时按模式解释 |
+| `label`／`label` 插槽 | 组名称；插槽优先 | `''` |
+| `disabled` | 禁用所有子 Chip 的操作 | `false` |
+| `scrollable` | 单行水平滚动；关闭时自动换行 | `false` |
+
+默认 selection=none 只负责排列与焦点，子项的 selected 各自管理。single／multiple 接管可选择 Filter 的状态，子项须提供唯一 value，不另外绑定子项 selected。Input、Assist、Suggestion 与 selectable=false 的动作不由组模型管理。字符串与数字严格区分；单选允许再次点击取消，取消后为 null；多选每次发出新数组，不修改原数组。不在挂载时补发模型更新。
+
+组使用 toolbar 与原生 button／a 语义，可选择动作使用 aria-pressed。使用 label、label 插槽、aria-label 或 aria-labelledby 提供组名称。Tab 进入组内唯一入口，初始优先已选中项；左右方向键按 DOM 顺序经过主操作及删除操作，跳过禁用项，RTL 反向；Home／End 到首尾。导航只移动焦点，Space／Enter 才激活。独立使用 Chip 时，两个操作分别进入原生 Tab 顺序。
+
+删除当前聚焦项后，等父级实际移除节点，再聚焦下一个可用项，末尾则回到前一个；全部移除后聚焦组容器。使用稳定且唯一的 Vue key。若业务处理器已将焦点转移到其他控件，组尊重该落点。单行滚动模式下，键盘导航会让目标滚入视野。
+
+MdvChip 的 class／style／dir／lang／hidden 属于外层，id／ARIA／data-* 和原生事件属于主体；删除动作通过 remove／removeLabel 管理。MdvChipSet 的原生属性和监听属于组容器。两者公开 `focus(options?)` 与 `blur()`；blur 只影响自身拥有的焦点。
+
+Chip 不生成隐式表单字段，组模型由业务提交；本轮没有 required、原生字段校验、表单 reset 或自动标签输入 API。菜单、标签编辑器和拖拽排序可在后续复合组件中组合。服务端使用稳定 ID 与一个初始入口；hydration 后整理组入口，并保留已经落在组内的用户焦点。
+
+公共类型：`MdvChipVariant`、`MdvChipColor`、`MdvChipValue`、`MdvChipSetSelection`、`MdvChipSetModelValue`。

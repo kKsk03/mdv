@@ -3,6 +3,7 @@
 @import './radio.css';
 @import './switch.css';
 @import './slider.css';
+@import './chip.css';
 
 .mdv-icon {
   display: inline-block;

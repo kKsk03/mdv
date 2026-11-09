@@ -51,16 +51,26 @@ MDV 用 Vue 与原生 checkbox 实现自己的模型、标签、辅助说明、�
 
 MDV 根据现行官方表格与尺寸图整理 CSS 数值，采用自己的 Vue、原生 range 与指针事件实现；未引入 Compose 或其他 Slider 运行时。下文保留 Apache License 2.0 原文。
 
+## Material 3 Chip 规格与令牌
+
+- 规格来源：https://m3.material.io/components/chips/specs 、https://m3.material.io/components/chips/guidelines 与 accessibility 页面。
+- 数值依据：官网当前发布的四类 Chip 尺寸图与页面令牌表，交叉核对 Google Material Web 的 chips 目录。
+- 版权：Copyright Google LLC
+- Google Material Web 许可：Apache License 2.0
+- 使用位置：`src/styles/chip.css` 的尺寸、颜色角色、状态透明度、抬升与禁用数值。
+
+MDV 自行实现 Vue 组件、组选择、键盘导航、独立删除操作及焦点恢复；未引入 Material Web 运行时。图形复用下述 Material Symbols 数据，下文保留 Apache License 2.0 原文。
+
 ## Material Symbols 图标数据
 
 - 来源：https://github.com/google/material-design-icons
 - 数据分发：`@iconify-icons/material-symbols`，当前以 2.0.9 为资源基线；https://github.com/iconify/icon-sets
 - 版权：Copyright Google LLC
 - 许可：Apache License 2.0
-- 使用资源：Material Symbols 的本地 SVG 数据，包括 favorite、home、save、search 等预览图形及其填充／风格变体；文本框内置动作使用 close、visibility、visibility-off。
-- 使用位置：`src/components/MdvTextField.vue` 的内置动作、`playground/` 的组件预览、组件测试和 `COMPONENTS.md` 示例。
+- 使用资源：Material Symbols 的本地 SVG 数据，包括 favorite、home、save、search 等预览图形及其填充／风格变体；文本框内置动作使用 close、visibility、visibility-off，Chip 使用 check、close。
+- 使用位置：`src/components/MdvTextField.vue`、`src/components/MdvChip.vue` 的内置动作、`playground/` 的组件预览、组件测试和 `COMPONENTS.md` 示例。
 
-Iconify 分发包提供可单独导入的图标数据，原始图形版权与许可归上游 Google。该包是本仓库的开发依赖；文本框只导入三个固定图形并随组件构建，MDV 不导入或注册整套数据。使用方无需为文本框内置动作安装图标集；自定义图标按自己的静态导入分发，并保留相应许可。
+Iconify 分发包提供可单独导入的图标数据，原始图形版权与许可归上游 Google。该包是本仓库的开发依赖；文本框与 Chip 只导入各自固定图形并随组件构建，MDV 不导入或注册整套数据。使用方无需为内置动作安装图标集；自定义图标按自己的静态导入分发，并保留相应许可。
 
 ## Iconify Vue 渲染器
 

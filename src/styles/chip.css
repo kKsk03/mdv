@@ -1,0 +1,470 @@
+.mdv-chip {
+  --mdv-chip-color: var(--mdv-sys-color-primary);
+  --mdv-chip-container-color: var(--mdv-sys-color-secondary-container);
+  --mdv-chip-on-container-color: var(--mdv-sys-color-on-secondary-container);
+  --mdv-chip-foreground: var(--mdv-sys-color-on-surface-variant);
+  --mdv-chip-leading-color: var(--mdv-chip-foreground);
+  --mdv-chip-focus-outline: var(--mdv-sys-color-on-surface-variant);
+  --mdv-chip-background: transparent;
+  --mdv-chip-outline: var(--mdv-sys-color-outline-variant);
+  --mdv-chip-shadow: var(--mdv-sys-elevation-level-0);
+  --mdv-chip-start: 16px;
+  --mdv-chip-end: 16px;
+  --mdv-chip-visual-end: 0px;
+
+  position: relative;
+  display: inline-grid;
+  box-sizing: border-box;
+  height: 48px;
+  min-width: 48px;
+  max-width: 100%;
+  flex: none;
+  grid-template-columns: minmax(0, 1fr);
+  color: var(--mdv-chip-foreground);
+  font-family: var(--mdv-sys-typescale-font-family);
+  font-size: var(--mdv-sys-typescale-label-large-size);
+  font-weight: var(--mdv-sys-typescale-label-large-weight);
+  line-height: var(--mdv-sys-typescale-label-large-line-height);
+  letter-spacing: var(--mdv-sys-typescale-label-large-tracking);
+  vertical-align: middle;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mdv-chip--assist {
+  --mdv-chip-foreground: var(--mdv-sys-color-on-surface);
+  --mdv-chip-leading-color: var(--mdv-chip-color);
+  --mdv-chip-focus-outline: var(--mdv-sys-color-on-surface);
+}
+
+.mdv-chip[hidden] {
+  display: none;
+}
+
+.mdv-chip--input {
+  --mdv-chip-start: 12px;
+}
+
+.mdv-chip--has-leading {
+  --mdv-chip-start: 8px;
+}
+
+.mdv-chip--avatar {
+  --mdv-chip-start: 4px;
+}
+
+.mdv-chip--has-trailing {
+  --mdv-chip-end: 8px;
+}
+
+.mdv-chip--elevated {
+  --mdv-chip-background: var(--mdv-sys-color-surface-container-low);
+  --mdv-chip-outline: transparent;
+  --mdv-chip-shadow: var(--mdv-sys-elevation-level-1);
+}
+
+.mdv-chip--colored {
+  --mdv-chip-foreground: var(--mdv-chip-color);
+  --mdv-chip-leading-color: var(--mdv-chip-color);
+  --mdv-chip-outline: var(--mdv-chip-color);
+  --mdv-chip-focus-outline: var(--mdv-chip-color);
+}
+
+.mdv-chip--colored:where(.mdv-chip--elevated) {
+  --mdv-chip-outline: transparent;
+}
+
+.mdv-chip--selected {
+  --mdv-chip-background: var(--mdv-chip-container-color);
+  --mdv-chip-foreground: var(--mdv-chip-on-container-color);
+  --mdv-chip-leading-color: var(--mdv-chip-on-container-color);
+  --mdv-chip-outline: transparent;
+}
+
+.mdv-chip--two-actions {
+  --mdv-chip-end: 4px;
+  --mdv-chip-visual-end: 18px;
+
+  /* 两个 48px 命中区互不重叠；尾端留出命中空间，保持图标到文字／框缘各 8px。 */
+  min-width: 106px;
+  grid-template-columns: minmax(58px, 1fr) 48px;
+}
+
+.mdv-chip__surface {
+  position: absolute;
+  z-index: 0;
+  inset-block: 8px;
+  inset-inline: 0 var(--mdv-chip-visual-end);
+  overflow: hidden;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: var(--mdv-sys-shape-corner-small);
+  background-color: var(--mdv-chip-background);
+  box-shadow: var(--mdv-chip-shadow);
+  pointer-events: none;
+  transition:
+    background-color var(--mdv-sys-motion-duration-short-4) var(--mdv-sys-motion-easing-standard),
+    box-shadow var(--mdv-sys-motion-duration-short-4) var(--mdv-sys-motion-easing-standard);
+}
+
+/* 描边独立绘制，让状态层与涟漪覆盖容器全幅，避免透明边框形成浅色外圈。 */
+.mdv-chip__surface::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  box-sizing: border-box;
+  border: 1px solid var(--mdv-chip-outline);
+  border-radius: inherit;
+  content: '';
+  pointer-events: none;
+  transition: border-color var(--mdv-sys-motion-duration-short-4)
+    var(--mdv-sys-motion-easing-standard);
+}
+
+.mdv-chip__primary,
+.mdv-chip__remove {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  box-sizing: border-box;
+  height: 48px;
+  min-width: 48px;
+  align-items: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+  appearance: none;
+}
+
+.mdv-chip__primary {
+  min-width: 0;
+  grid-area: 1 / 1;
+  padding-block: 8px;
+  padding-inline: var(--mdv-chip-start) var(--mdv-chip-end);
+  transition: padding-inline-start var(--mdv-sys-motion-duration-short-4)
+    var(--mdv-sys-motion-easing-standard);
+}
+
+.mdv-chip__remove {
+  width: 48px;
+  grid-area: 1 / 2;
+  padding-inline: 4px 26px;
+}
+
+.mdv-chip__surface::before,
+.mdv-chip__remove-surface::before {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: currentColor;
+  content: '';
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--mdv-sys-motion-duration-short-2) var(--mdv-sys-motion-easing-standard);
+}
+
+.mdv-chip__remove-surface {
+  position: absolute;
+  /* 18px 图标外围各留 3px，状态层保持 24px 并与图标中心对齐。 */
+  inset-block: 12px;
+  inset-inline-start: 1px;
+  width: 24px;
+  overflow: hidden;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .mdv-chip:not(.mdv-chip--disabled):not(:has(.mdv-chip__primary:disabled)):has(
+      .mdv-chip__primary:hover
+    )
+    .mdv-chip__surface::before,
+  .mdv-chip__remove:not(:disabled):hover .mdv-chip__remove-surface::before {
+    opacity: 0.08;
+  }
+
+  .mdv-chip:where(.mdv-chip--elevated):not(.mdv-chip--disabled):not(
+      :has(.mdv-chip__primary:disabled)
+    ):has(.mdv-chip__primary:hover) {
+    --mdv-chip-shadow: var(--mdv-sys-elevation-level-2);
+  }
+
+  .mdv-chip:where(.mdv-chip--filter.mdv-chip--selected:not(.mdv-chip--elevated)):not(
+      .mdv-chip--disabled
+    ):not(:has(.mdv-chip__primary:disabled)):has(.mdv-chip__primary:hover) {
+    --mdv-chip-shadow: var(--mdv-sys-elevation-level-1);
+  }
+}
+
+.mdv-chip__primary:focus-visible,
+.mdv-chip__remove:focus-visible {
+  outline: none;
+}
+
+.mdv-chip:not(.mdv-chip--disabled):not(:has(.mdv-chip__primary:disabled)):has(
+    .mdv-chip__primary:focus-visible
+  )
+  .mdv-chip__surface {
+  outline: 3px solid var(--mdv-chip-color);
+  outline-offset: 2px;
+}
+
+.mdv-chip__remove:not(:disabled):focus-visible .mdv-chip__remove-surface {
+  outline: 3px solid var(--mdv-chip-color);
+  outline-offset: 0;
+}
+
+.mdv-chip:not(.mdv-chip--disabled):not(:has(.mdv-chip__primary:disabled)):has(
+    .mdv-chip__primary:focus-visible,
+    .mdv-chip__primary:active
+  )
+  .mdv-chip__surface::before,
+.mdv-chip__remove:not(:disabled):is(:focus-visible, :active) .mdv-chip__remove-surface::before {
+  opacity: 0.1;
+}
+
+.mdv-chip:not(.mdv-chip--selected):not(.mdv-chip--elevated):not(.mdv-chip--disabled):not(
+    :has(.mdv-chip__primary:disabled)
+  ):has(.mdv-chip__primary:focus-visible)
+  .mdv-chip__surface::after {
+  border-color: var(--mdv-chip-focus-outline);
+}
+
+.mdv-chip:where(.mdv-chip--elevated):not(.mdv-chip--disabled):not(
+    :has(.mdv-chip__primary:disabled)
+  ):has(.mdv-chip__primary:focus-visible, .mdv-chip__primary:active) {
+  --mdv-chip-shadow: var(--mdv-sys-elevation-level-1);
+}
+
+.mdv-chip:where(.mdv-chip--filter:not(.mdv-chip--elevated)):not(.mdv-chip--disabled):not(
+    :has(.mdv-chip__primary:disabled)
+  ):has(.mdv-chip__primary:focus-visible, .mdv-chip__primary:active) {
+  --mdv-chip-shadow: var(--mdv-sys-elevation-level-0);
+}
+
+.mdv-chip__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mdv-chip__leading-track {
+  display: block;
+  width: 0;
+  height: 18px;
+  min-width: 0;
+  flex: none;
+  overflow: hidden;
+  transition: width var(--mdv-sys-motion-duration-short-4) var(--mdv-sys-motion-easing-standard);
+}
+
+.mdv-chip--has-leading .mdv-chip__leading-track {
+  width: 26px;
+}
+
+.mdv-chip__leading-clip {
+  display: block;
+  width: 26px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.mdv-chip__leading-content {
+  display: grid;
+  box-sizing: border-box;
+  width: 26px;
+  height: 18px;
+  grid-template-columns: 18px;
+  padding-inline-end: 8px;
+  color: var(--mdv-chip-leading-color);
+}
+
+.mdv-chip__icon {
+  position: relative;
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.mdv-chip__icon > :is(svg, img) {
+  width: 100%;
+  height: 100%;
+}
+
+.mdv-chip__leading-icon,
+.mdv-chip__check {
+  grid-area: 1 / 1;
+  transition:
+    opacity var(--mdv-sys-motion-duration-short-3) var(--mdv-sys-motion-easing-standard),
+    transform var(--mdv-sys-motion-duration-short-4) var(--mdv-sys-motion-easing-standard);
+}
+
+.mdv-chip__check,
+.mdv-chip__leading-icon--hidden {
+  opacity: 0;
+  transform: scale(0.75);
+}
+
+.mdv-chip__check--visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.mdv-chip__trailing {
+  margin-inline-start: 8px;
+}
+
+.mdv-chip__avatar {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  margin-inline-end: 8px;
+  overflow: hidden;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.mdv-chip__avatar > :is(img, svg) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mdv-chip__ripple {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.mdv-chip__ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  background-color: currentColor;
+  opacity: 0.1;
+  transform: translate(-50%, -50%) scale(0);
+  animation: mdv-button-ripple 450ms var(--mdv-sys-motion-easing-standard) forwards;
+}
+
+.mdv-chip__ripple--released {
+  animation: mdv-button-ripple-fade 200ms linear forwards;
+}
+
+.mdv-chip:where(.mdv-chip--disabled, :has(.mdv-chip__primary:disabled)) {
+  --mdv-chip-foreground: color-mix(in srgb, var(--mdv-sys-color-on-surface) 38%, transparent);
+  --mdv-chip-leading-color: var(--mdv-chip-foreground);
+  --mdv-chip-outline: color-mix(in srgb, var(--mdv-sys-color-on-surface) 12%, transparent);
+  --mdv-chip-shadow: var(--mdv-sys-elevation-level-0);
+}
+
+.mdv-chip:where(.mdv-chip--disabled, :has(.mdv-chip__primary:disabled)):is(
+    .mdv-chip--selected,
+    .mdv-chip--elevated
+  ) {
+  --mdv-chip-background: color-mix(in srgb, var(--mdv-sys-color-on-surface) 12%, transparent);
+  --mdv-chip-outline: transparent;
+}
+
+.mdv-chip__primary:disabled,
+.mdv-chip__remove:disabled,
+.mdv-chip--disabled .mdv-chip__primary {
+  cursor: not-allowed;
+}
+
+.mdv-chip-set {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.mdv-chip-set__label {
+  display: block;
+  margin-block-end: 4px;
+  color: var(--mdv-sys-color-on-surface-variant);
+  font-family: var(--mdv-sys-typescale-font-family);
+  font-size: var(--mdv-sys-typescale-label-large-size);
+  font-weight: var(--mdv-sys-typescale-label-large-weight);
+  line-height: var(--mdv-sys-typescale-label-large-line-height);
+}
+
+.mdv-chip-set__items {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 8px;
+}
+
+.mdv-chip-set--scrollable .mdv-chip-set__items {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--mdv-sys-color-outline) transparent;
+}
+
+.mdv-chip-set:focus-visible {
+  outline: 3px solid var(--mdv-sys-color-primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mdv-chip__surface,
+  .mdv-chip__surface::after,
+  .mdv-chip__primary,
+  .mdv-chip__surface::before,
+  .mdv-chip__remove-surface::before,
+  .mdv-chip__leading-track,
+  .mdv-chip__leading-icon,
+  .mdv-chip__check {
+    transition: none;
+  }
+
+  .mdv-chip__ripple {
+    display: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .mdv-chip {
+    --mdv-chip-foreground: ButtonText;
+    --mdv-chip-leading-color: ButtonText;
+    --mdv-chip-background: Canvas;
+    --mdv-chip-outline: ButtonText;
+  }
+
+  .mdv-chip--selected {
+    --mdv-chip-foreground: HighlightText;
+    --mdv-chip-leading-color: HighlightText;
+    --mdv-chip-background: Highlight;
+    --mdv-chip-outline: Highlight;
+  }
+
+  .mdv-chip__surface {
+    forced-color-adjust: none;
+  }
+
+  .mdv-chip:is(.mdv-chip--disabled, :has(.mdv-chip__primary:disabled)) {
+    --mdv-chip-foreground: GrayText;
+    --mdv-chip-leading-color: GrayText;
+    --mdv-chip-background: Canvas;
+    --mdv-chip-outline: GrayText;
+  }
+
+  .mdv-chip:has(.mdv-chip__primary:focus-visible) .mdv-chip__surface,
+  .mdv-chip__remove:focus-visible .mdv-chip__remove-surface {
+    outline-color: Highlight;
+  }
+}

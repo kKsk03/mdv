@@ -24,6 +24,24 @@ const iconStyles = new WeakMap<Readonly<CSSProperties>, Readonly<CSSProperties>>
 const checkboxStyles = new WeakMap<Readonly<CSSProperties>, Readonly<CSSProperties>>()
 const radioStyles = new WeakMap<Readonly<CSSProperties>, Readonly<CSSProperties>>()
 const switchStyles = new WeakMap<Readonly<CSSProperties>, Readonly<CSSProperties>>()
+const chipStyles = new WeakMap<Readonly<CSSProperties>, Readonly<CSSProperties>>()
+
+/** Chip 的局部色系；省略 color 时由组件保留官方的中性及 secondary 角色。 */
+export function resolveChipColor(color: unknown): Readonly<CSSProperties> | undefined {
+  const colors = resolveButtonColor(color)
+  if (!colors) return undefined
+
+  const cached = chipStyles.get(colors)
+  if (cached) return cached
+
+  const style = Object.freeze({
+    '--mdv-chip-color': colors['--mdv-button-color'],
+    '--mdv-chip-container-color': colors['--mdv-button-container-color'],
+    '--mdv-chip-on-container-color': colors['--mdv-button-on-container-color'],
+  })
+  chipStyles.set(colors, style)
+  return style
+}
 
 /** Checkbox 复用纯配色计算，仅暴露自身的强调色与图形色变量。 */
 export function resolveCheckboxColor(color: unknown): Readonly<CSSProperties> | undefined {
