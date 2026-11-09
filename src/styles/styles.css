@@ -7,6 +7,7 @@
 @import './segmented-button.css';
 @import './card.css';
 @import './divider.css';
+@import './badge.css';
 
 .mdv-icon {
   display: inline-block;

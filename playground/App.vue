@@ -13,6 +13,7 @@ import ChipPlayground from './ChipPlayground.vue'
 import SegmentedButtonPlayground from './SegmentedButtonPlayground.vue'
 import CardPlayground from './CardPlayground.vue'
 import DividerPlayground from './DividerPlayground.vue'
+import BadgePlayground from './BadgePlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -87,6 +88,12 @@ const pages = [
     label: 'Divider 分割线',
     description: '对照横竖方向、三种缩进、RTL、主题、语义和卡片内组合。',
     component: DividerPlayground,
+  },
+  {
+    id: 'badge',
+    label: 'Badge 徽标',
+    description: '对照 Small／Large 形态、定位、可访问名称、主题和包裹交互内容。',
+    component: BadgePlayground,
   },
   {
     id: 'theme',

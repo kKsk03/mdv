@@ -1,0 +1,58 @@
+@layer components {
+  .mdv-badge {
+    position: relative;
+    display: inline-flex;
+    max-inline-size: 100%;
+    vertical-align: middle;
+  }
+
+  .mdv-badge__indicator {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    inset-inline-end: 0;
+    display: inline-flex;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    transform: translate(50%, -50%);
+    border-radius: var(--mdv-sys-shape-corner-full);
+    background-color: var(--mdv-sys-color-error);
+    color: var(--mdv-sys-color-on-error);
+  }
+
+  .mdv-badge:dir(rtl) .mdv-badge__indicator {
+    transform: translate(-50%, -50%);
+  }
+
+  .mdv-badge__indicator--small {
+    width: 6px;
+    height: 6px;
+  }
+
+  .mdv-badge__indicator--large {
+    min-width: 16px;
+    min-height: 16px;
+    padding-inline: 4px;
+    font-family: var(--mdv-sys-typescale-font-family);
+    font-size: var(--mdv-sys-typescale-label-small-size);
+    font-weight: var(--mdv-sys-typescale-label-small-weight);
+    line-height: 1;
+    letter-spacing: var(--mdv-sys-typescale-label-small-tracking);
+    white-space: nowrap;
+  }
+
+  .mdv-badge__label {
+    display: block;
+    line-height: inherit;
+  }
+
+  @media (forced-colors: active) {
+    .mdv-badge__indicator {
+      background-color: CanvasText;
+      color: Canvas;
+      forced-color-adjust: none;
+    }
+  }
+}

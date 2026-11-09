@@ -14,6 +14,7 @@
 - [MdvSegmentedButton 分段按钮](#mdvsegmentedbutton)
 - [MdvCard 卡片](#mdvcard)
 - [MdvDivider 分割线](#mdvdivider)
+- [MdvBadge 徽标](#mdvbadge)
 
 ## MdvButton
 
@@ -1171,3 +1172,48 @@ class、style、id、dir、lang、hidden、ARIA、data-* 和原生监听均透�
 ```
 
 无需单独导入新样式或安装依赖，继续使用统一的 `mdv/theme`、`mdv/styles` 入口。公共类型：`MdvDividerOrientation`、`MdvDividerVariant`。
+
+## MdvBadge
+
+在图标按钮、普通按钮或头像等内容的逻辑右上角显示简短状态。当前实现覆盖 Material 3 的 Small 圆点和 Large 内容两种形态；徽标是包裹内容的视觉指示器，不会抢点击、进入 Tab 顺序或管理焦点。
+
+```vue
+<script setup lang="ts">
+import { MdvBadge, MdvButton, MdvIcon, MdvIconButton } from 'mdv'
+import notifications from '@iconify-icons/material-symbols/notifications-outline'
+</script>
+
+<template>
+  <MdvBadge aria-label="有未读消息">
+    <MdvIconButton variant="standard" aria-label="通知">
+      <MdvIcon :icon="notifications" />
+    </MdvIconButton>
+  </MdvBadge>
+
+  <MdvBadge variant="large" :content="3" aria-label="3 条未读消息">
+    <MdvButton variant="tonal">查看消息</MdvButton>
+  </MdvBadge>
+
+  <MdvBadge variant="large" content="99+" aria-label="超过 99 条未读消息">
+    <span>收件箱</span>
+  </MdvBadge>
+</template>
+```
+
+### 属性与内容
+
+| Prop | 类型／说明 | 默认值 |
+| --- | --- | --- |
+| `variant` | `small` 或 `large` | `small` |
+| `content` | `string` 或 `number`；Large 直接显示传入值，可自行传入 `99+` 等文本 | 不提供 |
+| `visible` | 是否渲染徽标指示器；包裹内容始终保留 | `true` |
+
+Small 固定为 6px 圆点，不需要 `content`。Large 最小高度为 16px；没有内容时不渲染，数字 `0` 仍是有效内容。组件不提供 `max`、`count`、`showZero`、四角 `position`、`color` 或动画 API，颜色固定使用主题的 `error`／`on-error` 角色，并跟随浅色、深色和种子色主题。
+
+默认定位使用 CSS 逻辑属性 `inset-inline-end`，所以 `dir="rtl"` 时仍位于内容的逻辑 top-end。根节点是 `inline-flex` 的相对定位包装器，默认插槽只承载被包裹内容；可以通过 class、style、id、dir、lang、data-* 和其他原生属性控制包装器布局。
+
+### 无障碍与交互
+
+徽标指示器设置 `pointer-events: none`，不会改变包裹按钮、链接或头像的点击范围，也不会创建额外焦点。没有 `aria-label` 时指示器使用 `aria-hidden="true"`，避免重复朗读；提供非空 `aria-label` 后，标签会放在指示器上并使用 `role="img"`。包裹的交互内容仍必须自行提供可访问名称。
+
+`MdvBadge` 只负责显示状态，不提供 loading、hover、pressed、选中模型或删除操作。需要动态数字、隐藏时机或通知读取状态时，由使用方通过 `content` 与 `visible` 绑定业务状态；徽标本身不管理这些状态。
