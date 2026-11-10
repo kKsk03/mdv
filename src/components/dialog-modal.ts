@@ -15,6 +15,21 @@ interface ModalState {
 
 // 按 Document 隔离，模块导入和 SSR 渲染都不读取浏览器全局对象。
 const documents = new WeakMap<Document, ModalState>()
+const observers = new WeakMap<Document, Set<() => void>>()
+
+function notifyDialogs(doc: Document) {
+  observers.get(doc)?.forEach((notify) => notify())
+}
+
+export function observeDialogs(doc: Document, notify: () => void) {
+  const listeners = observers.get(doc) ?? new Set<() => void>()
+  listeners.add(notify)
+  observers.set(doc, listeners)
+  return () => {
+    listeners.delete(notify)
+    if (!listeners.size) observers.delete(doc)
+  }
+}
 
 function keepStyle(element: HTMLElement, property: string) {
   const value = element.style.getPropertyValue(property)
@@ -146,6 +161,7 @@ export function acquireDialog(dialog: HTMLDialogElement) {
     previous,
   }
   current.entries.push(entry)
+  notifyDialogs(doc)
   let released = false
   let restore = false
 
@@ -168,6 +184,7 @@ export function acquireDialog(dialog: HTMLDialogElement) {
         current.unlock()
         documents.delete(doc)
       }
+      notifyDialogs(doc)
     },
     restoreFocus() {
       if (!released || !restore) return

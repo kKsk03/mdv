@@ -88,16 +88,25 @@ MDV 自行实现 Vue 内容插槽、原生按钮／链接主操作、禁用与�
 
 MDV 自行实现 Vue 组件、装饰／separator 语义与逻辑方向布局；竖向缩进是沿线条方向映射的 MDV 约定，未引入其他 Divider 运行时或新依赖。
 
+## Material 3 Snackbar 规格与令牌
+
+- 规格来源：https://m3.material.io/components/snackbar/specs 、https://m3.material.io/components/snackbar/guidelines 与 accessibility 页面。
+- 数值依据：官网 Snackbar 令牌表、Measurements 与 Configurations 图；双行高度按 Specs 的 68dp 处理。
+- 版权：Copyright Google LLC
+- 使用位置：`src/styles/snackbar.css` 的颜色角色、圆角、阴影、排版、尺寸和内边距。
+
+MDV 自行实现 Vue 组件、作用域内队列、计时、焦点和模态协调；未引入其他 Snackbar 运行时或新依赖。关闭图标使用下述 Material Symbols 数据。
+
 ## Material Symbols 图标数据
 
 - 来源：https://github.com/google/material-design-icons
 - 数据分发：`@iconify-icons/material-symbols`，当前以 2.0.9 为资源基线；https://github.com/iconify/icon-sets
 - 版权：Copyright Google LLC
 - 许可：Apache License 2.0
-- 使用资源：Material Symbols 的本地 SVG 数据，包括 favorite、home、save、search 等预览图形及其填充／风格变体；文本框内置动作使用 close、visibility、visibility-off，Chip 使用 check、close，Segmented Button 使用 check，Menu 使用 check、chevron-right、arrow-back。
-- 使用位置：`src/components/MdvTextField.vue`、`src/components/MdvChip.vue`、`src/components/MdvSegmentedButtonItem.vue`、`src/components/MdvFullscreenDialog.vue`、`src/components/MdvMenuItem.vue`、`src/components/_MdvMenuPanel.vue` 的内置动作、`playground/` 的组件预览、组件测试和 `COMPONENTS.md` 示例。
+- 使用资源：Material Symbols 的本地 SVG 数据，包括 favorite、home、save、search 等预览图形及其填充／风格变体；文本框内置动作使用 close、visibility、visibility-off，Chip 使用 check、close，Segmented Button 使用 check，Menu 使用 check、chevron-right、arrow-back，Snackbar 使用 close。
+- 使用位置：`src/components/MdvTextField.vue`、`src/components/MdvChip.vue`、`src/components/MdvSegmentedButtonItem.vue`、`src/components/MdvFullscreenDialog.vue`、`src/components/MdvMenuItem.vue`、`src/components/_MdvMenuPanel.vue`、`src/components/MdvSnackbar.vue` 的内置动作、`playground/` 的组件预览、组件测试和 `COMPONENTS.md` 示例。
 
-Iconify 分发包提供可单独导入的图标数据，原始图形版权与许可归上游 Google。该包是本仓库的开发依赖；文本框、Chip、Segmented Button、Dialog 与 Menu 只导入各自固定图形并随组件构建，MDV 不导入或注册整套数据。使用方无需为内置动作安装图标集；自定义图标按自己的静态导入分发，并保留相应许可。
+Iconify 分发包提供可单独导入的图标数据，原始图形版权与许可归上游 Google。该包是本仓库的开发依赖；文本框、Chip、Segmented Button、Dialog、Menu 与 Snackbar 只导入各自固定图形并随组件构建，MDV 不导入或注册整套数据。使用方无需为内置动作安装图标集；自定义图标按自己的静态导入分发，并保留相应许可。
 
 ## Iconify Vue 渲染器
 

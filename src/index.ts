@@ -27,6 +27,24 @@ export { default as MdvMenuItem } from './components/MdvMenuItem.vue'
 export { default as MdvMenuGroup } from './components/MdvMenuGroup.vue'
 export { default as MdvTooltip } from './components/MdvTooltip.vue'
 export { default as MdvRichTooltip } from './components/MdvRichTooltip.vue'
+export { default as MdvSnackbar } from './components/MdvSnackbar.vue'
+export { default as MdvSnackbarProvider } from './components/MdvSnackbarProvider.vue'
+export { useSnackbar } from './components/use-snackbar'
+export type {
+  MdvSnackbarAction,
+  MdvSnackbarActionLayout,
+  MdvSnackbarActionSlotProps,
+  MdvSnackbarCloseDetail,
+  MdvSnackbarCloseReason,
+  MdvSnackbarColor,
+  MdvSnackbarInput,
+  MdvSnackbarOptions,
+  MdvSnackbarPlacement,
+  MdvSnackbarProps,
+  MdvSnackbarProviderApi,
+  MdvSnackbarSlotProps,
+  MdvSnackbarSlots,
+} from './components/snackbar.types'
 export type {
   MdvTooltipProps,
   MdvRichTooltipProps,

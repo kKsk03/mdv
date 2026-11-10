@@ -21,6 +21,7 @@
 - [MdvFullscreenDialog 全屏对话框](#mdvfullscreendialog)
 - [MdvMenu 菜单家族](#mdvmenu)
 - [MdvTooltip 与 MdvRichTooltip 提示](#mdvtooltip)
+- [MdvSnackbar 消息提示](#mdvsnackbar)
 
 ## MdvButton
 
@@ -1824,3 +1825,117 @@ Tooltip 是附加说明。图标按钮仍需自己的 aria-label／aria-labelled
 采用原 DOM 中的 Popover manual top layer，保留局部主题和 Dialog 所属关系，需要支持 Popover 的现代浏览器；复用现有 Floating UI 依赖，不添加全局 Provider，不锁页面滚动。淡入／淡出为 MDV 150／100ms 动效，快速反向从当前帧继续，reduced-motion 下即时切换。卸载、KeepAlive 停用、所属浮层关闭和页面失焦会释放计时器、监听、定位与动画。
 
 公共类型：`MdvTooltipProps`、`MdvRichTooltipProps`、`MdvTooltipPlacement`、`MdvTooltipCloseReason`、`MdvTooltipCloseDetail`、`MdvTooltipSlotProps`、`MdvTooltipTriggerProps`、`MdvTooltipTriggerSlotProps`。
+
+## MdvSnackbar
+
+Snackbar 在页面底部显示简短消息和至多一个业务操作，支持受控组件与显式 Provider 队列。
+
+声明式使用：
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvButton, MdvSnackbar } from 'mdv'
+
+const visible = ref(false)
+
+function undo() {
+  // 执行撤销操作。
+}
+</script>
+
+<template>
+  <MdvButton @click="visible = true">删除</MdvButton>
+  <MdvSnackbar
+    v-model="visible"
+    message="项目已删除。"
+    :action="{ label: '撤销', onClick: undo }"
+  />
+</template>
+```
+
+调用式使用时，先在应用中挂载 Provider：
+
+```vue
+<script setup lang="ts">
+import { MdvSnackbarProvider } from 'mdv'
+import PageContent from './PageContent.vue'
+</script>
+
+<template>
+  <MdvSnackbarProvider>
+    <PageContent />
+  </MdvSnackbarProvider>
+</template>
+```
+
+在 Provider 的**子组件** `setup` 中使用：
+
+```vue
+<script setup lang="ts">
+import { MdvButton, useSnackbar } from 'mdv'
+
+const snackbar = useSnackbar()
+
+function save() {
+  snackbar.show({ message: '更改已保存。', color: 'success' })
+}
+</script>
+
+<template>
+  <MdvButton @click="save">保存</MdvButton>
+</template>
+```
+
+### 属性与内容
+
+| Prop | 类型 | 默认值与作用 |
+| --- | --- | --- |
+| `modelValue` | `boolean` | `false`；控制显示，配合 `v-model` 接收关闭请求 |
+| `message` | `string` | `''`；默认消息文字 |
+| `color` | `MdvSnackbarColor` | 无；支持 `primary`、`secondary`、`tertiary`、`success`、`warning`、`error`、`info` 和 `#RGB`／`#RRGGBB` 种子色 |
+| `action` | `{ label: string; onClick?: () => void \| Promise<void> }` | 无；内置业务操作 |
+| `duration` | `number` | 无操作为 `4000`，有操作为 `0`；单位 ms，`0` 为常驻 |
+| `closable` | `boolean` | 省略时常驻消息显示关闭按钮，自动关闭消息不显示；显式值可覆盖 |
+| `closeLabel` | `string` | `'关闭通知'`；关闭按钮的可访问名称 |
+| `actionLayout` | `'auto' \| 'inline' \| 'stacked'` | `'auto'`；操作自动换行、保持同行或另起一行 |
+| `placement` | `'bottom' \| 'bottom-start'` | `'bottom'`；底部居中或逻辑起始侧 |
+| `offset` | `number` | `16`；距底部安全区的额外距离，单位 px |
+| `pauseOnHover` | `boolean` | `true`；指针停留时暂停计时 |
+| `closeOnEsc` | `boolean` | `true`；焦点在消息内部时响应 Escape |
+| `focusShortcut` | `string \| false` | `'Alt+G'`；主动聚焦的快捷键，`false` 关闭 |
+
+负数 duration／offset 视为 0，非有限 duration 视为常驻，非有限 offset 使用默认值。显式 duration 可覆盖有操作时的常驻默认值；如果常驻消息没有业务操作，建议保留关闭按钮。
+
+默认插槽替代 `message`，提供 `{ close }`；`#action` 替代内置操作，提供 `{ close, pending }`。自定义操作自行执行和关闭，内置操作的自动关闭、异步处理及 `action`／`actionError` 事件不作用于该插槽。为保持可访问性，消息内容应简短，避免在正文中放置交互控件。
+
+### 队列与操作
+
+`useSnackbar()` 返回：
+
+- `show(messageOrOptions)`：接收字符串或 `MdvSnackbarOptions`，返回消息 id。
+- `update(id, patch)`：更新当前或等待中的消息，找到时返回 `true`。
+- `close(id)`：关闭当前消息或移除等待项，找到时返回 `true`。
+- `clear()`：清空等待项并关闭当前消息。
+
+`MdvSnackbarOptions` 使用上述除 `modelValue` 外的属性，`message` 必填，并可传 `key`。`show({ key, ... })` 会更新同 key 的当前或等待消息并返回原 id；否则加入队列。每个 Provider 使用独立 FIFO 队列，当前消息退场完成后展示下一条，等待项不计时。不同 Provider 或声明式实例互不协调，应用应自行避免同时显示多条。`useSnackbar()` 必须在 Provider 后代的 setup 中调用；卸载 Provider 会清理其队列。
+
+内置操作点击后触发 `action`，监听器可对收到的原生事件调用 `preventDefault()` 以阻止自动关闭，但 `action.onClick` 仍会执行。同步执行成功后默认关闭；返回 Promise 时等待结果，期间禁用该按钮并暂停计时，成功后关闭，失败时发出 `actionError` 并恢复剩余计时。消息关闭或消息文字、操作标签／回调变化后的旧异步结果不会再改变当前消息；重新创建内容相同且回调引用不变的操作对象不会中断它。调用式 Provider 不转发 `actionError`，需要处理失败的业务代码应在自身 `onClick` 中捕获并处理错误。
+
+### 事件、焦点与计时
+
+组件事件为 `update:modelValue(boolean)`、`open`、`opened`、`close(detail)`、`closed(detail)`、`action(MouseEvent)` 和 `actionError(error)`。`close`／`closed` 的 detail 为 `{ reason }`，可能是 `timeout`、`escape`、`close-button`、`action`、`programmatic` 或 `model`。组件请求关闭时先发出 `update:modelValue(false)`，父组件接受后才进入关闭流程；父组件可以拒绝。`open`／`close` 表示开始，`opened`／`closed` 表示显示或退场完成。
+
+组件实例暴露 `close()`、`focus()`、`pause()`、`resume()`。计时从消息实际显示、入场结束后开始；hover、焦点在消息内、页面隐藏、手动暂停、MDV Dialog 遮挡、KeepAlive 停用或内置异步操作期间会暂停并保留剩余时间。消息文字、操作标签或时长改变会重新计算计时；恢复后按剩余时间继续。
+
+消息使用 `role="status"` 和 polite live region，不主动抢焦点或限制 Tab。默认按 Alt+G 聚焦消息内首个可用操作，没有操作时聚焦容器；快捷键要求修饰键精确匹配。焦点位于消息内时 Escape 关闭消息并阻止该次事件继续关闭下层 Dialog；其他位置按 Escape 不由 Snackbar 处理。关闭时只有消息实际持有焦点才尝试恢复此前仍有效的焦点。自动消失的信息还应在业务发生的位置提供可访问反馈；真实播报仍受浏览器和辅助技术组合影响。
+
+### 样式与浮层
+
+默认容器使用 inverse-surface／inverse-on-surface，操作使用 inverse-primary。指定 `color` 时，容器使用对应主题色或由种子色生成的局部色，正文、操作和关闭图标使用配对的 on 色；支持浅色和深色主题，不修改全局主题。无效颜色回退默认配色，并在开发模式下发出警告。声明式组件与 `show()`、`update()` 均支持此选项；`update(id, { color: undefined })` 可恢复默认配色。颜色属于 MDV 扩展，默认配色遵循官方规范。
+
+容器圆角 4px，默认单行高度 48px、双行高度 68px，长内容可自然增高。官网 Specs 的双行高度为 68dp，Guidelines 中另有 64dp 描述；本组件按 Specs 处理。默认最大宽度 560px、侧边距至少 16px、进入／退出 200／150ms 为 MDV 的布局和动效选择；支持 reduced-motion、RTL 和底部安全区。需要避让底部导航、悬浮按钮等内容时，由使用方设置 `offset`。
+
+支持 Popover API 的浏览器使用原 DOM 位置的 manual popover，以继承局部主题并进入 top layer；不支持时退回普通 fixed 布局，层级受所在上下文影响。页面消息会在 MDV Dialog 打开时隐藏并暂停，可在 Dialog 内放局部组件或 Provider；对第三方或原生模态框不保证自动协调。
+
+公共类型：`MdvSnackbarProps`、`MdvSnackbarOptions`、`MdvSnackbarColor`、`MdvSnackbarInput`、`MdvSnackbarAction`、`MdvSnackbarActionLayout`、`MdvSnackbarPlacement`、`MdvSnackbarCloseReason`、`MdvSnackbarCloseDetail`、`MdvSnackbarSlotProps`、`MdvSnackbarActionSlotProps`、`MdvSnackbarSlots`、`MdvSnackbarProviderApi`。

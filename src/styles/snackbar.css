@@ -1,0 +1,233 @@
+@layer mdv {
+  .mdv-snackbar-positioner {
+    --mdv-snackbar-surface: var(--mdv-sys-color-inverse-surface);
+    --mdv-snackbar-foreground: var(--mdv-sys-color-inverse-on-surface);
+    --mdv-snackbar-action: var(--mdv-sys-color-inverse-primary);
+
+    position: fixed;
+    z-index: 1000;
+    inset: auto;
+    inset-block-end: calc(var(--mdv-snackbar-offset) + env(safe-area-inset-bottom, 0px));
+    box-sizing: border-box;
+    width: min(
+      560px,
+      calc(
+        100vw - max(16px, env(safe-area-inset-left, 0px)) -
+          max(16px, env(safe-area-inset-right, 0px))
+      )
+    );
+    max-width: 100%;
+    max-height: none;
+    margin: 0;
+    overflow: visible;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: var(--mdv-snackbar-foreground);
+    font-family: var(--mdv-sys-typescale-font-family);
+  }
+
+  .mdv-snackbar-positioner::backdrop {
+    background: transparent;
+    pointer-events: none;
+  }
+
+  .mdv-snackbar-positioner--bottom {
+    inset-inline: 0;
+    margin-inline: auto;
+  }
+
+  .mdv-snackbar-positioner--bottom-start {
+    inset-inline-start: max(16px, env(safe-area-inset-left, 0px));
+  }
+
+  .mdv-snackbar-positioner--bottom-start:dir(rtl) {
+    inset-inline-start: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  .mdv-snackbar-positioner[data-blocked] {
+    display: none;
+  }
+
+  .mdv-snackbar {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 48px;
+    overflow: hidden;
+    border-radius: 4px;
+    padding-inline-start: 16px;
+    background: var(--mdv-snackbar-surface);
+    box-shadow: var(--mdv-sys-elevation-level-3);
+    color: var(--mdv-snackbar-foreground);
+  }
+
+  .mdv-snackbar__content {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .mdv-snackbar__content:last-child {
+    padding-inline-end: 8px;
+  }
+
+  .mdv-snackbar:not(.mdv-snackbar--has-action) .mdv-snackbar__content:last-child {
+    padding-inline-end: 16px;
+  }
+
+  .mdv-snackbar__message {
+    flex: 1 1 12rem;
+    min-width: 0;
+    padding-block: 14px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.25px;
+    overflow-wrap: anywhere;
+  }
+
+  .mdv-snackbar__action {
+    display: flex;
+    flex: 0 1 auto;
+    justify-content: flex-end;
+    max-width: 100%;
+    margin-inline-start: auto;
+  }
+
+  .mdv-snackbar__action-button,
+  .mdv-snackbar__close {
+    box-sizing: border-box;
+    border: 0;
+    background: transparent;
+    color: var(--mdv-snackbar-action);
+    font: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mdv-snackbar__action-button {
+    min-height: 40px;
+    max-width: 100%;
+    border-radius: 20px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.1px;
+    text-align: center;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .mdv-snackbar__action-button:hover,
+  .mdv-snackbar__close:hover::before {
+    background: color-mix(in srgb, currentColor 8%, transparent);
+  }
+
+  .mdv-snackbar__action-button:active,
+  .mdv-snackbar__close:active::before {
+    background: color-mix(in srgb, currentColor 12%, transparent);
+  }
+
+  .mdv-snackbar__action-button:focus-visible,
+  .mdv-snackbar__close:focus-visible,
+  .mdv-snackbar-positioner:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -3px;
+  }
+
+  .mdv-snackbar__action-button:disabled {
+    cursor: wait;
+    opacity: 0.5;
+  }
+
+  .mdv-snackbar__close {
+    position: relative;
+    display: grid;
+    flex: 0 0 48px;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    padding: 12px;
+    color: var(--mdv-snackbar-foreground);
+  }
+
+  .mdv-snackbar__close::before {
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    content: '';
+    pointer-events: none;
+  }
+
+  .mdv-snackbar__close .mdv-icon {
+    position: relative;
+    width: 24px;
+    height: 24px;
+  }
+
+  .mdv-snackbar--inline .mdv-snackbar__content {
+    flex-wrap: nowrap;
+  }
+
+  .mdv-snackbar--inline .mdv-snackbar__message {
+    flex-basis: 0;
+  }
+
+  .mdv-snackbar--stacked .mdv-snackbar__content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mdv-snackbar--stacked .mdv-snackbar__message {
+    flex-basis: auto;
+  }
+
+  .mdv-snackbar--stacked .mdv-snackbar__action {
+    padding-block-end: 4px;
+  }
+
+  .mdv-snackbar-enter-active {
+    transition:
+      opacity 200ms var(--mdv-sys-motion-easing-standard),
+      translate 200ms var(--mdv-sys-motion-easing-standard);
+  }
+
+  .mdv-snackbar-leave-active {
+    transition:
+      opacity 150ms var(--mdv-sys-motion-easing-standard),
+      translate 150ms var(--mdv-sys-motion-easing-standard);
+  }
+
+  .mdv-snackbar-enter-from,
+  .mdv-snackbar-leave-to {
+    opacity: 0;
+    translate: 0 8px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mdv-snackbar-enter-active,
+    .mdv-snackbar-leave-active {
+      transition-duration: 0.01ms;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .mdv-snackbar {
+      border: 1px solid CanvasText;
+    }
+
+    .mdv-snackbar__action-button {
+      color: LinkText;
+    }
+
+    .mdv-snackbar__action-button:focus-visible,
+    .mdv-snackbar__close:focus-visible {
+      outline-color: Highlight;
+    }
+  }
+}

@@ -20,6 +20,7 @@ import DialogPlayground from './DialogPlayground.vue'
 import FullscreenDialogPlayground from './FullscreenDialogPlayground.vue'
 import MenuPlayground from './MenuPlayground.vue'
 import TooltipPlayground from './TooltipPlayground.vue'
+import SnackbarPlayground from './SnackbarPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -136,6 +137,12 @@ const pages = [
     label: 'Tooltip 提示',
     description: '对照普通与富内容提示、悬停／键盘／长按、持久提示、定位和浮层组合。',
     component: TooltipPlayground,
+  },
+  {
+    id: 'snackbar',
+    label: 'Snackbar 消息提示',
+    description: '对照消息布局、操作、队列、键盘和对话框中的局部消息。',
+    component: SnackbarPlayground,
   },
   {
     id: 'theme',
