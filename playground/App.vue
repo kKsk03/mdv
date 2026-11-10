@@ -15,6 +15,7 @@ import CardPlayground from './CardPlayground.vue'
 import DividerPlayground from './DividerPlayground.vue'
 import BadgePlayground from './BadgePlayground.vue'
 import ListPlayground from './ListPlayground.vue'
+import ProgressPlayground from './ProgressPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -101,6 +102,12 @@ const pages = [
     label: 'List 列表',
     description: '对照标准与 segmented 列表、行高、插槽、选择、分隔线和 RTL。',
     component: ListPlayground,
+  },
+  {
+    id: 'progress',
+    label: 'Progress 进度指示器',
+    description: '对照线性与圆形、平直与波浪、确定与不确定进度，以及动效、尺寸和布局边界。',
+    component: ProgressPlayground,
   },
   {
     id: 'theme',

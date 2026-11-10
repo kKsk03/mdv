@@ -9,6 +9,7 @@
 @import './divider.css';
 @import './badge.css';
 @import './list.css';
+@import './progress.css';
 
 .mdv-icon {
   display: inline-block;

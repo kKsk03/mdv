@@ -1,0 +1,79 @@
+.mdv-progress {
+  display: flex;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--mdv-sys-typescale-font-family);
+}
+
+.mdv-progress--linear {
+  inline-size: 100%;
+}
+
+.mdv-progress--circular {
+  display: inline-flex;
+  max-inline-size: 100%;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.mdv-progress__label {
+  color: var(--mdv-sys-color-on-surface-variant);
+  font-size: var(--mdv-sys-typescale-label-small-size);
+  font-weight: var(--mdv-sys-typescale-label-small-weight);
+  line-height: var(--mdv-sys-typescale-label-small-line-height);
+  letter-spacing: var(--mdv-sys-typescale-label-small-tracking);
+  overflow-wrap: anywhere;
+}
+
+.mdv-progress__graphic {
+  display: block;
+  max-inline-size: 100%;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.mdv-progress--linear > .mdv-progress__graphic:dir(rtl) {
+  transform: scaleX(-1);
+}
+
+.mdv-progress--circular > .mdv-progress__graphic {
+  block-size: auto;
+  aspect-ratio: 1;
+}
+
+.mdv-progress__active {
+  stroke: var(--mdv-progress-active-color, var(--mdv-sys-color-primary));
+}
+
+.mdv-progress__track {
+  stroke: var(--mdv-progress-track-color, var(--mdv-sys-color-secondary-container));
+}
+
+.mdv-progress__stop {
+  fill: var(--mdv-progress-active-color, var(--mdv-sys-color-primary));
+  stroke: none;
+}
+
+@media (forced-colors: active) {
+  .mdv-progress {
+    forced-color-adjust: none;
+  }
+
+  .mdv-progress__active {
+    stroke: Highlight;
+  }
+
+  .mdv-progress__track {
+    stroke: GrayText;
+  }
+
+  .mdv-progress__stop {
+    fill: Highlight;
+  }
+
+  .mdv-progress__label {
+    color: CanvasText;
+  }
+}

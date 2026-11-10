@@ -131,6 +131,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
+## Material 3 Progress 规格、令牌与动效时序
+
+- 规格来源：https://m3.material.io/components/progress-indicators/specs
+- 令牌与时序核对：https://github.com/androidx/androidx/tree/androidx-main/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3 中的 `tokens/ProgressIndicatorTokens.kt`、`tokens/LinearProgressIndicatorTokens.kt`、`tokens/CircularProgressIndicatorTokens.kt`、`ProgressIndicator.kt`、`WavyProgressIndicator.kt` 及相关 internal 绘制文件。
+- 版权：Copyright 2022, 2024, 2025 The Android Open Source Project
+- 许可：Apache License 2.0
+- 使用位置：`src/components/progress-geometry.ts`、`src/components/progress-motion.ts` 与 `src/styles/progress.css` 的标准尺寸、颜色角色、间隙、波长、振幅、缓动和动效时序。
+
+MDV 使用自己的 Vue 与 SVG 几何、动画时钟和资源生命周期实现，未引入 Compose 运行时。线性波浪按官方二次曲线轮廓绘制，圆形波浪通过独立的径向曲线生成；下文保留 Apache License 2.0 原文。
+
 ## Material Color Utilities
 
 - 软件包：`@material/material-color-utilities`，当前以 0.4.0 为实现基线。

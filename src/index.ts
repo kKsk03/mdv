@@ -17,6 +17,13 @@ export { default as MdvBadge } from './components/MdvBadge.vue'
 export { default as MdvList } from './components/MdvList.vue'
 export { default as MdvListItem } from './components/MdvListItem.vue'
 export { default as MdvListSubheader } from './components/MdvListSubheader.vue'
+export { default as MdvLinearProgress } from './components/MdvLinearProgress.vue'
+export { default as MdvCircularProgress } from './components/MdvCircularProgress.vue'
+export type {
+  MdvProgressVariant,
+  MdvProgressProps,
+  MdvCircularProgressProps,
+} from './components/progress.types'
 export type { MdvBadgeContent, MdvBadgeVariant } from './components/badge.types'
 export type {
   MdvListDivider,

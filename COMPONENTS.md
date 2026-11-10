@@ -16,6 +16,7 @@
 - [MdvDivider 分割线](#mdvdivider)
 - [MdvBadge 徽标](#mdvbadge)
 - [MdvList 列表](#mdvlist)
+- [MdvLinearProgress 与 MdvCircularProgress 进度指示器](#mdvlinearprogress-与-mdvcircularprogress)
 
 ## MdvButton
 
@@ -1374,3 +1375,74 @@ Standard 的 `full-width` 分隔线铺满相邻条目之间，`inset` 随 leadin
 ### 当前范围
 
 当前版本不包含可展开树形列表、拖拽排序、滑动操作、虚拟列表或 sticky subheader。这些能力按独立方案推进。
+
+## MdvLinearProgress 与 MdvCircularProgress
+
+两个组件均支持平直／波浪、确定／不确定进度，默认使用平直外观和确定进度。组件只展示业务传入的状态，完成后保持可见，由业务决定何时隐藏。当前约定范围已完成本地项目检查与开发预览验收，真实包消费另行验证。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvCircularProgress, MdvLinearProgress } from 'mdv'
+
+const uploaded = ref(35)
+const waiting = ref(true)
+</script>
+
+<template>
+  <MdvLinearProgress :value="uploaded" label="文件上传" />
+  <MdvCircularProgress :value="uploaded" aria-label="文件上传" />
+
+  <MdvLinearProgress indeterminate variant="wavy" label="正在连接" />
+  <MdvCircularProgress :indeterminate="waiting" :value="uploaded" variant="wavy" aria-label="文件处理" />
+</template>
+```
+
+### 属性与数值
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `value` | `number` | `0` | 当前值；限制在 `0–max`，保留小数；非有限数值回退到 0 |
+| `max` | `number` | `100` | 正的有限上限；无效时回退到 100 |
+| `indeterminate` | `boolean` | `false` | 无法确定实际进度时开启；不据 `value` 猜测模式 |
+| `variant` | `'flat' \| 'wavy'` | `'flat'` | 平直或波浪 |
+| `thickness` | `number` | `4` | 线宽，单位 px；非正数或非有限数值回退到 4 |
+| `label` | `string` | — | 图形上方的可见文字，同时提供默认可访问名称 |
+| `size` | `number` | 平直 `40`，波浪 `48` | 仅圆形：直径，单位 px；无效时使用对应默认值 |
+
+例如 `value=128`、`max=256` 显示一半进度，ARIA 报告的仍是 `128 / 256`。两个组件没有 `v-model`、值更新事件、插槽或公开方法；业务直接更新 `value` 与 `indeterminate`。
+
+线性组件占满容器宽度，可用外层容器或组件上的 `class`／`style` 限制宽度。平直高度等于 `thickness`；波浪额外预留 6px，因此默认高度为 10px。圆形通过 `size` 改变直径、通过 `thickness` 改变线宽；线宽最多取直径的一半，避免形成无效圆环。
+
+### 形状、轨道与动效
+
+- 活动进度使用主题 `primary`，轨道使用 `secondary-container`；端点均为圆形。线性确定进度在末端保留 4px 停止标记，并在进度靠近完成时收起。
+- 圆形确定进度从十二点方向顺时针增长。平直圆形的不确定模式默认没有底环；波浪圆形的不确定模式保留轨道。
+- 波浪确定进度在不超过 10% 和达到 95% 时收回为平直，图形容器尺寸保持稳定；不确定模式持续使用波浪。
+- 数值变化和波浪收放使用 500ms 过渡。更新目标时从当前显示位置继续过渡，ARIA 立即报告真实业务值，不逐帧播报动画中间值。
+- 系统启用 `prefers-reduced-motion: reduce` 后，确定进度直接更新；不确定模式显示静态图形，保留未知进度语义。
+- 页面隐藏、图形离开视口或所在 KeepAlive 页面停用时暂停持续动画；卸载时清理动画帧和监听。
+
+### 主题与样式覆盖
+
+组件跟随已有浅色／深色、局部主题和动态取色。可在当前组件或祖先容器上覆盖专用变量：
+
+```vue
+<MdvLinearProgress
+  :value="60"
+  label="文件处理"
+  style="--mdv-progress-active-color: var(--mdv-sys-color-tertiary); --mdv-progress-track-color: var(--mdv-sys-color-tertiary-container)"
+/>
+```
+
+`--mdv-progress-active-color` 同时控制活动进度与线性停止标记，`--mdv-progress-track-color` 控制轨道。没有额外 `color` prop。高对比度模式使用系统 Highlight／GrayText 颜色。
+
+### 无障碍与原生属性
+
+根节点是只读的 `role="progressbar"`，确定模式提供 `aria-valuemin="0"`、规范化后的 `aria-valuemax` 和 `aria-valuenow`；不确定模式省略 `aria-valuenow`。SVG 是装饰内容，不增加 Tab 入口，不抢占焦点。
+
+为每个进度提供名称：优先使用原生 `aria-label` 或 `aria-labelledby`，也可以提供可见 `label`。`aria-describedby`、`aria-valuetext`、`id`、`dir`、`class`、`style` 和原生监听器透传到根节点。组件不自动建立 live region；需要通知完成或失败时，由业务提供独立的状态文字。
+
+RTL 下线性进度从右向左增长，不确定移动方向随之镜像；圆形继续顺时针。服务端输出确定的初始 SVG，挂载后再测量实际宽度并启动动画。
+
+公共类型：`MdvProgressVariant`、`MdvProgressProps`、`MdvCircularProgressProps`。
