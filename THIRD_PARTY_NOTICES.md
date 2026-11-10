@@ -161,12 +161,17 @@ MDV 使用 Vue、原生 dialog 与自己的关闭拦截、焦点、滚动锁和�
 
 MDV 用 Vue、原生 Popover 与独立菜单树实现交互，使用下面的 Floating UI 定位。点击高度采用至少 48px，以协调官网 Common 44dp 令牌与 48dp 测量图／可访问目标的差异。分组间隙的 Web 移植、滚动时退回分隔线、push 子菜单和动效时序属于 MDV 的实现选择；未引入其他 Material 组件运行时。
 
+## Material 3 Tooltip 规格与交互
+
+- Tooltip 规格来源：https://m3.material.io/components/tooltips/specs 、guidelines 与 accessibility 页面；网页交互语义参考 https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/ 。
+- 使用位置：`src/styles/tooltip.css` 的普通／富内容形状、颜色角色、排版与留白；`src/components/use-tooltip.ts` 的临时／持久行为。官网建议临时提示离开后保留 1.5 秒；MDV 的桌面关闭采用普通款立即、Rich 触发器 120ms／面板立即的较短默认值，触屏抬手后仍保留 1.5 秒。600ms 出现延迟、淡入／淡出时长及默认宽度上限均为 MDV 实现选择，不作为官方固定令牌。
+
 ## Floating UI
 
 - 软件包：`@floating-ui/dom`。
 - 来源：https://github.com/floating-ui/floating-ui
 - 许可：MIT，Copyright (c) 2021-present Floating UI contributors。
-- 使用位置：`src/components/menu-position.ts`；计算菜单和虚拟右键锚点的位置、边缘翻转、位移、可用空间以及位置更新。
+- 使用位置：`src/components/menu-position.ts`、`src/components/tooltip-position.ts`；计算菜单、虚拟右键锚点及 Tooltip 的位置、边缘翻转、位移、可用空间与位置更新。
 
 作为运行时依赖分发，不修改其源码。其原始许可随依赖提供：
 

@@ -1,4 +1,5 @@
 import { dismissMenusOutsideDialog } from './menu-stack'
+import { dismissTooltipsOutsideDialog, dismissTooltipsWithin } from './tooltip-layer'
 
 interface ModalEntry {
   element: HTMLDialogElement
@@ -113,6 +114,7 @@ export function trapDialogTab(dialog: HTMLDialogElement, event: KeyboardEvent) {
 
 export function acquireDialog(dialog: HTMLDialogElement) {
   const doc = dialog.ownerDocument
+  dismissTooltipsOutsideDialog(dialog)
   const previous = dismissMenusOutsideDialog(dialog) ?? (doc.activeElement as HTMLElement | null)
   let state = documents.get(doc)
   if (!state) {
@@ -152,6 +154,7 @@ export function acquireDialog(dialog: HTMLDialogElement) {
     release() {
       if (released) return
       released = true
+      dismissTooltipsWithin(dialog)
       const index = current.entries.indexOf(entry)
       restore = index === current.entries.length - 1
       if (index >= 0) {

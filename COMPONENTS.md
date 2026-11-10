@@ -20,6 +20,7 @@
 - [MdvDialog 对话框](#mdvdialog)
 - [MdvFullscreenDialog 全屏对话框](#mdvfullscreendialog)
 - [MdvMenu 菜单家族](#mdvmenu)
+- [MdvTooltip 与 MdvRichTooltip 提示](#mdvtooltip)
 
 ## MdvButton
 
@@ -193,7 +194,7 @@ const loading = ref(false)
 
 普通按钮建议实心图标；切换按钮建议未选空心、选中实心，以颜色之外的方式表达状态。组件不自动把任意 SVG 改成对应实心图形。SVG 推荐 `currentColor` 与 `focusable="false"`；直接放入的 SVG／图片按尺寸填满图标容器。图标容器始终隐藏于辅助技术并禁止内部聚焦，不要在插槽中放置可交互控件。
 
-**必须提供 `aria-label` 或 `aria-labelledby` 描述动作。** 仅图标或 SVG 的 title 不作为组件名称来源。切换按钮自动设置 `aria-pressed`，名称保持稳定，例如始终为“收藏”；不要随选中状态改成“取消收藏”。loading 不移除名称。缺失名称时开发环境会提示；引用的标签元素是否存在仍由使用方保证。可透传原生 `title`，但它不是 MD3 Tooltip；本组件不内置 Tooltip，后续通过独立组件组合。
+**必须提供 `aria-label` 或 `aria-labelledby` 描述动作。** 仅图标或 SVG 的 title 不作为组件名称来源。切换按钮自动设置 `aria-pressed`，名称保持稳定，例如始终为“收藏”；不要随选中状态改成“取消收藏”。loading 不移除名称。缺失名称时开发环境会提示；引用的标签元素是否存在仍由使用方保证。可透传原生 `title`，但它不是 MD3 Tooltip；本组件不内置 Tooltip，可通过独立的 `MdvTooltip`／`MdvRichTooltip` 组合。
 
 | size | 可见高度 | 图标 | narrow 宽 | default 宽 | wide 宽 | square 圆角 | outlined 描边 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -1734,3 +1735,92 @@ reason 为 `escape`、`outside`、`focus-out`、`tab`、`select`、`trigger`、`
 面板通过原生 Popover manual top layer 在原 DOM 位置绘制，继承局部浅深色、动态取色和 dir；需要支持 Popover API 的现代浏览器。新增运行依赖 `@floating-ui/dom` 负责定位、边缘翻转、位移、可用空间和滚动更新；没有 Teleport 到 body，也没有 Sheet 或触屏长按的替代实现。SSR 输出关闭态节点，初始 modelValue=true 在 hydration 后打开。
 
 公共类型：`MdvMenuProps`、`MdvMenuVariant`、`MdvMenuColorScheme`、`MdvMenuLayout`、`MdvMenuSubmenuMode`、`MdvMenuPlacement`、`MdvMenuSelectionMode`、`MdvMenuValue`、`MdvMenuModelValue`、`MdvMenuCloseReason`、`MdvMenuCloseDetail`、`MdvMenuSelectDetail`、`MdvMenuSelectEvent`、`MdvMenuSlotProps`、`MdvMenuTriggerProps`、`MdvMenuTriggerSlotProps`、`MdvMenuItemSlotProps`。
+
+## MdvTooltip
+
+普通款 `MdvTooltip` 展示短文字说明；富内容款 `MdvRichTooltip` 支持可选标题、正文、内联链接和最多两个文字按钮。两款已完成当前约定范围的项目检查与用户预览验收，包含默认时长调整；提供行为／SSR／hydration 测试和独立 playground，真实包消费另行验证。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import refresh from '@iconify-icons/material-symbols/refresh'
+import { MdvButton, MdvIcon, MdvIconButton, MdvRichTooltip, MdvTooltip } from 'mdv'
+
+const introduction = ref(false)
+
+function refreshContent() {
+  // 刷新业务数据。
+}
+</script>
+
+<template>
+  <MdvTooltip text="刷新当前内容">
+    <template #trigger="{ triggerProps }">
+      <MdvIconButton v-bind="triggerProps" aria-label="刷新" @click="refreshContent">
+        <MdvIcon :icon="refresh" />
+      </MdvIconButton>
+    </template>
+  </MdvTooltip>
+
+  <MdvRichTooltip
+    v-model="introduction"
+    persistent
+    title="云端备份"
+    text="在其他设备上继续使用你的文件。"
+  >
+    <template #trigger="{ triggerProps }">
+      <MdvButton v-bind="triggerProps" variant="outlined">了解备份</MdvButton>
+    </template>
+    <template #actions="{ close }">
+      <MdvButton variant="text" @click="close">知道了</MdvButton>
+    </template>
+  </MdvRichTooltip>
+</template>
+```
+
+### Props、插槽与事件
+
+两款共有：
+
+| Prop | 类型 | 默认值 |
+| --- | --- | --- |
+| `modelValue` | `boolean` | 省略时内部管理 |
+| `text` | `string` | 无 |
+| `placement` | `MdvTooltipPlacement` | 普通款 `top`，Rich `bottom-start` |
+| `offset` | `number` | `4`，单位 px |
+| `openDelay` | `number` | `600`，单位 ms，仅 hover |
+| `closeDelay` | `number` | 未指定时按场景处理，见下文；显式设置后统一覆盖关闭延迟，单位 ms |
+| `disabled` | `boolean` | `false`，只禁用提示 |
+
+`MdvRichTooltip` 额外提供 `title?: string` 和 `persistent?: boolean`，persistent 默认 false。位置包含 top／bottom／left／right 及其 `-start`／`-end` 对齐；start／end 随 RTL 变化。负距离或延迟规范化为 0，非有限数值使用默认值。
+
+`#trigger` 提供 `{ triggerProps, open, close }`：把整个 triggerProps 绑定到一个原生元素或向控件透传属性／事件的组件；普通 Button／IconButton 可直接使用。不添加触发包装盒。默认插槽替代 text，普通款仅放说明文字，不能放链接或按钮；Rich 可放段落和内联链接。Rich 另有 `#title` 替代 title、`#actions` 放最多两个 `variant="text"` 按钮；这些内容插槽都提供 `{ open, close }`。actions 不自动关闭，由业务调用 close。
+
+普通款保留并合并触发器原有 aria-describedby；Rich 使用 aria-controls、aria-haspopup="dialog" 与 aria-expanded，卸载或禁用时撤销自身关联。关系在客户端绑定真实触发器后建立；SSR 输出关闭态面板，hydration 不修改现有节点或抢焦点。触发器自身的 id、可访问名称、原生行为和通过 Vue 合并绑定的事件保留。`ref` 属于 triggerProps，手写组合多个浮层触发器时，应同时转发各自的 ref 与事件，不能用后一个对象直接覆盖前一个。
+
+事件为 `update:modelValue(boolean)`、`open`、`opened`、`close(detail)`、`closed(detail)`；detail 为 `{ reason }`，区分 leave、focus-out、escape、outside、trigger、replaced、owner、disabled、empty、model、programmatic。open／close 表示进入／退出开始，opened／closed 表示相应动效完成；快速反向时不发送被取消阶段的完成事件。Expose 提供 `open()`、`close()`、`toggle()`。
+
+显式传入 modelValue 后，普通开关请求等待父级接受，父级拒绝时保留现状。为了确保同一 Document 同时只显示一个提示，被另一提示替换或所属浮层关闭时会立即隐藏并请求模型回传 false；父级拒绝也不会让旧提示继续显示。之后可显式调用 open() 或再次切换模型重新打开。disabled／空内容会抑制显示，但保留调用方的模型值；恢复可用后按当前模型同步。
+
+### 触发、键盘与触屏
+
+- 默认两款：hover 等待 openDelay，默认 600ms；键盘或程序聚焦立即显示。进入触发器或面板会取消关闭计时；键盘焦点移出整个区域关闭。
+- 桌面关闭：普通款鼠标移开立即开始退场；临时 Rich 从触发器移开预留 120ms，方便跨越间隙进入面板，从面板移开则立即开始退场。显式设置 closeDelay 后，以上离开操作均等待该值。
+- Rich persistent：点击触发器切换，也可由模型或公开方法打开。hover／聚焦不自动打开；离开指针区域仍保留，到外部点击／焦点、Escape 或明确关闭为止。
+- 触屏普通／临时 Rich：长按 500ms 显示；抬手后默认保留 1500ms，显式设置 closeDelay 后使用该值。移动超过 10px 或 pointercancel 会取消长按，正常短按和滚动保持原行为。识别后的同次 click／contextmenu 被阻止，避免长按误执行按钮业务；持久 Rich 使用正常点击。
+- Esc 优先关闭提示，不同时关闭底下 Menu／Dialog，也不会在触发器仍聚焦时自行重开。IME 组合输入期间不处理 Esc。焦点在 Rich 操作内时，Esc 或程序关闭会合理返回触发器；外部交互造成关闭时保留业务的新焦点。
+- 普通款 role=tooltip，焦点留在原控件；Rich 使用 role=dialog、aria-modal=false，打开时不抢焦点，不锁 Tab。可从触发器依 DOM 顺序进入链接、操作按钮，再继续到后续页面。Rich 没有标题时可通过 aria-label 命名，默认名称为“帮助信息”。
+
+Tooltip 是附加说明。图标按钮仍需自己的 aria-label／aria-labelledby，已有明确标签的控件无需再重复同文提示；关键错误、必须完成的步骤应直接呈现。原生 disabled 控件可能不派发焦点与指针事件，应提供另一个可聚焦的说明入口，或把提示绑定到具有名称和 tabindex 的外层锚点；提示的 disabled 不会改变业务控件的禁用状态。
+
+官方 Guidelines 建议临时提示离开目标区域后保留 1.5 秒；MDV 的桌面关闭采用上述较短默认值。600ms 出现延迟与桌面关闭时长属于本库的体验选择，均非官方固定令牌；触屏抬手后仍默认保留 1.5 秒。
+
+### 外观、定位与样式
+
+普通款采用 inverse-surface／inverse-on-surface、4px 圆角、12／16／400 正文、左右 8px／上下 4px 留白，单行高 24px，允许自然换行，无阴影。Rich 采用 surface-container／on-surface-variant、12px 圆角和 elevation level2（3dp）；标题 14／20／500、正文 14／20／400，顶部 12px、底部 8px、左右 16px，标题到正文 4px、正文到操作区 12px。文字按钮使用 primary，从逻辑起始侧横向排列，窄容器允许换行。配色跟随主题与动态令牌，两款均没有箭头。
+
+默认最大宽度为普通 200px／Rich 320px；这是 MDV 的布局默认值。class／style 和原生描述／方向属性作用于面板，可覆盖 `--mdv-tooltip-max-width` 或 max-width；最终仍受视口可用空间约束。普通款默认距离有边界的控件 4px，无边界文字可显式传 offset=8。Rich 默认 bottom-start；遇到边缘自动 flip／shift，并跟随滚动、尺寸与 visualViewport 变化，触发器完全被裁切时关闭。
+
+采用原 DOM 中的 Popover manual top layer，保留局部主题和 Dialog 所属关系，需要支持 Popover 的现代浏览器；复用现有 Floating UI 依赖，不添加全局 Provider，不锁页面滚动。淡入／淡出为 MDV 150／100ms 动效，快速反向从当前帧继续，reduced-motion 下即时切换。卸载、KeepAlive 停用、所属浮层关闭和页面失焦会释放计时器、监听、定位与动画。
+
+公共类型：`MdvTooltipProps`、`MdvRichTooltipProps`、`MdvTooltipPlacement`、`MdvTooltipCloseReason`、`MdvTooltipCloseDetail`、`MdvTooltipSlotProps`、`MdvTooltipTriggerProps`、`MdvTooltipTriggerSlotProps`。

@@ -19,6 +19,7 @@ import ProgressPlayground from './ProgressPlayground.vue'
 import DialogPlayground from './DialogPlayground.vue'
 import FullscreenDialogPlayground from './FullscreenDialogPlayground.vue'
 import MenuPlayground from './MenuPlayground.vue'
+import TooltipPlayground from './TooltipPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -129,6 +130,12 @@ const pages = [
     label: 'Menu 菜单',
     description: '对照菜单外观、分组选择、子菜单、右键触发、键盘和 Dialog 组合。',
     component: MenuPlayground,
+  },
+  {
+    id: 'tooltip',
+    label: 'Tooltip 提示',
+    description: '对照普通与富内容提示、悬停／键盘／长按、持久提示、定位和浮层组合。',
+    component: TooltipPlayground,
   },
   {
     id: 'theme',

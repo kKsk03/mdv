@@ -9,6 +9,8 @@ MdvDialog 与 MdvFullscreenDialog 已完成当前约定范围的项目检查与�
 
 MdvMenu、MdvContextMenu、MdvMenuItem 与 MdvMenuGroup 已完成当前约定范围的项目检查与用户验收，真实包消费另行验证。
 
+MdvTooltip 与 MdvRichTooltip 已完成当前约定范围的项目检查与开发预览验收，包含普通／富内容、临时／持久提示及默认时长调整，真实包消费另行验证。
+
 ## 本地开发
 
 在仓库根目录执行。当前环境基线为 Node.js 24.22.1 和 pnpm 12.14.0。
@@ -66,6 +68,7 @@ pnpm build
 - [MdvDialog 对话框](./COMPONENTS.md#mdvdialog)
 - [MdvFullscreenDialog 全屏对话框](./COMPONENTS.md#mdvfullscreendialog)
 - [MdvMenu 菜单家族](./COMPONENTS.md#mdvmenu)
+- [MdvTooltip 与 MdvRichTooltip 提示](./COMPONENTS.md#mdvtooltip)
 
 ## 主题与排版
 

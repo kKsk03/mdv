@@ -25,6 +25,18 @@ export { default as MdvMenu } from './components/MdvMenu.vue'
 export { default as MdvContextMenu } from './components/MdvContextMenu.vue'
 export { default as MdvMenuItem } from './components/MdvMenuItem.vue'
 export { default as MdvMenuGroup } from './components/MdvMenuGroup.vue'
+export { default as MdvTooltip } from './components/MdvTooltip.vue'
+export { default as MdvRichTooltip } from './components/MdvRichTooltip.vue'
+export type {
+  MdvTooltipProps,
+  MdvRichTooltipProps,
+  MdvTooltipPlacement,
+  MdvTooltipCloseReason,
+  MdvTooltipCloseDetail,
+  MdvTooltipSlotProps,
+  MdvTooltipTriggerProps,
+  MdvTooltipTriggerSlotProps,
+} from './components/tooltip.types'
 export type {
   MdvMenuVariant,
   MdvMenuColorScheme,

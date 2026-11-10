@@ -235,6 +235,8 @@ defineExpose({ panel })
 
 function keydown(event: KeyboardEvent) {
   if (event.defaultPrevented || event.isComposing || event.keyCode === 229) return
+  const tooltip = (event.target as Element | null)?.closest('[data-mdv-tooltip-panel]')
+  if (tooltip && element.value?.contains(tooltip)) return
   event.stopPropagation()
   tree.keyboard.value = true
   activate()

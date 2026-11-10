@@ -1,3 +1,10 @@
+import {
+  acquireTooltipMenuBoundary,
+  dismissTooltipOnEscape,
+  dismissTooltipsWithin,
+  tooltipOwnsTab,
+} from './tooltip-layer'
+
 interface MenuLayer {
   owner: HTMLElement
   contains: (target: EventTarget | null) => boolean
@@ -22,6 +29,7 @@ export function acquireMenuLayer(doc: Document, layer: MenuLayer) {
     const keydown = (event: KeyboardEvent) => {
       const top = layers[layers.length - 1]
       if (!top || event.defaultPrevented || event.isComposing || event.keyCode === 229) return
+      if (dismissTooltipOnEscape(event) || tooltipOwnsTab(event)) return
       if (event.key === 'Escape') {
         event.preventDefault()
         event.stopPropagation()
@@ -54,10 +62,13 @@ export function acquireMenuLayer(doc: Document, layer: MenuLayer) {
   }
   const current = stack
   current.layers.push(layer)
+  const releaseTooltipBoundary = acquireTooltipMenuBoundary(layer.owner)
   let released = false
   return () => {
     if (released) return
     released = true
+    releaseTooltipBoundary()
+    dismissTooltipsWithin(layer.owner)
     const index = current.layers.indexOf(layer)
     if (index >= 0) current.layers.splice(index, 1)
     if (!current.layers.length) {

@@ -13,6 +13,7 @@
 @import './dialog.css';
 @import './fullscreen-dialog.css';
 @import './menu.css';
+@import './tooltip.css';
 
 .mdv-icon {
   display: inline-block;
