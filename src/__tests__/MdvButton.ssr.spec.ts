@@ -17,6 +17,17 @@ describe('MdvButton SSR', () => {
     expect(html).toContain('保存')
   })
 
+  it('omits inactive loading content even when a loading label is supplied', async () => {
+    const html = await renderToString(
+      h(MdvButton, { loading: false, loadingText: '正在保存全部更改…' }, { default: () => '保存' }),
+    )
+
+    expect(html).toContain('保存')
+    expect(html).not.toContain('正在保存全部更改…')
+    expect(html).not.toContain('mdv-button__spinner')
+    expect(html).not.toContain('aria-busy=')
+  })
+
   it.each(['success', '#06C'] as const)(
     'renders deterministic local color=%s without DOM access or a native color attribute',
     async (color) => {
@@ -49,15 +60,14 @@ describe('MdvButton SSR', () => {
     expect(html).not.toContain('loadingtext=')
   })
 
-  it('reserves a custom loading label in the initial non-loading render', async () => {
+  it('keeps the original slotted label out of layout while using a custom loading label', async () => {
     const html = await renderToString(
-      h(MdvButton, { loadingText: '保存中…' }, { default: () => '保存' }),
+      h(MdvButton, { loading: true, loadingText: '保存中…' }, { default: () => '保存' }),
     )
 
     expect(html).toContain('保存中…')
-    expect(html).toContain('aria-hidden="true"')
-    expect(html).toContain('inert')
-    expect(html).not.toContain('aria-busy=')
+    expect(html).toMatch(/style="display:none;"[^>]*>[\s\S]*?保存/)
+    expect(html).toContain('aria-busy="true"')
   })
 
   it('renders disabled links without an activatable href', async () => {

@@ -1,0 +1,181 @@
+.mdv-dialog {
+  position: fixed;
+  inset: 0;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  padding: 24px;
+  overflow: hidden;
+  background: transparent;
+  color: var(--mdv-sys-color-on-surface);
+  font-family: var(--mdv-sys-typescale-font-family);
+  font-size: var(--mdv-sys-typescale-body-medium-size);
+  font-weight: var(--mdv-sys-typescale-body-medium-weight);
+  line-height: var(--mdv-sys-typescale-body-medium-line-height);
+  letter-spacing: var(--mdv-sys-typescale-body-medium-tracking);
+  overscroll-behavior: contain;
+  outline: none;
+}
+
+.mdv-dialog:not([open]) {
+  display: none;
+}
+
+.mdv-dialog[open] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 自绘遮罩继承局部主题；原生 backdrop 只负责 top layer 的模态屏障。 */
+.mdv-dialog::backdrop {
+  background: transparent;
+}
+
+.mdv-dialog__scrim {
+  position: absolute;
+  inset: 0;
+  background-color: color-mix(in srgb, var(--mdv-sys-color-scrim) 32%, transparent);
+}
+
+.mdv-dialog__container {
+  position: relative;
+  display: flex;
+  isolation: isolate;
+  box-sizing: border-box;
+  width: var(--mdv-dialog-width, fit-content);
+  min-width: min(280px, 100%);
+  max-width: min(var(--mdv-dialog-max-width, 560px), 100%);
+  max-height: 100%;
+  min-height: 0;
+  flex-direction: column;
+  border-radius: var(--mdv-sys-shape-corner-extra-large);
+  overflow: visible;
+  overflow-wrap: anywhere;
+}
+
+.mdv-dialog__surface {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  height: 100%;
+  border-radius: inherit;
+  background-color: var(--mdv-sys-color-surface-container-high);
+  pointer-events: none;
+}
+
+.mdv-dialog__header {
+  position: relative;
+  min-width: 0;
+  flex-shrink: 0;
+  padding: 24px 24px 0;
+}
+
+.mdv-dialog__title {
+  min-width: 0;
+  margin: 0;
+  color: var(--mdv-sys-color-on-surface);
+  font-size: var(--mdv-sys-typescale-headline-small-size);
+  font-weight: var(--mdv-sys-typescale-headline-small-weight);
+  line-height: var(--mdv-sys-typescale-headline-small-line-height);
+  letter-spacing: var(--mdv-sys-typescale-headline-small-tracking);
+}
+
+.mdv-dialog__icon {
+  display: flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  margin-inline: auto;
+  color: var(--mdv-sys-color-secondary);
+}
+
+.mdv-dialog__icon > :is(svg, img) {
+  width: 24px;
+  height: 24px;
+}
+
+.mdv-dialog__icon + .mdv-dialog__title {
+  margin-block-start: 16px;
+  text-align: center;
+}
+
+.mdv-dialog__content,
+.mdv-fullscreen-dialog__content {
+  min-width: 0;
+  min-height: 0;
+  padding: 24px;
+  overflow: auto;
+  color: var(--mdv-sys-color-on-surface-variant);
+  scrollbar-width: thin;
+  scrollbar-color: var(--mdv-sys-color-outline) transparent;
+  overscroll-behavior: contain;
+}
+
+.mdv-dialog__description {
+  margin: 0;
+}
+
+.mdv-dialog__content:focus-visible,
+.mdv-fullscreen-dialog__content:focus-visible {
+  outline: 2px solid var(--mdv-sys-color-primary);
+  outline-offset: -2px;
+}
+
+.mdv-dialog--with-header > .mdv-dialog__container > .mdv-dialog__content {
+  padding-block-start: 16px;
+}
+
+.mdv-dialog--with-actions > .mdv-dialog__container > .mdv-dialog__content {
+  padding-block-end: 0;
+}
+
+.mdv-dialog__actions {
+  display: flex;
+  min-width: 0;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 24px;
+  /* 两个操作不足以并排时，确认按钮换到上面，取消按钮保留在下面。 */
+  flex-wrap: wrap-reverse;
+}
+
+.mdv-dialog__actions > * {
+  flex-shrink: 0;
+  max-width: 100%;
+}
+
+.mdv-dialog--scrollable > .mdv-dialog__container > .mdv-dialog__content {
+  border-block: 1px solid var(--mdv-sys-color-outline-variant);
+}
+
+.mdv-dialog--scrollable.mdv-dialog--with-header > .mdv-dialog__container > .mdv-dialog__header {
+  padding-block-end: 16px;
+}
+
+.mdv-dialog--scrollable.mdv-dialog--with-actions > .mdv-dialog__container > .mdv-dialog__content {
+  padding-block-end: 16px;
+}
+
+@media (forced-colors: active) {
+  .mdv-dialog__container {
+    outline: 1px solid CanvasText;
+  }
+
+  .mdv-dialog__surface {
+    background-color: Canvas;
+  }
+
+  .mdv-dialog__scrim {
+    background-color: Canvas;
+    opacity: 0.6;
+  }
+}

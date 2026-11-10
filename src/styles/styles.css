@@ -10,6 +10,8 @@
 @import './badge.css';
 @import './list.css';
 @import './progress.css';
+@import './dialog.css';
+@import './fullscreen-dialog.css';
 
 .mdv-icon {
   display: inline-block;
@@ -22,6 +24,7 @@
 .mdv-button {
   --mdv-button-height: 40px;
   --mdv-button-space: 16px;
+  --mdv-button-min-width: calc(var(--mdv-button-space) * 2 + 32px);
   --mdv-button-icon-size: 20px;
   --mdv-button-gap: 8px;
   --mdv-button-stroke: 1px;
@@ -37,7 +40,7 @@
 
   position: relative;
   box-sizing: border-box;
-  min-width: 0;
+  min-width: min(100%, var(--mdv-button-min-width));
   min-height: var(--mdv-button-height);
   max-width: 100%;
   border: var(--mdv-button-border) solid transparent;
@@ -111,6 +114,11 @@
 
 .mdv-button--square {
   border-radius: var(--mdv-button-square-radius);
+}
+
+.mdv-button--text,
+.mdv-button--link {
+  --mdv-button-min-width: calc(var(--mdv-button-space) * 2 + 16px);
 }
 
 .mdv-button--full-width {
@@ -216,35 +224,14 @@
   background-color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 10%, transparent);
 }
 
-.mdv-button__layout {
+.mdv-button__content {
   position: relative;
   z-index: 1;
-  display: inline-grid;
-  min-width: 0;
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.mdv-button__content {
   display: inline-flex;
   min-width: 0;
-  grid-area: 1 / 1;
   align-items: center;
-  align-self: center;
   justify-content: center;
   gap: var(--mdv-button-gap);
-}
-
-.mdv-button__content--reserve-spinner {
-  --mdv-button-current-icons: var(--mdv-button-normal-icons);
-
-  padding-inline: calc(
-    (max(1, var(--mdv-button-normal-icons)) - var(--mdv-button-current-icons)) *
-      (var(--mdv-button-icon-size) + var(--mdv-button-gap)) / 2
-  );
-}
-
-.mdv-button__content--loading {
-  --mdv-button-current-icons: 1;
 }
 
 .mdv-button__ripple,
@@ -282,15 +269,6 @@
   to {
     opacity: 0;
   }
-}
-
-.mdv-button__content--hidden {
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.mdv-button__content--hidden .mdv-button__spinner {
-  animation-play-state: paused;
 }
 
 .mdv-button__label {

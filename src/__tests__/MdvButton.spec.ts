@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, onTestFinished, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { defineComponent, h, onMounted } from 'vue'
 import MdvButton from '../components/MdvButton.vue'
@@ -263,36 +263,44 @@ describe('MdvButton', () => {
     expect(content.text()).toBe('保存更改')
   })
 
-  it('exposes only the active label when reserving a custom loading message', async () => {
+  it('renders a custom loading message only while loading and restores the original content', async () => {
+    // jsdom 只为已连接节点刷新计算样式，可见性切换需要挂载到文档。
+    const host = document.createElement('div')
+    document.body.appendChild(host)
     const wrapper = mount(MdvButton, {
-      props: { loadingText: '正在保存所有更改…' },
+      attachTo: host,
+      props: { loading: false, loadingText: '正在保存所有更改…' },
       slots: { default: '保存', leading: '<svg />', trailing: '<svg />' },
     })
-    const normal = wrapper.get('.mdv-button__content')
-    const loading = wrapper.get('.mdv-button__loading')
+    onTestFinished(() => {
+      wrapper.unmount()
+      host.remove()
+    })
+    const normal = wrapper.get<HTMLElement>('.mdv-button__label')
 
     expect(normal.text()).toBe('保存')
-    expect(normal.attributes('aria-hidden')).toBeUndefined()
-    expect(normal.attributes('inert')).toBeUndefined()
-    expect(loading.text()).toBe('正在保存所有更改…')
-    expect(loading.attributes('aria-hidden')).toBe('true')
-    expect(loading.attributes('inert')).toBeDefined()
+    expect(normal.isVisible()).toBe(true)
+    expect(wrapper.text()).toBe('保存')
+    expect(wrapper.find('.mdv-button__loading-label').exists()).toBe(false)
+    expect(wrapper.find('.mdv-button__spinner').exists()).toBe(false)
+    expect(wrapper.findAll('.mdv-button__icon')).toHaveLength(2)
 
     await wrapper.setProps({ loading: true })
     expect(wrapper.get('button').attributes('aria-busy')).toBe('true')
     expect(wrapper.get('button').element.disabled).toBe(false)
-    expect(normal.attributes('aria-hidden')).toBe('true')
-    expect(normal.attributes('inert')).toBeDefined()
-    expect(loading.attributes('aria-hidden')).toBeUndefined()
-    expect(loading.attributes('inert')).toBeUndefined()
-    expect(loading.get('.mdv-button__spinner').attributes('aria-hidden')).toBe('true')
-    expect(loading.find('.mdv-button__icon').exists()).toBe(false)
+    expect(normal.isVisible()).toBe(false)
+    expect(normal.element.style.display).toBe('none')
+    expect(wrapper.get('.mdv-button__loading-label').text()).toBe('正在保存所有更改…')
+    expect(wrapper.get('.mdv-button__loading-label').isVisible()).toBe(true)
+    expect(wrapper.get('.mdv-button__spinner').attributes('aria-hidden')).toBe('true')
+    expect(wrapper.findAll('.mdv-button__spinner')).toHaveLength(1)
+    expect(wrapper.find('.mdv-button__icon').exists()).toBe(false)
 
     await wrapper.setProps({ loading: false })
-    expect(normal.attributes('aria-hidden')).toBeUndefined()
-    expect(normal.attributes('inert')).toBeUndefined()
-    expect(loading.attributes('aria-hidden')).toBe('true')
-    expect(loading.attributes('inert')).toBeDefined()
+    expect(normal.isVisible()).toBe(true)
+    expect(wrapper.find('.mdv-button__loading-label').exists()).toBe(false)
+    expect(wrapper.find('.mdv-button__spinner').exists()).toBe(false)
+    expect(wrapper.findAll('.mdv-button__icon')).toHaveLength(2)
     expect(wrapper.get('button').attributes('aria-busy')).toBeUndefined()
   })
 
@@ -322,18 +330,31 @@ describe('MdvButton', () => {
   )
 
   it('switches between custom and original loading labels without disabling the button', async () => {
+    const host = document.createElement('div')
+    document.body.appendChild(host)
     const wrapper = mount(MdvButton, {
+      attachTo: host,
       props: { loading: true, loadingText: '保存中…' },
       slots: { default: '保存' },
     })
+    onTestFinished(() => {
+      wrapper.unmount()
+      host.remove()
+    })
 
-    expect(wrapper.get('.mdv-button__loading').text()).toBe('保存中…')
+    expect(wrapper.get('.mdv-button__loading-label').text()).toBe('保存中…')
 
     await wrapper.setProps({ loadingText: '正在上传…' })
-    expect(wrapper.get('.mdv-button__loading').text()).toBe('正在上传…')
+    expect(wrapper.get('.mdv-button__loading-label').text()).toBe('正在上传…')
+
+    await wrapper.setProps({ loadingText: '' })
+    expect(wrapper.find('.mdv-button__loading-label').exists()).toBe(false)
+    expect(wrapper.get('.mdv-button__label').isVisible()).toBe(false)
+    expect(wrapper.findAll('.mdv-button__spinner')).toHaveLength(1)
 
     await wrapper.setProps({ loadingText: undefined })
-    expect(wrapper.find('.mdv-button__loading').exists()).toBe(false)
+    expect(wrapper.find('.mdv-button__loading-label').exists()).toBe(false)
+    expect(wrapper.get('.mdv-button__label').isVisible()).toBe(true)
     expect(wrapper.get('.mdv-button__content').text()).toBe('保存')
     expect(wrapper.get('.mdv-button__content').attributes('aria-hidden')).toBeUndefined()
     expect(wrapper.get('.mdv-button__spinner').attributes('aria-hidden')).toBe('true')

@@ -170,7 +170,7 @@ function applyButtonSeed() {
         {{ buttonSeedError }}
       </p>
       <p class="mt-4 text-mdv-body-small text-mdv-on-surface-variant">
-        loading 显示指示器和标签，前后图标隐藏；提前预留两种状态所需的空间，切换时保持尺寸。
+        loading 显示指示器和标签，前后图标隐藏；尺寸随当前内容自然变化，不提前预留加载空间。
         未提供加载文案时沿用原标签。loading 仍可点击，disabled 才会禁用。
         官方优先建议前置图标，同一按钮避免同时使用两个图标。
       </p>
@@ -402,12 +402,20 @@ function applyButtonSeed() {
 
     <div class="grid gap-5 lg:grid-cols-2">
       <article class="min-w-0 rounded-mdv-large border border-mdv-outline-variant p-5">
-        <h3 class="text-mdv-title-medium">加载时保持尺寸</h3>
+        <h3 class="text-mdv-title-medium">自然宽度与加载内容</h3>
         <p class="mt-2 text-mdv-body-small text-mdv-on-surface-variant">
           每组使用相同配置：左侧保持普通状态，右侧跟随 loading 开关。
-          对照无图标、双图标与长加载文案，切换时两侧宽高应保持一致。
+          尺寸按当前可见内容自然变化；没有额外加载占位，较长的加载文字只在加载时撑宽按钮。
         </p>
         <div class="mt-5 space-y-5">
+          <div>
+            <p class="mb-3 text-mdv-label-medium">普通操作随文字自然撑开</p>
+            <div class="flex flex-wrap items-center gap-2">
+              <MdvButton variant="text">取消</MdvButton>
+              <MdvButton variant="text">确认</MdvButton>
+              <MdvButton variant="text">保存全部修改</MdvButton>
+            </div>
+          </div>
           <div>
             <p class="mb-3 text-mdv-label-medium">无图标，沿用原标签</p>
             <div class="flex flex-wrap items-center gap-4">
@@ -466,6 +474,17 @@ function applyButtonSeed() {
                 保存
               </MdvButton>
             </div>
+          </div>
+          <div>
+            <p class="mb-3 text-mdv-label-medium">业务自行指定宽度</p>
+            <MdvButton
+              variant="text"
+              :loading="showLoading"
+              loading-text="保存中…"
+              style="width: 160px"
+            >
+              保存
+            </MdvButton>
           </div>
           <div>
             <p class="mb-3 text-mdv-label-medium">loading 与 disabled 同时开启</p>

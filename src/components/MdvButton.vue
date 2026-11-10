@@ -31,9 +31,9 @@ const props = withDefaults(
     /** 提供 href（包括空字符串）时使用原生 a，与 variant 无关。 */
     href?: string
     disabled?: boolean
-    /** 显示指示器与标签；不自动禁用或阻止点击。 */
+    /** 显示指示器与标签，按当前内容自然布局；不自动禁用或阻止点击。 */
     loading?: boolean
-    /** 加载标签；未提供时沿用默认插槽。布局预留两种状态中较宽的内容。 */
+    /** 加载标签；未提供时沿用默认插槽。 */
     loadingText?: string
     /** 开启 filled／tonal 的悬停阴影及 elevated 的悬停阴影升级。 */
     hoverShadow?: boolean
@@ -160,48 +160,22 @@ function preventDisabledLinkActivation(event: Event) {
         }"
       />
     </span>
-    <span
-      class="mdv-button__layout"
-      :style="{
-        '--mdv-button-normal-icons': ($slots.leading ? 1 : 0) + ($slots.trailing ? 1 : 0),
-      }"
-    >
-      <span
-        class="mdv-button__content"
-        :class="{
-          'mdv-button__content--hidden': props.loading && hasLoadingText,
-          'mdv-button__content--reserve-spinner': !hasLoadingText,
-          'mdv-button__content--loading': props.loading && !hasLoadingText,
-        }"
-        :aria-hidden="props.loading && hasLoadingText ? true : undefined"
-        :inert="props.loading && hasLoadingText ? true : undefined"
-      >
-        <span
-          v-if="props.loading && !hasLoadingText"
-          class="mdv-button__spinner"
-          aria-hidden="true"
-        />
-        <span v-else-if="$slots.leading" class="mdv-button__icon" aria-hidden="true">
-          <slot name="leading" />
-        </span>
-        <span class="mdv-button__label"><slot /></span>
-        <span
-          v-if="$slots.trailing && (!props.loading || hasLoadingText)"
-          class="mdv-button__icon"
-          aria-hidden="true"
-        >
-          <slot name="trailing" />
-        </span>
+    <span class="mdv-button__content">
+      <span v-if="props.loading" class="mdv-button__spinner" aria-hidden="true" />
+      <span v-else-if="$slots.leading" class="mdv-button__icon" aria-hidden="true">
+        <slot name="leading" />
+      </span>
+      <span v-show="!props.loading || !hasLoadingText" class="mdv-button__label">
+        <slot />
       </span>
       <span
-        v-if="hasLoadingText"
-        class="mdv-button__content mdv-button__loading"
-        :class="{ 'mdv-button__content--hidden': !props.loading }"
-        :aria-hidden="!props.loading ? true : undefined"
-        :inert="!props.loading ? true : undefined"
+        v-if="props.loading && props.loadingText"
+        class="mdv-button__label mdv-button__loading-label"
       >
-        <span class="mdv-button__spinner" aria-hidden="true" />
-        <span class="mdv-button__label">{{ props.loadingText }}</span>
+        {{ props.loadingText }}
+      </span>
+      <span v-if="$slots.trailing && !props.loading" class="mdv-button__icon" aria-hidden="true">
+        <slot name="trailing" />
       </span>
     </span>
   </component>

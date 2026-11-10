@@ -19,6 +19,16 @@ export { default as MdvListItem } from './components/MdvListItem.vue'
 export { default as MdvListSubheader } from './components/MdvListSubheader.vue'
 export { default as MdvLinearProgress } from './components/MdvLinearProgress.vue'
 export { default as MdvCircularProgress } from './components/MdvCircularProgress.vue'
+export { default as MdvDialog } from './components/MdvDialog.vue'
+export { default as MdvFullscreenDialog } from './components/MdvFullscreenDialog.vue'
+export type {
+  MdvDialogBeforeClose,
+  MdvDialogCloseDetail,
+  MdvDialogCloseReason,
+  MdvFullscreenDialogProps,
+  MdvDialogProps,
+  MdvDialogSlotProps,
+} from './components/dialog.types'
 export type {
   MdvProgressVariant,
   MdvProgressProps,

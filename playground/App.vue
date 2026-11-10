@@ -16,6 +16,8 @@ import DividerPlayground from './DividerPlayground.vue'
 import BadgePlayground from './BadgePlayground.vue'
 import ListPlayground from './ListPlayground.vue'
 import ProgressPlayground from './ProgressPlayground.vue'
+import DialogPlayground from './DialogPlayground.vue'
+import FullscreenDialogPlayground from './FullscreenDialogPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -108,6 +110,18 @@ const pages = [
     label: 'Progress 进度指示器',
     description: '对照线性与圆形、平直与波浪、确定与不确定进度，以及动效、尺寸和布局边界。',
     component: ProgressPlayground,
+  },
+  {
+    id: 'dialog',
+    label: 'Dialog 对话框',
+    description: '对照普通对话框，检查标题、图标、关闭策略、表单、焦点与滚动。',
+    component: DialogPlayground,
+  },
+  {
+    id: 'fullscreen-dialog',
+    label: 'Fullscreen Dialog 全屏对话框',
+    description: '检查全屏顶栏、底部操作、长正文、异步保存与嵌套确认。',
+    component: FullscreenDialogPlayground,
   },
   {
     id: 'theme',

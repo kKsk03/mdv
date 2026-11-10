@@ -95,9 +95,9 @@ MDV 自行实现 Vue 组件、装饰／separator 语义与逻辑方向布局；�
 - 版权：Copyright Google LLC
 - 许可：Apache License 2.0
 - 使用资源：Material Symbols 的本地 SVG 数据，包括 favorite、home、save、search 等预览图形及其填充／风格变体；文本框内置动作使用 close、visibility、visibility-off，Chip 使用 check、close，Segmented Button 使用 check。
-- 使用位置：`src/components/MdvTextField.vue`、`src/components/MdvChip.vue`、`src/components/MdvSegmentedButtonItem.vue` 的内置动作、`playground/` 的组件预览、组件测试和 `COMPONENTS.md` 示例。
+- 使用位置：`src/components/MdvTextField.vue`、`src/components/MdvChip.vue`、`src/components/MdvSegmentedButtonItem.vue`、`src/components/MdvFullscreenDialog.vue` 的内置动作、`playground/` 的组件预览、组件测试和 `COMPONENTS.md` 示例。
 
-Iconify 分发包提供可单独导入的图标数据，原始图形版权与许可归上游 Google。该包是本仓库的开发依赖；文本框、Chip 与 Segmented Button 只导入各自固定图形并随组件构建，MDV 不导入或注册整套数据。使用方无需为内置动作安装图标集；自定义图标按自己的静态导入分发，并保留相应许可。
+Iconify 分发包提供可单独导入的图标数据，原始图形版权与许可归上游 Google。该包是本仓库的开发依赖；文本框、Chip、Segmented Button 与 Dialog 只导入各自固定图形并随组件构建，MDV 不导入或注册整套数据。使用方无需为内置动作安装图标集；自定义图标按自己的静态导入分发，并保留相应许可。
 
 ## Iconify Vue 渲染器
 
@@ -140,6 +140,17 @@ SOFTWARE.
 - 使用位置：`src/components/progress-geometry.ts`、`src/components/progress-motion.ts` 与 `src/styles/progress.css` 的标准尺寸、颜色角色、间隙、波长、振幅、缓动和动效时序。
 
 MDV 使用自己的 Vue 与 SVG 几何、动画时钟和资源生命周期实现，未引入 Compose 运行时。线性波浪按官方二次曲线轮廓绘制，圆形波浪通过独立的径向曲线生成；下文保留 Apache License 2.0 原文。
+
+## Material 3 Dialog 规格与动效
+
+- 规格来源：https://m3.material.io/components/dialogs/specs 、https://m3.material.io/components/dialogs/guidelines 与 accessibility 页面。
+- 令牌交叉核对：AndroidX Material 3 `tokens/DialogTokens.kt`。
+- 动效时序依据：https://github.com/material-components/material-web/blob/main/dialog/internal/animations.ts
+- 动效版权：Copyright 2023 Google LLC；AndroidX 令牌版权：Copyright 2022 The Android Open Source Project。
+- 许可：Apache License 2.0。
+- 使用位置：`src/styles/dialog.css`／`src/styles/fullscreen-dialog.css` 的几何、色彩与排版，以及 `src/components/dialog-motion.ts` 的基本款进入／退出、遮罩与内容分层时序。
+
+MDV 使用 Vue、原生 dialog 与自己的关闭拦截、焦点、滚动锁和生命周期实现；基本款参考官方 Web 时序，全屏纵向过渡为 MDV 的实现选择。未引入 Material Web 或 Compose 运行时；下文保留 Apache License 2.0 原文。
 
 ## Material Color Utilities
 

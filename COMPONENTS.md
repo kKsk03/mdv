@@ -17,6 +17,8 @@
 - [MdvBadge 徽标](#mdvbadge)
 - [MdvList 列表](#mdvlist)
 - [MdvLinearProgress 与 MdvCircularProgress 进度指示器](#mdvlinearprogress-与-mdvcircularprogress)
+- [MdvDialog 对话框](#mdvdialog)
+- [MdvFullscreenDialog 全屏对话框](#mdvfullscreendialog)
 
 ## MdvButton
 
@@ -78,7 +80,7 @@ primary／secondary／tertiary／error 引用当前主题角色。success／warn
 
 `loading` 显示“指示器＋标签”，整组居中，不显示前后图标。提供 `loading-text` 时使用该文字，否则沿用默认标签；根元素设置 `aria-busy="true"`。指示器是装饰内容，可访问名称来自当前显示的标签，或使用方显式传入的 `aria-label`。loading 本身仍可点击、导航或提交表单；需要阻止激活时，同时绑定 `disabled`。
 
-组件提前预留普通内容和加载内容中较宽的尺寸，必要时同时预留较高的内容，避免仅切换 loading 时宽高跳动。普通状态可能比只容纳原标签略宽；未提供 `loading-text` 时也会为指示器预留空间。隐藏占位内容不参与交互与可访问名称，默认标签插槽只渲染一次。文案、图标、字号、size 或容器宽度改变时会正常重新布局；希望显示不同加载文案时，优先使用 `loading-text`，而不是在切换 loading 的同时替换默认标签。
+普通状态与加载状态均按当前可见的文字、图标／指示器和标准内边距自然布局，不提前预留另一状态的空间。加载文案较长时按钮会自然变宽，结束后恢复；需要始终等宽时，由使用方通过 `style` 指定宽度，或使用 `full-width`。默认标签插槽只挂载一次，使用自定义加载文案时原标签暂时移出布局和可访问名称，结束后恢复；未加载时不渲染自定义加载文案或指示器。显式传入空字符串 `loading-text=""` 时，加载期间仅显示居中指示器，此时请通过 `aria-label` 或 `aria-labelledby` 提供名称。
 
 悬停阴影默认关闭。`hover-shadow` 为 filled／tonal 开启悬停时的 elevation 1，为 elevated 开启从常态 elevation 1 到悬停 elevation 2 的变化；elevated 自身的常态阴影一直保留。text／outlined／link 不因此新增阴影，disabled 时不显示阴影，键盘焦点轮廓也不受此开关影响。默认关闭是 MDV 的设计选择；官方规范为上述适用变体定义了悬停 elevation。
 
@@ -106,6 +108,16 @@ primary／secondary／tertiary／error 引用当前主题角色。success／warn
 | `m` | 56px | 24px | 24px | 8px | 1px |
 | `l` | 96px | 48px | 32px | 12px | 2px |
 | `xl` | 136px | 64px | 40px | 16px | 3px |
+
+MDV 为短内容设置最小宽度，普通外观按两侧留白加 32px、text／link 按两侧留白加 16px 计算；这是 MDV 的布局约定。内容超过下限后自然撑开，最小宽度也不会超过父容器的可用宽度。
+
+| size | filled／tonal／outlined／elevated 最小宽度 | text／link 最小宽度 |
+| --- | ---: | ---: |
+| `xs` | 56px | 40px |
+| `s` | 64px | 48px |
+| `m` | 80px | 64px |
+| `l` | 128px | 112px |
+| `xl` | 160px | 144px |
 
 `round` 使用胶囊圆角；`square` 在 xs／s 为 12px、m 为 16px、l／xl 为 28px。点击、长按与释放时保持所选圆角，按压反馈使用状态层、涟漪与适用的阴影变化。状态层与涟漪独立叠加，点击结束后鼠标仍在按钮上时，保留悬停底色；鼠标离开后清除对应的悬停状态。
 
@@ -1446,3 +1458,142 @@ const waiting = ref(true)
 RTL 下线性进度从右向左增长，不确定移动方向随之镜像；圆形继续顺时针。服务端输出确定的初始 SVG，挂载后再测量实际宽度并启动动画。
 
 公共类型：`MdvProgressVariant`、`MdvProgressProps`、`MdvCircularProgressProps`。
+
+## MdvDialog
+
+普通模态对话框，提供图标、标题、正文和底部操作。全屏布局由独立的 MdvFullscreenDialog 提供，两款组件均已完成当前约定范围的项目检查与开发预览验收。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvButton, MdvDialog } from 'mdv'
+
+const visible = ref(false)
+const result = ref('')
+</script>
+
+<template>
+  <MdvButton @click="visible = true">打开对话框</MdvButton>
+  <MdvDialog
+    v-model="visible"
+    title="放弃修改？"
+    description="尚未保存的修改将会丢失。"
+    @closed="result = $event.returnValue"
+  >
+    <template #actions="{ close }">
+      <MdvButton variant="text" @click="close('continue')">继续编辑</MdvButton>
+      <MdvButton variant="text" @click="close('discard')">放弃修改</MdvButton>
+    </template>
+  </MdvDialog>
+  <p role="status">{{ result }}</p>
+</template>
+```
+
+### Props
+
+| Prop | 类型 | 默认值 |
+| --- | --- | --- |
+| `modelValue`／`v-model` | `boolean` | `false` |
+| `title` | `string` | `''` |
+| `description` | `string` | `''` |
+| `closeOnEsc` | `boolean` | `true` |
+| `closeOnScrim` | `boolean` | `true` |
+| `beforeClose` | `(detail) => boolean \| void \| Promise<boolean \| void>` | 不提供 |
+| `destroyOnClose` | `boolean` | `false` |
+
+普通款不提供 X、全屏切换或底部附加栏；退出操作放入 actions。Esc 和遮罩分别由对应选项控制，同时关闭时应保留操作按钮。
+
+### 插槽
+
+| 插槽 | 用途 |
+| --- | --- |
+| `icon` | 顶部 24px 图标 |
+| `title` | 替代标题文字，保留内置标题容器及其 ID |
+| 默认插槽 | 正文或表单，替代 description |
+| `actions="{ close }"` | 底部操作 |
+
+操作按钮推荐使用 `variant="text"`，按照“取消、确认”的 DOM 顺序书写，通常最多两个。并排空间不足时，确认显示在上、取消显示在下，键盘顺序保持原 DOM 顺序。组件不自动添加按钮或推断业务行为。
+
+普通款默认宽度 280–560px、28px 圆角和 24px 留白，使用 surface-container-high 和 32% 遮罩，可见容器不绘制阴影。有图标时图标与标题居中，正文保持起始对齐。长正文独立滚动，标题和操作区保留。
+
+## MdvFullscreenDialog
+
+独立的全屏模态对话框，提供顶部 X、标题、顶部操作和可选底栏。打开后始终填满视口，不根据窗口尺寸切换成普通款；使用方按场景明确选择组件。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvButton, MdvFullscreenDialog, MdvTextField } from 'mdv'
+
+const visible = ref(false)
+const name = ref('')
+function save() {
+  // 完成业务保存后关闭；失败时保留弹窗和输入。
+  visible.value = false
+}
+</script>
+
+<template>
+  <MdvButton @click="visible = true">新建行程</MdvButton>
+  <MdvFullscreenDialog v-model="visible" title="新建行程">
+    <form id="trip-form" @submit.prevent="save">
+      <MdvTextField v-model="name" label="行程名称" required autofocus full-width />
+    </form>
+    <template #actions>
+      <MdvButton variant="text" type="submit" form="trip-form">保存</MdvButton>
+    </template>
+  </MdvFullscreenDialog>
+</template>
+```
+
+### Props 与插槽
+
+全屏款具有普通款的 modelValue、title、description、closeOnEsc、beforeClose、destroyOnClose；不提供 closeOnScrim，因为可见容器覆盖整个视口。额外提供：
+
+| Prop | 类型 | 默认值 |
+| --- | --- | --- |
+| `closable` | `boolean` | `true` |
+| `closeLabel` | `string` | `'关闭对话框'` |
+
+| 插槽 | 用途 |
+| --- | --- |
+| `title` | 顶栏标题 |
+| 默认插槽 | 正文或表单，替代 description |
+| `actions="{ close }"` | 顶栏末端确认操作 |
+| `footer="{ close }"` | 可选底部操作栏 |
+
+全屏款不提供普通款的顶部装饰图标区域。容器无圆角、无阴影；顶栏与可选底栏各至少 56px，正文独立滚动。通常把保存放在顶栏，X 用于取消或退出；未保存确认可通过 beforeClose 打开普通 MdvDialog，playground 提供组合示例。
+
+### 两款组件共有：关闭与事件
+
+两款组件及操作插槽均提供 `close(returnValue?: string): Promise<boolean>`。返回 true 表示父级已接受关闭请求，退出动画可能尚未结束；等待退出完成请监听 closed。如果父级未接受 update:modelValue，弹窗继续保持打开。
+
+beforeClose 接收只读 `{ reason, returnValue }`，返回 false 阻止关闭，其他正常返回允许关闭；支持异步等待，其间重复请求共用同一个结果。抛错或 Promise 拒绝会保留弹窗并输出错误日志。外部关闭、重新打开或卸载后，旧结果失效。
+
+关闭原因包括 escape、scrim、close-button、action、form、model，其中 scrim 用于普通款，close-button 用于全屏款。Esc、遮罩、X、close() 和原生关闭表单经过拦截；父级直接设置 v-model=false 跳过拦截。确认、保存、删除和提交由业务处理；MdvButton 的 loading 不自动禁止重复点击。
+
+| 事件 | 时机／参数 |
+| --- | --- |
+| `update:modelValue` | 请求把模型设为 false |
+| `open` | 原生模态已打开，进入动效开始前 |
+| `opened` | 进入动效完成 |
+| `close` | 父级已接受关闭，退出动效开始前；`{ reason, returnValue }` |
+| `closed` | 退出动效、原生关闭及资源清理完成；`{ reason, returnValue }` |
+
+destroyOnClose 默认保留内容和内部状态，开启后在退出完成时卸载，不清空外部绑定值。KeepAlive 停用和卸载释放模态与滚动锁，重新激活按当前模型恢复。
+
+### 两款组件共有：表单、焦点和渲染
+
+普通表单继续使用原生提交和约束校验。操作区按钮可通过 `type="submit" form="your-form-id"` 关联正文表单。组件不把 Enter 统一映射为确认，中文输入期间的 Esc 不关闭弹窗。
+
+`method="dialog"` 和提交按钮的 `formmethod="dialog"` 经过关闭拦截和退出动画，按钮 value 成为 returnValue。表单自身的 @submit.prevent 会阻止默认关闭。程序化提交使用 requestSubmit()；直接调用原生 close() 或 form.submit() 会绕过正常请求入口，应使用模型和组件 close()。
+
+普通款默认 role=alertdialog，全屏款默认 role=dialog；普通款用于复杂表单时显式设置 role=dialog。标题自动关联 aria-labelledby，简单 description 自动关联 aria-describedby，复杂正文不自动整体关联。显式 ARIA 优先；没有可见标题时提供 aria-label 或 aria-labelledby。
+
+打开时优先内部 autofocus，再选择首个可操作元素，无交互内容时聚焦容器。Tab／Shift+Tab 在最上层弹窗内循环，关闭后恢复触发位置；嵌套弹窗共享滚动锁计数，全部关闭后才解锁。普通款遮罩要求按下与抬起都在面板外，避免拖出内容时误关闭。
+
+class 和普通 style 作用于可见容器，id、dir、lang、ARIA、data 和原生监听器作用于 dialog。CSS 变量同时应用原生根节点，让遮罩继承局部主题。普通款可用 --mdv-dialog-width、--mdv-dialog-max-width 调整宽度。
+
+两款在原 DOM 位置调用原生 showModal()，保留主题继承，需要支持 dialog 的现代浏览器；open、closedby、tabindex 由组件管理。服务端输出确定的关闭态节点，初始模型为 true 时在 hydration 后建立模态。支持 reduced-motion、快速开关和状态清理；没有新增运行依赖。
+
+公共类型：`MdvDialogProps`、`MdvFullscreenDialogProps`、`MdvDialogBeforeClose`、`MdvDialogCloseReason`、`MdvDialogCloseDetail`、`MdvDialogSlotProps`。

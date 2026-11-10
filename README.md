@@ -5,6 +5,8 @@ Tailwind 工具类由使用方安装并编译；本项目提供组件、主题�
 
 项目目前处于早期开发阶段。主题、字体、动态配色与 MdvButton 已完成本地验收及真实安装包消费验证；MdvIconButton、MdvIcon、MdvTextField、MdvCheckbox、MdvRadio、MdvSwitch、MdvSlider、MdvChip、MdvChipSet、MdvSegmentedButton、MdvSegmentedButtonItem、MdvCard、MdvDivider、MdvBadge、MdvList 家族、MdvLinearProgress 与 MdvCircularProgress 已完成当前约定范围的本地检查与开发预览验收，真实包消费另行验证。正式文档站计划在独立仓库建设；本仓库使用 playground 调试组件。
 
+MdvDialog 与 MdvFullscreenDialog 已完成当前约定范围的项目检查与开发预览验收；MdvButton 的自然宽度与 loading 布局修订也已验收。本轮改动的真实安装包消费另行验证。
+
 ## 本地开发
 
 在仓库根目录执行。当前环境基线为 Node.js 24.22.1 和 pnpm 12.14.0。
@@ -59,6 +61,8 @@ pnpm build
 - [MdvBadge 徽标](./COMPONENTS.md#mdvbadge)
 - [MdvList 列表](./COMPONENTS.md#mdvlist)
 - [MdvLinearProgress 与 MdvCircularProgress 进度指示器](./COMPONENTS.md#mdvlinearprogress-与-mdvcircularprogress)
+- [MdvDialog 对话框](./COMPONENTS.md#mdvdialog)
+- [MdvFullscreenDialog 全屏对话框](./COMPONENTS.md#mdvfullscreendialog)
 
 ## 主题与排版
 
