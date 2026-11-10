@@ -14,6 +14,7 @@ import SegmentedButtonPlayground from './SegmentedButtonPlayground.vue'
 import CardPlayground from './CardPlayground.vue'
 import DividerPlayground from './DividerPlayground.vue'
 import BadgePlayground from './BadgePlayground.vue'
+import ListPlayground from './ListPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -94,6 +95,12 @@ const pages = [
     label: 'Badge 徽标',
     description: '对照 Small／Large 形态、定位、可访问名称、主题和包裹交互内容。',
     component: BadgePlayground,
+  },
+  {
+    id: 'list',
+    label: 'List 列表',
+    description: '对照标准与 segmented 列表、行高、插槽、选择、分隔线和 RTL。',
+    component: ListPlayground,
   },
   {
     id: 'theme',

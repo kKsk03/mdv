@@ -1,0 +1,622 @@
+.mdv-list {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding-block: 8px;
+  padding-inline: 0;
+  color: var(--mdv-sys-color-on-surface);
+  font-family: var(--mdv-sys-typescale-font-family);
+  list-style: none;
+}
+
+.mdv-list--segmented {
+  gap: 2px;
+  padding: 8px;
+}
+
+.mdv-list-item {
+  --mdv-list-item-height: 56px;
+  --mdv-list-item-background: transparent;
+  --mdv-list-item-foreground: var(--mdv-sys-color-on-surface);
+  --mdv-list-item-secondary: var(--mdv-sys-color-on-surface-variant);
+  --mdv-list-item-control: var(--mdv-sys-color-primary);
+  --mdv-list-item-on-control: var(--mdv-sys-color-on-primary);
+  --mdv-list-item-control-outline: var(--mdv-sys-color-outline);
+  --mdv-list-item-radius-top: var(--mdv-sys-shape-corner-extra-small);
+  --mdv-list-item-radius-bottom: var(--mdv-sys-shape-corner-extra-small);
+
+  position: relative;
+  min-width: 0;
+  color: var(--mdv-list-item-foreground);
+  list-style: none;
+}
+
+.mdv-list-item[hidden],
+.mdv-list-subheader[hidden] {
+  display: none;
+}
+
+.mdv-list-item--two-line {
+  --mdv-list-item-height: 72px;
+}
+
+.mdv-list-item--three-line {
+  --mdv-list-item-height: 88px;
+}
+
+.mdv-list--segmented > .mdv-list-item {
+  --mdv-list-item-background: var(--mdv-sys-color-surface-container);
+}
+
+/* Only the outer corners of a continuous run are large. The adjacent-sibling
+   rules also work in SSR, on reorder and across subheaders, without DOM observers. */
+.mdv-list--expressive.mdv-list--segmented
+  > .mdv-list-item:not(.mdv-list-item:not([hidden]) + .mdv-list-item) {
+  --mdv-list-item-radius-top: var(--mdv-sys-shape-corner-large);
+}
+
+.mdv-list--expressive.mdv-list--segmented
+  > .mdv-list-item:not(:has(+ .mdv-list-item:not([hidden]))) {
+  --mdv-list-item-radius-bottom: var(--mdv-sys-shape-corner-large);
+}
+
+.mdv-list-item__shape {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: var(--mdv-list-item-height);
+  align-items: stretch;
+  border-radius: var(--mdv-list-item-radius-top) var(--mdv-list-item-radius-top)
+    var(--mdv-list-item-radius-bottom) var(--mdv-list-item-radius-bottom);
+  background: var(--mdv-list-item-background);
+  color: var(--mdv-list-item-foreground);
+  isolation: isolate;
+  transition:
+    border-radius var(--mdv-sys-motion-duration-medium-2) var(--mdv-sys-motion-easing-emphasized),
+    background-color var(--mdv-sys-motion-duration-short-3) linear,
+    color var(--mdv-sys-motion-duration-short-3) linear;
+}
+
+.mdv-list-item__primary {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-width: 0;
+  flex: 1 1 0;
+  align-items: stretch;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mdv-list-item--interactive:not(.mdv-list-item--disabled) .mdv-list-item__primary {
+  cursor: pointer;
+}
+
+/* Interaction shapes override all resting corners, including the small inner
+   corners of a segmented list. Baseline keeps its resting shape throughout. */
+@media (hover: hover) {
+  .mdv-list--expressive
+    > .mdv-list-item--interactive:not(.mdv-list-item--disabled, .mdv-list-item--selected)
+    > .mdv-list-item__shape:has(
+      > .mdv-list-item__primary:hover:not(:disabled, :focus-visible, :active)
+    ) {
+    --mdv-list-item-radius-top: var(--mdv-sys-shape-corner-small);
+    --mdv-list-item-radius-bottom: var(--mdv-sys-shape-corner-small);
+  }
+}
+
+.mdv-list--expressive
+  > .mdv-list-item
+  > .mdv-list-item__shape:has(> .mdv-list-item__primary:focus-visible),
+.mdv-list--expressive
+  > .mdv-list-item--interactive:not(.mdv-list-item--disabled)
+  > .mdv-list-item__shape:has(> .mdv-list-item__primary:active:not(:disabled)),
+.mdv-list--expressive > .mdv-list-item--selected > .mdv-list-item__shape {
+  --mdv-list-item-radius-top: var(--mdv-sys-shape-corner-large);
+  --mdv-list-item-radius-bottom: var(--mdv-sys-shape-corner-large);
+}
+
+.mdv-list-item--selected,
+.mdv-list--segmented > .mdv-list-item--selected {
+  --mdv-list-item-background: var(--mdv-sys-color-secondary-container);
+  --mdv-list-item-foreground: var(--mdv-sys-color-on-secondary-container);
+  --mdv-list-item-secondary: var(--mdv-sys-color-on-secondary-container);
+}
+
+.mdv-list-item__shape:has(> .mdv-list-item__primary:focus-visible) {
+  z-index: 2;
+  outline: 3px solid var(--mdv-sys-color-secondary);
+  outline-offset: 2px;
+}
+
+.mdv-list-item__surface,
+.mdv-list-item__ripple {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.mdv-list-item__surface::before {
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  content: '';
+  opacity: 0;
+  transition: opacity var(--mdv-sys-motion-duration-short-2) linear;
+}
+
+@media (hover: hover) {
+  .mdv-list-item--interactive:not(.mdv-list-item--disabled)
+    > .mdv-list-item__shape:has(
+      > .mdv-list-item__primary:hover:not(:disabled, :focus-visible, :active)
+    )
+    > .mdv-list-item__surface::before {
+    opacity: 0.08;
+  }
+}
+
+.mdv-list-item--interactive:not(.mdv-list-item--disabled)
+  > .mdv-list-item__shape:has(> .mdv-list-item__primary:focus-visible)
+  > .mdv-list-item__surface::before,
+.mdv-list-item--interactive:not(.mdv-list-item--disabled)
+  > .mdv-list-item__shape:has(> .mdv-list-item__primary:active:not(:disabled))
+  > .mdv-list-item__surface::before {
+  opacity: 0.12;
+}
+
+.mdv-list-item--disabled,
+.mdv-list--segmented > .mdv-list-item--disabled,
+.mdv-list-item:has(> .mdv-list-item__shape > .mdv-list-item__primary:disabled) {
+  --mdv-list-item-foreground: color-mix(in srgb, var(--mdv-sys-color-on-surface) 38%, transparent);
+  --mdv-list-item-secondary: var(--mdv-list-item-foreground);
+  --mdv-list-item-control: var(--mdv-list-item-foreground);
+  --mdv-list-item-on-control: var(--mdv-sys-color-surface);
+  --mdv-list-item-control-outline: var(--mdv-list-item-foreground);
+}
+
+.mdv-list-item--disabled .mdv-list-item__primary,
+.mdv-list-item__primary:disabled {
+  cursor: not-allowed;
+}
+
+.mdv-list-item--selected.mdv-list-item--disabled,
+.mdv-list--segmented > .mdv-list-item--selected.mdv-list-item--disabled,
+.mdv-list-item--selected:has(> .mdv-list-item__shape > .mdv-list-item__primary:disabled) {
+  --mdv-list-item-background: color-mix(in srgb, var(--mdv-sys-color-on-surface) 12%, transparent);
+}
+
+.mdv-list-item__layout {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 16px;
+  padding-block: 8px;
+  padding-inline: 16px 24px;
+}
+
+.mdv-list-item--three-line .mdv-list-item__layout {
+  align-items: flex-start;
+  padding-block: 12px;
+}
+
+.mdv-list-item__leading {
+  display: inline-grid;
+  min-width: 24px;
+  flex: none;
+  place-items: center;
+  align-self: center;
+  color: var(--mdv-list-item-secondary);
+}
+
+.mdv-list-item--three-line .mdv-list-item__leading {
+  align-self: flex-start;
+}
+
+.mdv-list-item__leading > .mdv-icon,
+.mdv-list-item__trailing > .mdv-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.mdv-list-item__leading > img {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--mdv-sys-shape-corner-extra-small);
+  object-fit: cover;
+}
+
+.mdv-list-item__avatar {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--mdv-sys-color-primary-container);
+  color: var(--mdv-sys-color-on-primary-container);
+  font-size: var(--mdv-sys-typescale-title-medium-size);
+  font-weight: var(--mdv-sys-typescale-title-medium-weight);
+  line-height: var(--mdv-sys-typescale-title-medium-line-height);
+}
+
+.mdv-list-item__avatar > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mdv-list-item--disabled .mdv-list-item__avatar,
+.mdv-list-item--disabled .mdv-list-item__leading > img {
+  opacity: 0.38;
+}
+
+.mdv-list-item__content {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 0;
+  flex-direction: column;
+}
+
+.mdv-list-item__overline,
+.mdv-list-item__headline {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mdv-list-item__overline,
+.mdv-list-item__trailing-text {
+  color: var(--mdv-list-item-secondary);
+  font-size: var(--mdv-sys-typescale-label-small-size);
+  font-weight: var(--mdv-sys-typescale-label-small-weight);
+  letter-spacing: var(--mdv-sys-typescale-label-small-tracking);
+  line-height: var(--mdv-sys-typescale-label-small-line-height);
+}
+
+.mdv-list-item__headline {
+  color: inherit;
+  font-size: var(--mdv-sys-typescale-body-large-size);
+  font-weight: var(--mdv-sys-typescale-body-large-weight);
+  letter-spacing: var(--mdv-sys-typescale-body-large-tracking);
+  line-height: var(--mdv-sys-typescale-body-large-line-height);
+}
+
+.mdv-list-item__supporting {
+  display: -webkit-box;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--mdv-list-item-secondary);
+  font-size: var(--mdv-sys-typescale-body-medium-size);
+  font-weight: var(--mdv-sys-typescale-body-medium-weight);
+  letter-spacing: var(--mdv-sys-typescale-body-medium-tracking);
+  line-height: var(--mdv-sys-typescale-body-medium-line-height);
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.mdv-list-item--three-line:not(.mdv-list-item--has-overline) .mdv-list-item__supporting {
+  -webkit-line-clamp: 2;
+}
+
+.mdv-list-item__trailing {
+  display: inline-flex;
+  min-width: 0;
+  max-width: 40%;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  color: var(--mdv-list-item-secondary);
+}
+
+.mdv-list-item__trailing-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mdv-list-item__action {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  min-width: 48px;
+  min-height: 48px;
+  flex: none;
+  place-items: center;
+  align-self: center;
+}
+
+.mdv-list-item__action--leading {
+  margin-inline: 4px 8px;
+}
+
+.mdv-list-item__action--trailing {
+  margin-inline: 8px 12px;
+}
+
+.mdv-list-item--has-leading-action .mdv-list-item__layout {
+  padding-inline-start: 0;
+}
+
+.mdv-list-item--has-trailing-action .mdv-list-item__layout {
+  padding-inline-end: 0;
+}
+
+.mdv-list-item--three-line .mdv-list-item__action {
+  align-self: flex-start;
+}
+
+/* These are selection indicators, not nested inputs. Geometry matches the
+   public controls: 18px checkbox, 20px radio and 52 x 32px switch. */
+.mdv-list-item__control {
+  position: relative;
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  color: var(--mdv-list-item-control);
+  pointer-events: none;
+}
+
+.mdv-list-item__control--checkbox {
+  width: 18px;
+  height: 18px;
+  margin: 3px;
+  box-sizing: border-box;
+  border: 2px solid var(--mdv-list-item-secondary);
+  border-radius: 2px;
+  transition:
+    background-color var(--mdv-sys-motion-duration-short-3) linear,
+    border-color var(--mdv-sys-motion-duration-short-3) linear;
+}
+
+.mdv-list-item__control--checkbox.mdv-list-item__control--on {
+  border-color: currentColor;
+  background: currentColor;
+}
+
+.mdv-list-item__control--checkbox .mdv-list-item__control-mark {
+  width: 6px;
+  height: 10px;
+  margin-block-start: -2px;
+  border: solid var(--mdv-list-item-on-control);
+  border-width: 0 2px 2px 0;
+  opacity: 0;
+  transform: rotate(45deg) scale(0.6);
+  transition:
+    transform var(--mdv-sys-motion-duration-medium-1)
+      var(--mdv-sys-motion-easing-emphasized-decelerate),
+    opacity var(--mdv-sys-motion-duration-short-2) linear;
+}
+
+.mdv-list-item__control--checkbox.mdv-list-item__control--on .mdv-list-item__control-mark {
+  opacity: 1;
+  transform: rotate(45deg) scale(1);
+}
+
+.mdv-list-item__control--radio {
+  width: 20px;
+  height: 20px;
+  margin: 2px;
+  box-sizing: border-box;
+  border: 2px solid var(--mdv-list-item-secondary);
+  border-radius: 50%;
+}
+
+.mdv-list-item__control--radio.mdv-list-item__control--on {
+  border-color: currentColor;
+}
+
+.mdv-list-item__control--radio .mdv-list-item__control-mark {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+  transform: scale(0);
+  transition: transform var(--mdv-sys-motion-duration-medium-1)
+    var(--mdv-sys-motion-easing-emphasized-decelerate);
+}
+
+.mdv-list-item__control--radio.mdv-list-item__control--on .mdv-list-item__control-mark {
+  transform: scale(1);
+}
+
+.mdv-list-item__control--switch {
+  width: 52px;
+  height: 32px;
+  box-sizing: border-box;
+  border: 2px solid var(--mdv-list-item-control-outline);
+  border-radius: 16px;
+  background: var(--mdv-sys-color-surface-container-highest);
+}
+
+.mdv-list-item__control--switch .mdv-list-item__control-mark {
+  position: absolute;
+  inset-inline-start: 6px;
+  top: 6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--mdv-list-item-control-outline);
+  transition:
+    inset-inline-start var(--mdv-sys-motion-duration-medium-2)
+      var(--mdv-sys-motion-easing-emphasized),
+    top var(--mdv-sys-motion-duration-medium-2) var(--mdv-sys-motion-easing-emphasized),
+    width var(--mdv-sys-motion-duration-medium-2) var(--mdv-sys-motion-easing-emphasized),
+    height var(--mdv-sys-motion-duration-medium-2) var(--mdv-sys-motion-easing-emphasized),
+    background-color var(--mdv-sys-motion-duration-short-3) linear;
+}
+
+.mdv-list-item__control--switch.mdv-list-item__control--on {
+  border-color: currentColor;
+  background: currentColor;
+}
+
+.mdv-list-item__control--switch.mdv-list-item__control--on .mdv-list-item__control-mark {
+  inset-inline-start: 22px;
+  top: 2px;
+  width: 24px;
+  height: 24px;
+  background: var(--mdv-list-item-on-control);
+}
+
+.mdv-list-item__control--switch.mdv-list-item__control--on .mdv-list-item__control-mark::after {
+  position: absolute;
+  top: 6px;
+  left: 9px;
+  width: 6px;
+  height: 10px;
+  border: solid var(--mdv-list-item-control);
+  border-width: 0 2px 2px 0;
+  content: '';
+  transform: rotate(45deg);
+}
+
+.mdv-list--dividers-full-width > .mdv-list-item:has(+ .mdv-list-item)::after,
+.mdv-list--dividers-inset > .mdv-list-item:has(+ .mdv-list-item)::after {
+  position: absolute;
+  z-index: 3;
+  inset-block-end: 0;
+  inset-inline: 0;
+  height: 1px;
+  background: var(--mdv-sys-color-outline-variant);
+  content: '';
+  pointer-events: none;
+}
+
+.mdv-list--dividers-inset > .mdv-list-item:has(+ .mdv-list-item)::after {
+  inset-inline: 16px;
+}
+
+.mdv-list--dividers-inset > .mdv-list-item--has-leading:has(+ .mdv-list-item)::after {
+  inset-inline-start: 56px;
+}
+
+.mdv-list--dividers-inset > .mdv-list-item:has(.mdv-list-item__leading--avatar)::after {
+  inset-inline-start: 72px;
+}
+
+.mdv-list--dividers-inset > .mdv-list-item:has(.mdv-list-item__leading--image)::after {
+  inset-inline-start: 88px;
+}
+
+.mdv-list--segmented > .mdv-list-item::after {
+  display: none;
+}
+
+.mdv-list-subheader {
+  min-height: 48px;
+  box-sizing: border-box;
+  padding-block: 14px 8px;
+  padding-inline: 16px;
+  color: var(--mdv-sys-color-on-surface-variant);
+  font-size: var(--mdv-sys-typescale-title-small-size);
+  font-weight: var(--mdv-sys-typescale-title-small-weight);
+  letter-spacing: var(--mdv-sys-typescale-title-small-tracking);
+  line-height: var(--mdv-sys-typescale-title-small-line-height);
+  list-style: none;
+}
+
+.mdv-list-subheader--inset {
+  padding-inline-start: 56px;
+}
+
+.mdv-list-item__ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.12;
+  transform: translate(-50%, -50%) scale(0);
+  animation: mdv-list-ripple 450ms var(--mdv-sys-motion-easing-standard) forwards;
+}
+
+.mdv-list-item__ripple--released {
+  animation: mdv-list-ripple-fade 200ms linear forwards;
+}
+
+@keyframes mdv-list-ripple {
+  to {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes mdv-list-ripple-fade {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mdv-list-item__shape,
+  .mdv-list-item__surface::before,
+  .mdv-list-item__control,
+  .mdv-list-item__control-mark {
+    transition-duration: 0.01ms !important;
+  }
+
+  .mdv-list-item__ripple {
+    display: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .mdv-list-item,
+  .mdv-list--segmented > .mdv-list-item {
+    --mdv-list-item-background: Canvas;
+    --mdv-list-item-foreground: CanvasText;
+    --mdv-list-item-secondary: CanvasText;
+    --mdv-list-item-control: Highlight;
+    --mdv-list-item-on-control: HighlightText;
+    --mdv-list-item-control-outline: CanvasText;
+  }
+
+  .mdv-list-item__shape,
+  .mdv-list-item__control {
+    forced-color-adjust: none;
+  }
+
+  .mdv-list-item--selected,
+  .mdv-list--segmented > .mdv-list-item--selected {
+    --mdv-list-item-background: Highlight;
+    --mdv-list-item-foreground: HighlightText;
+    --mdv-list-item-secondary: HighlightText;
+    --mdv-list-item-control: HighlightText;
+    --mdv-list-item-on-control: Highlight;
+  }
+
+  .mdv-list-item--disabled,
+  .mdv-list--segmented > .mdv-list-item--disabled {
+    --mdv-list-item-foreground: GrayText;
+    --mdv-list-item-secondary: GrayText;
+    --mdv-list-item-control: GrayText;
+    --mdv-list-item-control-outline: GrayText;
+  }
+
+  .mdv-list-item__shape:has(> .mdv-list-item__primary:focus-visible) {
+    outline-color: Highlight;
+  }
+
+  .mdv-list-item__surface {
+    display: none;
+  }
+
+  .mdv-list-item__avatar,
+  .mdv-list-subheader {
+    color: inherit;
+  }
+}

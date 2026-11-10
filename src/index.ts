@@ -14,7 +14,22 @@ export { default as MdvSegmentedButtonItem } from './components/MdvSegmentedButt
 export { default as MdvCard } from './components/MdvCard.vue'
 export { default as MdvDivider } from './components/MdvDivider.vue'
 export { default as MdvBadge } from './components/MdvBadge.vue'
+export { default as MdvList } from './components/MdvList.vue'
+export { default as MdvListItem } from './components/MdvListItem.vue'
+export { default as MdvListSubheader } from './components/MdvListSubheader.vue'
 export type { MdvBadgeContent, MdvBadgeVariant } from './components/badge.types'
+export type {
+  MdvListDivider,
+  MdvListItemContentProps,
+  MdvListItemSlotProps,
+  MdvListLayout,
+  MdvListLeading,
+  MdvListModelValue,
+  MdvListSelectionMode,
+  MdvListTrailing,
+  MdvListValue,
+  MdvListVariant,
+} from './components/list.types'
 export type { MdvDividerOrientation, MdvDividerVariant } from './components/divider.types'
 export type { MdvCardVariant } from './components/card.types'
 export type {

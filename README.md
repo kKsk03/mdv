@@ -57,6 +57,7 @@ pnpm build
 - [MdvCard 卡片](./COMPONENTS.md#mdvcard)
 - [MdvDivider 分割线](./COMPONENTS.md#mdvdivider)
 - [MdvBadge 徽标](./COMPONENTS.md#mdvbadge)
+- [MdvList 列表](./COMPONENTS.md#mdvlist)
 
 ## 主题与排版
 

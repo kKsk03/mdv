@@ -15,6 +15,7 @@
 - [MdvCard 卡片](#mdvcard)
 - [MdvDivider 分割线](#mdvdivider)
 - [MdvBadge 徽标](#mdvbadge)
+- [MdvList 列表](#mdvlist)
 
 ## MdvButton
 
@@ -1217,3 +1218,159 @@ Small 固定为 6px 圆点，不需要 `content`。Large 最小高度为 16px；
 徽标指示器设置 `pointer-events: none`，不会改变包裹按钮、链接或头像的点击范围，也不会创建额外焦点。没有 `aria-label` 时指示器使用 `aria-hidden="true"`，避免重复朗读；提供非空 `aria-label` 后，标签会放在指示器上并使用 `role="img"`。包裹的交互内容仍必须自行提供可访问名称。
 
 `MdvBadge` 只负责显示状态，不提供 loading、hover、pressed、选中模型或删除操作。需要动态数字、隐藏时机或通知读取状态时，由使用方通过 `content` 与 `visible` 绑定业务状态；徽标本身不管理这些状态。
+
+## MdvList
+
+Material 3 列表，包含 `MdvList`、`MdvListItem` 和 `MdvListSubheader`。提供 `expressive`／`baseline` 两种变体，以及 `standard`／`segmented` 两种布局。
+
+| 组合 | 普通条目 | 选中条目 | 交互形状 |
+| --- | --- | --- | --- |
+| Expressive Standard | 透明背景、4px 圆角 | secondary-container、16px 圆角 | hover 8px，focus-visible／pressed 16px |
+| Expressive Segmented | surface-container；整组最上、最下外角 16px，其余角 4px | secondary-container、四角 16px | 同上，交互形状覆盖静态分段形状 |
+| Baseline Standard | 透明背景、4px 圆角 | secondary-container | 固定圆角 |
+| Baseline Segmented | surface-container、4px 圆角 | secondary-container | 固定圆角 |
+
+Segmented 使用 8px 列表内边距与 2px 条目间距。Subheader 或其他非条目节点切断连续分段；增删和重排条目后，首尾形状自动跟随。Selected 的形状优先于 hover。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvList, MdvListItem, MdvListSubheader } from 'mdv'
+import person from '@iconify-icons/material-symbols/person-outline'
+import security from '@iconify-icons/material-symbols/security'
+
+const selected = ref<string | null>('profile')
+</script>
+
+<template>
+  <MdvList
+    v-model="selected"
+    selection-mode="single"
+    layout="segmented"
+    aria-label="账户设置"
+  >
+    <MdvListSubheader>账户</MdvListSubheader>
+    <MdvListItem
+      value="profile"
+      headline="个人资料"
+      supporting-text="头像、昵称和公开信息"
+      :icon="person"
+      trailing="radio"
+    />
+    <MdvListItem
+      value="security"
+      headline="安全设置"
+      supporting-text="密码和登录验证方式"
+      :icon="security"
+      trailing="radio"
+    />
+  </MdvList>
+</template>
+```
+
+### MdvList 属性与模型
+
+| Prop | 类型／说明 | 默认值 |
+| --- | --- | --- |
+| `variant` | `expressive` 或 `baseline` | `expressive` |
+| `layout` | `standard` 或 `segmented`；优先于 `segmented` | `standard` |
+| `segmented` | `segmented` 布局的兼容简写 | `false` |
+| `selection-mode` | `none`、`single` 或 `multiple` | `none` |
+| `model-value` | 单选为 `string`／`number`／`null`，多选为值数组 | `null` |
+| `lines` | 子条目未指定时的默认行数：`1`、`2` 或 `3` | 自动推断 |
+| `dividers` | `none`、`full-width` 或 `inset` | `none` |
+
+普通列表使用 `ul[role="list"]`；选择列表使用 `ul[role="listbox"]`，多选附加 `aria-multiselectable="true"`。为选择列表提供 `aria-label` 或 `aria-labelledby`。
+
+单选点击当前项保持选中；多选生成新数组并用 `Object.is` 比较值，因此数字 `1` 和字符串 `'1'` 不相等。禁用项不更新模型。选择项应有唯一的 `value`；没有 `value` 的条目不参与选择。链接保留原生导航用途，不参与 listbox 选择。
+
+选择列表使用单一 roving Tab 停靠点，优先进入选中项；方向键移动焦点，Home／End 跳转首尾，Space／Enter 选择。移动焦点不会自动选中。禁用、hidden 和 inert 项会被跳过；当前焦点项变为不可用或被删除时，焦点转向可用项。取消主操作的 `click` 或选择用的 `keydown` 默认行为可以取消本次选择。
+
+普通列表中的原生按钮、链接和独立操作各自保留 Tab 入口；为单纯选项使用 `selection-mode`，包含多个独立操作的行使用普通列表。
+
+### MdvListItem 属性
+
+| Prop | 类型／说明 | 默认值 |
+| --- | --- | --- |
+| `lines` | `1`、`2` 或 `3`，覆盖列表默认值 | 根据内容推断 |
+| `overline` | 主标题上方的标签 | `''` |
+| `headline` | 主标题；默认插槽优先 | `''` |
+| `supporting-text` | 辅助文字 | `''` |
+| `trailing-text` | 尾部短文本 | `''` |
+| `icon` | leading 图标数据 | 不提供 |
+| `leading` | `icon`、`avatar`、`image`、`checkbox`、`radio` 或 `switch` | 根据内容推断 |
+| `avatar-name` | 头像文字，使用首个 Unicode 字符 | 不提供 |
+| `image` | leading 图片地址；`leading="avatar"` 时作为圆形头像 | 不提供 |
+| `trailing-icon` | 尾部图标数据 | 不提供 |
+| `trailing` | `icon`、`text`、`checkbox`、`radio` 或 `switch` | 根据内容推断 |
+| `leading-value`／`trailing-value` | 选择指示器的显示状态 | 跟随条目的 selected 状态 |
+| `value` | 列表选择值：`string` 或 `number` | 不提供 |
+| `selected` | 不参与列表模型时的视觉选中状态 | `false` |
+| `disabled` | 禁用主操作和本行操作激活 | `false` |
+| `interactive` | 使用原生 button 作为主操作 | `false` |
+| `href` | 使用原生 a 作为主操作，空字符串也生效 | 不提供 |
+| `type` | 原生按钮类型：`button`、`submit`、`reset` | `button` |
+
+未显式设置 `leading` 时，依次从 `icon`、`avatar-name`、`image` 推断；`trailing` 从 `trailing-icon`、`trailing-text` 推断。显式类型优先。前后图标与图片为装饰内容；有独立信息意义的图片通过插槽提供合适的可访问名称。
+
+便利的 checkbox／radio／switch 是跟随整行选择的**显示指示器**，不嵌套 input，不提供单独的 Tab 入口或变更事件。`leading-value`／`trailing-value` 只覆盖显示值。需要独立切换、表单提交或独立名称时，把真正的 `MdvCheckbox`／`MdvRadio`／`MdvSwitch` 放进 action 插槽。
+
+提供 `href` 时使用原生链接；提供 `interactive` 或点击／键盘监听时使用原生按钮。静态条目保持普通列表项语义。原生链接支持 `target`、`rel`、`download` 等属性；禁用时移除 href 并设置 `aria-disabled`。按钮默认不提交表单，可显式设置 `type`、`name`、`value`、`form` 等原生属性。
+
+`class`、`style`、`dir`、`lang`、`hidden` 和 `inert` 作用于外围 li；交互条目的 id、data 属性、ARIA 和原生事件作用于主 button／a／option。主标题自动关联为可访问名称，辅助文字自动合并到 `aria-describedby`。可以显式提供 `aria-label`／`aria-labelledby` 覆盖名称。
+
+### 插槽与独立操作
+
+| 插槽 | 用途 |
+| --- | --- |
+| `leading` | 替换 leading 展示内容 |
+| 默认插槽 | 替换主标题 |
+| `overline` | 替换上方标签 |
+| `supporting` | 替换辅助文字 |
+| `content` | 完全替换正文列 |
+| `trailing` | 完全替换尾部展示内容 |
+| `leading-action` | 独立前置控件或操作 |
+| `trailing-action` | 独立尾部控件或操作 |
+
+所有插槽接收 `{ selected, disabled }`。`content` 另外接收 `MdvListItemContentProps` 中的内容属性。
+
+整行共用背景、圆角和状态层。主操作与 action 插槽互为兄弟节点，因此点击独立操作不会触发主操作；主操作只占用正文区域。不要把可交互控件放入默认插槽或普通 leading／trailing 插槽。自定义 action 控件应绑定插槽给出的 `disabled`，使其原生禁用状态和外观与行状态一致。
+
+```vue
+<MdvList layout="segmented" aria-label="项目">
+  <MdvListItem
+    interactive
+    headline="项目详情"
+    supporting-text="正文与独立操作共享条目背景"
+    :selected="saved"
+    @click="openProject"
+  >
+    <template #leading-action="{ disabled }">
+      <MdvCheckbox v-model="saved" :disabled="disabled" aria-label="保存项目" />
+    </template>
+    <template #trailing-action="{ disabled }">
+      <MdvIconButton variant="standard" :disabled="disabled" aria-label="更多操作">
+        <MdvIcon :icon="moreIcon" />
+      </MdvIconButton>
+    </template>
+  </MdvListItem>
+</MdvList>
+```
+
+### 尺寸、分隔线与状态
+
+一行／两行／三行条目的**最小高度**为 56／72／88px，媒体和自定义内容可自然撑高。起始端留白 16px，末端 24px，内容区域间距 16px。普通图标 24px，头像 40px，图片 56px；leading 图标不会占用头像宽度。三行内容顶部对齐，其他内容垂直居中。
+
+Headline 和 overline 单行省略。Supporting text 使用 body-medium：三行且无 overline 时最多两行，其余情况一行。Trailing text 使用 label-small。选中时文字和展示图标使用 on-secondary-container。
+
+Standard 的 `full-width` 分隔线铺满相邻条目之间，`inset` 随 leading 图标／头像／图片对齐文字起点；Segmented 通过 2px 间隙分隔，不叠加分隔线。
+
+状态包括默认、hover、pressed、focus-visible、selected、disabled；hover 状态层与 ripple 独立，选中不会清除 ripple。支持主题切换、局部令牌、动态取色、RTL、reduced-motion 与 forced-colors。
+
+`MdvList` 和 `MdvListItem` 均暴露 `focus(options?)`／`blur()`。列表 focus 优先定位选中项或当前停靠项；静态内容不增加 Tab 入口。SSR 使用稳定 ID，分段形状不依赖挂载后的 JavaScript 计算。
+
+`MdvListSubheader` 是展示性的 li，支持默认插槽与 `inset`。`inset` 将起始留白改为 56px，与普通 leading 图标后的正文对齐；它不进入 Tab 顺序。
+
+### 当前范围
+
+当前版本不包含可展开树形列表、拖拽排序、滑动操作、虚拟列表或 sticky subheader。这些能力按独立方案推进。
