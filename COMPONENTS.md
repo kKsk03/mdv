@@ -19,6 +19,7 @@
 - [MdvLinearProgress 与 MdvCircularProgress 进度指示器](#mdvlinearprogress-与-mdvcircularprogress)
 - [MdvDialog 对话框](#mdvdialog)
 - [MdvFullscreenDialog 全屏对话框](#mdvfullscreendialog)
+- [MdvMenu 菜单家族](#mdvmenu)
 
 ## MdvButton
 
@@ -1597,3 +1598,139 @@ class 和普通 style 作用于可见容器，id、dir、lang、ARIA、data 和�
 两款在原 DOM 位置调用原生 showModal()，保留主题继承，需要支持 dialog 的现代浏览器；open、closedby、tabindex 由组件管理。服务端输出确定的关闭态节点，初始模型为 true 时在 hydration 后建立模态。支持 reduced-motion、快速开关和状态清理；没有新增运行依赖。
 
 公共类型：`MdvDialogProps`、`MdvFullscreenDialogProps`、`MdvDialogBeforeClose`、`MdvDialogCloseReason`、`MdvDialogCloseDetail`、`MdvDialogSlotProps`。
+
+## MdvMenu
+
+菜单已完成当前约定范围的项目检查与用户验收。提供普通菜单 `MdvMenu`、右键入口 `MdvContextMenu`、条目 `MdvMenuItem` 与分组 `MdvMenuGroup`；分隔线复用 `MdvDivider`。用于临时操作和少量选择，表单选项请使用后续独立的 Select／Autocomplete。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvButton, MdvDivider, MdvMenu, MdvMenuGroup, MdvMenuItem } from 'mdv'
+import type { MdvMenuModelValue, MdvMenuSelectEvent } from 'mdv'
+
+const styles = ref<MdvMenuModelValue>(['bold'])
+function rename() {
+  // 打开业务编辑界面。
+}
+function confirmSelection(event: MdvMenuSelectEvent) {
+  if (!window.confirm('执行这个操作？')) event.preventDefault()
+}
+</script>
+
+<template>
+  <MdvMenu>
+    <template #trigger="{ triggerProps }">
+      <MdvButton v-bind="triggerProps" variant="tonal">文件操作</MdvButton>
+    </template>
+    <MdvMenuItem label="重命名" @select="rename" />
+    <MdvMenuItem label="执行前确认" @select="confirmSelection" />
+    <MdvDivider />
+    <MdvMenuItem label="打开指南" href="/guide" target="_blank" rel="noopener noreferrer" />
+    <MdvMenuItem label="暂不可用" disabled />
+  </MdvMenu>
+
+  <MdvMenu layout="grouped" color-scheme="vibrant">
+    <template #trigger="{ triggerProps }">
+      <MdvButton v-bind="triggerProps">文字格式</MdvButton>
+    </template>
+    <MdvMenuGroup v-model="styles" selection-mode="multiple" label="样式">
+      <MdvMenuItem value="bold" label="粗体" trailing-text="Ctrl+B" />
+      <MdvMenuItem value="italic" label="斜体" trailing-text="Ctrl+I" />
+    </MdvMenuGroup>
+    <MdvMenuGroup label="更多">
+      <MdvMenuItem label="导出">
+        <template #children>
+          <MdvMenuItem label="PDF" />
+          <MdvMenuItem label="图片" />
+        </template>
+      </MdvMenuItem>
+    </MdvMenuGroup>
+  </MdvMenu>
+</template>
+```
+
+### 普通／右键入口
+
+`MdvMenu` 与 `MdvContextMenu` 共用以下 Props：
+
+| Prop | 类型 | 默认值 |
+| --- | --- | --- |
+| `modelValue`／`v-model` | `boolean` | 不绑定时由内部管理，初始关闭 |
+| `variant` | `'expressive' \| 'baseline'` | `'expressive'` |
+| `colorScheme` | `'standard' \| 'vibrant'` | `'standard'` |
+| `layout` | `'standard' \| 'grouped'` | `'standard'` |
+| `submenuMode` | `'flyout' \| 'push'` | `'flyout'` |
+| `placement` | `'top' \| 'bottom' \| 'left' \| 'right'`，各可追加 `-start`／`-end` | `'bottom-start'` |
+| `offset` | `number`，非负像素 | `4` |
+
+Baseline 固定使用 standard 配色和布局。默认 Expressive 使用 16px 容器圆角、4px 普通条目、12px 选中条目和 20px 图标；Baseline 为 4px 容器圆角和 24px 图标。两套均保留菜单阴影，点击高度至少 48px；辅助文字和长标签可让条目自然增高。Expressive 官网高度令牌 44dp 与测量图／无障碍要求的 48dp 不一致，MDV 选择至少 48px。
+
+`grouped` 是对官方间隙外观的 Web 实现：把直接内容放进 `MdvMenuGroup`，短菜单使用 2px 组间隙、8px 分组圆角；高度不足需要滚动时改用连续容器和分隔线。菜单本地使用细滚动条，不修改全局滚动条。可通过 style 的 `width`、`max-width` 及 `--mdv-menu-max-height` 调整尺寸，仍受视口可用空间限制。
+
+`#trigger="{ triggerProps, open, close }"` 中，`open` 是当前展开布尔值，`close()` 请求关闭。把完整 `triggerProps` 通过 `v-bind` 绑定到一个原生元素或单个原生根元素的 Vue 组件，包括 ref、ID、ARIA 和监听器；适用于 MdvButton／MdvIconButton。非原生可聚焦的右键区域需自行设置 `tabindex="0"`。
+
+普通菜单支持点击、Enter／Space、上／下键；上键从末项进入。右键入口支持鼠标右键、Shift+F10 和上下文菜单键，在指针位置或键盘触发区域下方定位，不接管触屏长按：
+
+```vue
+<MdvContextMenu>
+  <template #trigger="{ triggerProps }">
+    <div v-bind="triggerProps" tabindex="0">在此右键</div>
+  </template>
+  <MdvMenuItem label="复制" />
+  <MdvMenuItem label="粘贴" disabled />
+</MdvContextMenu>
+```
+
+默认插槽得到 `{ open, close }`。两种入口 expose `open(edge?: 'first' | 'last')`、`close()`、`toggle()`、`focus(edge?: 'first' | 'last')`。绑定 v-model 时，以父级值为准；父级未接受更新请求则保留原状态。
+
+| 事件 | 参数／时机 |
+| --- | --- |
+| `update:modelValue` | 请求新的展开布尔值 |
+| `open` | 进入顶层绘制，开始进入动效 |
+| `opened` | 进入完成 |
+| `close` | 退出开始，`{ reason }` |
+| `closed` | 退出完成、释放资源后，`{ reason }` |
+
+reason 为 `escape`、`outside`、`focus-out`、`tab`、`select`、`trigger`、`model` 或 `programmatic`。子菜单逐级开关不重复触发根菜单事件；快速反向时被中断的动效不发送完成事件。
+
+### MdvMenuItem
+
+| Prop | 类型 | 默认值 |
+| --- | --- | --- |
+| `label` | `string` | `''` |
+| `supportingText` | `string` | `''` |
+| `trailingText` | `string` | `''` |
+| `icon`／`trailingIcon` | `MdvIconData` | 不提供 |
+| `value` | `string \| number` | 不提供 |
+| `disabled` | `boolean` | `false` |
+| `href` | `string` | 不提供 |
+| `keepOpen` | `boolean` | 普通操作／链接／单选为 false，多选为 true |
+
+没有 href 时使用不提交表单的原生 button；提供 href 时使用 a，target、rel、download、ARIA 和原生监听器透传。带 children 的条目优先作为子菜单入口，不执行链接或选择组更新。禁用项保留焦点能力，但阻止点击、链接和键盘激活。
+
+`@select` 接收可取消的 `MdvMenuSelectEvent`，detail 包含 `{ value, selected, originalEvent }`。selected 表示本次期望提交的选择状态，普通操作为 false。同步调用 `event.preventDefault()` 同时阻止选择更新、链接导航和默认关闭；异步业务请先取消，再自行控制模型。原生 `@click.prevent` 也会阻止内置激活。
+
+默认、leading、supporting、trailing 插槽均得到 `{ selected, disabled, expanded }`。默认插槽替代 label，supporting 替代辅助文字；leading 替代图标，选中时显示内置勾；trailing 替代尾部文字／图标，可放 Badge。前后图形和尾部内容为装饰，重要计数或快捷键说明应通过 label／ARIA 表达。不要在条目插槽内嵌另一组独立按钮或表单控件。辅助文字自动关联 aria-describedby，保留用户额外描述 ID。
+
+`#children` 内组合下一层 MdvMenuItem／MdvMenuGroup，支持多级。默认 flyout 可通过鼠标悬停、点击或左右键进入；跨向子菜单保留指针走廊容错。push 在同一位置逐级进入，提供可聚焦的返回项，是 MDV 扩展。子菜单继承整棵菜单的外观和主题，选择模型由该层自身的分组管理。条目 expose `focus()` 与 `blur()`。
+
+### MdvMenuGroup
+
+| Prop | 类型 | 默认值 |
+| --- | --- | --- |
+| `selectionMode` | `'none' \| 'single' \| 'multiple'` | `'none'` |
+| `modelValue`／`v-model` | `string \| number \| (string \| number)[] \| null` | 不绑定时内部管理；单选 null，多选 [] |
+| `label` | `string` | `''` |
+
+默认插槽放条目，label 插槽替代组标题。none 用于操作分组；single／multiple 自动将有 value 的普通条目标为 menuitemradio／menuitemcheckbox，更新时发出 update:modelValue 与 change。字符串与数字严格区分，不把 `14` 与 `'14'` 视为同一值；多组互不影响。链接和子菜单入口不参与组选择，多选默认保持打开。
+
+### 键盘、焦点与平台
+
+打开后聚焦首项，上下键循环、Home／End 到首尾，输入文字前缀定位；分隔线／组标题不进入导航，禁用项可聚焦但不能执行。左右键进入／返回子菜单，RTL 反转方向；Escape 优先关闭最深层，逐级返回。push 返回项也参与上下导航。Tab／Shift+Tab 关闭整棵菜单并继续菜单外的焦点顺序；不建立菜单焦点循环，位于 Dialog 内时遵守 Dialog 的焦点范围。
+
+选择、Escape 和程序化关闭后合理恢复触发器焦点；点击／聚焦外部或业务主动转移焦点时不抢回。菜单本身不锁页面滚动。Dialog 内的菜单优先处理 Escape；新模态弹窗出现时关闭其范围外的菜单。KeepAlive 停用、卸载、快速开合和 reduced-motion 会清理定位、计时器、动画与文档监听。
+
+面板通过原生 Popover manual top layer 在原 DOM 位置绘制，继承局部浅深色、动态取色和 dir；需要支持 Popover API 的现代浏览器。新增运行依赖 `@floating-ui/dom` 负责定位、边缘翻转、位移、可用空间和滚动更新；没有 Teleport 到 body，也没有 Sheet 或触屏长按的替代实现。SSR 输出关闭态节点，初始 modelValue=true 在 hydration 后打开。
+
+公共类型：`MdvMenuProps`、`MdvMenuVariant`、`MdvMenuColorScheme`、`MdvMenuLayout`、`MdvMenuSubmenuMode`、`MdvMenuPlacement`、`MdvMenuSelectionMode`、`MdvMenuValue`、`MdvMenuModelValue`、`MdvMenuCloseReason`、`MdvMenuCloseDetail`、`MdvMenuSelectDetail`、`MdvMenuSelectEvent`、`MdvMenuSlotProps`、`MdvMenuTriggerProps`、`MdvMenuTriggerSlotProps`、`MdvMenuItemSlotProps`。

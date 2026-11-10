@@ -94,10 +94,10 @@ MDV 自行实现 Vue 组件、装饰／separator 语义与逻辑方向布局；�
 - 数据分发：`@iconify-icons/material-symbols`，当前以 2.0.9 为资源基线；https://github.com/iconify/icon-sets
 - 版权：Copyright Google LLC
 - 许可：Apache License 2.0
-- 使用资源：Material Symbols 的本地 SVG 数据，包括 favorite、home、save、search 等预览图形及其填充／风格变体；文本框内置动作使用 close、visibility、visibility-off，Chip 使用 check、close，Segmented Button 使用 check。
-- 使用位置：`src/components/MdvTextField.vue`、`src/components/MdvChip.vue`、`src/components/MdvSegmentedButtonItem.vue`、`src/components/MdvFullscreenDialog.vue` 的内置动作、`playground/` 的组件预览、组件测试和 `COMPONENTS.md` 示例。
+- 使用资源：Material Symbols 的本地 SVG 数据，包括 favorite、home、save、search 等预览图形及其填充／风格变体；文本框内置动作使用 close、visibility、visibility-off，Chip 使用 check、close，Segmented Button 使用 check，Menu 使用 check、chevron-right、arrow-back。
+- 使用位置：`src/components/MdvTextField.vue`、`src/components/MdvChip.vue`、`src/components/MdvSegmentedButtonItem.vue`、`src/components/MdvFullscreenDialog.vue`、`src/components/MdvMenuItem.vue`、`src/components/_MdvMenuPanel.vue` 的内置动作、`playground/` 的组件预览、组件测试和 `COMPONENTS.md` 示例。
 
-Iconify 分发包提供可单独导入的图标数据，原始图形版权与许可归上游 Google。该包是本仓库的开发依赖；文本框、Chip、Segmented Button 与 Dialog 只导入各自固定图形并随组件构建，MDV 不导入或注册整套数据。使用方无需为内置动作安装图标集；自定义图标按自己的静态导入分发，并保留相应许可。
+Iconify 分发包提供可单独导入的图标数据，原始图形版权与许可归上游 Google。该包是本仓库的开发依赖；文本框、Chip、Segmented Button、Dialog 与 Menu 只导入各自固定图形并随组件构建，MDV 不导入或注册整套数据。使用方无需为内置动作安装图标集；自定义图标按自己的静态导入分发，并保留相应许可。
 
 ## Iconify Vue 渲染器
 
@@ -151,6 +151,48 @@ MDV 使用自己的 Vue 与 SVG 几何、动画时钟和资源生命周期实现
 - 使用位置：`src/styles/dialog.css`／`src/styles/fullscreen-dialog.css` 的几何、色彩与排版，以及 `src/components/dialog-motion.ts` 的基本款进入／退出、遮罩与内容分层时序。
 
 MDV 使用 Vue、原生 dialog 与自己的关闭拦截、焦点、滚动锁和生命周期实现；基本款参考官方 Web 时序，全屏纵向过渡为 MDV 的实现选择。未引入 Material Web 或 Compose 运行时；下文保留 Apache License 2.0 原文。
+
+## Material 3 Menu 规格
+
+- 规格来源：https://m3.material.io/components/menus/specs 、https://m3.material.io/components/menus/guidelines 与 accessibility 页面。
+- 数值依据：官网 Expressive／Baseline 测量图、Common／Standard 令牌与键盘无障碍说明。
+- 版权：Copyright Google LLC。
+- 使用位置：`src/styles/menu.css` 的尺寸、颜色角色、圆角、排版、阴影、选择与焦点状态。
+
+MDV 用 Vue、原生 Popover 与独立菜单树实现交互，使用下面的 Floating UI 定位。点击高度采用至少 48px，以协调官网 Common 44dp 令牌与 48dp 测量图／可访问目标的差异。分组间隙的 Web 移植、滚动时退回分隔线、push 子菜单和动效时序属于 MDV 的实现选择；未引入其他 Material 组件运行时。
+
+## Floating UI
+
+- 软件包：`@floating-ui/dom`。
+- 来源：https://github.com/floating-ui/floating-ui
+- 许可：MIT，Copyright (c) 2021-present Floating UI contributors。
+- 使用位置：`src/components/menu-position.ts`；计算菜单和虚拟右键锚点的位置、边缘翻转、位移、可用空间以及位置更新。
+
+作为运行时依赖分发，不修改其源码。其原始许可随依赖提供：
+
+```text
+MIT License
+
+Copyright (c) 2021-present Floating UI contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
 
 ## Material Color Utilities
 

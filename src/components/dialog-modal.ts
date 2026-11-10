@@ -1,3 +1,5 @@
+import { dismissMenusOutsideDialog } from './menu-stack'
+
 interface ModalEntry {
   element: HTMLDialogElement
   focus: () => void
@@ -111,7 +113,7 @@ export function trapDialogTab(dialog: HTMLDialogElement, event: KeyboardEvent) {
 
 export function acquireDialog(dialog: HTMLDialogElement) {
   const doc = dialog.ownerDocument
-  const previous = doc.activeElement as HTMLElement | null
+  const previous = dismissMenusOutsideDialog(dialog) ?? (doc.activeElement as HTMLElement | null)
   let state = documents.get(doc)
   if (!state) {
     const entries: ModalEntry[] = []
@@ -182,4 +184,9 @@ export function acquireDialog(dialog: HTMLDialogElement) {
       top?.focus()
     },
   }
+}
+
+export function topDialog(doc: Document) {
+  const entries = documents.get(doc)?.entries
+  return entries?.[entries.length - 1]?.element ?? null
 }

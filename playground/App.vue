@@ -18,6 +18,7 @@ import ListPlayground from './ListPlayground.vue'
 import ProgressPlayground from './ProgressPlayground.vue'
 import DialogPlayground from './DialogPlayground.vue'
 import FullscreenDialogPlayground from './FullscreenDialogPlayground.vue'
+import MenuPlayground from './MenuPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -122,6 +123,12 @@ const pages = [
     label: 'Fullscreen Dialog 全屏对话框',
     description: '检查全屏顶栏、底部操作、长正文、异步保存与嵌套确认。',
     component: FullscreenDialogPlayground,
+  },
+  {
+    id: 'menu',
+    label: 'Menu 菜单',
+    description: '对照菜单外观、分组选择、子菜单、右键触发、键盘和 Dialog 组合。',
+    component: MenuPlayground,
   },
   {
     id: 'theme',

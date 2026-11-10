@@ -7,6 +7,8 @@ Tailwind 工具类由使用方安装并编译；本项目提供组件、主题�
 
 MdvDialog 与 MdvFullscreenDialog 已完成当前约定范围的项目检查与开发预览验收；MdvButton 的自然宽度与 loading 布局修订也已验收。本轮改动的真实安装包消费另行验证。
 
+MdvMenu、MdvContextMenu、MdvMenuItem 与 MdvMenuGroup 已完成当前约定范围的项目检查与用户验收，真实包消费另行验证。
+
 ## 本地开发
 
 在仓库根目录执行。当前环境基线为 Node.js 24.22.1 和 pnpm 12.14.0。
@@ -63,6 +65,7 @@ pnpm build
 - [MdvLinearProgress 与 MdvCircularProgress 进度指示器](./COMPONENTS.md#mdvlinearprogress-与-mdvcircularprogress)
 - [MdvDialog 对话框](./COMPONENTS.md#mdvdialog)
 - [MdvFullscreenDialog 全屏对话框](./COMPONENTS.md#mdvfullscreendialog)
+- [MdvMenu 菜单家族](./COMPONENTS.md#mdvmenu)
 
 ## 主题与排版
 

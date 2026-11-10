@@ -21,6 +21,29 @@ export { default as MdvLinearProgress } from './components/MdvLinearProgress.vue
 export { default as MdvCircularProgress } from './components/MdvCircularProgress.vue'
 export { default as MdvDialog } from './components/MdvDialog.vue'
 export { default as MdvFullscreenDialog } from './components/MdvFullscreenDialog.vue'
+export { default as MdvMenu } from './components/MdvMenu.vue'
+export { default as MdvContextMenu } from './components/MdvContextMenu.vue'
+export { default as MdvMenuItem } from './components/MdvMenuItem.vue'
+export { default as MdvMenuGroup } from './components/MdvMenuGroup.vue'
+export type {
+  MdvMenuVariant,
+  MdvMenuColorScheme,
+  MdvMenuLayout,
+  MdvMenuSubmenuMode,
+  MdvMenuPlacement,
+  MdvMenuSelectionMode,
+  MdvMenuValue,
+  MdvMenuModelValue,
+  MdvMenuCloseReason,
+  MdvMenuCloseDetail,
+  MdvMenuSelectDetail,
+  MdvMenuSelectEvent,
+  MdvMenuProps,
+  MdvMenuSlotProps,
+  MdvMenuTriggerProps,
+  MdvMenuTriggerSlotProps,
+  MdvMenuItemSlotProps,
+} from './components/menu.types'
 export type {
   MdvDialogBeforeClose,
   MdvDialogCloseDetail,

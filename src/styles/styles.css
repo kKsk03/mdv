@@ -12,6 +12,7 @@
 @import './progress.css';
 @import './dialog.css';
 @import './fullscreen-dialog.css';
+@import './menu.css';
 
 .mdv-icon {
   display: inline-block;
@@ -269,6 +270,12 @@
   to {
     opacity: 0;
   }
+}
+
+/* 菜单展开期间，触发控件保持官方要求的 pressed 状态层。 */
+.mdv-button[data-mdv-menu-trigger-open]::before,
+.mdv-icon-button[data-mdv-menu-trigger-open] .mdv-icon-button__surface::before {
+  opacity: 0.1;
 }
 
 .mdv-button__label {
