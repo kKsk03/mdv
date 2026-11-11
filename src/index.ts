@@ -29,6 +29,19 @@ export { default as MdvTooltip } from './components/MdvTooltip.vue'
 export { default as MdvRichTooltip } from './components/MdvRichTooltip.vue'
 export { default as MdvSnackbar } from './components/MdvSnackbar.vue'
 export { default as MdvSnackbarProvider } from './components/MdvSnackbarProvider.vue'
+export { default as MdvBottomSheet } from './components/MdvBottomSheet.vue'
+export { default as MdvBottomSheetScaffold } from './components/MdvBottomSheetScaffold.vue'
+export type {
+  MdvBottomSheetBeforeClose,
+  MdvBottomSheetChangeDetail,
+  MdvBottomSheetChangeReason,
+  MdvBottomSheetCloseDetail,
+  MdvBottomSheetCloseReason,
+  MdvBottomSheetProps,
+  MdvBottomSheetScaffoldProps,
+  MdvBottomSheetSlotProps,
+  MdvBottomSheetState,
+} from './components/bottom-sheet.types'
 export { useSnackbar } from './components/use-snackbar'
 export type {
   MdvSnackbarAction,

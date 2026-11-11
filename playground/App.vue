@@ -21,6 +21,7 @@ import FullscreenDialogPlayground from './FullscreenDialogPlayground.vue'
 import MenuPlayground from './MenuPlayground.vue'
 import TooltipPlayground from './TooltipPlayground.vue'
 import SnackbarPlayground from './SnackbarPlayground.vue'
+import BottomSheetPlayground from './BottomSheetPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -143,6 +144,12 @@ const pages = [
     label: 'Snackbar 消息提示',
     description: '对照消息布局、操作、队列、键盘和对话框中的局部消息。',
     component: SnackbarPlayground,
+  },
+  {
+    id: 'bottom-sheet',
+    label: 'Bottom Sheet 底部面板',
+    description: '对照模态与 Standard 面板、预设高度、手势、焦点与浮层组合。',
+    component: BottomSheetPlayground,
   },
   {
     id: 'theme',

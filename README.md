@@ -13,6 +13,8 @@ MdvTooltip 与 MdvRichTooltip 已完成当前约定范围的项目检查与开�
 
 MdvSnackbar、MdvSnackbarProvider 与 useSnackbar 已完成当前约定范围的项目检查与开发预览验收，包含状态颜色扩展；真实包消费另行验证。
 
+MdvBottomSheet 与 MdvBottomSheetScaffold 已完成模态和 Standard 两款当前约定范围的项目检查与用户验收，包含局部滚动条和全高按钮修订；真实包消费另行验证。
+
 ## 本地开发
 
 在仓库根目录执行。当前环境基线为 Node.js 24.22.1 和 pnpm 12.14.0。
@@ -72,6 +74,7 @@ pnpm build
 - [MdvMenu 菜单家族](./COMPONENTS.md#mdvmenu)
 - [MdvTooltip 与 MdvRichTooltip 提示](./COMPONENTS.md#mdvtooltip)
 - [MdvSnackbar 消息提示](./COMPONENTS.md#mdvsnackbar)
+- [MdvBottomSheet 与 MdvBottomSheetScaffold 底部面板](./COMPONENTS.md#mdvbottomsheet)
 
 ## 主题与排版
 

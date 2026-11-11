@@ -39,9 +39,10 @@ interface DialogOptions {
   hasTitle: () => boolean
   hasContentSlot: () => boolean
   animate: DialogAnimator
+  prepare?: () => void
 }
 
-/** 共用模态生命周期，两款组件分别维护模板、布局和动画。 */
+/** 共用模态生命周期，各组件分别维护模板、布局和动画。 */
 export function useDialog(props: MdvDialogProps, emit: DialogEmit, options: DialogOptions) {
   const attrs = useAttrs()
   const id = `mdv-dialog-${useId()}`
@@ -214,6 +215,11 @@ export function useDialog(props: MdvDialogProps, emit: DialogEmit, options: Dial
         throw error
       }
       element.returnValue = ''
+      if (options.prepare) {
+        options.prepare()
+        await nextTick()
+        if (!mounted || !active || ticket !== transition || !props.modelValue) return
+      }
       focusDialog(element)
     }
     phase.value = 'opening'
@@ -390,6 +396,7 @@ export function useDialog(props: MdvDialogProps, emit: DialogEmit, options: Dial
   })
 
   return {
+    elements: { dialog, container, scrim, content },
     attrs,
     id,
     phase,

@@ -22,6 +22,7 @@
 - [MdvMenu 菜单家族](#mdvmenu)
 - [MdvTooltip 与 MdvRichTooltip 提示](#mdvtooltip)
 - [MdvSnackbar 消息提示](#mdvsnackbar)
+- [MdvBottomSheet 与 MdvBottomSheetScaffold 底部面板](#mdvbottomsheet)
 
 ## MdvButton
 
@@ -49,31 +50,31 @@ const loading = ref(false)
 </template>
 ```
 
-| Prop | 类型／可选值 | 默认值 |
-| --- | --- | --- |
-| `variant` | `filled`、`tonal`、`outlined`、`elevated`、`text`、`link` | `filled` |
-| `color` | `primary`、`secondary`、`tertiary`、`success`、`warning`、`error`、`info` 或 `#RGB`／`#RRGGBB` 种子色 | 不提供 |
-| `size` | `xs`、`s`、`m`、`l`、`xl` | `s` |
-| `shape` | `round`、`square` | `round` |
-| `type` | `button`、`submit`、`reset`，仅对原生按钮生效 | `button` |
-| `href` | `string`；提供时使用原生链接 | 不提供 |
-| `disabled` | `boolean` | `false` |
-| `loading` | `boolean` | `false` |
-| `loadingText` | `string`；加载时的标签，省略时沿用默认插槽 | 不提供 |
-| `hoverShadow` | `boolean`；开启适用变体的悬停阴影 | `false` |
-| `fullWidth` | `boolean` | `false` |
+| Prop          | 类型／可选值                                                                                          | 默认值   |
+| ------------- | ----------------------------------------------------------------------------------------------------- | -------- |
+| `variant`     | `filled`、`tonal`、`outlined`、`elevated`、`text`、`link`                                             | `filled` |
+| `color`       | `primary`、`secondary`、`tertiary`、`success`、`warning`、`error`、`info` 或 `#RGB`／`#RRGGBB` 种子色 | 不提供   |
+| `size`        | `xs`、`s`、`m`、`l`、`xl`                                                                             | `s`      |
+| `shape`       | `round`、`square`                                                                                     | `round`  |
+| `type`        | `button`、`submit`、`reset`，仅对原生按钮生效                                                         | `button` |
+| `href`        | `string`；提供时使用原生链接                                                                          | 不提供   |
+| `disabled`    | `boolean`                                                                                             | `false`  |
+| `loading`     | `boolean`                                                                                             | `false`  |
+| `loadingText` | `string`；加载时的标签，省略时沿用默认插槽                                                            | 不提供   |
+| `hoverShadow` | `boolean`；开启适用变体的悬停阴影                                                                     | `false`  |
+| `fullWidth`   | `boolean`                                                                                             | `false`  |
 
 `variant` 只控制外观。任何外观都能提供 `href`，此时渲染 `<a>`，透传 `target`、`rel`、`download` 等原生链接属性；不指定 `target` 时在当前标签页打开。`href=""` 按原生链接处理；不需要链接语义时直接省略 `href`。未提供 `href` 时渲染 `<button>`，包括 `variant="link"` 的情况，不自动添加默认 URL。`link` 是 MDV 扩展，外观接近 `text`，仅在 `:focus-visible` 时为标签显示下划线。
 
 `color` 选择色系，可与全部 `variant` 组合。省略时保留官方默认角色：tonal 使用 secondary-container，outlined 使用中性文字和描边；显式指定 `color="primary"` 后，tonal 改用 primary-container，outlined 使用 primary 文字和描边。
 
-| variant | 显式指定 color 后的配色 |
-| --- | --- |
-| `filled` | 主色背景与配套文字色 |
-| `tonal` | 容器背景与配套容器文字色 |
-| `outlined` | 透明背景、该色系的文字和描边 |
-| `text`／`link` | 透明背景与该色系文字 |
-| `elevated` | 保留 surface-container-low 和阴影，使用该色系文字 |
+| variant        | 显式指定 color 后的配色                           |
+| -------------- | ------------------------------------------------- |
+| `filled`       | 主色背景与配套文字色                              |
+| `tonal`        | 容器背景与配套容器文字色                          |
+| `outlined`     | 透明背景、该色系的文字和描边                      |
+| `text`／`link` | 透明背景与该色系文字                              |
+| `elevated`     | 保留 surface-container-low 和阴影，使用该色系文字 |
 
 primary／secondary／tertiary／error 引用当前主题角色。success／warning／info 是 MDV 扩展语义色，各自提供浅深色主色、on-color、container 和 on-container；不会随着全局品牌种子色变成另一种语义色。可在所需的主题作用域覆盖 `--mdv-sys-color-success`、`--mdv-sys-color-on-success`、`--mdv-sys-color-success-container`、`--mdv-sys-color-on-success-container`，warning／info 同理，背景和前景需配对覆盖。
 
@@ -104,23 +105,23 @@ primary／secondary／tertiary／error 引用当前主题角色。success／warn
 
 尺寸采用当前 [M3 Expressive Button 规格](https://m3.material.io/components/buttons/specs)。常规单行标签、默认根字号下的规格如下；长标签和较大字体允许自然撑高：
 
-| size | 高度 | 水平留白（含描边） | 图标大小 | 图标间距 | outlined 描边 |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| `xs` | 32px | 12px | 20px | 4px | 1px |
-| `s` | 40px | 16px | 20px | 8px | 1px |
-| `m` | 56px | 24px | 24px | 8px | 1px |
-| `l` | 96px | 48px | 32px | 12px | 2px |
-| `xl` | 136px | 64px | 40px | 16px | 3px |
+| size |  高度 | 水平留白（含描边） | 图标大小 | 图标间距 | outlined 描边 |
+| ---- | ----: | -----------------: | -------: | -------: | ------------: |
+| `xs` |  32px |               12px |     20px |      4px |           1px |
+| `s`  |  40px |               16px |     20px |      8px |           1px |
+| `m`  |  56px |               24px |     24px |      8px |           1px |
+| `l`  |  96px |               48px |     32px |     12px |           2px |
+| `xl` | 136px |               64px |     40px |     16px |           3px |
 
 MDV 为短内容设置最小宽度，普通外观按两侧留白加 32px、text／link 按两侧留白加 16px 计算；这是 MDV 的布局约定。内容超过下限后自然撑开，最小宽度也不会超过父容器的可用宽度。
 
 | size | filled／tonal／outlined／elevated 最小宽度 | text／link 最小宽度 |
-| --- | ---: | ---: |
-| `xs` | 56px | 40px |
-| `s` | 64px | 48px |
-| `m` | 80px | 64px |
-| `l` | 128px | 112px |
-| `xl` | 160px | 144px |
+| ---- | -----------------------------------------: | ------------------: |
+| `xs` |                                       56px |                40px |
+| `s`  |                                       64px |                48px |
+| `m`  |                                       80px |                64px |
+| `l`  |                                      128px |               112px |
+| `xl` |                                      160px |               144px |
 
 `round` 使用胶囊圆角；`square` 在 xs／s 为 12px、m 为 16px、l／xl 为 28px。点击、长按与释放时保持所选圆角，按压反馈使用状态层、涟漪与适用的阴影变化。状态层与涟漪独立叠加，点击结束后鼠标仍在按钮上时，保留悬停底色；鼠标离开后清除对应的悬停状态。
 
@@ -159,18 +160,18 @@ const loading = ref(false)
 
 示例图形来自 Material Symbols，许可见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)。插槽仍接受自己的 SVG 或图标组件。
 
-| Prop | 类型／可选值 | 默认值 |
-| --- | --- | --- |
-| `variant` | `filled`、`tonal`、`outlined`、`standard` | `filled` |
-| `color` | `primary`、`secondary`、`tertiary`、`success`、`warning`、`error`、`info` 或 `#RGB`／`#RRGGBB` 种子色 | 不提供 |
-| `size` | `xs`、`s`、`m`、`l`、`xl` | `s` |
-| `width` | `narrow`、`default`、`wide` | `default` |
-| `shape` | `round`、`square`，指定未选中时的形状 | `round` |
-| `selected` | `boolean`；提供时进入受控切换模式 | `undefined`（普通模式） |
-| `type` | `button`、`submit`、`reset`，仅对原生按钮生效 | `button` |
-| `href` | `string`；普通模式中提供时使用原生链接 | 不提供 |
-| `disabled` | `boolean` | `false` |
-| `loading` | `boolean`；显示居中指示器 | `false` |
+| Prop       | 类型／可选值                                                                                          | 默认值                  |
+| ---------- | ----------------------------------------------------------------------------------------------------- | ----------------------- |
+| `variant`  | `filled`、`tonal`、`outlined`、`standard`                                                             | `filled`                |
+| `color`    | `primary`、`secondary`、`tertiary`、`success`、`warning`、`error`、`info` 或 `#RGB`／`#RRGGBB` 种子色 | 不提供                  |
+| `size`     | `xs`、`s`、`m`、`l`、`xl`                                                                             | `s`                     |
+| `width`    | `narrow`、`default`、`wide`                                                                           | `default`               |
+| `shape`    | `round`、`square`，指定未选中时的形状                                                                 | `round`                 |
+| `selected` | `boolean`；提供时进入受控切换模式                                                                     | `undefined`（普通模式） |
+| `type`     | `button`、`submit`、`reset`，仅对原生按钮生效                                                         | `button`                |
+| `href`     | `string`；普通模式中提供时使用原生链接                                                                | 不提供                  |
+| `disabled` | `boolean`                                                                                             | `false`                 |
+| `loading`  | `boolean`；显示居中指示器                                                                             | `false`                 |
 
 省略 `selected` 是普通按钮，不产生 `aria-pressed` 或切换事件；`selected="false"` 应使用布尔绑定 `:selected="false"`。提供布尔 `selected`（包括 false）即进入切换模式；点击发出 `update:selected`，父级更新后才改变选中外观，不维护另一份内部状态。一般使用 `v-model:selected`；也可绑定固定值并监听更新。原生 `@click` 先执行，调用 `event.preventDefault()` 可取消这次切换。键盘激活交给原生按钮，避免重复触发。
 
@@ -178,10 +179,10 @@ const loading = ref(false)
 
 `disabled` 使用原生按钮禁用；链接则移除 `href`，设置 `role="link"`、`aria-disabled="true"`、`tabindex="-1"`，阻止激活与调用方对应的事件处理。恢复启用时恢复地址和监听。`loading` 只把图标替换为居中指示器，宽高保持不变，设置 `aria-busy="true"`，保留原可访问名称；仍能点击、切换或导航，阻止操作需同时传入 `disabled`。隐藏的图标保持挂载，指示器不参与名称。
 
-| 插槽 | 参数 | 用途 |
-| --- | --- | --- |
-| 默认 | `{ selected: boolean }` | 普通／未选中图标；没有 selected 插槽时，也用于选中状态 |
-| `selected` | `{ selected: boolean }`，值为 true | 已选中图标；省略时回退默认插槽 |
+| 插槽       | 参数                               | 用途                                                   |
+| ---------- | ---------------------------------- | ------------------------------------------------------ |
+| 默认       | `{ selected: boolean }`            | 普通／未选中图标；没有 selected 插槽时，也用于选中状态 |
+| `selected` | `{ selected: boolean }`，值为 true | 已选中图标；省略时回退默认插槽                         |
 
 也可在默认插槽中读取状态，让已有图标组件切换图形：
 
@@ -198,12 +199,12 @@ const loading = ref(false)
 **必须提供 `aria-label` 或 `aria-labelledby` 描述动作。** 仅图标或 SVG 的 title 不作为组件名称来源。切换按钮自动设置 `aria-pressed`，名称保持稳定，例如始终为“收藏”；不要随选中状态改成“取消收藏”。loading 不移除名称。缺失名称时开发环境会提示；引用的标签元素是否存在仍由使用方保证。可透传原生 `title`，但它不是 MD3 Tooltip；本组件不内置 Tooltip，可通过独立的 `MdvTooltip`／`MdvRichTooltip` 组合。
 
 | size | 可见高度 | 图标 | narrow 宽 | default 宽 | wide 宽 | square 圆角 | outlined 描边 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| `xs` | 32px | 20px | 28px | 32px | 40px | 12px | 1px |
-| `s` | 40px | 24px | 32px | 40px | 52px | 12px | 1px |
-| `m` | 56px | 24px | 48px | 56px | 72px | 16px | 1px |
-| `l` | 96px | 32px | 64px | 96px | 128px | 28px | 2px |
-| `xl` | 136px | 40px | 104px | 136px | 184px | 28px | 3px |
+| ---- | -------: | ---: | --------: | ---------: | ------: | ----------: | ------------: |
+| `xs` |     32px | 20px |      28px |       32px |    40px |        12px |           1px |
+| `s`  |     40px | 24px |      32px |       40px |    52px |        12px |           1px |
+| `m`  |     56px | 24px |      48px |       56px |    72px |        16px |           1px |
+| `l`  |     96px | 32px |      64px |       96px |   128px |        28px |           2px |
+| `xl` |    136px | 40px |     104px |      136px |   184px |        28px |           3px |
 
 `round` 使用完整圆角。切换按钮选中时 round→square、square→round，取消后恢复，并支持平滑过渡。按下、长按与释放均不额外改变圆角；按压反馈使用独立状态层和涟漪。hover 为 8%，focus／pressed 为 10%；涟漪结束后保留仍适用的悬停底色。四款均不增加阴影。
 
@@ -226,12 +227,12 @@ const loading = ref(false)
 
 省略 `color` 时，按官方角色区分普通、切换未选与已选：
 
-| variant | 普通 | 切换未选 | 切换已选 |
-| --- | --- | --- | --- |
-| `filled` | primary／on-primary | surface-container／on-surface-variant | primary／on-primary |
-| `tonal` | secondary-container／on-secondary-container | 同普通 | secondary／on-secondary |
-| `outlined` | 透明背景，outline-variant 描边，on-surface-variant 图标 | 同普通 | inverse-surface／inverse-on-surface，无描边 |
-| `standard` | 透明背景，on-surface-variant 图标 | 同普通 | 透明背景，primary 图标 |
+| variant    | 普通                                                    | 切换未选                              | 切换已选                                    |
+| ---------- | ------------------------------------------------------- | ------------------------------------- | ------------------------------------------- |
+| `filled`   | primary／on-primary                                     | surface-container／on-surface-variant | primary／on-primary                         |
+| `tonal`    | secondary-container／on-secondary-container             | 同普通                                | secondary／on-secondary                     |
+| `outlined` | 透明背景，outline-variant 描边，on-surface-variant 图标 | 同普通                                | inverse-surface／inverse-on-surface，无描边 |
+| `standard` | 透明背景，on-surface-variant 图标                       | 同普通                                | 透明背景，primary 图标                      |
 
 显式 `color` 沿用 Button 的预设与种子色规则：filled 普通／已选使用该色系主色，未选仍为中性；tonal 普通／未选使用容器色，选中使用主色；outlined 普通／未选使用该色系图标和描边，选中使用容器色、去掉描边；standard 普通／已选使用主色，切换未选保持中性。十六进制表示种子色而非直接背景色，浅深模式由 CSS 跟随当前主题；两类按钮共享有容量上限的算法缓存，不修改全局主题。
 
@@ -271,11 +272,11 @@ import save from '@iconify-icons/material-symbols/save'
 </template>
 ```
 
-| Prop | 类型 | 默认值 |
-| --- | --- | --- |
-| `icon` | `MdvIconData`；本地 Iconify SVG 数据对象，必填 | 无 |
-| `size` | `MdvIconSize`，即 `number \| string` | 独立使用 24px；按钮插槽内跟随容器 |
-| `color` | `string`，CSS 颜色 | 继承 `currentColor` |
+| Prop    | 类型                                           | 默认值                            |
+| ------- | ---------------------------------------------- | --------------------------------- |
+| `icon`  | `MdvIconData`；本地 Iconify SVG 数据对象，必填 | 无                                |
+| `size`  | `MdvIconSize`，即 `number \| string`           | 独立使用 24px；按钮插槽内跟随容器 |
+| `color` | `string`，CSS 颜色                             | 继承 `currentColor`               |
 
 `icon` 接收导入的数据对象，不接收 `"material-symbols:home"` 等字符串名称。也可使用其他图标集或自有的 Iconify 格式数据，至少包含 SVG `body`，可提供 `width`、`height` 等数据字段。只传入可信的数据，组件不负责清洗 SVG。无效输入保留空的图标盒子，开发环境提示；不会尝试联网补取。
 
@@ -285,11 +286,11 @@ import save from '@iconify-icons/material-symbols/save'
 
 推荐以 Material Symbols 的 **Outlined 风格、400 字重**为基线。风格与填充由导入资源决定，例如：
 
-| 风格 | 空心 | 实心 |
-| --- | --- | --- |
-| Outlined | `favorite-outline` | `favorite` |
-| Rounded | `favorite-outline-rounded` | `favorite-rounded` |
-| Sharp | `favorite-outline-sharp` | `favorite-sharp` |
+| 风格     | 空心                       | 实心               |
+| -------- | -------------------------- | ------------------ |
+| Outlined | `favorite-outline`         | `favorite`         |
+| Rounded  | `favorite-outline-rounded` | `favorite-rounded` |
+| Sharp    | `favorite-outline-sharp`   | `favorite-sharp`   |
 
 上表名称都是 `@iconify-icons/material-symbols/` 后的单图标子路径。空心／实心切换时更换 `icon` 数据，也可使用 `MdvIconButton` 的默认／selected 插槽。这里使用静态 SVG，不提供可变字体的 `FILL`、`wght`、`GRAD`、`opsz` 轴，也不会随尺寸自动换用另一份光学轮廓。
 
@@ -315,32 +316,47 @@ const quantity = ref<string | number>('')
 </script>
 
 <template>
-  <MdvTextField v-model="name" label="姓名" name="name" autocomplete="name" required clearable :maxlength="20" supporting-text="用于公开显示" />
-  <MdvTextField v-model="password" label="密码" type="password" autocomplete="new-password" password-toggle />
+  <MdvTextField
+    v-model="name"
+    label="姓名"
+    name="name"
+    autocomplete="name"
+    required
+    clearable
+    :maxlength="20"
+    supporting-text="用于公开显示"
+  />
+  <MdvTextField
+    v-model="password"
+    label="密码"
+    type="password"
+    autocomplete="new-password"
+    password-toggle
+  />
   <MdvTextField v-model="notes" variant="filled" label="备注" multiline :rows="4" full-width />
   <MdvTextField v-model.number="quantity" label="数量" type="number" min="0" step="1" />
 </template>
 ```
 
-| Prop | 类型／说明 | 默认值 |
-| --- | --- | --- |
-| `modelValue`／`v-model` | `string \| number` | `''` |
-| `modelModifiers` | Vue 自动传入的 `trim`／`number`／`lazy` 标记 | `{}` |
-| `variant` | `outlined`、`filled` | `outlined` |
-| `type` | `text`、`password`、`email`、`tel`、`url`、`search`、`number`；单行时生效 | `text` |
-| `label` | 浮动标签 | `''` |
-| `placeholder` | 原生占位提示，避免与未浮动标签重叠 | `''` |
-| `supportingText` | 辅助说明 | `''` |
-| `error` | 业务错误状态 | `false` |
-| `errorText` | 错误状态下优先显示的说明，替换辅助文字 | `''` |
-| `prefixText`／`suffixText` | 仅展示的前缀／后缀，不计入输入值 | `''` |
-| `multiline` | 改用原生 `textarea` | `false` |
-| `rows` | 多行输入的初始行数 | `3` |
-| `disabled`／`readonly`／`required` | 对应原生输入属性 | `false` |
-| `clearable` | 有内容且可编辑时提供清除操作 | `false` |
-| `passwordToggle` | `type="password"` 单行输入提供显隐操作 | `false` |
-| `showCount` | 显示当前字数；省略时有合法 `maxlength` 才显示字数／上限 | 不提供 |
-| `fullWidth` | 占满父容器可用宽度 | `false` |
+| Prop                               | 类型／说明                                                                | 默认值     |
+| ---------------------------------- | ------------------------------------------------------------------------- | ---------- |
+| `modelValue`／`v-model`            | `string \| number`                                                        | `''`       |
+| `modelModifiers`                   | Vue 自动传入的 `trim`／`number`／`lazy` 标记                              | `{}`       |
+| `variant`                          | `outlined`、`filled`                                                      | `outlined` |
+| `type`                             | `text`、`password`、`email`、`tel`、`url`、`search`、`number`；单行时生效 | `text`     |
+| `label`                            | 浮动标签                                                                  | `''`       |
+| `placeholder`                      | 原生占位提示，避免与未浮动标签重叠                                        | `''`       |
+| `supportingText`                   | 辅助说明                                                                  | `''`       |
+| `error`                            | 业务错误状态                                                              | `false`    |
+| `errorText`                        | 错误状态下优先显示的说明，替换辅助文字                                    | `''`       |
+| `prefixText`／`suffixText`         | 仅展示的前缀／后缀，不计入输入值                                          | `''`       |
+| `multiline`                        | 改用原生 `textarea`                                                       | `false`    |
+| `rows`                             | 多行输入的初始行数                                                        | `3`        |
+| `disabled`／`readonly`／`required` | 对应原生输入属性                                                          | `false`    |
+| `clearable`                        | 有内容且可编辑时提供清除操作                                              | `false`    |
+| `passwordToggle`                   | `type="password"` 单行输入提供显隐操作                                    | `false`    |
+| `showCount`                        | 显示当前字数；省略时有合法 `maxlength` 才显示字数／上限                   | 不提供     |
+| `fullWidth`                        | 占满父容器可用宽度                                                        | `false`    |
 
 单行输入默认容器高度 56px、输入排版 16px／24px、浮动标签与辅助文字 12px／16px、图标 24px。普通边线为 1px，聚焦按现行官网令牌使用 3px；线宽变化不改变布局。填充外观只有上方圆角，描边外观四角为 4px。默认宽度 280px 是 MDV 的布局默认值，可通过外层 `style` 调整，也可用 `full-width`；默认最大宽度不会超过父容器。
 
@@ -404,14 +420,14 @@ const query = ref('')
 
 通过模板 ref 调用以下方法：
 
-| 方法 | 原生行为 |
-| --- | --- |
-| `focus(options?: FocusOptions)` | 聚焦实际控件，支持 preventScroll |
-| `blur()` | 移除输入焦点 |
-| `select()` | 选中全部文字；仅在原生类型支持时生效 |
-| `checkValidity(): boolean` | 检查原生约束，失败触发 invalid |
-| `reportValidity(): boolean` | 检查约束并显示浏览器的校验反馈 |
-| `setCustomValidity(message: string)` | 设置自定义原生校验；空字符串解除 |
+| 方法                                 | 原生行为                             |
+| ------------------------------------ | ------------------------------------ |
+| `focus(options?: FocusOptions)`      | 聚焦实际控件，支持 preventScroll     |
+| `blur()`                             | 移除输入焦点                         |
+| `select()`                           | 选中全部文字；仅在原生类型支持时生效 |
+| `checkValidity(): boolean`           | 检查原生约束，失败触发 invalid       |
+| `reportValidity(): boolean`          | 检查约束并显示浏览器的校验反馈       |
+| `setCustomValidity(message: string)` | 设置自定义原生校验；空字符串解除     |
 
 ```ts
 import { useTemplateRef } from 'vue'
@@ -445,17 +461,17 @@ const channels = ref<MdvCheckboxValue[]>(['email'])
 </template>
 ```
 
-| Prop／模型 | 类型／说明 | 默认值 |
-| --- | --- | --- |
-| `modelValue`／`v-model` | `boolean \| (string \| number)[]` | `false` |
-| `value` | 数组成员与原生表单提交值，`string \| number` | `'on'` |
-| `indeterminate`／`v-model:indeterminate` | 半选状态，横线优先于勾显示 | `false` |
-| `label` | 可点击的标签文字 | `''` |
-| `supportingText` | 标签下方的辅助说明 | `''` |
-| `error` | 外部业务错误状态 | `false` |
-| `errorText` | 错误状态下优先显示的说明 | `''` |
-| `disabled`／`required` | 原生禁用／本项必选约束 | `false` |
-| `color` | 主题／语义色或十六进制种子色 | `'primary'` |
+| Prop／模型                               | 类型／说明                                   | 默认值      |
+| ---------------------------------------- | -------------------------------------------- | ----------- |
+| `modelValue`／`v-model`                  | `boolean \| (string \| number)[]`            | `false`     |
+| `value`                                  | 数组成员与原生表单提交值，`string \| number` | `'on'`      |
+| `indeterminate`／`v-model:indeterminate` | 半选状态，横线优先于勾显示                   | `false`     |
+| `label`                                  | 可点击的标签文字                             | `''`        |
+| `supportingText`                         | 标签下方的辅助说明                           | `''`        |
+| `error`                                  | 外部业务错误状态                             | `false`     |
+| `errorText`                              | 错误状态下优先显示的说明                     | `''`        |
+| `disabled`／`required`                   | 原生禁用／本项必选约束                       | `false`     |
+| `color`                                  | 主题／语义色或十六进制种子色                 | `'primary'` |
 
 方框 18px、圆角 2px、状态层 40px；组件实际保留 48 × 48px 的控件点击区域。标签默认在后，长中文、英文和连续标识符可以换行，控件对齐标签首行；`dir="rtl"` 同时作用于布局和输入。相邻标签使用 on-surface，不随选中颜色变化；禁用时使用禁用文字色。
 
@@ -492,7 +508,13 @@ function toggleAll(value: MdvCheckboxModelValue) {
       label="全选"
       @update:model-value="toggleAll"
     />
-    <MdvCheckbox v-for="option in options" :key="option" v-model="selected" :value="option" :label="option" />
+    <MdvCheckbox
+      v-for="option in options"
+      :key="option"
+      v-model="selected"
+      :value="option"
+      :label="option"
+    />
   </fieldset>
 </template>
 ```
@@ -519,12 +541,12 @@ FormData 只包含有 name、选中且未禁用的控件，值取自 value；数
 
 ### 公开方法与类型
 
-| 方法 | 行为 |
-| --- | --- |
-| `focus(options?: FocusOptions)` | 聚焦实际输入，支持 preventScroll |
-| `blur()` | 移除输入焦点 |
-| `checkValidity(): boolean` | 检查原生约束，失败触发 invalid |
-| `reportValidity(): boolean` | 检查约束并显示浏览器的校验反馈 |
+| 方法                                 | 行为                             |
+| ------------------------------------ | -------------------------------- |
+| `focus(options?: FocusOptions)`      | 聚焦实际输入，支持 preventScroll |
+| `blur()`                             | 移除输入焦点                     |
+| `checkValidity(): boolean`           | 检查原生约束，失败触发 invalid   |
+| `reportValidity(): boolean`          | 检查约束并显示浏览器的校验反馈   |
 | `setCustomValidity(message: string)` | 设置原生自定义错误；空字符串解除 |
 
 公共类型：`MdvCheckboxValue`、`MdvCheckboxModelValue`、`MdvCheckboxColor`，均可从 mdv 主入口导入。已提供行为、SSR 与 hydration 测试及独立开发预览；当前约定范围已完成本地检查与开发预览验收。新版本包消费另行验证。
@@ -558,15 +580,15 @@ const plan = ref<string | number | null>(null)
 
 ### MdvRadio 属性
 
-| Prop／模型 | 类型／说明 | 默认值 |
-| --- | --- | --- |
-| `modelValue`／`v-model` | `string \| number \| null`；选中项的值 | `null` |
-| `value` | 当前选项的值，数字和字符串严格区分 | 必填 |
-| `label` | 可点击的标签文字 | `''` |
-| `supportingText` | 单独使用时显示的辅助说明 | `''` |
-| `error`／`errorText` | 单独使用时的业务错误及说明 | `false`／`''` |
-| `disabled`／`required` | 原生禁用／必选约束 | `false` |
-| `color` | 主题／语义色或十六进制种子色 | `primary` |
+| Prop／模型              | 类型／说明                             | 默认值        |
+| ----------------------- | -------------------------------------- | ------------- |
+| `modelValue`／`v-model` | `string \| number \| null`；选中项的值 | `null`        |
+| `value`                 | 当前选项的值，数字和字符串严格区分     | 必填          |
+| `label`                 | 可点击的标签文字                       | `''`          |
+| `supportingText`        | 单独使用时显示的辅助说明               | `''`          |
+| `error`／`errorText`    | 单独使用时的业务错误及说明             | `false`／`''` |
+| `disabled`／`required`  | 原生禁用／必选约束                     | `false`       |
+| `color`                 | 主题／语义色或十六进制种子色           | `primary`     |
 
 单独使用时可以像原生 radio 一样传入 `name`：
 
@@ -579,16 +601,16 @@ const plan = ref<string | number | null>(null)
 
 ### MdvRadioGroup 属性
 
-| Prop／模型 | 类型／说明 | 默认值 |
-| --- | --- | --- |
-| `modelValue`／`v-model` | `string \| number \| null` | `null` |
-| `name` | 传给组内原生 radio 的表单名称 | 未设置 |
-| `label` | `legend` 文字 | `''` |
-| `supportingText` | 组级辅助说明 | `''` |
-| `error`／`errorText` | 组级业务错误及说明 | `false`／`''` |
-| `disabled`／`required` | 禁用整组／至少选择一项 | `false` |
-| `color` | 组级默认主题／语义色或种子色 | 未设置 |
-| `orientation` | `vertical` 或 `horizontal` | `vertical` |
+| Prop／模型              | 类型／说明                    | 默认值        |
+| ----------------------- | ----------------------------- | ------------- |
+| `modelValue`／`v-model` | `string \| number \| null`    | `null`        |
+| `name`                  | 传给组内原生 radio 的表单名称 | 未设置        |
+| `label`                 | `legend` 文字                 | `''`          |
+| `supportingText`        | 组级辅助说明                  | `''`          |
+| `error`／`errorText`    | 组级业务错误及说明            | `false`／`''` |
+| `disabled`／`required`  | 禁用整组／至少选择一项        | `false`       |
+| `color`                 | 组级默认主题／语义色或种子色  | 未设置        |
+| `orientation`           | `vertical` 或 `horizontal`    | `vertical`    |
 
 组内 `MdvRadio` 会继承组的 `color` 和 `disabled`。子项仍可以用自己的 `disabled` 或 `color` 覆盖。`supportingText`、`error`、`errorText` 和 `required` 主要由组管理；这样错误说明只出现一次，也符合“这一组选一个”的校验语义。
 
@@ -633,16 +655,16 @@ const enabled = ref(false)
 
 ### MdvSwitch 属性
 
-| Prop／模型 | 类型／说明 | 默认值 |
-| --- | --- | --- |
-| `modelValue`／`v-model` | `boolean`；开启或关闭 | `false` |
-| `label` | 可点击的标签文字；默认插槽优先 | `''` |
-| `supportingText` | 辅助说明；错误报告后按错误优先级显示 | `''` |
-| `error`／`errorText` | 业务错误及说明；与原生 validity 分开 | `false`／`''` |
-| `disabled`／`required` | 原生禁用／必选约束 | `false` |
-| `color` | 主题／语义色或 `#RGB`／`#RRGGBB` 种子色 | `primary` |
-| `labelPosition` | `start` 或 `end` | `end` |
-| `value` | 原生表单提交值 | `'on'` |
+| Prop／模型              | 类型／说明                              | 默认值        |
+| ----------------------- | --------------------------------------- | ------------- |
+| `modelValue`／`v-model` | `boolean`；开启或关闭                   | `false`       |
+| `label`                 | 可点击的标签文字；默认插槽优先          | `''`          |
+| `supportingText`        | 辅助说明；错误报告后按错误优先级显示    | `''`          |
+| `error`／`errorText`    | 业务错误及说明；与原生 validity 分开    | `false`／`''` |
+| `disabled`／`required`  | 原生禁用／必选约束                      | `false`       |
+| `color`                 | 主题／语义色或 `#RGB`／`#RRGGBB` 种子色 | `primary`     |
+| `labelPosition`         | `start` 或 `end`                        | `end`         |
+| `value`                 | 原生表单提交值                          | `'on'`        |
 
 `id`、`name`、`form`、`value`、`required`、ARIA、`data-*` 和原生事件会透传到实际的 `input[type="checkbox"]`；`class`、`style`、`dir` 和 `lang` 属于组件外层。没有可见标签时，必须提供 `aria-label` 或 `aria-labelledby`。`labelPosition="start"` 只改变视觉排列，不改变原生表单和阅读顺序。
 
@@ -696,29 +718,37 @@ const percent = (value: number) => `${value}%`
 <template>
   <MdvSlider v-model="volume" label="音量" value-indicator :format-value="percent" />
   <MdvSlider v-model="exposure" variant="centered" :min="-100" :max="100" label="曝光偏移" />
-  <MdvSlider v-model="price" variant="range" name="price" label="价格区间" :step="10" stops value-indicator />
+  <MdvSlider
+    v-model="price"
+    variant="range"
+    name="price"
+    label="价格区间"
+    :step="10"
+    stops
+    value-indicator
+  />
 </template>
 ```
 
 ### MdvSlider 属性
 
-| Prop／模型 | 类型／说明 | 默认值 |
-| --- | --- | --- |
-| `modelValue`／`v-model` | standard／centered 使用 `number`，range 使用 `[number, number]` | standard 从 min 开始；centered 从中心开始；range 为 `[min, max]` |
-| `variant` | `standard`／`centered`／`range` | `standard` |
-| `min`／`max` | 有限的上下界，max 不小于 min | `0`／`100` |
-| `step` | 正数步长，以 min 为起点；支持小数 | `1` |
-| `centerValue` | centered 的高亮起点，须位于上下界内 | `0` |
-| `stops` | 绘制中间刻度，手柄通过短动画移动到有效档位 | `false` |
-| `size` | `xs`／`s`／`m`／`l`／`xl` | `xs` |
-| `orientation` | `horizontal`／`vertical` | `horizontal` |
-| `valueIndicator` | 连续滑块按压时显示；有刻度时拖动或按住稍久显示；键盘聚焦时立即显示 | `false` |
-| `formatValue` | `(value: number) => string`，同时用于提示与 aria-valuetext | 普通数字文字 |
-| `label` | 可见标签；默认插槽优先 | `''` |
-| `supportingText` | 与原生控件关联的辅助说明 | `''` |
-| `disabled` | 禁用交互和表单提交 | `false` |
-| `color` | 主题／语义色或 `#RGB`／`#RRGGBB` 种子色 | `primary` |
-| `startAriaLabel`／`endAriaLabel` | range 两个手柄的独立无障碍名称 | 从标签与“下限／上限”组合 |
+| Prop／模型                       | 类型／说明                                                         | 默认值                                                           |
+| -------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| `modelValue`／`v-model`          | standard／centered 使用 `number`，range 使用 `[number, number]`    | standard 从 min 开始；centered 从中心开始；range 为 `[min, max]` |
+| `variant`                        | `standard`／`centered`／`range`                                    | `standard`                                                       |
+| `min`／`max`                     | 有限的上下界，max 不小于 min                                       | `0`／`100`                                                       |
+| `step`                           | 正数步长，以 min 为起点；支持小数                                  | `1`                                                              |
+| `centerValue`                    | centered 的高亮起点，须位于上下界内                                | `0`                                                              |
+| `stops`                          | 绘制中间刻度，手柄通过短动画移动到有效档位                         | `false`                                                          |
+| `size`                           | `xs`／`s`／`m`／`l`／`xl`                                          | `xs`                                                             |
+| `orientation`                    | `horizontal`／`vertical`                                           | `horizontal`                                                     |
+| `valueIndicator`                 | 连续滑块按压时显示；有刻度时拖动或按住稍久显示；键盘聚焦时立即显示 | `false`                                                          |
+| `formatValue`                    | `(value: number) => string`，同时用于提示与 aria-valuetext         | 普通数字文字                                                     |
+| `label`                          | 可见标签；默认插槽优先                                             | `''`                                                             |
+| `supportingText`                 | 与原生控件关联的辅助说明                                           | `''`                                                             |
+| `disabled`                       | 禁用交互和表单提交                                                 | `false`                                                          |
+| `color`                          | 主题／语义色或 `#RGB`／`#RRGGBB` 种子色                            | `primary`                                                        |
+| `startAriaLabel`／`endAriaLabel` | range 两个手柄的独立无障碍名称                                     | 从标签与“下限／上限”组合                                         |
 
 五档轨道厚度为 16／24／40／56／96px，手柄长度为 44／44／52／68／108px；手柄常态厚度 4px，键盘聚焦与按压时为 2px。指针松开后恢复常态厚度并隐藏提示，保留原生焦点，随后可直接使用方向键继续调整并恢复键盘焦点反馈。横向填充所在容器；竖向初始整体高度 240px，可通过 style 调整。竖向由下向上增加，横向跟随继承的 dir；range 建议优先使用横向。
 
@@ -797,7 +827,7 @@ const tags = ref(['设计讨论', '发布准备'])
       :key="tag"
       variant="input"
       :label="tag"
-      @remove="tags = tags.filter(item => item !== tag)"
+      @remove="tags = tags.filter((item) => item !== tag)"
     />
   </MdvChipSet>
 </template>
@@ -805,20 +835,20 @@ const tags = ref(['设计讨论', '发布准备'])
 
 ### MdvChip 属性
 
-| Prop／模型 | 类型／说明 | 默认值 |
-| --- | --- | --- |
-| `variant` | `assist`／`filter`／`input`／`suggestion`，表示用途 | `assist` |
-| `label` | 标签及默认删除名称的来源；默认插槽优先显示 | `''` |
-| `elevated` | Assist、Filter、Suggestion 的抬升外观；Input 忽略此项 | `false` |
-| `selected`／`v-model:selected` | Filter／Input 的选中状态 | 未提供时内部从 `false` 开始 |
-| `selectable` | 点击主体请求切换选中；Assist／Suggestion 不参与选择 | Filter 为 `true`，Input 为 `false` |
-| `removable` | 显示并启用尾部删除；仅 Filter／Input 可用 | Input 为 `true`，Filter 为 `false` |
-| `removeOnly` | Input 整颗纸片只执行删除，合为一个焦点目标；须同时允许删除 | `false` |
-| `removeLabel` | 删除动作的独立可访问名称 | `删除${label}` |
-| `disabled` | 禁用主体和删除操作 | `false` |
-| `color` | 七种现有语义色或 `#RGB`／`#RRGGBB` 种子色 | 保留官方默认角色 |
-| `value` | `string`／`number`；在 ChipSet 的单多选模式中标识可选择的 Filter | 不提供 |
-| `href` | Assist／Suggestion 的原生链接地址 | 不提供 |
+| Prop／模型                     | 类型／说明                                                       | 默认值                             |
+| ------------------------------ | ---------------------------------------------------------------- | ---------------------------------- |
+| `variant`                      | `assist`／`filter`／`input`／`suggestion`，表示用途              | `assist`                           |
+| `label`                        | 标签及默认删除名称的来源；默认插槽优先显示                       | `''`                               |
+| `elevated`                     | Assist、Filter、Suggestion 的抬升外观；Input 忽略此项            | `false`                            |
+| `selected`／`v-model:selected` | Filter／Input 的选中状态                                         | 未提供时内部从 `false` 开始        |
+| `selectable`                   | 点击主体请求切换选中；Assist／Suggestion 不参与选择              | Filter 为 `true`，Input 为 `false` |
+| `removable`                    | 显示并启用尾部删除；仅 Filter／Input 可用                        | Input 为 `true`，Filter 为 `false` |
+| `removeOnly`                   | Input 整颗纸片只执行删除，合为一个焦点目标；须同时允许删除       | `false`                            |
+| `removeLabel`                  | 删除动作的独立可访问名称                                         | `删除${label}`                     |
+| `disabled`                     | 禁用主体和删除操作                                               | `false`                            |
+| `color`                        | 七种现有语义色或 `#RGB`／`#RRGGBB` 种子色                        | 保留官方默认角色                   |
+| `value`                        | `string`／`number`；在 ChipSet 的单多选模式中标识可选择的 Filter | 不提供                             |
+| `href`                         | Assist／Suggestion 的原生链接地址                                | 不提供                             |
 
 Assist 执行上下文操作，Suggestion 提供建议；Filter 用来筛选，选中时显示前置勾；Input 表示已输入的标签、文件或联系人。Input 默认主体点击只执行外部业务操作；显式开启 `selectable` 后才自动请求切换选中，选中不自动增加 Filter 的勾。普通按钮固定使用 `type="button"`。
 
@@ -850,13 +880,13 @@ hover 状态层为 8%，focus／pressed 为 10%。抬升款常态为 elevation 1
 
 ### MdvChipSet
 
-| Prop／模型 | 类型／说明 | 默认值 |
-| --- | --- | --- |
-| `selection` | `none`／`single`／`multiple` | `none` |
+| Prop／模型              | 类型／说明                                                | 默认值                 |
+| ----------------------- | --------------------------------------------------------- | ---------------------- |
+| `selection`             | `none`／`single`／`multiple`                              | `none`                 |
 | `modelValue`／`v-model` | single 为 `string`／`number`／`null`，multiple 为相应数组 | 未选，显示时按模式解释 |
-| `label`／`label` 插槽 | 组名称；插槽优先 | `''` |
-| `disabled` | 禁用所有子 Chip 的操作 | `false` |
-| `scrollable` | 单行水平滚动；关闭时自动换行 | `false` |
+| `label`／`label` 插槽   | 组名称；插槽优先                                          | `''`                   |
+| `disabled`              | 禁用所有子 Chip 的操作                                    | `false`                |
+| `scrollable`            | 单行水平滚动；关闭时自动换行                              | `false`                |
 
 默认 selection=none 只负责排列与焦点，子项的 selected 各自管理。single／multiple 接管可选择 Filter 的状态，子项须提供唯一 value，不另外绑定子项 selected。Input、Assist、Suggestion 与 selectable=false 的动作不由组模型管理。字符串与数字严格区分；单选允许再次点击取消，取消后为 null；多选每次发出新数组，不修改原数组。不在挂载时补发模型更新。
 
@@ -891,12 +921,7 @@ const details = ref<MdvSegmentedButtonModelValue>(['summary'])
     <MdvSegmentedButtonItem value="month" label="月" />
   </MdvSegmentedButton>
 
-  <MdvSegmentedButton
-    v-model="details"
-    selection="multiple"
-    aria-label="显示内容"
-    name="details"
-  >
+  <MdvSegmentedButton v-model="details" selection="multiple" aria-label="显示内容" name="details">
     <MdvSegmentedButtonItem value="summary" label="摘要" />
     <MdvSegmentedButtonItem value="image" label="图片" />
     <MdvSegmentedButtonItem value="date" label="日期" />
@@ -906,17 +931,17 @@ const details = ref<MdvSegmentedButtonModelValue>(['summary'])
 
 ### 组属性与选择规则
 
-| Prop／模型 | 类型／说明 | 默认值 |
-| --- | --- | --- |
-| `modelValue`／`v-model` | 单选为 `string`／`number`／`null`；多选为 `(string \| number)[]` | `null`，多选按空数组解释 |
-| `selection` | `single`／`multiple` | `single` |
-| `selectionRequired` | 阻止用户取消最后一项；不自动选择、不校验外部模型 | 单选 `true`，多选 `false` |
-| `disabled` | 禁用全部分段 | `false` |
-| `fullWidth` | 撑满可用宽度，所有分段等宽 | `false` |
-| `density` | `0`／`-1`／`-2`／`-3`，可见高度依次 40／36／32／28px | `0` |
-| `showSelectedIcon` | 显示内置勾或自定义选中图标 | `true` |
-| `name` | 组内原生字段的提交名称 | 不提供 |
-| `form` | 原生外部表单 ID | 不提供 |
+| Prop／模型              | 类型／说明                                                       | 默认值                    |
+| ----------------------- | ---------------------------------------------------------------- | ------------------------- |
+| `modelValue`／`v-model` | 单选为 `string`／`number`／`null`；多选为 `(string \| number)[]` | `null`，多选按空数组解释  |
+| `selection`             | `single`／`multiple`                                             | `single`                  |
+| `selectionRequired`     | 阻止用户取消最后一项；不自动选择、不校验外部模型                 | 单选 `true`，多选 `false` |
+| `disabled`              | 禁用全部分段                                                     | `false`                   |
+| `fullWidth`             | 撑满可用宽度，所有分段等宽                                       | `false`                   |
+| `density`               | `0`／`-1`／`-2`／`-3`，可见高度依次 40／36／32／28px             | `0`                       |
+| `showSelectedIcon`      | 显示内置勾或自定义选中图标                                       | `true`                    |
+| `name`                  | 组内原生字段的提交名称                                           | 不提供                    |
+| `form`                  | 原生外部表单 ID                                                  | 不提供                    |
 
 单选会替换当前值。显式设置 `:selection-required="false"` 后，再次点击选中项会清空为 `null`。多选每次产生新数组，不修改传入数组；设置 `selection-required` 后可以限制至少保留一项。数字与字符串严格区分，例如 `:value="1"` 和 `value="1"` 是两个不同选项。
 
@@ -926,11 +951,11 @@ const details = ref<MdvSegmentedButtonModelValue>(['summary'])
 
 ### 分段属性、插槽与图标
 
-| Prop | 类型／说明 | 默认值 |
-| --- | --- | --- |
-| `value` | 组内唯一的 `string`／`number` 标识；必需 | 无 |
-| `label` | 可见文字，默认插槽优先 | `''` |
-| `disabled` | 禁用这一分段 | `false` |
+| Prop       | 类型／说明                               | 默认值  |
+| ---------- | ---------------------------------------- | ------- |
+| `value`    | 组内唯一的 `string`／`number` 标识；必需 | 无      |
+| `label`    | 可见文字，默认插槽优先                   | `''`    |
+| `disabled` | 禁用这一分段                             | `false` |
 
 `MdvSegmentedButtonItem` 必须直接放在 `MdvSegmentedButton` 中，不另设逐项 selected 模型。默认插槽、`leading` 与 `selected-icon` 插槽均接收 `{ selected }`。
 
@@ -1025,15 +1050,15 @@ const saved = ref(false)
 
 ### 属性
 
-| Prop | 类型／说明 | 默认值 |
-| --- | --- | --- |
-| `variant` | `outlined`／`filled`／`elevated` | `outlined` |
-| `title` | 内置标题；header 插槽存在时由插槽接管 | `''` |
-| `subtitle` | 内置副标题；header 插槽存在时由插槽接管 | `''` |
-| `clickable` | 开启整卡原生按钮操作 | `false` |
-| `href` | 提供地址时开启整卡原生链接，优先于 clickable；空字符串也生效 | 不提供 |
-| `disabled` | 禁用整卡主操作；静态卡片的子控件由各自 disabled 管理 | `false` |
-| `dragged` | 外部控制的拖动视觉 | `false` |
+| Prop        | 类型／说明                                                   | 默认值     |
+| ----------- | ------------------------------------------------------------ | ---------- |
+| `variant`   | `outlined`／`filled`／`elevated`                             | `outlined` |
+| `title`     | 内置标题；header 插槽存在时由插槽接管                        | `''`       |
+| `subtitle`  | 内置副标题；header 插槽存在时由插槽接管                      | `''`       |
+| `clickable` | 开启整卡原生按钮操作                                         | `false`    |
+| `href`      | 提供地址时开启整卡原生链接，优先于 clickable；空字符串也生效 | 不提供     |
+| `disabled`  | 禁用整卡主操作；静态卡片的子控件由各自 disabled 管理         | `false`    |
+| `dragged`   | 外部控制的拖动视觉                                           | `false`    |
 
 卡片宽高由使用方布局和内容决定，没有尺寸档位或固定媒体比例。默认圆角 12px，文字与操作区域留白 16px；相邻文字区域不重复叠加纵向留白。标题使用 Title Medium，正文及副标题使用 Body Medium。需要其他标题级别或布局时使用插槽和应用样式。
 
@@ -1043,11 +1068,11 @@ Outlined／Filled 常态、聚焦和按压使用 elevation 0，hover 为 1，dra
 
 ### 插槽与组合
 
-| 插槽 | 用途 |
-| --- | --- |
-| `header` | 接管内置 title／subtitle 区域，可放自定义标题、头像等 |
-| `media` | 图片、视频或其他媒体，默认不留内边距、不强制比例 |
-| 默认插槽 | 正文，默认留白 16px |
+| 插槽      | 用途                                                         |
+| --------- | ------------------------------------------------------------ |
+| `header`  | 接管内置 title／subtitle 区域，可放自定义标题、头像等        |
+| `media`   | 图片、视频或其他媒体，默认不留内边距、不强制比例             |
+| 默认插槽  | 正文，默认留白 16px                                          |
 | `actions` | 静态卡片内的独立操作；默认末端对齐、间隔 8px、空间不足时换行 |
 
 内容顺序是 header → media → 默认插槽 → actions，未提供的区域不渲染。媒体位于卡片首端或末端时，自动沿对应外角裁切；外部焦点环保留在裁切区域之外。图片默认占满媒体宽度并按自身比例显示，需要裁切或固定比例时由使用方设置。装饰图片应提供空 alt，有信息的图片提供相应替代文本。
@@ -1121,19 +1146,19 @@ import { MdvButton, MdvDivider } from 'mdv'
 
 ### 属性与尺寸
 
-| Prop | 类型／说明 | 默认值 |
-| --- | --- | --- |
-| `orientation` | `horizontal`／`vertical` | `horizontal` |
-| `variant` | `full-width`／`inset`／`middle-inset` | `full-width` |
-| `decorative` | 是否仅作为视觉装饰 | `true` |
+| Prop          | 类型／说明                            | 默认值       |
+| ------------- | ------------------------------------- | ------------ |
+| `orientation` | `horizontal`／`vertical`              | `horizontal` |
+| `variant`     | `full-width`／`inset`／`middle-inset` | `full-width` |
+| `decorative`  | 是否仅作为视觉装饰                    | `true`       |
 
 默认厚度 1px，颜色使用 `outline-variant`，线端为直角；浅色、深色和种子色配色跟随现有主题。没有 hover、pressed、选中、禁用或加载状态，也没有内置动画。强制颜色模式下使用系统 `CanvasText` 保持线条可见。
 
-| 缩进 | 水平分割线 | 竖向分割线 |
-| --- | --- | --- |
-| `full-width` | 两端 0，占满可用宽度 | 上下 0，拉伸至父布局提供的可用高度 |
-| `inset` | 起始端 16px，末端 0 | 顶部 16px，底部 0 |
-| `middle-inset` | 起始端和末端各 16px | 上下各 16px |
+| 缩进           | 水平分割线           | 竖向分割线                         |
+| -------------- | -------------------- | ---------------------------------- |
+| `full-width`   | 两端 0，占满可用宽度 | 上下 0，拉伸至父布局提供的可用高度 |
+| `inset`        | 起始端 16px，末端 0  | 顶部 16px，底部 0                  |
+| `middle-inset` | 起始端和末端各 16px  | 上下各 16px                        |
 
 水平缩进使用逻辑方向，RTL 下 `inset` 自动变为右侧缩进。竖向缩进是 MDV 将同一 API 沿线条方向映射的约定，不是另一组官方竖向尺寸令牌。缩进以外没有额外外边距；周围留白由使用处的 gap、padding 或 margin 管理。
 
@@ -1219,11 +1244,11 @@ import notifications from '@iconify-icons/material-symbols/notifications-outline
 
 ### 属性与内容
 
-| Prop | 类型／说明 | 默认值 |
-| --- | --- | --- |
-| `variant` | `small` 或 `large` | `small` |
-| `content` | `string` 或 `number`；Large 直接显示传入值，可自行传入 `99+` 等文本 | 不提供 |
-| `visible` | 是否渲染徽标指示器；包裹内容始终保留 | `true` |
+| Prop      | 类型／说明                                                          | 默认值  |
+| --------- | ------------------------------------------------------------------- | ------- |
+| `variant` | `small` 或 `large`                                                  | `small` |
+| `content` | `string` 或 `number`；Large 直接显示传入值，可自行传入 `99+` 等文本 | 不提供  |
+| `visible` | 是否渲染徽标指示器；包裹内容始终保留                                | `true`  |
 
 Small 固定为 6px 圆点，不需要 `content`。Large 最小高度为 16px；没有内容时不渲染，数字 `0` 仍是有效内容。组件不提供 `max`、`count`、`showZero`、四角 `position`、`color` 或动画 API，颜色固定使用主题的 `error`／`on-error` 角色，并跟随浅色、深色和种子色主题。
 
@@ -1239,12 +1264,12 @@ Small 固定为 6px 圆点，不需要 `content`。Large 最小高度为 16px；
 
 Material 3 列表，包含 `MdvList`、`MdvListItem` 和 `MdvListSubheader`。提供 `expressive`／`baseline` 两种变体，以及 `standard`／`segmented` 两种布局。
 
-| 组合 | 普通条目 | 选中条目 | 交互形状 |
-| --- | --- | --- | --- |
-| Expressive Standard | 透明背景、4px 圆角 | secondary-container、16px 圆角 | hover 8px，focus-visible／pressed 16px |
-| Expressive Segmented | surface-container；整组最上、最下外角 16px，其余角 4px | secondary-container、四角 16px | 同上，交互形状覆盖静态分段形状 |
-| Baseline Standard | 透明背景、4px 圆角 | secondary-container | 固定圆角 |
-| Baseline Segmented | surface-container、4px 圆角 | secondary-container | 固定圆角 |
+| 组合                 | 普通条目                                               | 选中条目                       | 交互形状                               |
+| -------------------- | ------------------------------------------------------ | ------------------------------ | -------------------------------------- |
+| Expressive Standard  | 透明背景、4px 圆角                                     | secondary-container、16px 圆角 | hover 8px，focus-visible／pressed 16px |
+| Expressive Segmented | surface-container；整组最上、最下外角 16px，其余角 4px | secondary-container、四角 16px | 同上，交互形状覆盖静态分段形状         |
+| Baseline Standard    | 透明背景、4px 圆角                                     | secondary-container            | 固定圆角                               |
+| Baseline Segmented   | surface-container、4px 圆角                            | secondary-container            | 固定圆角                               |
 
 Segmented 使用 8px 列表内边距与 2px 条目间距。Subheader 或其他非条目节点切断连续分段；增删和重排条目后，首尾形状自动跟随。Selected 的形状优先于 hover。
 
@@ -1259,12 +1284,7 @@ const selected = ref<string | null>('profile')
 </script>
 
 <template>
-  <MdvList
-    v-model="selected"
-    selection-mode="single"
-    layout="segmented"
-    aria-label="账户设置"
-  >
+  <MdvList v-model="selected" selection-mode="single" layout="segmented" aria-label="账户设置">
     <MdvListSubheader>账户</MdvListSubheader>
     <MdvListItem
       value="profile"
@@ -1286,15 +1306,15 @@ const selected = ref<string | null>('profile')
 
 ### MdvList 属性与模型
 
-| Prop | 类型／说明 | 默认值 |
-| --- | --- | --- |
-| `variant` | `expressive` 或 `baseline` | `expressive` |
-| `layout` | `standard` 或 `segmented`；优先于 `segmented` | `standard` |
-| `segmented` | `segmented` 布局的兼容简写 | `false` |
-| `selection-mode` | `none`、`single` 或 `multiple` | `none` |
-| `model-value` | 单选为 `string`／`number`／`null`，多选为值数组 | `null` |
-| `lines` | 子条目未指定时的默认行数：`1`、`2` 或 `3` | 自动推断 |
-| `dividers` | `none`、`full-width` 或 `inset` | `none` |
+| Prop             | 类型／说明                                      | 默认值       |
+| ---------------- | ----------------------------------------------- | ------------ |
+| `variant`        | `expressive` 或 `baseline`                      | `expressive` |
+| `layout`         | `standard` 或 `segmented`；优先于 `segmented`   | `standard`   |
+| `segmented`      | `segmented` 布局的兼容简写                      | `false`      |
+| `selection-mode` | `none`、`single` 或 `multiple`                  | `none`       |
+| `model-value`    | 单选为 `string`／`number`／`null`，多选为值数组 | `null`       |
+| `lines`          | 子条目未指定时的默认行数：`1`、`2` 或 `3`       | 自动推断     |
+| `dividers`       | `none`、`full-width` 或 `inset`                 | `none`       |
 
 普通列表使用 `ul[role="list"]`；选择列表使用 `ul[role="listbox"]`，多选附加 `aria-multiselectable="true"`。为选择列表提供 `aria-label` 或 `aria-labelledby`。
 
@@ -1306,26 +1326,26 @@ const selected = ref<string | null>('profile')
 
 ### MdvListItem 属性
 
-| Prop | 类型／说明 | 默认值 |
-| --- | --- | --- |
-| `lines` | `1`、`2` 或 `3`，覆盖列表默认值 | 根据内容推断 |
-| `overline` | 主标题上方的标签 | `''` |
-| `headline` | 主标题；默认插槽优先 | `''` |
-| `supporting-text` | 辅助文字 | `''` |
-| `trailing-text` | 尾部短文本 | `''` |
-| `icon` | leading 图标数据 | 不提供 |
-| `leading` | `icon`、`avatar`、`image`、`checkbox`、`radio` 或 `switch` | 根据内容推断 |
-| `avatar-name` | 头像文字，使用首个 Unicode 字符 | 不提供 |
-| `image` | leading 图片地址；`leading="avatar"` 时作为圆形头像 | 不提供 |
-| `trailing-icon` | 尾部图标数据 | 不提供 |
-| `trailing` | `icon`、`text`、`checkbox`、`radio` 或 `switch` | 根据内容推断 |
-| `leading-value`／`trailing-value` | 选择指示器的显示状态 | 跟随条目的 selected 状态 |
-| `value` | 列表选择值：`string` 或 `number` | 不提供 |
-| `selected` | 不参与列表模型时的视觉选中状态 | `false` |
-| `disabled` | 禁用主操作和本行操作激活 | `false` |
-| `interactive` | 使用原生 button 作为主操作 | `false` |
-| `href` | 使用原生 a 作为主操作，空字符串也生效 | 不提供 |
-| `type` | 原生按钮类型：`button`、`submit`、`reset` | `button` |
+| Prop                              | 类型／说明                                                 | 默认值                   |
+| --------------------------------- | ---------------------------------------------------------- | ------------------------ |
+| `lines`                           | `1`、`2` 或 `3`，覆盖列表默认值                            | 根据内容推断             |
+| `overline`                        | 主标题上方的标签                                           | `''`                     |
+| `headline`                        | 主标题；默认插槽优先                                       | `''`                     |
+| `supporting-text`                 | 辅助文字                                                   | `''`                     |
+| `trailing-text`                   | 尾部短文本                                                 | `''`                     |
+| `icon`                            | leading 图标数据                                           | 不提供                   |
+| `leading`                         | `icon`、`avatar`、`image`、`checkbox`、`radio` 或 `switch` | 根据内容推断             |
+| `avatar-name`                     | 头像文字，使用首个 Unicode 字符                            | 不提供                   |
+| `image`                           | leading 图片地址；`leading="avatar"` 时作为圆形头像        | 不提供                   |
+| `trailing-icon`                   | 尾部图标数据                                               | 不提供                   |
+| `trailing`                        | `icon`、`text`、`checkbox`、`radio` 或 `switch`            | 根据内容推断             |
+| `leading-value`／`trailing-value` | 选择指示器的显示状态                                       | 跟随条目的 selected 状态 |
+| `value`                           | 列表选择值：`string` 或 `number`                           | 不提供                   |
+| `selected`                        | 不参与列表模型时的视觉选中状态                             | `false`                  |
+| `disabled`                        | 禁用主操作和本行操作激活                                   | `false`                  |
+| `interactive`                     | 使用原生 button 作为主操作                                 | `false`                  |
+| `href`                            | 使用原生 a 作为主操作，空字符串也生效                      | 不提供                   |
+| `type`                            | 原生按钮类型：`button`、`submit`、`reset`                  | `button`                 |
 
 未显式设置 `leading` 时，依次从 `icon`、`avatar-name`、`image` 推断；`trailing` 从 `trailing-icon`、`trailing-text` 推断。显式类型优先。前后图标与图片为装饰内容；有独立信息意义的图片通过插槽提供合适的可访问名称。
 
@@ -1337,16 +1357,16 @@ const selected = ref<string | null>('profile')
 
 ### 插槽与独立操作
 
-| 插槽 | 用途 |
-| --- | --- |
-| `leading` | 替换 leading 展示内容 |
-| 默认插槽 | 替换主标题 |
-| `overline` | 替换上方标签 |
-| `supporting` | 替换辅助文字 |
-| `content` | 完全替换正文列 |
-| `trailing` | 完全替换尾部展示内容 |
-| `leading-action` | 独立前置控件或操作 |
-| `trailing-action` | 独立尾部控件或操作 |
+| 插槽              | 用途                  |
+| ----------------- | --------------------- |
+| `leading`         | 替换 leading 展示内容 |
+| 默认插槽          | 替换主标题            |
+| `overline`        | 替换上方标签          |
+| `supporting`      | 替换辅助文字          |
+| `content`         | 完全替换正文列        |
+| `trailing`        | 完全替换尾部展示内容  |
+| `leading-action`  | 独立前置控件或操作    |
+| `trailing-action` | 独立尾部控件或操作    |
 
 所有插槽接收 `{ selected, disabled }`。`content` 另外接收 `MdvListItemContentProps` 中的内容属性。
 
@@ -1409,21 +1429,26 @@ const waiting = ref(true)
   <MdvCircularProgress :value="uploaded" aria-label="文件上传" />
 
   <MdvLinearProgress indeterminate variant="wavy" label="正在连接" />
-  <MdvCircularProgress :indeterminate="waiting" :value="uploaded" variant="wavy" aria-label="文件处理" />
+  <MdvCircularProgress
+    :indeterminate="waiting"
+    :value="uploaded"
+    variant="wavy"
+    aria-label="文件处理"
+  />
 </template>
 ```
 
 ### 属性与数值
 
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `value` | `number` | `0` | 当前值；限制在 `0–max`，保留小数；非有限数值回退到 0 |
-| `max` | `number` | `100` | 正的有限上限；无效时回退到 100 |
-| `indeterminate` | `boolean` | `false` | 无法确定实际进度时开启；不据 `value` 猜测模式 |
-| `variant` | `'flat' \| 'wavy'` | `'flat'` | 平直或波浪 |
-| `thickness` | `number` | `4` | 线宽，单位 px；非正数或非有限数值回退到 4 |
-| `label` | `string` | — | 图形上方的可见文字，同时提供默认可访问名称 |
-| `size` | `number` | 平直 `40`，波浪 `48` | 仅圆形：直径，单位 px；无效时使用对应默认值 |
+| 属性            | 类型               | 默认值               | 说明                                                 |
+| --------------- | ------------------ | -------------------- | ---------------------------------------------------- |
+| `value`         | `number`           | `0`                  | 当前值；限制在 `0–max`，保留小数；非有限数值回退到 0 |
+| `max`           | `number`           | `100`                | 正的有限上限；无效时回退到 100                       |
+| `indeterminate` | `boolean`          | `false`              | 无法确定实际进度时开启；不据 `value` 猜测模式        |
+| `variant`       | `'flat' \| 'wavy'` | `'flat'`             | 平直或波浪                                           |
+| `thickness`     | `number`           | `4`                  | 线宽，单位 px；非正数或非有限数值回退到 4            |
+| `label`         | `string`           | —                    | 图形上方的可见文字，同时提供默认可访问名称           |
+| `size`          | `number`           | 平直 `40`，波浪 `48` | 仅圆形：直径，单位 px；无效时使用对应默认值          |
 
 例如 `value=128`、`max=256` 显示一半进度，ARIA 报告的仍是 `128 / 256`。两个组件没有 `v-model`、值更新事件、插槽或公开方法；业务直接更新 `value` 与 `indeterminate`。
 
@@ -1494,26 +1519,26 @@ const result = ref('')
 
 ### Props
 
-| Prop | 类型 | 默认值 |
-| --- | --- | --- |
-| `modelValue`／`v-model` | `boolean` | `false` |
-| `title` | `string` | `''` |
-| `description` | `string` | `''` |
-| `closeOnEsc` | `boolean` | `true` |
-| `closeOnScrim` | `boolean` | `true` |
-| `beforeClose` | `(detail) => boolean \| void \| Promise<boolean \| void>` | 不提供 |
-| `destroyOnClose` | `boolean` | `false` |
+| Prop                    | 类型                                                      | 默认值  |
+| ----------------------- | --------------------------------------------------------- | ------- |
+| `modelValue`／`v-model` | `boolean`                                                 | `false` |
+| `title`                 | `string`                                                  | `''`    |
+| `description`           | `string`                                                  | `''`    |
+| `closeOnEsc`            | `boolean`                                                 | `true`  |
+| `closeOnScrim`          | `boolean`                                                 | `true`  |
+| `beforeClose`           | `(detail) => boolean \| void \| Promise<boolean \| void>` | 不提供  |
+| `destroyOnClose`        | `boolean`                                                 | `false` |
 
 普通款不提供 X、全屏切换或底部附加栏；退出操作放入 actions。Esc 和遮罩分别由对应选项控制，同时关闭时应保留操作按钮。
 
 ### 插槽
 
-| 插槽 | 用途 |
-| --- | --- |
-| `icon` | 顶部 24px 图标 |
-| `title` | 替代标题文字，保留内置标题容器及其 ID |
-| 默认插槽 | 正文或表单，替代 description |
-| `actions="{ close }"` | 底部操作 |
+| 插槽                  | 用途                                  |
+| --------------------- | ------------------------------------- |
+| `icon`                | 顶部 24px 图标                        |
+| `title`               | 替代标题文字，保留内置标题容器及其 ID |
+| 默认插槽              | 正文或表单，替代 description          |
+| `actions="{ close }"` | 底部操作                              |
 
 操作按钮推荐使用 `variant="text"`，按照“取消、确认”的 DOM 顺序书写，通常最多两个。并排空间不足时，确认显示在上、取消显示在下，键盘顺序保持原 DOM 顺序。组件不自动添加按钮或推断业务行为。
 
@@ -1553,17 +1578,17 @@ function save() {
 
 全屏款具有普通款的 modelValue、title、description、closeOnEsc、beforeClose、destroyOnClose；不提供 closeOnScrim，因为可见容器覆盖整个视口。额外提供：
 
-| Prop | 类型 | 默认值 |
-| --- | --- | --- |
-| `closable` | `boolean` | `true` |
-| `closeLabel` | `string` | `'关闭对话框'` |
+| Prop         | 类型      | 默认值         |
+| ------------ | --------- | -------------- |
+| `closable`   | `boolean` | `true`         |
+| `closeLabel` | `string`  | `'关闭对话框'` |
 
-| 插槽 | 用途 |
-| --- | --- |
-| `title` | 顶栏标题 |
-| 默认插槽 | 正文或表单，替代 description |
-| `actions="{ close }"` | 顶栏末端确认操作 |
-| `footer="{ close }"` | 可选底部操作栏 |
+| 插槽                  | 用途                         |
+| --------------------- | ---------------------------- |
+| `title`               | 顶栏标题                     |
+| 默认插槽              | 正文或表单，替代 description |
+| `actions="{ close }"` | 顶栏末端确认操作             |
+| `footer="{ close }"`  | 可选底部操作栏               |
 
 全屏款不提供普通款的顶部装饰图标区域。容器无圆角、无阴影；顶栏与可选底栏各至少 56px，正文独立滚动。通常把保存放在顶栏，X 用于取消或退出；未保存确认可通过 beforeClose 打开普通 MdvDialog，playground 提供组合示例。
 
@@ -1575,13 +1600,13 @@ beforeClose 接收只读 `{ reason, returnValue }`，返回 false 阻止关闭�
 
 关闭原因包括 escape、scrim、close-button、action、form、model，其中 scrim 用于普通款，close-button 用于全屏款。Esc、遮罩、X、close() 和原生关闭表单经过拦截；父级直接设置 v-model=false 跳过拦截。确认、保存、删除和提交由业务处理；MdvButton 的 loading 不自动禁止重复点击。
 
-| 事件 | 时机／参数 |
-| --- | --- |
-| `update:modelValue` | 请求把模型设为 false |
-| `open` | 原生模态已打开，进入动效开始前 |
-| `opened` | 进入动效完成 |
-| `close` | 父级已接受关闭，退出动效开始前；`{ reason, returnValue }` |
-| `closed` | 退出动效、原生关闭及资源清理完成；`{ reason, returnValue }` |
+| 事件                | 时机／参数                                                  |
+| ------------------- | ----------------------------------------------------------- |
+| `update:modelValue` | 请求把模型设为 false                                        |
+| `open`              | 原生模态已打开，进入动效开始前                              |
+| `opened`            | 进入动效完成                                                |
+| `close`             | 父级已接受关闭，退出动效开始前；`{ reason, returnValue }`   |
+| `closed`            | 退出动效、原生关闭及资源清理完成；`{ reason, returnValue }` |
 
 destroyOnClose 默认保留内容和内部状态，开启后在退出完成时卸载，不清空外部绑定值。KeepAlive 停用和卸载释放模态与滚动锁，重新激活按当前模型恢复。
 
@@ -1656,15 +1681,15 @@ function confirmSelection(event: MdvMenuSelectEvent) {
 
 `MdvMenu` 与 `MdvContextMenu` 共用以下 Props：
 
-| Prop | 类型 | 默认值 |
-| --- | --- | --- |
-| `modelValue`／`v-model` | `boolean` | 不绑定时由内部管理，初始关闭 |
-| `variant` | `'expressive' \| 'baseline'` | `'expressive'` |
-| `colorScheme` | `'standard' \| 'vibrant'` | `'standard'` |
-| `layout` | `'standard' \| 'grouped'` | `'standard'` |
-| `submenuMode` | `'flyout' \| 'push'` | `'flyout'` |
-| `placement` | `'top' \| 'bottom' \| 'left' \| 'right'`，各可追加 `-start`／`-end` | `'bottom-start'` |
-| `offset` | `number`，非负像素 | `4` |
+| Prop                    | 类型                                                                | 默认值                       |
+| ----------------------- | ------------------------------------------------------------------- | ---------------------------- |
+| `modelValue`／`v-model` | `boolean`                                                           | 不绑定时由内部管理，初始关闭 |
+| `variant`               | `'expressive' \| 'baseline'`                                        | `'expressive'`               |
+| `colorScheme`           | `'standard' \| 'vibrant'`                                           | `'standard'`                 |
+| `layout`                | `'standard' \| 'grouped'`                                           | `'standard'`                 |
+| `submenuMode`           | `'flyout' \| 'push'`                                                | `'flyout'`                   |
+| `placement`             | `'top' \| 'bottom' \| 'left' \| 'right'`，各可追加 `-start`／`-end` | `'bottom-start'`             |
+| `offset`                | `number`，非负像素                                                  | `4`                          |
 
 Baseline 固定使用 standard 配色和布局。默认 Expressive 使用 16px 容器圆角、4px 普通条目、12px 选中条目和 20px 图标；Baseline 为 4px 容器圆角和 24px 图标。两套均保留菜单阴影，点击高度至少 48px；辅助文字和长标签可让条目自然增高。Expressive 官网高度令牌 44dp 与测量图／无障碍要求的 48dp 不一致，MDV 选择至少 48px。
 
@@ -1686,28 +1711,28 @@ Baseline 固定使用 standard 配色和布局。默认 Expressive 使用 16px �
 
 默认插槽得到 `{ open, close }`。两种入口 expose `open(edge?: 'first' | 'last')`、`close()`、`toggle()`、`focus(edge?: 'first' | 'last')`。绑定 v-model 时，以父级值为准；父级未接受更新请求则保留原状态。
 
-| 事件 | 参数／时机 |
-| --- | --- |
-| `update:modelValue` | 请求新的展开布尔值 |
-| `open` | 进入顶层绘制，开始进入动效 |
-| `opened` | 进入完成 |
-| `close` | 退出开始，`{ reason }` |
-| `closed` | 退出完成、释放资源后，`{ reason }` |
+| 事件                | 参数／时机                         |
+| ------------------- | ---------------------------------- |
+| `update:modelValue` | 请求新的展开布尔值                 |
+| `open`              | 进入顶层绘制，开始进入动效         |
+| `opened`            | 进入完成                           |
+| `close`             | 退出开始，`{ reason }`             |
+| `closed`            | 退出完成、释放资源后，`{ reason }` |
 
 reason 为 `escape`、`outside`、`focus-out`、`tab`、`select`、`trigger`、`model` 或 `programmatic`。子菜单逐级开关不重复触发根菜单事件；快速反向时被中断的动效不发送完成事件。
 
 ### MdvMenuItem
 
-| Prop | 类型 | 默认值 |
-| --- | --- | --- |
-| `label` | `string` | `''` |
-| `supportingText` | `string` | `''` |
-| `trailingText` | `string` | `''` |
-| `icon`／`trailingIcon` | `MdvIconData` | 不提供 |
-| `value` | `string \| number` | 不提供 |
-| `disabled` | `boolean` | `false` |
-| `href` | `string` | 不提供 |
-| `keepOpen` | `boolean` | 普通操作／链接／单选为 false，多选为 true |
+| Prop                   | 类型               | 默认值                                    |
+| ---------------------- | ------------------ | ----------------------------------------- |
+| `label`                | `string`           | `''`                                      |
+| `supportingText`       | `string`           | `''`                                      |
+| `trailingText`         | `string`           | `''`                                      |
+| `icon`／`trailingIcon` | `MdvIconData`      | 不提供                                    |
+| `value`                | `string \| number` | 不提供                                    |
+| `disabled`             | `boolean`          | `false`                                   |
+| `href`                 | `string`           | 不提供                                    |
+| `keepOpen`             | `boolean`          | 普通操作／链接／单选为 false，多选为 true |
 
 没有 href 时使用不提交表单的原生 button；提供 href 时使用 a，target、rel、download、ARIA 和原生监听器透传。带 children 的条目优先作为子菜单入口，不执行链接或选择组更新。禁用项保留焦点能力，但阻止点击、链接和键盘激活。
 
@@ -1719,11 +1744,11 @@ reason 为 `escape`、`outside`、`focus-out`、`tab`、`select`、`trigger`、`
 
 ### MdvMenuGroup
 
-| Prop | 类型 | 默认值 |
-| --- | --- | --- |
-| `selectionMode` | `'none' \| 'single' \| 'multiple'` | `'none'` |
+| Prop                    | 类型                                               | 默认值                               |
+| ----------------------- | -------------------------------------------------- | ------------------------------------ |
+| `selectionMode`         | `'none' \| 'single' \| 'multiple'`                 | `'none'`                             |
 | `modelValue`／`v-model` | `string \| number \| (string \| number)[] \| null` | 不绑定时内部管理；单选 null，多选 [] |
-| `label` | `string` | `''` |
+| `label`                 | `string`                                           | `''`                                 |
 
 默认插槽放条目，label 插槽替代组标题。none 用于操作分组；single／multiple 自动将有 value 的普通条目标为 menuitemradio／menuitemcheckbox，更新时发出 update:modelValue 与 change。字符串与数字严格区分，不把 `14` 与 `'14'` 视为同一值；多组互不影响。链接和子菜单入口不参与组选择，多选默认保持打开。
 
@@ -1783,15 +1808,15 @@ function refreshContent() {
 
 两款共有：
 
-| Prop | 类型 | 默认值 |
-| --- | --- | --- |
-| `modelValue` | `boolean` | 省略时内部管理 |
-| `text` | `string` | 无 |
-| `placement` | `MdvTooltipPlacement` | 普通款 `top`，Rich `bottom-start` |
-| `offset` | `number` | `4`，单位 px |
-| `openDelay` | `number` | `600`，单位 ms，仅 hover |
-| `closeDelay` | `number` | 未指定时按场景处理，见下文；显式设置后统一覆盖关闭延迟，单位 ms |
-| `disabled` | `boolean` | `false`，只禁用提示 |
+| Prop         | 类型                  | 默认值                                                          |
+| ------------ | --------------------- | --------------------------------------------------------------- |
+| `modelValue` | `boolean`             | 省略时内部管理                                                  |
+| `text`       | `string`              | 无                                                              |
+| `placement`  | `MdvTooltipPlacement` | 普通款 `top`，Rich `bottom-start`                               |
+| `offset`     | `number`              | `4`，单位 px                                                    |
+| `openDelay`  | `number`              | `600`，单位 ms，仅 hover                                        |
+| `closeDelay` | `number`              | 未指定时按场景处理，见下文；显式设置后统一覆盖关闭延迟，单位 ms |
+| `disabled`   | `boolean`             | `false`，只禁用提示                                             |
 
 `MdvRichTooltip` 额外提供 `title?: string` 和 `persistent?: boolean`，persistent 默认 false。位置包含 top／bottom／left／right 及其 `-start`／`-end` 对齐；start／end 随 RTL 变化。负距离或延迟规范化为 0，非有限数值使用默认值。
 
@@ -1889,21 +1914,21 @@ function save() {
 
 ### 属性与内容
 
-| Prop | 类型 | 默认值与作用 |
-| --- | --- | --- |
-| `modelValue` | `boolean` | `false`；控制显示，配合 `v-model` 接收关闭请求 |
-| `message` | `string` | `''`；默认消息文字 |
-| `color` | `MdvSnackbarColor` | 无；支持 `primary`、`secondary`、`tertiary`、`success`、`warning`、`error`、`info` 和 `#RGB`／`#RRGGBB` 种子色 |
-| `action` | `{ label: string; onClick?: () => void \| Promise<void> }` | 无；内置业务操作 |
-| `duration` | `number` | 无操作为 `4000`，有操作为 `0`；单位 ms，`0` 为常驻 |
-| `closable` | `boolean` | 省略时常驻消息显示关闭按钮，自动关闭消息不显示；显式值可覆盖 |
-| `closeLabel` | `string` | `'关闭通知'`；关闭按钮的可访问名称 |
-| `actionLayout` | `'auto' \| 'inline' \| 'stacked'` | `'auto'`；操作自动换行、保持同行或另起一行 |
-| `placement` | `'bottom' \| 'bottom-start'` | `'bottom'`；底部居中或逻辑起始侧 |
-| `offset` | `number` | `16`；距底部安全区的额外距离，单位 px |
-| `pauseOnHover` | `boolean` | `true`；指针停留时暂停计时 |
-| `closeOnEsc` | `boolean` | `true`；焦点在消息内部时响应 Escape |
-| `focusShortcut` | `string \| false` | `'Alt+G'`；主动聚焦的快捷键，`false` 关闭 |
+| Prop            | 类型                                                       | 默认值与作用                                                                                                   |
+| --------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `modelValue`    | `boolean`                                                  | `false`；控制显示，配合 `v-model` 接收关闭请求                                                                 |
+| `message`       | `string`                                                   | `''`；默认消息文字                                                                                             |
+| `color`         | `MdvSnackbarColor`                                         | 无；支持 `primary`、`secondary`、`tertiary`、`success`、`warning`、`error`、`info` 和 `#RGB`／`#RRGGBB` 种子色 |
+| `action`        | `{ label: string; onClick?: () => void \| Promise<void> }` | 无；内置业务操作                                                                                               |
+| `duration`      | `number`                                                   | 无操作为 `4000`，有操作为 `0`；单位 ms，`0` 为常驻                                                             |
+| `closable`      | `boolean`                                                  | 省略时常驻消息显示关闭按钮，自动关闭消息不显示；显式值可覆盖                                                   |
+| `closeLabel`    | `string`                                                   | `'关闭通知'`；关闭按钮的可访问名称                                                                             |
+| `actionLayout`  | `'auto' \| 'inline' \| 'stacked'`                          | `'auto'`；操作自动换行、保持同行或另起一行                                                                     |
+| `placement`     | `'bottom' \| 'bottom-start'`                               | `'bottom'`；底部居中或逻辑起始侧                                                                               |
+| `offset`        | `number`                                                   | `16`；距底部安全区的额外距离，单位 px                                                                          |
+| `pauseOnHover`  | `boolean`                                                  | `true`；指针停留时暂停计时                                                                                     |
+| `closeOnEsc`    | `boolean`                                                  | `true`；焦点在消息内部时响应 Escape                                                                            |
+| `focusShortcut` | `string \| false`                                          | `'Alt+G'`；主动聚焦的快捷键，`false` 关闭                                                                      |
 
 负数 duration／offset 视为 0，非有限 duration 视为常驻，非有限 offset 使用默认值。显式 duration 可覆盖有操作时的常驻默认值；如果常驻消息没有业务操作，建议保留关闭按钮。
 
@@ -1939,3 +1964,118 @@ function save() {
 支持 Popover API 的浏览器使用原 DOM 位置的 manual popover，以继承局部主题并进入 top layer；不支持时退回普通 fixed 布局，层级受所在上下文影响。页面消息会在 MDV Dialog 打开时隐藏并暂停，可在 Dialog 内放局部组件或 Provider；对第三方或原生模态框不保证自动协调。
 
 公共类型：`MdvSnackbarProps`、`MdvSnackbarOptions`、`MdvSnackbarColor`、`MdvSnackbarInput`、`MdvSnackbarAction`、`MdvSnackbarActionLayout`、`MdvSnackbarPlacement`、`MdvSnackbarCloseReason`、`MdvSnackbarCloseDetail`、`MdvSnackbarSlotProps`、`MdvSnackbarActionSlotProps`、`MdvSnackbarSlots`、`MdvSnackbarProviderApi`。
+
+## MdvBottomSheet
+
+两款组件分别处理模态浮层和 Standard 页面布局。当前约定范围已完成项目检查与用户验收，包含局部滚动条和全高按钮修订；真实包消费另行验证。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvBottomSheet, MdvBottomSheetScaffold, MdvButton } from 'mdv'
+import type { MdvBottomSheetState } from 'mdv'
+
+const open = ref(false)
+const expanded = ref(false)
+const layoutState = ref<MdvBottomSheetState>('partial')
+</script>
+
+<template>
+  <MdvButton @click="open = true">打开底部面板</MdvButton>
+  <MdvBottomSheet v-model="open" v-model:expanded="expanded" title="分享内容">
+    <p>放入分享选项、表单或列表。</p>
+    <template #actions="{ close }">
+      <MdvButton variant="text" @click="close()">取消</MdvButton>
+      <MdvButton @click="close('share')">分享</MdvButton>
+    </template>
+  </MdvBottomSheet>
+
+  <div style="height: 520px">
+    <MdvBottomSheetScaffold v-model="layoutState" title="附近地点" :peek-height="180">
+      <p>主页面内容。面板展开后仍可交互。</p>
+      <template #sheet><p>地点列表与详情。</p></template>
+    </MdvBottomSheetScaffold>
+  </div>
+</template>
+```
+
+### 模态款 Props
+
+| 属性                                           | 类型                        | 默认值与行为                                                                                   |
+| ---------------------------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------- |
+| `modelValue` / `v-model`                       | `boolean`                   | `false`，由使用方控制显示                                                                      |
+| `expanded` / `v-model:expanded`                | `boolean`                   | `false`；未传此属性时内部管理展开状态，传入后由父级接受更新                                    |
+| `partial`                                      | `boolean \| number`         | `true`：半展开高度上限为当前可见视口的 50%；数字为 0–1 比例，超出范围会截取；`false`：直接展开 |
+| `title`                                        | `string`                    | 空，生成可访问名称；也可用 `header` 插槽或原生 `aria-label` 命名                               |
+| `description`                                  | `string`                    | 空，无默认插槽时显示并关联短描述                                                               |
+| `maxHeight`                                    | `string`                    | 无，CSS 长度；默认按响应式顶部留白限制最高高度                                                 |
+| `showHandle`                                   | `boolean`                   | `true`，显示顶部手柄；隐藏后仅在有两个可用高度时提供展开／收起按钮                             |
+| `draggable`                                    | `boolean`                   | `true`，允许手柄拖动及适用的正文触摸手势；不影响点击与键盘操作                                 |
+| `closeOnEsc`                                   | `boolean`                   | `true`                                                                                         |
+| `closeOnScrim`                                 | `boolean`                   | `true`，从遮罩开始并在遮罩松手才请求关闭                                                       |
+| `closeOnSwipe`                                 | `boolean`                   | `true`，允许下滑到隐藏位置；不禁止手柄点击或其他关闭操作                                       |
+| `beforeClose`                                  | `MdvBottomSheetBeforeClose` | 无，返回 `false` 或异步得到 `false` 时拒绝操作关闭；抛错也保留面板                             |
+| `destroyOnClose`                               | `boolean`                   | `false`，关闭后保留正文及表单状态                                                              |
+| `expandLabel` / `collapseLabel` / `closeLabel` | `string`                    | `展开面板` / `收起面板` / `关闭面板`，可覆盖操作的可访问名称                                   |
+
+短内容按自然高度显示，不为半展开补空白；只有最高高度大于半展开高度时才保留两个锚点。正数的半展开高度至少容纳手柄或替代操作区，避免过小配置裁掉操作；非正数不建立较低锚点。每次打开使用当前 `expanded` 配置；不绑定展开属性时，上次手势不会隐式决定下次初始高度。`change` 报告实际可用的状态，短内容的 `partial` 请求可能合并为 `expanded`。
+
+普通高度保留顶部圆角。`expanded` 表示到达本组件允许的最高高度，仍会保留顶部留白；真正覆盖可见视口全高时使用直角顶部。所有高度都不自动附加关闭按钮。
+
+手柄是原生按钮：从 partial 点击／Enter／Space 展开，在最高档再次操作关闭。`closeOnSwipe=false` 时拖动可在 partial 和 expanded 之间切换，手柄点击仍可关闭。隐藏手柄后，替代按钮只在两个可用高度间展开／收起；只有一个高度时不生成替代按钮。拖动后浏览器随附的 click 不会再触发一次高度变化。
+
+操作关闭、Esc、遮罩、手柄、滑动与原生 `method="dialog"` 表单都经过 `beforeClose`。直接设置 `v-model=false` 表示父级决定关闭，不等待拦截器。异步判定期间重复关闭合并处理；关闭重开或卸载后，旧判定不能关闭新一轮面板。父级拒绝高度更新或关闭时，手势回到已接受的高度。
+
+### Standard 布局款 Props
+
+| 属性                                           | 类型                  | 默认值与行为                                                                       |
+| ---------------------------------------------- | --------------------- | ---------------------------------------------------------------------------------- |
+| `modelValue` / `v-model`                       | `MdvBottomSheetState` | `partial`；可为 `hidden`、`partial`、`expanded`；未传入时内部管理                  |
+| `peekHeight`                                   | `number`              | `56`，partial 的可见像素高度；这是 MDV 默认值，不是官方强制尺寸                    |
+| `hideable`                                     | `boolean`             | `false`，是否允许通过用户拖动／手柄隐藏；程序设为 hidden 与 `close()` 始终可以隐藏 |
+| `title` / `description` / `maxHeight`          | 与模态款相同          | 标题用于命名 region，description 在没有 `sheet` 插槽时显示                         |
+| `showHandle` / `draggable`                     | `boolean`             | 均为 `true`                                                                        |
+| `expandLabel` / `collapseLabel` / `closeLabel` | `string`              | 与模态款相同                                                                       |
+
+Scaffold 作用于有明确高度的页面区域；默认 `height:100%`，父级需要有确定高度。默认槽是主页面，`sheet` 槽是底部面板。主区域为预览高度预留空间，面板展开时覆盖更大区域，背景继续可交互；不锁文档滚动、不建立焦点陷阱、不全局截获 Escape、不主动抢焦点。
+
+默认 56px 主要用于露出 48px 手柄区；若需要展示标题和内容预览，可增加 `peekHeight`。正数预览高度至少容纳手柄或替代操作区。正文可见空间不足 24px 时整块内容暂时隐藏并设为 inert，避免 Tab 进入不可见控件；手柄或替代操作仍可访问。正常预览及展开时，标题、正文和底部操作处于同一滚动区，焦点可以随原生滚动显示，不让固定操作区溢出较矮的面板。
+
+默认手柄在 partial／expanded 间切换；`hideable=true` 时最高档再次操作进入 hidden。所有高度都不自动附加关闭按钮。隐藏手柄后，替代按钮只负责展开／收起，只有一个可用高度时不生成按钮。hidden 不提供页面外的自动唤回入口，使用方需要保留一个主页面按钮或通过模型恢复显示。关闭后保留面板节点与输入内容。
+
+### 事件、插槽与方法
+
+两款均提供 `open`、`opened`、`close(detail)`、`closed(detail)` 和 `change(detail)`。open／opened 对应从隐藏到显示，close／closed 对应进入隐藏；纯高度变化使用 change。Scaffold 初次可见也会触发 open／opened。动效中途被新状态取代时，以最后接受的状态完成。
+
+`MdvBottomSheetChangeDetail` 为 `{ state, previousState, reason }`，reason 为 `model`、`handle`、`swipe`、`action` 或 `resize`。尺寸或内容变化导致锚点合并时也会发出 change。
+
+`MdvBottomSheetCloseDetail` 为 `{ reason, returnValue }`。模态款发出的 reason 包括 `model`、`escape`、`scrim`、`form`、`action`、`handle`、`swipe`；Standard 使用其中适用的 model／action／handle／swipe，returnValue 始终为空字符串。
+
+| 插槽      | 模态款                 | Standard 布局款                |
+| --------- | ---------------------- | ------------------------------ |
+| `default` | 面板正文               | 主页面，不传入面板操作参数     |
+| `sheet`   | 无                     | 面板正文                       |
+| `header`  | 替换标题；生成标题关联 | 替换标题；生成 region 名称关联 |
+| `actions` | 正文之后的操作         | 正文之后的操作                 |
+
+面板插槽收到 `{ state, expanded, close, expand, collapse }`。`close(returnValue?)`、`expand()`、`collapse()` 返回 `Promise<boolean>`，表示请求是否被接受。模态款的 collapse 在没有较低锚点时返回 false。Standard 的 close 不使用 returnValue。
+
+实例暴露同名 `close`／`expand`／`collapse`，另有 `focus()`。模态款 focus 按 autofocus、首个可用控件、原生 dialog 的顺序聚焦；Standard 优先聚焦手柄，再回退到 region。`update:modelValue` 的类型分别为 boolean 和 MdvBottomSheetState；模态款另有 boolean 的 `update:expanded`。
+
+### 交互、主题与布局
+
+鼠标只从手柄开始拖动；触屏也可从非交互正文开始竖向手势。未展开时上拖先扩大面板，再把多出的距离交给正文滚动；已展开且正文已滚动时保留正文的原生滚动，在内容顶部下拉可收起。不接管横向手势、文本选择、按钮、表单控件、嵌套 Slider 或其他交互控件；自定义交互区域可添加 `data-mdv-sheet-no-drag`。
+
+模态款使用原 DOM 内的原生 dialog top layer，保留局部浅深主题及动态取色；复用 Dialog 的模态栈、嵌套焦点、滚动锁、Tab 循环、IME 与关闭后的焦点恢复。SSR 不输出原生 open，客户端挂载后建立模态，不将内容 Teleport 到 body。Standard 为普通具名 region。动效区分位移／高度与遮罩透明度，支持 reduced-motion；触屏、软键盘与辅助技术组合仍需真实设备验证。
+
+容器使用 surface-container-low、elevation 1、顶部 28px 圆角和直角底部；手柄 32×4px、40% on-surface-variant，上下各 22px，交互区 48px；键盘焦点使用 secondary、3px 描边与 2px offset。默认最大宽 640px；窄屏顶部留白 72px，宽度超过 640px 时顶部和左右留白 56px。Scaffold 依据自身容器宽度切换。正文默认水平留白 24px 是 MDV 内容布局约定。
+
+面板正文和 Scaffold 主区域使用局部细滚动条，滑块为 outline 主题色、轨道透明，保留浏览器原生滚动行为；不会设置全局滚动条样式。
+
+Specs 的宽屏测量图仍标注顶部 72，而表格／替代文本为 56；此实现采用表格的宽屏值。32% 遮罩沿用 MDV 既有模态方案，不将其描述为当前 Bottom Sheet 令牌表的独立硬性数值。`minimized.shape=0` 不套用于普通 partial。
+
+模态款的 class／普通 style 作用于可见面板，CSS 变量同时置于原生 dialog，原生 ARIA／dir 等作用于 dialog。Standard 的 class／style／原生属性作用于 Scaffold 根节点。可以局部覆盖 `--mdv-bottom-sheet-top-gap`、`--mdv-bottom-sheet-side-gap` 和 `--mdv-bottom-sheet-max-width`；这些是 MDV 布局变量。
+
+例如真正全高可组合 `:partial="false"`、`max-height="100%"`，并在 style 设定 `--mdv-bottom-sheet-top-gap:0px; --mdv-bottom-sheet-side-gap:0px; --mdv-bottom-sheet-max-width:100%`。通常应保留默认留白；本组件不会在大屏自动变为 Side Sheet。
+
+公共类型：`MdvBottomSheetProps`、`MdvBottomSheetScaffoldProps`、`MdvBottomSheetState`、`MdvBottomSheetBeforeClose`、`MdvBottomSheetCloseReason`、`MdvBottomSheetCloseDetail`、`MdvBottomSheetChangeReason`、`MdvBottomSheetChangeDetail`、`MdvBottomSheetSlotProps`。
