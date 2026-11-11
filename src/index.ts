@@ -31,6 +31,17 @@ export { default as MdvSnackbar } from './components/MdvSnackbar.vue'
 export { default as MdvSnackbarProvider } from './components/MdvSnackbarProvider.vue'
 export { default as MdvBottomSheet } from './components/MdvBottomSheet.vue'
 export { default as MdvBottomSheetScaffold } from './components/MdvBottomSheetScaffold.vue'
+export { default as MdvSideSheet } from './components/MdvSideSheet.vue'
+export { default as MdvSideSheetScaffold } from './components/MdvSideSheetScaffold.vue'
+export type {
+  MdvSideSheetBeforeClose,
+  MdvSideSheetCloseDetail,
+  MdvSideSheetCloseReason,
+  MdvSideSheetPlacement,
+  MdvSideSheetProps,
+  MdvSideSheetScaffoldProps,
+  MdvSideSheetSlotProps,
+} from './components/side-sheet.types'
 export type {
   MdvBottomSheetBeforeClose,
   MdvBottomSheetChangeDetail,

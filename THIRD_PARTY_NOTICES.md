@@ -106,16 +106,25 @@ MDV 自行实现 Vue 组件、作用域内队列、计时、焦点和模态协�
 
 MDV 自行实现两款 Vue 组件、尺寸测量、手势、滚动交接及弹簧采样动效，复用既有模态栈；未引入 Sheet 运行时或新依赖。Standard 的 56px peek 默认、正文留白及动效参数属于 MDV 实现选择，不冒称官方强制值。
 
+## Material 3 Side Sheet 规格与令牌
+
+- 规格来源：https://m3.material.io/components/side-sheets/specs 、https://m3.material.io/components/side-sheets/guidelines 与 accessibility 页面。
+- 数值依据：Standard／Modal 的容器颜色与 elevation 0／1、256dp 默认宽度与 400dp 最大宽度、分离式 16dp 留白／圆角、标题和焦点令牌，以及内部关闭入口要求。
+- 版权：Copyright Google LLC
+- 使用位置：`src/styles/side-sheet.css` 的视觉与布局，两款 Side Sheet 的语义和操作结构。
+
+MDV 自行实现两款 Vue 组件、非模态布局占位、模态协调、边缘手势和横向弹簧采样动效。动效参考本地 m3ui 的 spatial／effects 分离思路，并依据 Material 参数实现，未引入其他 Sheet 运行时或依赖。外围分隔线按组件令牌 outline，记录其与颜色图 outline-variant 标注的差异。
+
 ## Material Symbols 图标数据
 
 - 来源：https://github.com/google/material-design-icons
 - 数据分发：`@iconify-icons/material-symbols`，当前以 2.0.9 为资源基线；https://github.com/iconify/icon-sets
 - 版权：Copyright Google LLC
 - 许可：Apache License 2.0
-- 使用资源：Material Symbols 的本地 SVG 数据，包括 favorite、home、save、search 等预览图形及其填充／风格变体；文本框内置动作使用 close、visibility、visibility-off，Chip 使用 check、close，Segmented Button 使用 check，Menu 使用 check、chevron-right、arrow-back，Snackbar 使用 close，Bottom Sheet 使用 unfold-more。
-- 使用位置：`src/components/MdvTextField.vue`、`src/components/MdvChip.vue`、`src/components/MdvSegmentedButtonItem.vue`、`src/components/MdvFullscreenDialog.vue`、`src/components/MdvMenuItem.vue`、`src/components/_MdvMenuPanel.vue`、`src/components/MdvSnackbar.vue`、`src/components/MdvBottomSheet.vue`、`src/components/MdvBottomSheetScaffold.vue` 的内置动作、`playground/` 的组件预览、组件测试和 `COMPONENTS.md` 示例。
+- 使用资源：Material Symbols 的本地 SVG 数据，包括 favorite、home、save、search 等预览图形及其填充／风格变体；文本框内置动作使用 close、visibility、visibility-off，Chip 使用 check、close，Segmented Button 使用 check，Menu 使用 check、chevron-right、arrow-back，Snackbar 使用 close，Bottom Sheet 使用 unfold-more，Side Sheet 使用 close、arrow-back。
+- 使用位置：`src/components/MdvTextField.vue`、`src/components/MdvChip.vue`、`src/components/MdvSegmentedButtonItem.vue`、`src/components/MdvFullscreenDialog.vue`、`src/components/MdvMenuItem.vue`、`src/components/_MdvMenuPanel.vue`、`src/components/MdvSnackbar.vue`、`src/components/MdvBottomSheet.vue`、`src/components/MdvBottomSheetScaffold.vue`、`src/components/MdvSideSheet.vue`、`src/components/MdvSideSheetScaffold.vue` 的内置动作、`playground/` 的组件预览、组件测试和 `COMPONENTS.md` 示例。
 
-Iconify 分发包提供可单独导入的图标数据，原始图形版权与许可归上游 Google。该包是本仓库的开发依赖；文本框、Chip、Segmented Button、Dialog、Menu、Snackbar 与 Bottom Sheet 只导入各自固定图形并随组件构建，MDV 不导入或注册整套数据。使用方无需为内置动作安装图标集；自定义图标按自己的静态导入分发，并保留相应许可。
+Iconify 分发包提供可单独导入的图标数据，原始图形版权与许可归上游 Google。该包是本仓库的开发依赖；文本框、Chip、Segmented Button、Dialog、Menu、Snackbar、Bottom Sheet 与 Side Sheet 只导入各自固定图形并随组件构建，MDV 不导入或注册整套数据。使用方无需为内置动作安装图标集；自定义图标按自己的静态导入分发，并保留相应许可。
 
 ## Iconify Vue 渲染器
 

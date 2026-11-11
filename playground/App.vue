@@ -22,6 +22,7 @@ import MenuPlayground from './MenuPlayground.vue'
 import TooltipPlayground from './TooltipPlayground.vue'
 import SnackbarPlayground from './SnackbarPlayground.vue'
 import BottomSheetPlayground from './BottomSheetPlayground.vue'
+import SideSheetPlayground from './SideSheetPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -150,6 +151,12 @@ const pages = [
     label: 'Bottom Sheet 底部面板',
     description: '对照模态与 Standard 面板、预设高度、手势、焦点与浮层组合。',
     component: BottomSheetPlayground,
+  },
+  {
+    id: 'side-sheet',
+    label: 'Side Sheet 侧边面板',
+    description: '对照 Standard 与模态侧边面板、贴边与分离、布局让位、手势和焦点。',
+    component: SideSheetPlayground,
   },
   {
     id: 'theme',

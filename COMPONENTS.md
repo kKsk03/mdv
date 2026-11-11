@@ -23,6 +23,7 @@
 - [MdvTooltip 与 MdvRichTooltip 提示](#mdvtooltip)
 - [MdvSnackbar 消息提示](#mdvsnackbar)
 - [MdvBottomSheet 与 MdvBottomSheetScaffold 底部面板](#mdvbottomsheet)
+- [MdvSideSheet 与 MdvSideSheetScaffold 侧边面板](#mdvsidesheet)
 
 ## MdvButton
 
@@ -2079,3 +2080,84 @@ Specs 的宽屏测量图仍标注顶部 72，而表格／替代文本为 56；�
 例如真正全高可组合 `:partial="false"`、`max-height="100%"`，并在 style 设定 `--mdv-bottom-sheet-top-gap:0px; --mdv-bottom-sheet-side-gap:0px; --mdv-bottom-sheet-max-width:100%`。通常应保留默认留白；本组件不会在大屏自动变为 Side Sheet。
 
 公共类型：`MdvBottomSheetProps`、`MdvBottomSheetScaffoldProps`、`MdvBottomSheetState`、`MdvBottomSheetBeforeClose`、`MdvBottomSheetCloseReason`、`MdvBottomSheetCloseDetail`、`MdvBottomSheetChangeReason`、`MdvBottomSheetChangeDetail`、`MdvBottomSheetSlotProps`。
+
+## MdvSideSheet
+
+`MdvSideSheet` 是模态侧边面板；`MdvSideSheetScaffold` 是 Standard 页面布局。两款分别维护模板与生命周期，共用侧边视觉和横向动效，当前约定范围已通过项目检查与用户验收；真实包消费另行验证，没有新增依赖。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvButton, MdvSideSheet, MdvSideSheetScaffold } from 'mdv'
+
+const open = ref(false)
+const details = ref(true)
+</script>
+
+<template>
+  <MdvButton @click="open = true">编辑详情</MdvButton>
+  <MdvSideSheet v-model="open" title="编辑详情" width="360px" detached>
+    <p>补充信息或表单。</p>
+    <template #actions="{ close }">
+      <MdvButton variant="text" @click="close('cancel')">取消</MdvButton>
+      <MdvButton variant="text" @click="close('save')">保存</MdvButton>
+    </template>
+  </MdvSideSheet>
+
+  <div class="h-[500px]">
+    <MdvSideSheetScaffold v-model="details" title="文件详情">
+      <div class="p-6">
+        <MdvButton @click="details = !details">切换详情</MdvButton>
+        <p>主内容与侧边面板并排显示。</p>
+      </div>
+      <template #sheet><p>文件信息与操作。</p></template>
+    </MdvSideSheetScaffold>
+  </div>
+</template>
+```
+
+### 共用 Props
+
+| Prop | 类型 | 默认值／说明 |
+| --- | --- | --- |
+| `modelValue` / `v-model` | `boolean` | `false`；受控开关，父级需接受 `update:modelValue` |
+| `title` | `string` | 空；没有标题时仍提供关闭按钮 |
+| `description` | `string` | 空；正文插槽未提供时显示并关联说明 |
+| `width` | `string` | `256px`；CSS 长度，最大 400px，且不超出可用区域 |
+| `placement` | `'start' \| 'end'` | `end`；逻辑方向，RTL 镜像 |
+| `detached` | `boolean` | `false`；分离式四周留白及四角圆角均为 16px |
+| `showBack` | `boolean` | `false`；显示返回按钮，发出 `back`，由应用决定返回行为 |
+| `backLabel` / `closeLabel` | `string` | `返回`／`关闭面板`；可覆盖操作名称 |
+| `dividers` | `boolean` | `false`；标题／操作区的水平分隔线 |
+| `beforeClose` | `MdvSideSheetBeforeClose` | 无；返回 `false`、异步得到 `false` 或抛错均保留面板 |
+| `destroyOnClose` | `boolean` | `false`；关闭动画结束后销毁面板内容，默认保留草稿与滚动位置 |
+
+Modal 另有 `closeOnEsc`、`closeOnScrim`、`closeOnSwipe`，均默认为 `true`。Standard 另有 `showDivider=true`，用于贴边面板与主内容之间的竖直边界线，分离时不显示。
+
+### 插槽、事件与实例
+
+Modal 的 `default` 为正文，另有 `header` 和 `actions`。Scaffold 的 `default` 为主内容，`sheet` 为侧边内容，另有 `header` 和 `actions`。`header` 只替换标题区域，关闭和返回按钮仍由组件提供。
+
+所有面板插槽收到 `{ close }`，其中 `close(returnValue?)` 返回 `Promise<boolean>`：`true` 表示父级已接受关闭请求，退出动画可能仍在进行；`false` 表示拒绝、拦截、请求过期或当前无法关闭。实例暴露同名 `close`，以及 `focus()`。Modal 按 autofocus／首个可用控件顺序聚焦；Standard 的 focus 显式聚焦面板容器，打开时不自动抢焦点。
+
+事件为 `update:modelValue`、`open`／`opened`、`close`／`closed`、`back`。open／close 在开始转换时发出，opened／closed 在转换完成后发出；close／closed 参数为 `{ reason, returnValue }`。Modal 的 reason 包括 `model`、`escape`、`scrim`、`close-button`、`action`、`form`、`swipe`；Standard 为其中的 `model`、`close-button`、`action`。`back` 不携带参数，不自动关闭。
+
+`beforeClose` 收到只读关闭详情。相同进行中的操作请求合并；父级直接改变模型是程序状态变更，不经过拦截。原生 `method="dialog"` 表单可在 Modal 中提交关闭，并保留提交按钮的 value；Standard 不劫持表单提交。
+
+### 布局、键盘与手势
+
+Standard 需要有确定高度的父区域。主内容会随着面板开关真实让位，双方独立滚动，关闭后恢复完整宽度；背景不锁定、不进入模态栈。面板使用非模态 `role="dialog"`，Tab 自然进入和离开，Escape 不会被全局截获；关闭时仅当焦点位于面板内才尝试恢复到打开前元素，否则保持当前焦点。
+
+Modal 在原 DOM 中使用原生 dialog top layer，继承局部主题。支持 Tab 焦点约束、最上层 Escape、背景滚动锁、嵌套 Dialog／Menu／Tooltip 和关闭后焦点恢复。内置关闭入口始终存在，遵循 Side Sheet 的官方无障碍要求。
+
+Modal 的面向主内容侧有 12px 手势边缘。横向拖向隐藏方向后释放可关闭，距离不足、取消或请求被拒绝时回弹；纵向手势和正文内交互保留原生行为。左右方向结合 placement 与 RTL 计算，窗口松手、失焦、卸载和 KeepAlive 停用都会清理监听。面板横移、Standard 占位与遮罩分别执行，正文不缩放或整体淡出；减少动态效果时直接定位。
+
+### 视觉与主题
+
+Standard 使用 surface、elevation 0、贴边直角；Modal 使用 surface-container-low、elevation 1、朝内容侧 16px 圆角。分离时均为四角 16px。标题使用 title-large（22／28px、400、on-surface-variant），常规内边距 24px、顶部元素间隔 12px；返回按钮起始边距 16px。操作区起始侧对齐，上方 16px、下方 24px，按钮保留自然宽度并可换行。
+
+正文使用局部 thin／outline／透明轨道滚动条，不改变全局滚动条。Modal 的 class／普通 style 作用于面板，CSS 变量同时放在原生 dialog；ARIA、dir 等原生属性作用于 dialog。Standard 的 class／style／dir 作用于布局根节点，`aria-*` 作用于侧边 dialog；不输出 `aria-modal`。无标题时可通过 aria-label 自定义名称。
+
+尺寸遵循当前 Specs 的 256dp 默认宽度令牌及 400dp 最大宽度表。外围分隔线按组件 divider 令牌使用 outline，内部线为 outline-variant；官网颜色图对外围线标注 outline-variant，与该组件令牌存在差异。32% 遮罩沿用 MDV 已有模态方案。两款不自动按断点互换，由应用选择适合布局的类型。
+
+公共类型：`MdvSideSheetProps`、`MdvSideSheetScaffoldProps`、`MdvSideSheetPlacement`、`MdvSideSheetBeforeClose`、`MdvSideSheetCloseReason`、`MdvSideSheetCloseDetail`、`MdvSideSheetSlotProps`。
