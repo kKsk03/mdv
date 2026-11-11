@@ -1,0 +1,335 @@
+@layer components {
+  .mdv-navigation-bar-anchor {
+    position: fixed;
+    z-index: 10;
+    inset-inline: 0;
+    inset-block-end: 0;
+    display: flex;
+    container-name: mdv-navigation-bar;
+    container-type: inline-size;
+    pointer-events: none;
+  }
+
+  .mdv-navigation-bar {
+    --mdv-navigation-bar-layout: column;
+    --mdv-navigation-bar-height: 80px;
+    --mdv-navigation-bar-item-height: 56px;
+    --mdv-navigation-bar-item-max-width: none;
+    --mdv-navigation-bar-items-max-width: none;
+
+    position: relative;
+    display: flex;
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-block-size: calc(var(--mdv-navigation-bar-height) + env(safe-area-inset-bottom, 0px));
+    align-items: stretch;
+    justify-content: center;
+    padding-block: 12px max(12px, env(safe-area-inset-bottom, 0px));
+    background: var(--mdv-sys-color-surface-container);
+    color: var(--mdv-sys-color-on-surface);
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mdv-navigation-bar--horizontal {
+    --mdv-navigation-bar-height: 64px;
+    --mdv-navigation-bar-item-height: 48px;
+    --mdv-navigation-bar-item-max-width: 168px;
+    --mdv-navigation-bar-items-max-width: 840px;
+    --mdv-navigation-bar-layout: row;
+
+    padding-block: 8px max(8px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .mdv-navigation-bar__items {
+    display: flex;
+    box-sizing: border-box;
+    inline-size: 100%;
+    max-inline-size: var(--mdv-navigation-bar-items-max-width);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mdv-navigation-bar-item {
+    --mdv-navigation-bar-item-state-color: var(--mdv-sys-color-on-surface-variant);
+
+    position: relative;
+    display: flex;
+    box-sizing: border-box;
+    min-inline-size: 0;
+    min-block-size: var(--mdv-navigation-bar-item-height);
+    max-inline-size: var(--mdv-navigation-bar-item-max-width);
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: var(--mdv-sys-shape-corner-full);
+    padding: 0 4px;
+    background: transparent;
+    color: var(--mdv-sys-color-on-surface-variant);
+    font-family: var(--mdv-sys-typescale-font-family);
+    font-size: var(--mdv-sys-typescale-label-medium-size);
+    font-style: normal;
+    font-weight: var(--mdv-sys-typescale-label-medium-weight);
+    line-height: var(--mdv-sys-typescale-label-medium-line-height);
+    letter-spacing: var(--mdv-sys-typescale-label-medium-tracking);
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mdv-navigation-bar-item__visual::before,
+  .mdv-navigation-bar-item__icon-container::before {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--mdv-navigation-bar-item-state-color);
+    content: '';
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--mdv-sys-motion-duration-short-2) var(--mdv-sys-motion-easing-standard);
+  }
+
+  .mdv-navigation-bar-item__visual::before {
+    display: none;
+  }
+
+  .mdv-navigation-bar-item__icon-container::before {
+    display: block;
+  }
+
+  .mdv-navigation-bar-item__visual {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    min-inline-size: 0;
+    flex-direction: var(--mdv-navigation-bar-layout);
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    border-radius: var(--mdv-sys-shape-corner-full);
+    transition: background-color var(--mdv-sys-motion-duration-short-4)
+      var(--mdv-sys-motion-easing-standard);
+  }
+
+  .mdv-navigation-bar-item__icon-container {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    inline-size: 64px;
+    block-size: 32px;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--mdv-sys-shape-corner-full);
+    transition:
+      background-color var(--mdv-sys-motion-duration-short-4) var(--mdv-sys-motion-easing-standard),
+      color var(--mdv-sys-motion-duration-short-4) var(--mdv-sys-motion-easing-standard);
+  }
+
+  .mdv-navigation-bar-item__icon {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    inline-size: 24px;
+    block-size: 24px;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  .mdv-navigation-bar-item__icon > :is(svg, img) {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .mdv-navigation-bar-item__badge {
+    position: absolute;
+    z-index: 3;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    display: inline-flex;
+    max-inline-size: 100%;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .mdv-navigation-bar-item__label {
+    position: relative;
+    z-index: 2;
+    display: block;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .mdv-navigation-bar-item--active {
+    --mdv-navigation-bar-item-state-color: var(--mdv-sys-color-on-surface);
+
+    color: var(--mdv-sys-color-on-surface);
+    font-weight: var(--mdv-sys-typescale-label-medium-weight);
+  }
+
+  .mdv-navigation-bar-item--active .mdv-navigation-bar-item__icon-container {
+    background: var(--mdv-sys-color-secondary-container);
+    color: var(--mdv-sys-color-on-secondary-container);
+  }
+
+  .mdv-navigation-bar-item--disabled {
+    color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 38%, transparent);
+    cursor: not-allowed;
+  }
+
+  .mdv-navigation-bar-item--disabled .mdv-navigation-bar-item__visual::before,
+  .mdv-navigation-bar-item--disabled .mdv-navigation-bar-item__icon-container::before {
+    display: none;
+  }
+
+  .mdv-navigation-bar-item--link.mdv-navigation-bar-item--disabled {
+    pointer-events: none;
+  }
+
+  .mdv-navigation-bar-item:not(.mdv-navigation-bar-item--disabled):focus-visible {
+    outline: 3px solid var(--mdv-sys-color-secondary);
+    outline-offset: -3px;
+  }
+
+  .mdv-navigation-bar-item:not(.mdv-navigation-bar-item--disabled):focus-visible
+    .mdv-navigation-bar-item__visual::before,
+  .mdv-navigation-bar-item:not(.mdv-navigation-bar-item--disabled):active
+    .mdv-navigation-bar-item__visual::before,
+  .mdv-navigation-bar-item:not(.mdv-navigation-bar-item--disabled):focus-visible
+    .mdv-navigation-bar-item__icon-container::before,
+  .mdv-navigation-bar-item:not(.mdv-navigation-bar-item--disabled):active
+    .mdv-navigation-bar-item__icon-container::before {
+    opacity: 0.1;
+  }
+
+  @media (hover: hover) {
+    .mdv-navigation-bar-item:not(.mdv-navigation-bar-item--disabled):not(
+        .mdv-navigation-bar-item--active
+      ):hover
+      .mdv-navigation-bar-item__visual::before,
+    .mdv-navigation-bar-item:not(.mdv-navigation-bar-item--disabled):not(
+        .mdv-navigation-bar-item--active
+      ):hover
+      .mdv-navigation-bar-item__icon-container::before {
+      opacity: 0.08;
+    }
+  }
+
+  @container mdv-navigation-bar (min-width: 600px) {
+    .mdv-navigation-bar:not(.mdv-navigation-bar--vertical) {
+      --mdv-navigation-bar-height: 64px;
+      --mdv-navigation-bar-item-height: 48px;
+      --mdv-navigation-bar-item-max-width: 168px;
+      --mdv-navigation-bar-items-max-width: 840px;
+      --mdv-navigation-bar-layout: row;
+
+      padding-block: 8px max(8px, env(safe-area-inset-bottom, 0px));
+    }
+
+    .mdv-navigation-bar:not(.mdv-navigation-bar--vertical) .mdv-navigation-bar-item__visual {
+      min-block-size: 48px;
+      flex-direction: row;
+      gap: 8px;
+      border-radius: var(--mdv-sys-shape-corner-full);
+      padding-inline: 12px;
+    }
+
+    .mdv-navigation-bar:not(.mdv-navigation-bar--vertical)
+      .mdv-navigation-bar-item__visual::before {
+      display: block;
+    }
+
+    .mdv-navigation-bar:not(.mdv-navigation-bar--vertical)
+      .mdv-navigation-bar-item__icon-container::before {
+      display: none;
+    }
+
+    .mdv-navigation-bar:not(.mdv-navigation-bar--vertical)
+      .mdv-navigation-bar-item--active
+      .mdv-navigation-bar-item__visual {
+      background: var(--mdv-sys-color-secondary-container);
+    }
+
+    .mdv-navigation-bar:not(.mdv-navigation-bar--vertical)
+      .mdv-navigation-bar-item__icon-container {
+      inline-size: 24px;
+      block-size: 24px;
+      background: transparent;
+    }
+
+    .mdv-navigation-bar:not(.mdv-navigation-bar--vertical)
+      .mdv-navigation-bar-item--active
+      .mdv-navigation-bar-item__icon-container {
+      background: transparent;
+    }
+  }
+
+  .mdv-navigation-bar--horizontal .mdv-navigation-bar-item__visual {
+    min-block-size: 48px;
+    flex-direction: row;
+    gap: 8px;
+    border-radius: var(--mdv-sys-shape-corner-full);
+    padding-inline: 12px;
+  }
+
+  .mdv-navigation-bar--horizontal .mdv-navigation-bar-item__visual::before {
+    display: block;
+  }
+
+  .mdv-navigation-bar--horizontal .mdv-navigation-bar-item__icon-container::before {
+    display: none;
+  }
+
+  .mdv-navigation-bar--horizontal
+    .mdv-navigation-bar-item--active
+    .mdv-navigation-bar-item__visual {
+    background: var(--mdv-sys-color-secondary-container);
+  }
+
+  .mdv-navigation-bar--horizontal .mdv-navigation-bar-item__icon-container {
+    inline-size: 24px;
+    block-size: 24px;
+    background: transparent;
+  }
+
+  .mdv-navigation-bar--horizontal
+    .mdv-navigation-bar-item--active
+    .mdv-navigation-bar-item__icon-container {
+    background: transparent;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mdv-navigation-bar-item__visual::before,
+    .mdv-navigation-bar-item__icon-container::before,
+    .mdv-navigation-bar-item__icon-container,
+    .mdv-navigation-bar-item__visual {
+      transition-duration: 0.01ms;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .mdv-navigation-bar-item--active .mdv-navigation-bar-item__icon-container,
+    .mdv-navigation-bar--horizontal
+      .mdv-navigation-bar-item--active
+      .mdv-navigation-bar-item__visual {
+      border: 1px solid CanvasText;
+      background: Canvas;
+      color: CanvasText;
+      forced-color-adjust: none;
+    }
+
+    .mdv-navigation-bar-item:not(.mdv-navigation-bar-item--disabled):focus-visible {
+      outline-color: Highlight;
+    }
+  }
+}

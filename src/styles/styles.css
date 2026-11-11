@@ -18,6 +18,7 @@
 @import './bottom-sheet.css';
 @import './side-sheet.css';
 @import './tabs.css';
+@import './navigation-bar.css';
 
 .mdv-icon {
   display: inline-block;

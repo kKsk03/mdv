@@ -24,6 +24,8 @@
 - [MdvSnackbar 消息提示](#mdvsnackbar)
 - [MdvBottomSheet 与 MdvBottomSheetScaffold 底部面板](#mdvbottomsheet)
 - [MdvSideSheet 与 MdvSideSheetScaffold 侧边面板](#mdvsidesheet)
+- [MdvTabs、MdvTab 与 MdvTabPanel 标签页](#mdvtabs)
+- [MdvNavigationBar 与 MdvNavigationBarItem 导航栏](#mdvnavigationbar)
 
 ## MdvButton
 
@@ -2259,3 +2261,71 @@ Primary 指示线高 3px，按可见内容包络两侧各内缩 2px、最小 24p
 指示线的位置和宽度分别执行可中断弹簧；字体、徽标或容器尺寸变化后重新校准，reduced-motion 下直接定位。键盘焦点使用 secondary／3px 内描边，与选择指示线独立；状态层、局部浅深主题、动态取色和 forced-colors 使用现有令牌，不额外提供 color 属性。横向滚动条隐藏规则仅作用于 tablist 容器。
 
 公共类型：`MdvTabValue`、`MdvTabsVariant`、`MdvTabsIconPosition`、`MdvTabsActivation`、`MdvTabsTabNavigation`、`MdvTabsProps`、`MdvTabProps`、`MdvTabPanelProps`、`MdvTabSlotProps`。
+
+## MdvNavigationBar
+
+`MdvNavigationBar` 提供贴底的 Flexible 导航栏，`MdvNavigationBarItem` 表示一个目的地。当前约定范围已完成项目检查与开发预览验收；真实包消费另行验证。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvIcon, MdvNavigationBar, MdvNavigationBarItem } from 'mdv'
+import home from '@iconify-icons/material-symbols/home-outline'
+import bookmark from '@iconify-icons/material-symbols/bookmark-outline'
+import person from '@iconify-icons/material-symbols/person-outline'
+
+const current = ref('home')
+const destinations = [
+  { value: 'home', label: '首页', icon: home },
+  { value: 'saved', label: '收藏', icon: bookmark },
+  { value: 'profile', label: '个人资料', icon: person },
+]
+</script>
+
+<template>
+  <main class="pb-24">
+    <MdvNavigationBar aria-label="主要目的地">
+      <MdvNavigationBarItem
+        v-for="destination in destinations"
+        :key="destination.value"
+        :label="destination.label"
+        :active="current === destination.value"
+        @click="current = destination.value"
+      >
+        <template #icon>
+          <MdvIcon :icon="destination.icon" />
+        </template>
+      </MdvNavigationBarItem>
+    </MdvNavigationBar>
+  </main>
+</template>
+```
+
+示例图标来自 `@iconify-icons/material-symbols`；也可替换为项目自己的本地图标组件。真实链接场景将按钮项改为 `<MdvNavigationBarItem href="/saved" ...>`，由宿主路由更新当前页面后设置对应的 `active`。
+
+### MdvNavigationBar Props
+
+| 属性 | 类型 | 默认值与行为 |
+| ---- | ---- | ------------ |
+| `orientation` | `'auto' \| 'vertical' \| 'horizontal'` | `'auto'`；导航栏容器宽度小于 600px 时图标与标签纵向排列，达到 600px 时横向排列；另两值强制对应布局 |
+| `aria-label`／`aria-labelledby` | 原生 ARIA 属性 | 给导航 landmark 命名；页面有多个导航区时应提供可区分名称 |
+
+`MdvNavigationBar` 渲染原生 `<nav>`；其余 class、style、dir、id 和原生事件透传到该节点。底栏固定于视口底部并处理设备安全区，页面主内容应预留对应底部空间，避免最后一段内容被遮挡。窄屏使用纵向图标／文字项目，中等宽度使用横向项目；宽屏导航由使用方改用 Navigation Rail 等布局。
+
+### MdvNavigationBarItem Props 与插槽
+
+| 属性 | 类型 | 默认值与行为 |
+| ---- | ---- | ------------ |
+| `label` | `string` | 必填；可见目的地名称，也是默认可访问名称 |
+| `active` | `boolean` | `false`；由调用方按当前页面或目的地控制，组件不维护路由／选中模型 |
+| `href` | `string` | 未提供时渲染 `type="button"`；提供后渲染原生链接并保留浏览器导航行为 |
+| `disabled` | `boolean` | `false`；禁用按钮，或移除链接的 href 并从 Tab 顺序排除 |
+| `aria-label` | 原生 ARIA 属性 | 默认可访问名称来自可见 `label`；需要更明确描述时可覆盖 |
+
+`icon` 插槽始终显示并收到 `{ active }`，供调用方切换描边／填充图标；`badge` 插槽也收到 `{ active }`，用于组合现有 `MdvBadge`。图标标为装饰内容，目的地名称由 `label` 提供；标签必须保持可见。支持 3–5 个简短的顶层目的地，组件不限制项目数量，也不提供 swipe、颜色或路由器耦合。
+
+按钮和链接均保留原生语义、click 事件及其他原生属性。active 项标记 `aria-current="page"`；active 状态由使用方在应用导航成功后更新。所有可用项目按原生顺序逐项响应 Tab；按钮由浏览器原生 Space／Enter 激活，链接按浏览器原生键盘规则工作，不使用 tablist 或 roving tabindex。disabled 链接不参与激活。
+
+视觉使用 MD3 主题令牌与局部主题继承。紧凑布局项目高度 56px、容器总高至少 80px；中等布局项目高 48px、容器高至少 64px。激活图标使用 secondary-container 指示背景，图标内颜色为 on-secondary-container；横向布局的指示背景扩展至图标和文字区域。hover 状态层为 8%，focus-visible／pressed 为 10%；reduced-motion 与 forced-colors 有对应处理。实际内容组合、视口断点、长文字／放大文字、RTL、主题和遮挡情况应在浏览器中验收。
+
+公共类型：`MdvNavigationBarOrientation`、`MdvNavigationBarProps`、`MdvNavigationBarItemProps`、`MdvNavigationBarItemSlotProps`。

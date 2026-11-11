@@ -36,6 +36,14 @@ export { default as MdvSideSheetScaffold } from './components/MdvSideSheetScaffo
 export { default as MdvTabs } from './components/MdvTabs.vue'
 export { default as MdvTab } from './components/MdvTab.vue'
 export { default as MdvTabPanel } from './components/MdvTabPanel.vue'
+export { default as MdvNavigationBar } from './components/MdvNavigationBar.vue'
+export { default as MdvNavigationBarItem } from './components/MdvNavigationBarItem.vue'
+export type {
+  MdvNavigationBarOrientation,
+  MdvNavigationBarProps,
+  MdvNavigationBarItemProps,
+  MdvNavigationBarItemSlotProps,
+} from './components/navigation-bar.types'
 export type {
   MdvTabValue,
   MdvTabsVariant,

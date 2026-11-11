@@ -24,6 +24,7 @@ import SnackbarPlayground from './SnackbarPlayground.vue'
 import BottomSheetPlayground from './BottomSheetPlayground.vue'
 import SideSheetPlayground from './SideSheetPlayground.vue'
 import TabsPlayground from './TabsPlayground.vue'
+import NavigationBarPlayground from './NavigationBarPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -164,6 +165,12 @@ const pages = [
     label: 'Tabs 标签页',
     description: '对照主／次级标签页、图标与徽标、滚动、键盘、面板生命周期和内容横滑。',
     component: TabsPlayground,
+  },
+  {
+    id: 'navigation-bar',
+    label: 'Navigation Bar 导航栏',
+    description: '检查 Flexible 导航栏的紧凑／中等布局、目的地状态、徽标与原生导航语义。',
+    component: NavigationBarPlayground,
   },
   {
     id: 'theme',
