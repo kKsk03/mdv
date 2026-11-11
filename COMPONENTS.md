@@ -2161,3 +2161,101 @@ Standard 使用 surface、elevation 0、贴边直角；Modal 使用 surface-cont
 尺寸遵循当前 Specs 的 256dp 默认宽度令牌及 400dp 最大宽度表。外围分隔线按组件 divider 令牌使用 outline，内部线为 outline-variant；官网颜色图对外围线标注 outline-variant，与该组件令牌存在差异。32% 遮罩沿用 MDV 已有模态方案。两款不自动按断点互换，由应用选择适合布局的类型。
 
 公共类型：`MdvSideSheetProps`、`MdvSideSheetScaffoldProps`、`MdvSideSheetPlacement`、`MdvSideSheetBeforeClose`、`MdvSideSheetCloseReason`、`MdvSideSheetCloseDetail`、`MdvSideSheetSlotProps`。
+
+## MdvTabs
+
+`MdvTabs` 管理同一页面的内容分类，`MdvTab` 提供分类按钮，`MdvTabPanel` 提供关联内容。Primary／Secondary 两款当前约定范围已完成项目检查与开发预览验收；真实包消费另行验证，没有新增依赖。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvBadge, MdvTab, MdvTabPanel, MdvTabs } from 'mdv'
+import type { MdvTabValue } from 'mdv'
+
+const category = ref<MdvTabValue>('overview')
+</script>
+
+<template>
+  <MdvTabs v-model="category" aria-label="工作内容">
+    <MdvTab value="overview" label="概览" />
+    <MdvTab value="activity" label="动态">
+      <template #badge><MdvBadge variant="large" :content="3" aria-label="3 条新动态" /></template>
+    </MdvTab>
+    <MdvTab value="archive" label="归档" disabled />
+    <template #panels>
+      <MdvTabPanel value="overview" class="p-4">项目概览。</MdvTabPanel>
+      <MdvTabPanel value="activity" class="p-4">
+        <label>备注 <input placeholder="切换分类后保留草稿" /></label>
+      </MdvTabPanel>
+      <MdvTabPanel value="archive" class="p-4">归档记录。</MdvTabPanel>
+    </template>
+  </MdvTabs>
+</template>
+```
+
+### MdvTabs Props
+
+| 属性 | 类型 | 默认值与行为 |
+| ---- | ---- | ------------ |
+| `modelValue` / `v-model` | `string \| number` | 未传入时内部选择首个可用项；传入后以父级接受的值为准 |
+| `variant` | `'primary' \| 'secondary'` | `'primary'` |
+| `scrollable` | `boolean` | `false`，固定等宽；`true` 时按内容宽度排列并允许横向滚动 |
+| `showDivider` | `boolean` | `true`，显示标签栏底部的 outline-variant 分割线 |
+| `iconPosition` | `'top' \| 'leading'` | Primary 默认 `'top'`，Secondary 默认 `'leading'` |
+| `activation` | `'manual' \| 'automatic'` | `'manual'`，焦点与选择分开；`'automatic'` 时聚焦可用项即请求选中 |
+| `tabNavigation` | `'all' \| 'active'` | `'all'`，每个可用项均可 Tab 访问；`'active'` 时整组一个 Tab 入口 |
+| `swipeable` | `boolean` | `false`，显式开启面板正文的触摸横滑切换 |
+
+`default` 插槽直接放置 `MdvTab`，`panels` 插槽放置 `MdvTabPanel`；tablist 与面板是语义上的兄弟区域。每组 value 必须唯一，与面板严格匹配；数字 `1` 与字符串 `'1'` 是两项。嵌套组只关联最近的 `MdvTabs`。
+
+显式受控的无效值不自动改写；父级拒绝更新时保留原选择。内部管理的选中项被移除、隐藏或禁用时，优先选择相邻可用项，不伪造用户事件。程序切换只更新展示，不发送 `change`。
+
+### MdvTab 与 MdvTabPanel Props
+
+| 组件 | 属性 | 类型 | 默认值与行为 |
+| ---- | ---- | ---- | ------------ |
+| `MdvTab` | `value` | `string \| number` | 必填，组内唯一 |
+| `MdvTab` | `label` | `string` | 空；也可用默认插槽提供文字 |
+| `MdvTab` | `disabled` | `boolean` | `false`；禁用选择和键盘访问 |
+| `MdvTabPanel` | `value` | `string \| number` | 必填，与对应 tab 相同 |
+| `MdvTabPanel` | `lazy` | `boolean` | `false`；`true` 时首次选中才挂载正文，之后保留 |
+| `MdvTabPanel` | `destroyOnHide` | `boolean` | `false`；`true` 时离开即销毁正文，再选中重新挂载 |
+
+默认隐藏面板保留 DOM、表单草稿及组件状态。即使启用 lazy 或 destroyOnHide，面板语义外壳和关联 ID 仍保留；隐藏时设置 hidden／inert。可用 `class="p-4"` 等自行控制正文留白，组件不预设面板高度。
+
+MdvTab 的默认、`icon`、`badge` 插槽，以及 MdvTabPanel 的默认插槽均收到 `{ active: boolean }`。图标插槽可据此切换描边／填充图形。图标由 `MdvIcon` 或自有图形提供；仅图标项需用原生 `aria-label` 命名。徽标复用 `MdvBadge`，选中时不自动清除通知。
+
+### 事件、实例与原生属性
+
+| 事件 | 参数 | 行为 |
+| ---- | ---- | ---- |
+| `update:modelValue` | `MdvTabValue` | 用户请求选择另一可用项；同一已选项不重复发出 |
+| `change` | `MdvTabValue` | 用户请求被父级接受且选择实际改变后发出一次 |
+
+`MdvTabs` 暴露 `focus(value?)`：无参数时聚焦当前可用项或首个可用项，指定参数时聚焦对应项。`MdvTab` 暴露原生 `focus(options?)`／`blur()`。手动模式下 focus 不改变选择，自动模式仍按聚焦激活规则处理。
+
+MdvTab 渲染 `type="button"`，不提交外层表单。原生事件对象透传；click 监听器调用 `preventDefault()` 可取消该次点击选择，keydown 监听器可取消内置方向键行为。自动模式的聚焦选择是独立动作。组件维护 tab 的 role、type、tabindex、aria-selected、aria-controls，原生属性不能覆盖这些语义。
+
+MdvTabs 的 `aria-label`／`aria-labelledby`／`aria-describedby` 放到实际 tablist，其余 class、style、id、dir 和原生事件作用于外层容器。MdvTab 的原生 id 可自定义，对应面板自动引用；面板 id、role、hidden、inert、aria-labelledby 统一由组管理，忽略同名原生覆盖。MdvTabPanel 其余原生属性透传，tabindex 默认为 0，可显式设为 -1。
+
+### 键盘、滚动与触摸
+
+默认 `tabNavigation="all"` 保留逐项 Tab／Shift+Tab 顺序；方向键和 Home／End 在可用项之间移动焦点，Enter／Space 选择。左右键随 RTL 镜像，上下键保留页面滚动。禁用、hidden、inert 及 disabled fieldset 中的项不参与组内导航。
+
+`tabNavigation="active"` 对应 WAI-ARIA APG 的单入口模式：Tab 进入一项，方向键移动组内焦点，下一次 Tab 离组。手动模式允许焦点移到尚未选中的项；自动模式同时请求选择。组件不拦截原生 Tab，不形成焦点陷阱。
+
+正常切换不强行聚焦面板正文；程序切换或动态移除会在原焦点即将被隐藏或移除时恢复至合理的 tab，外部焦点保持原位。
+
+固定模式等宽，长文字截断；少量内容分类适合该模式。较多项目或长标题建议开启 scrollable：起始侧保留 52px 留白、项目按自然宽度排列，RTL 镜像。保留原生横向触摸／触控板滚动；聚焦或程序选中超出视野的项时，仅滚动条目容器。
+
+开启 swipeable 后，在非交互正文横滑达到阈值再释放，才请求相邻可用项；边界停留，不首尾循环。纵向滚动、输入控件、按钮、链接、Slider、选择文字、原生横向滚动区和内层 Tabs 保留各自操作；自定义交互区可添加 `data-mdv-tab-swipe-ignore`。取消或父级拒绝时保留当前面板；正文不做跟手位移。真实触屏与辅助技术组合仍需验证。
+
+### 视觉与主题
+
+纯文字、横排图标和仅图标高度 48px，上下图文 64px；图标 24px，文字 title-small（14／20px、500）。Tabs 条目区背景透明，呈现父级容器表面，避免嵌入 Dialog 等容器时出现额外色块。`showDivider` 默认 `true`，使用 1px outline-variant 底部分割线；设为 `false` 时隐藏该线。Primary 激活内容为 primary，Secondary 激活为 on-surface，未激活内容为 on-surface-variant。
+
+Primary 指示线高 3px，按可见内容包络两侧各内缩 2px、最小 24px，上方圆角、底部贴齐；Secondary 高 2px、覆盖单项全宽、直角。上下图文的图标徽标不扩展底部文字包络；横排和纯文字徽标计入包络。图文横排间距 8px、文字与徽标 4px，堆叠徽标在图标逻辑末侧重叠 6px。
+
+指示线的位置和宽度分别执行可中断弹簧；字体、徽标或容器尺寸变化后重新校准，reduced-motion 下直接定位。键盘焦点使用 secondary／3px 内描边，与选择指示线独立；状态层、局部浅深主题、动态取色和 forced-colors 使用现有令牌，不额外提供 color 属性。横向滚动条隐藏规则仅作用于 tablist 容器。
+
+公共类型：`MdvTabValue`、`MdvTabsVariant`、`MdvTabsIconPosition`、`MdvTabsActivation`、`MdvTabsTabNavigation`、`MdvTabsProps`、`MdvTabProps`、`MdvTabPanelProps`、`MdvTabSlotProps`。

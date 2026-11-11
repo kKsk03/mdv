@@ -23,6 +23,7 @@ import TooltipPlayground from './TooltipPlayground.vue'
 import SnackbarPlayground from './SnackbarPlayground.vue'
 import BottomSheetPlayground from './BottomSheetPlayground.vue'
 import SideSheetPlayground from './SideSheetPlayground.vue'
+import TabsPlayground from './TabsPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -157,6 +158,12 @@ const pages = [
     label: 'Side Sheet 侧边面板',
     description: '对照 Standard 与模态侧边面板、贴边与分离、布局让位、手势和焦点。',
     component: SideSheetPlayground,
+  },
+  {
+    id: 'tabs',
+    label: 'Tabs 标签页',
+    description: '对照主／次级标签页、图标与徽标、滚动、键盘、面板生命周期和内容横滑。',
+    component: TabsPlayground,
   },
   {
     id: 'theme',

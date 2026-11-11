@@ -17,6 +17,8 @@ MdvBottomSheet 与 MdvBottomSheetScaffold 已完成模态和 Standard 两款当�
 
 MdvSideSheet 与 MdvSideSheetScaffold 已完成模态和 Standard 两款当前约定范围的项目检查与用户验收，包含贴边／分离布局、逻辑方向、关闭拦截和边缘滑动；真实包消费另行验证。
 
+MdvTabs、MdvTab 与 MdvTabPanel 已完成 Primary／Secondary、固定／滚动、图标／徽标、可选底部分割线、键盘导航与内容生命周期的当前约定范围检查及开发预览验收；真实包消费另行验证。
+
 ## 本地开发
 
 在仓库根目录执行。当前环境基线为 Node.js 24.22.1 和 pnpm 12.14.0。
@@ -78,6 +80,7 @@ pnpm build
 - [MdvSnackbar 消息提示](./COMPONENTS.md#mdvsnackbar)
 - [MdvBottomSheet 与 MdvBottomSheetScaffold 底部面板](./COMPONENTS.md#mdvbottomsheet)
 - [MdvSideSheet 与 MdvSideSheetScaffold 侧边面板](./COMPONENTS.md#mdvsidesheet)
+- [MdvTabs、MdvTab 与 MdvTabPanel 标签页](./COMPONENTS.md#mdvtabs)
 
 ## 主题与排版
 

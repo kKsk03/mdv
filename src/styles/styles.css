@@ -17,6 +17,7 @@
 @import './snackbar.css';
 @import './bottom-sheet.css';
 @import './side-sheet.css';
+@import './tabs.css';
 
 .mdv-icon {
   display: inline-block;

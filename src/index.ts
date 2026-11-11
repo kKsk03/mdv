@@ -33,6 +33,20 @@ export { default as MdvBottomSheet } from './components/MdvBottomSheet.vue'
 export { default as MdvBottomSheetScaffold } from './components/MdvBottomSheetScaffold.vue'
 export { default as MdvSideSheet } from './components/MdvSideSheet.vue'
 export { default as MdvSideSheetScaffold } from './components/MdvSideSheetScaffold.vue'
+export { default as MdvTabs } from './components/MdvTabs.vue'
+export { default as MdvTab } from './components/MdvTab.vue'
+export { default as MdvTabPanel } from './components/MdvTabPanel.vue'
+export type {
+  MdvTabValue,
+  MdvTabsVariant,
+  MdvTabsIconPosition,
+  MdvTabsActivation,
+  MdvTabsTabNavigation,
+  MdvTabsProps,
+  MdvTabProps,
+  MdvTabPanelProps,
+  MdvTabSlotProps,
+} from './components/tabs.types'
 export type {
   MdvSideSheetBeforeClose,
   MdvSideSheetCloseDetail,

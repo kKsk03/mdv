@@ -115,6 +115,49 @@ MDV 自行实现两款 Vue 组件、尺寸测量、手势、滚动交接及弹�
 
 MDV 自行实现两款 Vue 组件、非模态布局占位、模态协调、边缘手势和横向弹簧采样动效。动效参考本地 m3ui 的 spatial／effects 分离思路，并依据 Material 参数实现，未引入其他 Sheet 运行时或依赖。外围分隔线按组件令牌 outline，记录其与颜色图 outline-variant 标注的差异。
 
+## Material 3 Tabs 规格与交互
+
+- 规格来源：https://m3.material.io/components/tabs/specs 、https://m3.material.io/components/tabs/guidelines 与 accessibility 页面。
+- Web 语义参考：https://www.w3.org/WAI/ARIA/apg/patterns/tabs/
+- 数值依据：Primary／Secondary 的尺寸图、颜色／排版／形状／状态令牌，以及滚动布局、图标和徽标测量。
+- Material 规格版权：Copyright Google LLC
+- 使用位置：`src/styles/tabs.css` 的 48／64px 布局、3／2px 指示线、内容留白和颜色；Tabs 三组件的关联语义与键盘模式。
+
+MDV 自行实现 Vue 三组件、模型、面板生命周期、DOM 测量、滚动和触摸边界。默认逐项 Tab 是 MDV 的交互选择；`tabNavigation="active"` 提供 APG 单入口模式，不把两者混为一种规范。
+
+## m3ui-vue Tabs 弹簧算法
+
+- 来源：https://github.com/SrWither/m3ui-vue/blob/main/src/components/MTabs.vue
+- 版权：Copyright (c) 2026 Fadel
+- 许可：MIT License
+- 使用位置：`src/components/tabs-indicator.ts`。
+
+MDV 改写其独立位置／宽度弹簧和中断时保留速度的实现，沿用 dampingRatio=0.9、stiffness=700，增加小步积分、布局重测和生命周期清理；指示线几何依据上述官方规格独立测量。未引入 m3ui-vue 运行时依赖。
+
+```text
+MIT License
+
+Copyright (c) 2026 Fadel
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
 ## Material Symbols 图标数据
 
 - 来源：https://github.com/google/material-design-icons
