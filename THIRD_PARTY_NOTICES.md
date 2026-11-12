@@ -2,6 +2,14 @@
 
 本文件随 MDV 源码和 npm 包提供，记录当前实际使用的第三方令牌、算法、字体、图标和渲染器。
 
+## Material 3 Search 规格与令牌
+
+- 规格来源：https://m3.material.io/components/search/specs 、overview、guidelines、accessibility，以及 https://m3.material.io/components/app-bars/specs 的 Search app bar。
+- 版权：Copyright Google LLC。
+- 使用位置：`src/styles/search.css` 的尺寸、形状、颜色角色、状态和排版；`src/components/search-motion.ts` 的 Contained 弹簧参数 damping 0.9／stiffness 1400。
+
+MDV 自行实现 Vue 输入、组合、模态生命周期、定位和动效采样，复用现有 dialog、App Bar、图标和 @floating-ui/dom；未复制 m3ui 的 Search 源码或引入额外 Search 运行时。已只读比较 m3ui 的组件分工，不将其旧版 Docked 形态和尺寸当作当前官网数值。官网 Overview 的默认无阴影与 elevation token 的表面层级分别处理，默认不绘制额外阴影。
+
 ## Material Web 设计令牌
 
 - 来源：https://github.com/material-components/material-web/tree/main/tokens/versions/v0_192

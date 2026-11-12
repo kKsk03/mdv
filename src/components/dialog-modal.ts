@@ -127,10 +127,14 @@ export function trapDialogTab(dialog: HTMLDialogElement, event: KeyboardEvent) {
   }
 }
 
-export function acquireDialog(dialog: HTMLDialogElement) {
+export function acquireDialog(dialog: HTMLDialogElement, returnFocus?: HTMLElement | null) {
   const doc = dialog.ownerDocument
   dismissTooltipsOutsideDialog(dialog)
-  const previous = dismissMenusOutsideDialog(dialog) ?? (doc.activeElement as HTMLElement | null)
+  const menuTrigger = dismissMenusOutsideDialog(dialog)
+  const previous =
+    returnFocus === undefined
+      ? (menuTrigger ?? (doc.activeElement as HTMLElement | null))
+      : returnFocus
   let state = documents.get(doc)
   if (!state) {
     const entries: ModalEntry[] = []

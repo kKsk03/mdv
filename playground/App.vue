@@ -28,6 +28,7 @@ import NavigationBarPlayground from './NavigationBarPlayground.vue'
 import NavigationRailPlayground from './NavigationRailPlayground.vue'
 import NavigationDrawerPlayground from './NavigationDrawerPlayground.vue'
 import AppBarPlayground from './AppBarPlayground.vue'
+import SearchPlayground from './SearchPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -192,6 +193,12 @@ const pages = [
     label: 'App Bar 应用栏',
     description: '检查三种尺寸、副标题、居中、图像、滚动收合／隐藏、键盘和导航组合。',
     component: AppBarPlayground,
+  },
+  {
+    id: 'search',
+    label: 'Search 搜索',
+    description: '检查两种样式、Docked／全屏、输入法、结果、焦点与搜索应用栏组合。',
+    component: SearchPlayground,
   },
   {
     id: 'theme',

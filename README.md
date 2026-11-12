@@ -25,7 +25,9 @@ MdvNavigationRail、MdvModalNavigationRail 与 MdvNavigationRailItem 已完成�
 
 MdvNavigationDrawer、MdvModalNavigationDrawer、MdvNavigationDrawerItem 与 MdvNavigationDrawerGroup 已完成旧版 M3 Standard／Modal 当前约定范围的项目检查与用户预览验收，包含分组嵌套、子项整行缩进、原生导航语义、关闭拦截与滑动；真实包消费另行验证。当前 Expressive 新项目可优先使用 Expanded Navigation Rail。
 
-MdvAppBar 与 MdvAppBarScaffold 已完成当前约定范围的项目检查与用户预览验收。提供 Small／Medium flexible／Large flexible、副标题、居中、图像、连续滚动配色、收合／隐藏及 default／elevated／bordered 外观，默认无阴影；右侧内容可通过 actions 插槽扩展。Scaffold 由 appbar／默认插槽组合应用栏与正文，自动关联滚动目标，滚动条只在正文区显示；与相邻 Standard Drawer 组合时保留圆角并延伸应用栏实际背景。真实包消费另行验证，Search app bar 后续结合 Search 实现。
+MdvAppBar 与 MdvAppBarScaffold 已完成当前约定范围的项目检查与用户预览验收。提供 Small／Medium flexible／Large flexible、副标题、居中、图像、连续滚动配色、收合／隐藏及 default／elevated／bordered 外观，默认无阴影；右侧内容可通过 actions 插槽扩展。Scaffold 由 appbar／默认插槽组合应用栏与正文，自动关联滚动目标，滚动条只在正文区显示；与相邻 Standard Drawer 组合时保留圆角并延伸应用栏实际背景。真实包消费另行验证。
+
+MdvSearchBar、MdvSearchView 与 MdvSearchAppBar 已完成当前约定范围的项目检查与用户开发预览验收。包含独立输入、Contained／Divided 两种样式、Docked／Fullscreen 与自动布局、结果插槽、输入法与焦点，以及复用 App Bar／Scaffold 的搜索应用栏；默认 Contained，无额外阴影。真实包消费另行验证。
 
 ## 本地开发
 
@@ -93,6 +95,7 @@ pnpm build
 - [MdvNavigationRail、MdvModalNavigationRail 与 MdvNavigationRailItem 导航轨](./COMPONENTS.md#mdvnavigationrail)
 - [MdvNavigationDrawer 导航抽屉家族](./COMPONENTS.md#mdvnavigationdrawer)
 - [MdvAppBar 应用栏](./COMPONENTS.md#mdvappbar)
+- [Search 搜索家族](./COMPONENTS.md#mdvsearchbarmdvsearchview-与-mdvsearchappbar)
 
 ## 主题与排版
 

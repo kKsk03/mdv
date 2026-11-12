@@ -39,8 +39,9 @@ interface DialogOptions {
   hasTitle: () => boolean
   hasContentSlot: () => boolean
   animate: DialogAnimator
-  prepare?: () => void
+  prepare?: () => void | Promise<void>
   preserveExternalFocus?: boolean
+  returnFocus?: () => HTMLElement | null | undefined
 }
 
 /** 共用模态生命周期，各组件分别维护模板、布局和动画。 */
@@ -191,6 +192,8 @@ export function useDialog(props: MdvDialogProps, emit: DialogEmit, options: Dial
       )
       await motion.finished
     } else oldMotion?.cancel()
+    // 入口可能随 modelValue 解除 disabled／隐藏；等待本轮 DOM 更新后再恢复焦点。
+    if (!entering) await nextTick()
     if (ticket !== transition || !mounted || !active) return
     motion?.cancel()
     motion = undefined
@@ -215,7 +218,7 @@ export function useDialog(props: MdvDialogProps, emit: DialogEmit, options: Dial
     const element = dialog.value
     if (!element || !mounted || !active || ticket !== transition || !props.modelValue) return
     if (!element.open) {
-      modal = acquireDialog(element)
+      modal = acquireDialog(element, options.returnFocus?.())
       try {
         element.showModal()
       } catch (error) {
@@ -225,7 +228,7 @@ export function useDialog(props: MdvDialogProps, emit: DialogEmit, options: Dial
       }
       element.returnValue = ''
       if (options.prepare) {
-        options.prepare()
+        await options.prepare()
         await nextTick()
         if (!mounted || !active || ticket !== transition || !props.modelValue) return
       }

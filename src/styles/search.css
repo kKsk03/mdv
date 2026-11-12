@@ -1,0 +1,335 @@
+.mdv-search-bar {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 56px;
+  align-items: center;
+  border: 0;
+  border-radius: var(--mdv-sys-shape-corner-full);
+  padding: 4px;
+  background: var(--mdv-search-bar-background, var(--mdv-sys-color-surface-container-high));
+  color: var(--mdv-sys-color-on-surface-variant);
+  font-family: var(--mdv-sys-typescale-font-family);
+}
+
+.mdv-search-bar__state {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.mdv-search-bar__state::before {
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  content: '';
+  opacity: 0;
+  transition: opacity 150ms var(--mdv-sys-motion-easing-standard);
+}
+
+@media (hover: hover) {
+  .mdv-search-bar:not(.mdv-search-bar--disabled):has(.mdv-search-bar__input:hover)
+    > .mdv-search-bar__state::before {
+    opacity: 0.08;
+  }
+}
+
+.mdv-search-bar--keyboard-focus:has(> .mdv-search-bar__input:focus-visible) {
+  outline: 3px solid var(--mdv-sys-color-secondary);
+  outline-offset: 2px;
+}
+
+.mdv-search-bar__input {
+  box-sizing: border-box;
+  inline-size: 0;
+  min-inline-size: 0;
+  min-block-size: 48px;
+  flex: 1 1 0;
+  border: 0;
+  outline: none;
+  padding: 8px 4px;
+  background: transparent;
+  color: var(--mdv-sys-color-on-surface);
+  font-family: inherit;
+  font-size: var(--mdv-sys-typescale-body-large-size);
+  font-weight: var(--mdv-sys-typescale-body-large-weight);
+  line-height: var(--mdv-sys-typescale-body-large-line-height);
+  letter-spacing: var(--mdv-sys-typescale-body-large-tracking);
+  appearance: none;
+}
+
+.mdv-search-bar__input::placeholder {
+  color: var(--mdv-sys-color-on-surface-variant);
+  opacity: 1;
+}
+
+.mdv-search-bar__input::-webkit-search-cancel-button,
+.mdv-search-bar__input::-webkit-search-decoration {
+  display: none;
+  appearance: none;
+}
+
+.mdv-search-bar__leading,
+.mdv-search-bar__trailing {
+  display: flex;
+  min-block-size: 48px;
+  flex: none;
+  align-items: center;
+}
+
+.mdv-search-bar__leading {
+  min-inline-size: 48px;
+  justify-content: center;
+}
+
+.mdv-search-bar__trailing {
+  margin-inline-start: 4px;
+}
+
+.mdv-search-bar__leading :is(img, svg),
+.mdv-search-bar__trailing :is(img, svg) {
+  flex: none;
+}
+
+.mdv-search-bar__trailing img {
+  inline-size: 30px;
+  block-size: 30px;
+  border-radius: 50%;
+}
+
+.mdv-search-bar--disabled {
+  color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 38%, transparent);
+}
+
+.mdv-search-bar--disabled .mdv-search-bar__input,
+.mdv-search-bar--disabled .mdv-search-bar__input::placeholder {
+  color: inherit;
+  cursor: not-allowed;
+}
+
+.mdv-search-view {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 768px;
+  min-inline-size: 0;
+  padding-inline: 24px;
+}
+
+.mdv-search-view--custom-trigger {
+  display: inline-block;
+  inline-size: auto;
+  padding: 0;
+}
+
+.mdv-search-view__entry--hidden {
+  visibility: hidden;
+}
+
+.mdv-search-dialog {
+  --mdv-search-expand-inline: 12px;
+
+  position: fixed;
+  inset: 0;
+  box-sizing: border-box;
+  inline-size: 100%;
+  block-size: 100%;
+  max-inline-size: none;
+  max-block-size: none;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--mdv-sys-color-on-surface);
+  font-family: var(--mdv-sys-typescale-font-family);
+  overscroll-behavior: contain;
+}
+
+.mdv-search-dialog:not([open]) {
+  display: none;
+}
+
+.mdv-search-dialog::backdrop {
+  background: transparent;
+}
+
+.mdv-search-dialog__scrim {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--mdv-sys-color-scrim) 32%, transparent);
+}
+
+.mdv-search-dialog__container {
+  position: fixed;
+  display: flex;
+  overflow: clip;
+  overflow-clip-margin: 6px;
+  box-sizing: border-box;
+  inline-size: var(--mdv-search-motion-width, var(--mdv-search-target-width, 360px));
+  block-size: var(--mdv-search-motion-height, auto);
+  min-block-size: min(
+    var(--mdv-search-motion-height, 240px),
+    var(--mdv-search-available-height, 66dvh)
+  );
+  max-block-size: var(--mdv-search-available-height, 66dvh);
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mdv-search-dialog__header {
+  flex: none;
+}
+
+.mdv-search-dialog__results {
+  overflow: auto;
+  box-sizing: border-box;
+  min-block-size: 0;
+  flex: 1 1 auto;
+  border-radius: 12px;
+  padding-block: 8px;
+  background: var(--mdv-sys-color-surface-container-high);
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--mdv-sys-color-outline-variant) transparent;
+}
+
+.mdv-search-dialog__results:focus-visible {
+  outline: 3px solid var(--mdv-sys-color-secondary);
+  outline-offset: -3px;
+}
+
+.mdv-search-dialog__results > .mdv-list {
+  background: transparent;
+}
+
+/* 紧邻结果区的输入栏和贴边列表项在内部绘制焦点框，避免重叠或被滚动区裁掉。 */
+.mdv-search-dialog__field:has(> .mdv-search-bar__input:focus-visible),
+.mdv-search-dialog__results
+  > .mdv-list
+  > .mdv-list-item
+  > .mdv-list-item__shape:has(> .mdv-list-item__primary:focus-visible) {
+  outline-offset: -3px;
+}
+
+.mdv-search-dialog__status {
+  position: absolute;
+  overflow: hidden;
+  inline-size: 1px;
+  block-size: 1px;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.mdv-search-dialog--fullscreen .mdv-search-dialog__container {
+  block-size: var(--mdv-search-motion-height, var(--mdv-search-viewport-height, 100dvh));
+  min-block-size: 0;
+  border-radius: 0;
+  padding-block-start: max(12px, env(safe-area-inset-top, 0px));
+  padding-block-end: env(safe-area-inset-bottom, 0px);
+  padding-inline: max(12px, env(safe-area-inset-left, 0px))
+    max(12px, env(safe-area-inset-right, 0px));
+  background: var(--mdv-sys-color-surface-container-low);
+}
+
+.mdv-search-dialog--fullscreen .mdv-search-dialog__results {
+  background: transparent;
+}
+
+.mdv-search-dialog--divided .mdv-search-dialog__container {
+  gap: 0;
+  border-radius: 28px;
+  background: var(--mdv-sys-color-surface-container-high);
+}
+
+.mdv-search-dialog--divided .mdv-search-dialog__header {
+  border-block-end: 1px solid var(--mdv-sys-color-outline);
+}
+
+.mdv-search-dialog--divided .mdv-search-dialog__field {
+  border-radius: 28px 28px 0 0;
+  background: transparent;
+}
+
+.mdv-search-dialog--divided .mdv-search-dialog__results {
+  border-radius: 0;
+  padding-block-end: 16px;
+}
+
+.mdv-search-dialog--divided.mdv-search-dialog--fullscreen .mdv-search-dialog__container {
+  border-radius: 0;
+  padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
+  padding-block-start: env(safe-area-inset-top, 0px);
+}
+
+.mdv-search-dialog--divided.mdv-search-dialog--fullscreen .mdv-search-dialog__field {
+  min-block-size: 72px;
+  border-radius: 0;
+}
+
+.mdv-search-dialog__back:dir(rtl) {
+  transform: scaleX(-1);
+}
+
+.mdv-app-bar--search > .mdv-app-bar__surface > .mdv-app-bar__content {
+  inset-block-start: var(--mdv-app-bar-compact-y, 4px);
+  align-items: center;
+}
+
+.mdv-app-bar--search > .mdv-app-bar__surface > .mdv-app-bar__content > .mdv-search-view {
+  max-inline-size: 720px;
+  padding: 0;
+}
+
+.mdv-app-bar--search
+  > .mdv-app-bar__surface
+  > .mdv-app-bar__content
+  > .mdv-search-view
+  > .mdv-search-dialog {
+  --mdv-search-expand-inline: 0px;
+}
+
+.mdv-app-bar--search
+  > .mdv-app-bar__surface
+  > .mdv-app-bar__content
+  > .mdv-search-view
+  > .mdv-search-view__entry {
+  --mdv-search-bar-background: color-mix(
+    in srgb,
+    var(--mdv-sys-color-surface-container-highest) calc(var(--mdv-app-bar-color-progress) * 100%),
+    var(--mdv-sys-color-surface-container-high)
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mdv-search-bar__state::before {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .mdv-search-bar,
+  .mdv-search-dialog__container,
+  .mdv-search-dialog__results {
+    border: 1px solid CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  .mdv-search-bar__input {
+    color: FieldText;
+  }
+
+  .mdv-search-bar--disabled {
+    color: GrayText;
+  }
+
+  .mdv-search-bar--keyboard-focus:has(> .mdv-search-bar__input:focus-visible),
+  .mdv-search-dialog__results:focus-visible {
+    outline-color: Highlight;
+  }
+}

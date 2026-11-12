@@ -244,3 +244,19 @@ export type {
   MdvIconButtonWidth,
 } from './components/icon-button.types'
 export type { MdvColorRole, MdvColorScheme } from './dynamic-color'
+export { default as MdvSearchBar } from './components/MdvSearchBar.vue'
+export { default as MdvSearchView } from './components/MdvSearchView.vue'
+export { default as MdvSearchAppBar } from './components/MdvSearchAppBar.vue'
+export type {
+  MdvSearchVariant,
+  MdvSearchLayout,
+  MdvSearchCloseReason,
+  MdvSearchCloseDetail,
+  MdvSearchBeforeClose,
+  MdvSearchBarProps,
+  MdvSearchViewProps,
+  MdvSearchAppBarProps,
+  MdvSearchSlotProps,
+  MdvSearchTriggerProps,
+  MdvSearchTriggerSlotProps,
+} from './components/search.types'

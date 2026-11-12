@@ -2597,7 +2597,7 @@ active 背景 secondary-container，文字／图标 on-secondary-container；未
 
 ## MdvAppBar
 
-按当前 [App Bar 规范](https://m3.material.io/components/app-bars/specs) 提供 Small、Medium flexible、Large flexible。默认 Small；旧 Center-aligned 对应 Small 的居中配置。Search app bar 与 search view 留到 Search 组件一起实现。
+按当前 [App Bar 规范](https://m3.material.io/components/app-bars/specs) 提供 Small、Medium flexible、Large flexible。默认 Small；旧 Center-aligned 对应 Small 的居中配置。搜索应用栏由下述 MdvSearchAppBar 组合提供，复用本组件的滚动和 Scaffold 协调。
 
 应用布局推荐组合 `MdvAppBarScaffold`：应用栏放在 `appbar` 插槽、正文放在默认插槽，滚动条只出现在正文区，自动关联滚动目标。
 
@@ -2702,3 +2702,108 @@ class、style、id、ARIA 和原生事件透传到 header；没有额外组件�
 MdvAppBar 与 MdvAppBarScaffold 当前约定范围已完成用户项目检查与开发预览验收，包含连续配色、三外观、独立正文滚动和 Drawer 圆角背景延伸。已提供滚动／目标切换／焦点／测量／KeepAlive、弹簧中断、SSR／hydration、Scaffold 嵌套隔离与节点保留等测试。协作侧真实浏览器检查了正文滚动条起点、收合中滚动范围、底端与短正文、自动隐藏及键盘恢复、窄容器／RTL／深色／放大文字、导航／菜单／对话框组合和背景延伸，控制台无警告或错误。其余设备专项与真实包消费另行验证。
 
 公共类型：`MdvAppBarProps`、`MdvAppBarVariant`、`MdvAppBarAppearance`、`MdvAppBarTitleAlignment`、`MdvAppBarScrollBehavior`、`MdvAppBarScrollTarget`、`MdvAppBarSlotProps`、`MdvAppBarScaffoldProps`。
+
+## MdvSearchBar、MdvSearchView 与 MdvSearchAppBar
+
+依据 [Search 规范](https://m3.material.io/components/search/specs)、Guidelines／Accessibility 和 Search app bar 测量图实现。默认 Contained；Divided 为旧版 M3 样式，按约定一并覆盖。当前约定范围已完成用户项目检查与开发预览验收，真实包消费另行验证。
+
+`MdvSearchBar` 是独立的原生搜索输入；`MdvSearchView` 默认自带搜索栏入口，管理模态展开和结果；`MdvSearchAppBar` 将 SearchView 放入 64px 应用栏，共用既有滚动、焦点显示和 Scaffold 布局。结果数据、过滤、网络请求和历史记录由应用管理。
+
+```vue
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import { MdvSearchView, MdvList, MdvListItem } from 'mdv'
+
+const query = ref('')
+const open = ref(false)
+const items = ['旅行计划', '设计评审', '团队分享']
+const results = computed(() => items.filter((item) => item.includes(query.value)))
+function search(value: string) {
+  console.log('提交搜索', value)
+}
+</script>
+
+<template>
+  <MdvSearchView
+    v-model="query"
+    v-model:open="open"
+    placeholder="搜索邮件"
+    :status-text="`${results.length} 条结果`"
+    @search="search"
+  >
+    <template #default="{ close }">
+      <MdvList>
+        <MdvListItem
+          v-for="item in results"
+          :key="item"
+          :headline="item"
+          interactive
+          @click="query = item; close()"
+        />
+      </MdvList>
+    </template>
+  </MdvSearchView>
+</template>
+```
+
+### 输入与布局
+
+| 属性 | 默认值 | 说明 |
+| --- | --- | --- |
+| `v-model` | `''` | 查询字符串；未绑定时由组件管理 |
+| `placeholder` | `'搜索'` | 提示文字 |
+| `label` | 使用 placeholder | 输入与搜索对话框的可访问名称；原生输入 ARIA 可另外透传 |
+| `disabled`／`readonly` | `false` | 禁用不请求展开；只读可查看已有结果，不能编辑或清空 |
+| `clearable`／`clearLabel` | `true`／`'清空搜索'` | 查询非空时显示独立清空动作 |
+| `loading` | `false` | 输入及结果区域标记忙碌，不自动禁用输入；进度视觉用结果插槽组合 |
+| `v-model:open` | `false` | View／AppBar 展开状态；未绑定时由组件管理 |
+| `variant` | `'contained'` | View／AppBar 支持 contained／divided |
+| `layout` | `'auto'` | auto／docked／fullscreen；auto 小于 600px 全屏，否则 Docked |
+| `backLabel` | `'返回'` | 全屏、Divided 或图标入口展开时的返回按钮名称 |
+| `inputAttrs` | — | View／AppBar 输入的原生 name、form、maxlength、autocomplete、ARIA 与事件 |
+| `statusText` | `''` | View／AppBar 单独的礼貌状态播报文本 |
+| `closeOnEsc`／`closeOnScrim` | `true` | 关闭请求策略 |
+| `beforeClose` | — | 接收只读 `{ reason }`，返回 false 或 Promise false 拒绝关闭 |
+| `destroyOnClose` | `false` | 退出完成后是否销毁展开内容；默认保留节点与结果滚动 |
+
+Bar 的原生 class／style 作用于外层，其余原生输入属性与事件作用于 input。View／AppBar 的原生属性保留在根节点，输入属性使用 inputAttrs；控件 ID 会按当前活动输入分配，避免入口与展开输入重复 ID。两个输入共享查询，并仅让当前输入参与表单；表单在外部时通过 inputAttrs.form 关联已有表单 ID。
+
+搜索栏最小高 56px；独立 Bar 宽度由父级决定。View 的普通栏在 pane 内左右 24px，Contained 展开时向两侧各延展 12px；搜索应用栏使用自身的 4px 外缘和 8px 动作间距。推荐宽度 360–720px，在窄视口内按可用空间缩小。Contained Docked 的栏和结果相隔 2px，结果圆角 12px；Divided Docked 使用 28px 合并容器，全屏头部高 72px。
+
+Docked 和全屏均使用模态遮罩与原生 dialog，背景暂不可交互。输入栏固定，仅结果区滚动；Docked 按视口空间约束，最大约屏高 2/3。全屏跟随 VisualViewport 与安全区。层级令牌与可见阴影分别处理，默认不额外绘制阴影。浅深主题、动态色及局部令牌在原 DOM 继承，无需 Teleport 到 body 复制主题。
+
+### 事件、插槽与实例
+
+- `search(query, originalEvent?)`：Enter 提交；中文 composition 中的 Enter 不提交，按键重复不重复搜索。提交后保留查询并将焦点移到结果区域，默认不关闭。
+- `clear()`：清空查询的通知；不关闭，焦点返回输入。
+- `open`／`opened`：接受展开／展开动效完成；`close(detail)`／`closed(detail)`：接受关闭／退出完成。`detail.reason` 为 back／escape／scrim／programmatic／model；父级拒绝 v-model:open 请求时不释放模态或触发关闭生命周期。
+- Bar 的 `leading`／`trailing`：前后图标或独立动作，动作不嵌套进整栏按钮。
+- View 的 `leading`：默认入口前导；`trailing`：入口和展开栏尾部，提供完整搜索状态。`default`：结果，提供 `{ query, expanded, close, search }`。复用插槽会分别实例化入口和展开内容，避免在其中写死重复 ID。
+- View 的 `trigger`：提供上述状态和 `triggerProps`，绑定到一个原生按钮或根为按钮的组件；包含 ref、ARIA 关联和原生点击处理，可组合 MdvIconButton。自定义触发器需提供可访问名称。
+- Bar 暴露 `element`／`inputElement`／`focus(options?)`／`blur()`；View 另有 `open()`／`close()`，返回 Promise boolean 表示父级是否接受请求；AppBar 同样提供，并另有 `refresh()`。入口切换时通过当前 inputElement 访问实际输入，不缓存旧节点。
+
+返回、Escape 和遮罩保留查询，关闭后恢复原触发器焦点且不自动重开。Tab／Shift+Tab 自然遍历最上层；输入的 Down／Up 进入建议首／尾，MdvListItem 的主操作可用 Up／Down／Home／End 导航，首项 Up 返回输入，跳过禁用项。自定义结果可将 `data-mdv-search-result` 放到原生可聚焦操作上；嵌套输入、筛选按钮和 List 自身已有的键盘模型保持原生行为。结果维持 list／button／link 等实际语义，不默认套 menu／listbox 或 combobox。
+
+### 搜索应用栏
+
+```vue
+<MdvAppBarScaffold style="height: 32rem">
+  <template #appbar>
+    <MdvSearchAppBar v-model="query" scroll-behavior="pinned">
+      <template #leading><!-- 导航按钮 --></template>
+      <template #actions><!-- 栏外账号或更多操作 --></template>
+      <template #search-trailing><!-- 搜索栏内部操作 --></template>
+      <template #default="{ close }"><!-- 搜索建议或结果 --></template>
+    </MdvSearchAppBar>
+  </template>
+  <!-- 正文内容 -->
+</MdvAppBarScaffold>
+```
+
+AppBar 另支持 `appearance='default' | 'elevated' | 'bordered'`、`scrollBehavior='none' | 'pinned' | 'enter-always'`、`scrollTarget` 和 `scrolled`，默认 none／default。配色连续跟随正文滚动，elevated 初始无阴影。leading／actions 是栏外操作，提供 AppBar 的 scrolled／collapsed；search-leading／search-trailing 是栏内插槽，提供搜索状态。输入使用单独的内容区域，不放入标题 heading；结果中嵌套的其它 AppBar 不继承搜索内容。
+
+建议使用已有 Scaffold 让滚动条只在正文出现，省略 scrollTarget 自动关联正文；与相邻 Standard Drawer 的圆角背景延伸规则相同。组件不默认添加全局快捷键、网络防抖、历史存储或路由行为。
+
+已编写输入、IME、模型拒绝、表单字段、焦点、嵌套浮层、响应切换、KeepAlive、动效中断与 SSR／hydration 规格。用户确认当前约定范围的项目指令全部通过，开发预览验收完成。协作侧在现有开发预览核对了四种布局的鼠标／键盘焦点来源和 Tab 焦点框，包含输入栏与结果区的边界；软键盘、触屏、读屏专项和真实包消费另行验证。
+
+公共类型：`MdvSearchVariant`、`MdvSearchLayout`、`MdvSearchCloseReason`、`MdvSearchCloseDetail`、`MdvSearchBeforeClose`、`MdvSearchBarProps`、`MdvSearchViewProps`、`MdvSearchAppBarProps`、`MdvSearchSlotProps`、`MdvSearchTriggerProps`、`MdvSearchTriggerSlotProps`。

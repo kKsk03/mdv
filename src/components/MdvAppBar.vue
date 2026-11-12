@@ -8,6 +8,7 @@ import {
   onDeactivated,
   onMounted,
   onUpdated,
+  provide,
   ref,
   shallowRef,
   useTemplateRef,
@@ -16,6 +17,7 @@ import {
 import type { CSSProperties, VNode, WatchStopHandle } from 'vue'
 import { createAppBarScroll } from './app-bar-scroll'
 import { appBarScaffoldKey } from './app-bar-scaffold'
+import { appBarSearchKey } from './app-bar-search'
 import type { MdvAppBarProps, MdvAppBarSlotProps } from './app-bar.types'
 
 defineOptions({ name: 'MdvAppBar' })
@@ -38,6 +40,9 @@ const slots = defineSlots<{
 
 const element = useTemplateRef<HTMLElement>('element')
 const scaffold = inject(appBarScaffoldKey, null)
+const search = inject(appBarSearchKey, null)
+// 只作用于当前组合栏；搜索结果中的其它 AppBar 保持原有行为。
+provide(appBarSearchKey, null)
 const content = useTemplateRef<HTMLElement>('content')
 const titleElement = useTemplateRef<HTMLElement>('titleElement')
 const leading = useTemplateRef<HTMLElement>('leading')
@@ -206,17 +211,21 @@ function measure() {
   observeLayout()
   const compact = Math.max(
     64,
-    compactContent + 16,
+    compactContent + (search ? 8 : 16),
     (leadingBox?.height ?? 0) + 16,
     (actionsBox?.height ?? 0) + 16,
   )
   let start = Math.max(16, (leadingBox?.width ?? 0) + (slots.leading ? 16 : 0))
   let end = Math.max(16, (actionsBox?.width ?? 0) + (slots.actions ? 16 : 0))
+  if (search) {
+    start = 4 + (slots.leading ? (leadingBox?.width ?? 48) + 8 : 0)
+    end = 4 + (slots.actions ? (actionsBox?.width ?? 48) + 8 : 0)
+  }
   if (props.titleAlignment === 'center') start = end = Math.max(start, end)
   const next = {
     expanded: flexible.value ? Math.max(defaultHeight(), compact + expandedContent + 12) : compact,
     compact,
-    compactY: Math.max(8, (compact - compactContent) / 2),
+    compactY: Math.max(search ? 4 : 8, (compact - compactContent) / 2),
     start,
     end,
     imageHeight,
@@ -355,6 +364,7 @@ defineExpose({ element, refresh })
         'mdv-app-bar--collapsed': collapsed,
         'mdv-app-bar--short-title': props.collapsedTitle !== undefined && !slots.title,
         'mdv-app-bar--transparent': props.transparentOnScroll,
+        'mdv-app-bar--search': !!search,
       },
     ]"
     :style="styles"
@@ -374,12 +384,13 @@ defineExpose({ element, refresh })
         </div>
       </div>
       <div ref="content" class="mdv-app-bar__content">
+        <component :is="search.content" v-if="search" />
         <div v-if="slots.image && flexible" ref="image" class="mdv-app-bar__image">
           <slot name="image" v-bind="slotState" />
         </div>
         <component
           :is="`h${props.headingLevel}`"
-          v-if="hasTitle()"
+          v-if="!search && hasTitle()"
           ref="titleElement"
           class="mdv-app-bar__title"
           :aria-label="
