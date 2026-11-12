@@ -25,6 +25,7 @@ import BottomSheetPlayground from './BottomSheetPlayground.vue'
 import SideSheetPlayground from './SideSheetPlayground.vue'
 import TabsPlayground from './TabsPlayground.vue'
 import NavigationBarPlayground from './NavigationBarPlayground.vue'
+import NavigationRailPlayground from './NavigationRailPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -171,6 +172,12 @@ const pages = [
     label: 'Navigation Bar 导航栏',
     description: '检查 Flexible 导航栏的紧凑／中等布局、目的地状态、徽标与原生导航语义。',
     component: NavigationBarPlayground,
+  },
+  {
+    id: 'navigation-rail',
+    label: 'Navigation Rail 导航轨',
+    description: '检查收起／展开、Standard 布局与 Modal 覆盖、内容胶囊、徽标、键盘和长标签。',
+    component: NavigationRailPlayground,
   },
   {
     id: 'theme',

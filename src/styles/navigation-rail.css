@@ -1,0 +1,425 @@
+@layer components {
+  .mdv-navigation-rail {
+    --mdv-rail-progress: 0;
+    --mdv-rail-content-progress: clamp(0, var(--mdv-rail-progress), 1);
+    --mdv-rail-rest: calc(1 - var(--mdv-rail-content-progress));
+
+    position: relative;
+    display: flex;
+    box-sizing: border-box;
+    inline-size: calc(
+      96px + (var(--mdv-rail-expanded-size, 220px) - 96px) * var(--mdv-rail-progress)
+    );
+    max-inline-size: 100%;
+    block-size: 100%;
+    min-inline-size: 0;
+    min-block-size: 0;
+    flex: 0 0 auto;
+    flex-direction: column;
+    padding-block: 44px 20px;
+    overflow: hidden;
+    background: var(--mdv-sys-color-surface);
+    color: var(--mdv-sys-color-on-surface-variant);
+    font-family: var(--mdv-sys-typescale-font-family);
+    outline: none;
+  }
+  .mdv-navigation-rail[data-expanded='true'] {
+    --mdv-rail-progress: 1;
+  }
+  .mdv-navigation-rail--external[data-expanded] {
+    --mdv-rail-progress: inherit;
+  }
+  .mdv-navigation-rail--transparent {
+    background: transparent;
+  }
+  .mdv-navigation-rail--divider {
+    border-inline-end: 1px solid var(--mdv-sys-color-outline-variant);
+  }
+  .mdv-navigation-rail__probe {
+    position: absolute;
+    block-size: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .mdv-navigation-rail__header {
+    display: flex;
+    min-block-size: 0;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-block-end: 40px;
+    padding-inline: 20px;
+  }
+  .mdv-navigation-rail__menu {
+    display: flex;
+    min-block-size: 48px;
+    align-items: center;
+    padding-inline-start: 4px;
+  }
+  .mdv-navigation-rail__fab {
+    display: flex;
+    max-inline-size: 100%;
+    min-block-size: 56px;
+    align-items: center;
+  }
+  .mdv-navigation-rail__scroll {
+    display: flex;
+    min-block-size: 0;
+    flex: 1 1 0;
+    flex-direction: column;
+    overflow: hidden auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--mdv-sys-color-outline-variant) transparent;
+    scroll-padding-block: 6px;
+  }
+  .mdv-navigation-rail__items {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    gap: calc(4px * var(--mdv-rail-rest));
+    padding-block: 6px;
+  }
+  .mdv-navigation-rail[data-alignment='center'] .mdv-navigation-rail__items {
+    margin-block: auto;
+  }
+  .mdv-navigation-rail-item {
+    --mdv-rail-indicator-color: transparent;
+    --mdv-rail-label-size: 116px;
+    --mdv-rail-label-height: 20px;
+    --mdv-rail-collapsed-height: 16px;
+    --mdv-rail-badge-size: 0px;
+    --mdv-rail-badge-space: 0px;
+
+    position: relative;
+    display: flex;
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-block-size: calc(56px + 8px * var(--mdv-rail-rest));
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    margin: 0;
+    padding: calc(6px * var(--mdv-rail-rest)) 0;
+    border: 0;
+    background: transparent;
+    color: var(--mdv-sys-color-on-surface-variant);
+    font: inherit;
+    text-align: start;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .mdv-navigation-rail-item__name {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .mdv-navigation-rail-item__measure {
+    position: absolute;
+    inline-size: max-content;
+    max-inline-size: none;
+    block-size: auto;
+    visibility: hidden;
+    white-space: pre;
+    pointer-events: none;
+  }
+  .mdv-navigation-rail-item__pill {
+    position: relative;
+    display: flex;
+    box-sizing: border-box;
+    inline-size: calc(
+      56px + (8px + var(--mdv-rail-label-size) + var(--mdv-rail-badge-space)) *
+        var(--mdv-rail-content-progress)
+    );
+    min-block-size: calc(32px + 24px * var(--mdv-rail-content-progress));
+    flex: 0 0 auto;
+    align-items: center;
+    margin-inline-start: 20px;
+    padding-block: calc(4px + 12px * var(--mdv-rail-content-progress));
+    padding-inline: 16px;
+    border-radius: 9999px;
+  }
+  .mdv-navigation-rail-item__surface {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+  .mdv-navigation-rail-item--active {
+    --mdv-rail-indicator-color: var(--mdv-sys-color-secondary-container);
+  }
+  .mdv-navigation-rail-item--active .mdv-navigation-rail-item__icon,
+  .mdv-navigation-rail-item--active .mdv-navigation-rail-item__label {
+    color: var(--mdv-sys-color-on-secondary-container);
+  }
+  .mdv-navigation-rail-item__icon {
+    position: relative;
+    display: inline-flex;
+    inline-size: 24px;
+    block-size: 24px;
+    flex: 0 0 24px;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    line-height: 1;
+  }
+  .mdv-navigation-rail-item__icon > :is(svg, img) {
+    inline-size: 24px;
+    block-size: 24px;
+  }
+  .mdv-navigation-rail-item__expanded {
+    position: relative;
+    display: block;
+    inline-size: calc(var(--mdv-rail-label-size) * var(--mdv-rail-content-progress));
+    max-block-size: calc(var(--mdv-rail-label-height) * var(--mdv-rail-content-progress));
+    flex: 0 0 auto;
+    margin-inline-start: calc(8px * var(--mdv-rail-content-progress));
+    overflow: hidden;
+    opacity: var(--mdv-rail-content-progress);
+  }
+  .mdv-navigation-rail-item__label {
+    display: block;
+    inline-size: var(--mdv-rail-label-size);
+    white-space: normal;
+  }
+  .mdv-navigation-rail-item__label,
+  .mdv-navigation-rail-item__measure {
+    font-size: var(--mdv-sys-typescale-label-large-size);
+    font-weight: var(--mdv-sys-typescale-label-large-weight);
+    line-height: var(--mdv-sys-typescale-label-large-line-height);
+    letter-spacing: var(--mdv-sys-typescale-label-large-tracking);
+  }
+  .mdv-navigation-rail-item__collapsed {
+    position: relative;
+    display: block;
+    box-sizing: content-box;
+    inline-size: 64px;
+    block-size: calc(var(--mdv-rail-collapsed-height) * var(--mdv-rail-rest));
+    margin-inline-start: 16px;
+    padding-block-start: calc(4px * var(--mdv-rail-rest));
+    overflow: hidden;
+    font-size: var(--mdv-sys-typescale-label-medium-size);
+    font-weight: var(--mdv-sys-typescale-label-medium-weight);
+    line-height: var(--mdv-sys-typescale-label-medium-line-height);
+    letter-spacing: var(--mdv-sys-typescale-label-medium-tracking);
+    text-align: center;
+    opacity: var(--mdv-rail-rest);
+  }
+  .mdv-navigation-rail-item__collapsed > span {
+    display: block;
+  }
+  .mdv-navigation-rail-item--active .mdv-navigation-rail-item__collapsed {
+    color: var(--mdv-sys-color-secondary);
+  }
+  .mdv-navigation-rail-item__badge {
+    position: absolute;
+    display: inline-flex;
+    inset-inline-start: calc(
+      40px - var(--mdv-rail-badge-size) * 0.5 +
+        (16px + var(--mdv-rail-label-size) + var(--mdv-rail-badge-size) * 0.5) *
+        var(--mdv-rail-content-progress)
+    );
+    inset-block-start: calc(4px + (50% - 4px) * var(--mdv-rail-content-progress));
+    align-items: center;
+    transform: translateY(-50%);
+  }
+  .mdv-navigation-rail-item__badge:empty,
+  .mdv-navigation-rail-item__badge:has(> .mdv-badge:empty) {
+    display: none;
+  }
+  .mdv-navigation-rail-item__badge .mdv-badge > .mdv-badge__indicator {
+    position: static;
+    transform: none;
+  }
+  .mdv-navigation-rail-item__badge .mdv-badge {
+    max-inline-size: none;
+  }
+  .mdv-navigation-rail-item__state {
+    position: absolute;
+    inset: 0;
+    inline-size: 0%;
+    margin-inline: auto;
+    border-radius: inherit;
+    background: var(--mdv-rail-indicator-color);
+    /* 参考 m3ui MNavigationBar 的 200ms 胶囊展开，内容与点击区域保持不动。 */
+    transition:
+      inline-size 200ms cubic-bezier(0.4, 0, 0.2, 1),
+      background-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .mdv-navigation-rail-item--active .mdv-navigation-rail-item__state {
+    inline-size: 100%;
+  }
+  @media (hover: hover) {
+    .mdv-navigation-rail-item:not(.mdv-navigation-rail-item--disabled):hover
+      .mdv-navigation-rail-item__state {
+      inline-size: 100%;
+      background: color-mix(
+        in srgb,
+        var(--mdv-sys-color-on-secondary-container) 8%,
+        var(--mdv-rail-indicator-color)
+      );
+    }
+  }
+  .mdv-navigation-rail-item:not(.mdv-navigation-rail-item--disabled):is(:focus-visible, :active)
+    .mdv-navigation-rail-item__state {
+    inline-size: 100%;
+    background: color-mix(
+      in srgb,
+      var(--mdv-sys-color-on-secondary-container) 10%,
+      var(--mdv-rail-indicator-color)
+    );
+  }
+  .mdv-navigation-rail-item:focus-visible .mdv-navigation-rail-item__pill::after {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    outline: 3px solid var(--mdv-sys-color-secondary);
+    outline-offset: 2px;
+    content: '';
+    pointer-events: none;
+  }
+  .mdv-navigation-rail-item__ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--mdv-sys-color-on-secondary-container);
+    opacity: 0.1;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0);
+    animation: mdv-button-ripple 450ms var(--mdv-sys-motion-easing-standard) forwards;
+  }
+  .mdv-navigation-rail-item__ripple--released {
+    animation:
+      mdv-button-ripple 450ms var(--mdv-sys-motion-easing-standard) forwards,
+      mdv-button-ripple-fade 150ms linear 150ms forwards;
+  }
+  .mdv-navigation-rail-item:has(.mdv-navigation-rail-item__ripple)
+    .mdv-navigation-rail-item__state {
+    inline-size: 100%;
+    background: var(--mdv-rail-indicator-color);
+  }
+  .mdv-navigation-rail-item--disabled {
+    cursor: default;
+  }
+  .mdv-navigation-rail-item--disabled
+    :is(.mdv-navigation-rail-item__pill, .mdv-navigation-rail-item__collapsed) {
+    color: var(--mdv-sys-color-on-surface);
+    opacity: 0.38;
+  }
+  .mdv-navigation-rail-item--disabled .mdv-navigation-rail-item__surface {
+    background: transparent;
+  }
+  .mdv-navigation-rail-item--disabled .mdv-navigation-rail-item__state {
+    inline-size: 0%;
+    background: transparent;
+  }
+  .mdv-navigation-rail-item--disabled
+    :is(.mdv-navigation-rail-item__icon, .mdv-navigation-rail-item__label) {
+    color: var(--mdv-sys-color-on-surface);
+  }
+
+  .mdv-modal-navigation-rail-host {
+    inline-size: 96px;
+    max-inline-size: 100%;
+    block-size: 100%;
+    min-block-size: 0;
+    flex: 0 0 auto;
+  }
+  .mdv-modal-navigation-rail-host--hidden {
+    inline-size: 0;
+  }
+  .mdv-modal-navigation-rail__scrim {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--mdv-sys-color-scrim) 32%, transparent);
+  }
+  .mdv-modal-navigation-rail__panel {
+    --mdv-rail-progress: 0;
+
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: fit-content;
+    max-inline-size: 100%;
+    block-size: 100%;
+    border-start-end-radius: 16px;
+    border-end-end-radius: 16px;
+    background: var(--mdv-sys-color-surface-container);
+    box-shadow: var(--mdv-sys-elevation-level-2);
+  }
+  .mdv-modal-navigation-rail__content {
+    block-size: 100%;
+  }
+  .mdv-modal-navigation-rail__panel--transparent {
+    background: transparent;
+  }
+  .mdv-modal-navigation-rail .mdv-navigation-rail {
+    max-inline-size: 100vw;
+    border-radius: inherit;
+    background: transparent;
+  }
+  .mdv-modal-navigation-rail__content {
+    border-radius: inherit;
+  }
+  .mdv-modal-navigation-rail[data-hidden-on-collapse='true'] .mdv-navigation-rail {
+    --mdv-rail-progress: 1;
+  }
+  .mdv-modal-navigation-rail[data-hidden-on-collapse='true'] .mdv-modal-navigation-rail__panel {
+    transform: translateX(calc(-100% * (1 - var(--mdv-rail-progress))));
+  }
+  .mdv-modal-navigation-rail[data-hidden-on-collapse='true']:dir(rtl)
+    .mdv-modal-navigation-rail__panel {
+    transform: translateX(calc(100% * (1 - var(--mdv-rail-progress))));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mdv-navigation-rail-item__state {
+      transition: none;
+    }
+    .mdv-navigation-rail-item__ripple {
+      display: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .mdv-navigation-rail {
+      color: CanvasText;
+      background: Canvas;
+    }
+    .mdv-navigation-rail--transparent {
+      background: transparent;
+    }
+    .mdv-navigation-rail--divider {
+      border-color: CanvasText;
+    }
+    .mdv-navigation-rail-item {
+      color: LinkText;
+    }
+    .mdv-navigation-rail-item--active .mdv-navigation-rail-item__surface {
+      border: 2px solid Highlight;
+    }
+    .mdv-navigation-rail-item:focus-visible .mdv-navigation-rail-item__pill::after {
+      outline-color: Highlight;
+    }
+    .mdv-navigation-rail-item--disabled {
+      color: GrayText;
+    }
+    .mdv-modal-navigation-rail__panel {
+      border-inline-end: 1px solid CanvasText;
+      background: Canvas;
+    }
+  }
+}
+
+/* 原生 Dialog 基础样式不在 layer 内；这里只覆盖该模态的布局。 */
+.mdv-modal-navigation-rail[open] {
+  display: block;
+  padding: 0;
+}

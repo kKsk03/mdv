@@ -26,6 +26,7 @@
 - [MdvSideSheet 与 MdvSideSheetScaffold 侧边面板](#mdvsidesheet)
 - [MdvTabs、MdvTab 与 MdvTabPanel 标签页](#mdvtabs)
 - [MdvNavigationBar 与 MdvNavigationBarItem 导航栏](#mdvnavigationbar)
+- [MdvNavigationRail、MdvModalNavigationRail 与 MdvNavigationRailItem 导航轨](#mdvnavigationrail)
 
 ## MdvButton
 
@@ -2326,6 +2327,149 @@ const destinations = [
 
 按钮和链接均保留原生语义、click 事件及其他原生属性。active 项标记 `aria-current="page"`；active 状态由使用方在应用导航成功后更新。所有可用项目按原生顺序逐项响应 Tab；按钮由浏览器原生 Space／Enter 激活，链接按浏览器原生键盘规则工作，不使用 tablist 或 roving tabindex。disabled 链接不参与激活。
 
-视觉使用 MD3 主题令牌与局部主题继承。紧凑布局项目高度 56px、容器总高至少 80px；中等布局项目高 48px、容器高至少 64px。激活图标使用 secondary-container 指示背景，图标内颜色为 on-secondary-container；横向布局的指示背景扩展至图标和文字区域。hover 状态层为 8%，focus-visible／pressed 为 10%；reduced-motion 与 forced-colors 有对应处理。实际内容组合、视口断点、长文字／放大文字、RTL、主题和遮挡情况应在浏览器中验收。
+视觉使用 MD3 主题令牌与局部主题继承。紧凑布局项目高度 56px、容器总高至少 80px；中等布局项目高 48px、容器高至少 64px。激活图标使用 secondary-container 指示背景，图标内颜色为 on-secondary-container；横向布局的指示背景扩展至图标和文字区域。未选项 hover 的 8% 背景胶囊在 200ms 内从中心展开，离开时收回；选中指示器同样按宽度过渡，图标、文字、徽标和点击区域保持稳定。已选项 hover 保持原指示背景，focus-visible／pressed 为 10%；reduced-motion 与 forced-colors 有对应处理。实际内容组合、视口断点、长文字／放大文字、RTL、主题和遮挡情况应在浏览器中验收。
 
 公共类型：`MdvNavigationBarOrientation`、`MdvNavigationBarProps`、`MdvNavigationBarItemProps`、`MdvNavigationBarItemSlotProps`。
+
+## MdvNavigationRail
+
+`MdvNavigationRail` 是在页面布局中展开的标准导航轨；`MdvModalNavigationRail` 用独立模态层展开，保留正文宽度。两款共用 `MdvNavigationRailItem`，按当前 Material 3 Expressive 的 Collapsed／Expanded 规格实现。当前约定范围已完成用户项目检查与组件验收，包含胶囊动画、沉浸模式入口和嵌套弹窗焦点修正；真实包消费另行验证。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import home from '@iconify-icons/material-symbols/home'
+import bookmark from '@iconify-icons/material-symbols/bookmark'
+import person from '@iconify-icons/material-symbols/person'
+import menu from '@iconify-icons/material-symbols/menu'
+import { MdvIcon, MdvIconButton, MdvNavigationRail, MdvNavigationRailItem } from 'mdv'
+
+const expanded = ref(false)
+const current = ref('home')
+const destinations = [
+  { value: 'home', label: '首页', icon: home },
+  { value: 'saved', label: '已保存', icon: bookmark },
+  { value: 'profile', label: '个人资料', icon: person },
+]
+</script>
+
+<template>
+  <div class="flex h-dvh min-w-0">
+    <MdvNavigationRail v-model:expanded="expanded" aria-label="主要目的地">
+      <template #menu="{ menuAttrs, expanded: open }">
+        <MdvIconButton variant="standard" v-bind="menuAttrs" :aria-label="open ? '收起导航' : '展开导航'">
+          <MdvIcon :icon="menu" />
+        </MdvIconButton>
+      </template>
+      <MdvNavigationRailItem
+        v-for="destination in destinations"
+        :key="destination.value"
+        :label="destination.label"
+        :active="current === destination.value"
+        @click="current = destination.value"
+      >
+        <template #icon><MdvIcon :icon="destination.icon" /></template>
+      </MdvNavigationRailItem>
+    </MdvNavigationRail>
+    <main class="min-w-0 flex-1 overflow-auto p-6">当前目的地：{{ current }}</main>
+  </div>
+</template>
+```
+
+导航轨位于布局的逻辑起始侧，父级应提供明确高度。标准款是普通布局元素，其真实宽度随展开动画变化，主区通过 flex／grid 自然让位；组件不固定整页、不修改正文样式。使用方决定何时使用 Navigation Bar、Rail 或其他导航。推荐收起时保留 3–7 个主要目的地，展开后可提供次要目的地。
+
+### 两款共有 Props
+
+| 属性 | 类型 | 默认值与行为 |
+| ---- | ---- | ------------ |
+| `expanded`／`v-model:expanded` | `boolean` | `false`；调用方控制，菜单操作发出更新请求，父级不接受则保持当前状态 |
+| `alignment` | `'top' \| 'center'` | `'top'`；导航项组的位置，菜单／FAB 始终在顶部 |
+| `expandedWidth` | `string` | 省略时按标签与徽标的自然宽度测量；显式 CSS 长度也受 220–360px 和可用空间约束 |
+| `transparent` | `boolean` | `false`；移除默认面板填色，便于组合局部表面 |
+| `showDivider` | `boolean` | `false`；逻辑末端的 1px outline-variant 分割线 |
+
+标准款的 class、style、id、dir、ARIA 和原生事件作用于 `<nav>`。使用 `aria-label`／`aria-labelledby` 命名导航 landmark；不将导航改成 tablist 或 menu。暴露 `focus(options?)`，聚焦当前可用 active 项或第一个可用目的地。
+
+### 插槽
+
+两款的 `default`、`menu`、`fab` 插槽均收到 `MdvNavigationRailSlotProps`：
+
+| 字段 | 含义 |
+| ---- | ---- |
+| `expanded` | 当前这份导航内容的展开形态；可用来显示次要目的地与分组说明 |
+| `toggle()` | 请求展开／收起 |
+| `menuAttrs` | 包含 `aria-controls`、`aria-expanded` 和 `onClick`；直接绑定菜单按钮即可，不必再绑定一次 toggle |
+
+`default` 放导航项，也可组合现有 `MdvDivider` 与分组说明；`menu` 放菜单按钮，`fab` 放主要创建操作。没有对应插槽时不预留顶部空盒。本轮没有新增公共 FAB 组件，插槽可组合现有按钮或应用自己的 FAB。
+
+模态款默认同时保留收起轨与展开层，两份内容复用同一组插槽，`expanded` 分别为 false／true。不要在两份内容中硬编码相同 id；Dialog 等独立浮层建议放在导航外，或只在展开分支实例化。`destroyOnClose` 只控制模态展开内容，收起轨保持挂载。
+
+### MdvNavigationRailItem
+
+| 属性 | 类型 | 默认值与行为 |
+| ---- | ---- | ------------ |
+| `label` | `string` | 必填，可见目的地名称，允许换行、撑高，不默认省略 |
+| `href` | `string` | 提供后为原生 `<a>`；省略时为 `type="button"` |
+| `active` | `boolean` | `false`；由应用在导航成功后控制，激活项标记 `aria-current="page"` |
+| `disabled` | `boolean` | `false`；禁用按钮或移除链接 href 并退出 Tab 顺序 |
+
+`icon`、`badge` 插槽收到 `{ active, expanded }`。图标为装饰内容，目的地名称由 label 提供；徽标可组合现有 `MdvBadge` 并提供通知说明。单份导航内始终保持一份徽标节点，收起时在图标角落，展开时在文字后，不私自清除通知。不要在导航项内部再嵌套按钮或链接。
+
+原生属性和原始 click 事件透传，链接保留 Ctrl／Meta／Shift、新窗口及下载行为。所有可用项依次进入原生 Tab 顺序；Up／Down、Home／End 只移动焦点并在项目区域内滚动，不改变 active。禁用、hidden、inert 和 CSS 隐藏项跳过，嵌套导航只处理最近一层的按键。按钮的 Space／Enter、链接的 Enter 由浏览器激活。暴露 `focus(options?)`、`blur()`；没有 Router 依赖或另一个选中模型。
+
+### MdvModalNavigationRail
+
+从 `mdv` 额外导入 `MdvModalNavigationRail`，将标准示例的根组件替换为它即可使用模态展开。默认收起轨占据 96px，展开层从逻辑起始侧覆盖正文；页面尺寸不随其展开改变。官方 [Placement 指南](https://m3.material.io/components/navigation-rail/guidelines#5802f97a-4b57-4d32-8e06-5e02a3e78ac2) 允许沉浸场景隐藏展开式导航，正文填满空间，但应保留可访问的菜单按钮；普通收起窄轨仍应常驻。此行为由已有的 `hideOnCollapse` 控制：true 时占位为零，页面外部菜单设置 expanded=true 即可打开，无需另加隐藏属性。
+
+```vue
+<MdvIconButton
+  variant="standard"
+  aria-label="打开导航"
+  aria-controls="immersive-navigation"
+  :aria-expanded="expanded"
+  @click="expanded = true"
+>
+  <MdvIcon :icon="menu" />
+</MdvIconButton>
+<MdvModalNavigationRail
+  id="immersive-navigation"
+  v-model:expanded="expanded"
+  hide-on-collapse
+  aria-label="主导航"
+>
+  <template #menu="{ menuAttrs }">
+    <MdvIconButton variant="standard" v-bind="menuAttrs" aria-label="收起导航">
+      <MdvIcon :icon="menu" />
+    </MdvIconButton>
+  </template>
+  <MdvNavigationRailItem label="首页" :active="current === 'home'" @click="current = 'home'">
+    <template #icon><MdvIcon :icon="home" /></template>
+  </MdvNavigationRailItem>
+</MdvModalNavigationRail>
+```
+
+| 模态专有属性 | 类型 | 默认值与行为 |
+| ------------ | ---- | ------------ |
+| `hideOnCollapse` | `boolean` | `false`；沉浸模式设为 true，收起时不保留窄轨占位，需在导航外提供菜单按钮；可动态切换 |
+| `closeOnEsc` | `boolean` | `true`；最上层 Escape 请求收起 |
+| `closeOnScrim` | `boolean` | `true`；在遮罩按下并释放后请求收起 |
+| `closeOnSelect` | `boolean` | `true`；普通目的地激活后请求收起 |
+| `destroyOnClose` | `boolean` | `false`；关闭动画完成后销毁模态内容 |
+
+模态公开 `update:expanded(boolean)`、`open`、`opened`、`close(detail)`、`closed(detail)`。前两对生命周期分别表示状态变化和动效完成；detail.reason 为 `'menu' \| 'escape' \| 'scrim' \| 'select' \| 'model'`。父级拒绝更新时不触发关闭生命周期，也不跳到关闭位置。原生 click 在任一同步冒泡监听中被 preventDefault，或使用新窗口／下载操作时，不按选择关闭。
+
+暴露 `close(): Promise<boolean>`，结果表示父级是否接受收起请求；动画可能尚未完成。`focus()` 聚焦 autofocus 元素或第一个可用交互项。模态通过原生 dialog 进入 top layer，使用已有模态栈、仅锁文档的滚动锁与焦点恢复；最上层 Tab 约束、Escape、嵌套 Menu／Dialog、卸载和 KeepAlive 清理与其他浮层一致。不附加 X，应用应提供可访问的菜单收起按钮。
+
+模态的 class／style 作用于保留布局占位的外壳，CSS 变量同时进入 dialog 继承链；dir 和 data-mdv-theme 同时覆盖收起轨与展开层；id、ARIA 和其他原生事件作用于原生 dialog。默认命名为“主导航”，可提供更具体的 aria-label／aria-labelledby。SSR 始终先渲染关闭的原生 dialog，客户端挂载后再响应初始 expanded，保留稳定节点与关联 ID。
+
+### 视觉与验证范围
+
+收起宽 96px，指示胶囊 56×32px，标签 label-medium（12／16、500、tracking 0.5px）；展开宽 220–360px，胶囊最小高 56px、按内容包络，标签 label-large（14／20、500、tracking 0.1px）。图标 24px，展开图文间距 8px，胶囊左右内边距 16px。标准款 surface／无阴影／直角；模态款 surface-container、3dp elevation、靠内容侧 16px 圆角；可选边界线独立控制。
+
+激活胶囊为 secondary-container，图标及展开标签 on-secondary-container，收起激活标签 secondary；未激活为 on-surface-variant。两种选中状态均有 on-secondary-container 的 8% hover 与 10% focus／pressed 状态层，范围限定在胶囊中。未选项 hover 和选中指示器参考 m3ui MNavigationBar，在 200ms 内从胶囊中心展开／收回，仅改变背景宽度与颜色，图标、文字、徽标及整行点击区域不移动；按下波纹沿用独立裁剪，避免重复叠加状态透明度。焦点轮廓使用 MDV 的 secondary／3px／offset 2px；这组焦点数值是项目实现选择，不冒称 Rail 页面独立令牌。
+
+布局与标签由同一连续进度同步变化，文字不缩放；标准／模态参考 m3ui 的 0.9／700、0.9／1400 弹簧参数，中断保留速度，遮罩独立变化。支持 reduced-motion、forced-colors、RTL、局部主题、字体变化与独立项目滚动。不自动增加手势、密度变体或隐藏标签。
+
+测试规格覆盖原生语义、键盘、取消导航、受控拒绝、焦点／嵌套、缓存、SSR／hydration 和动效中断；布局、hover、长标签、两倍字号、窄区域和真实设备效果仍须在开发预览中验收。真实包消费另行验证。
+
+公共类型：`MdvNavigationRailAlignment`、`MdvNavigationRailProps`、`MdvModalNavigationRailProps`、`MdvNavigationRailCloseReason`、`MdvNavigationRailCloseDetail`、`MdvNavigationRailSlotProps`、`MdvNavigationRailItemProps`、`MdvNavigationRailItemSlotProps`。

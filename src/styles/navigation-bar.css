@@ -52,6 +52,7 @@
 
   .mdv-navigation-bar-item {
     --mdv-navigation-bar-item-state-color: var(--mdv-sys-color-on-surface-variant);
+    --mdv-navigation-bar-indicator-color: transparent;
 
     position: relative;
     display: flex;
@@ -85,12 +86,16 @@
     position: absolute;
     z-index: 1;
     inset: 0;
+    inline-size: 0%;
+    margin-inline: auto;
     border-radius: inherit;
-    background: var(--mdv-navigation-bar-item-state-color);
+    background: var(--mdv-navigation-bar-indicator-color);
     content: '';
-    opacity: 0;
     pointer-events: none;
-    transition: opacity var(--mdv-sys-motion-duration-short-2) var(--mdv-sys-motion-easing-standard);
+    /* 与 m3ui MNavigationBar 一样只展开背景胶囊，不挤动图标、标签或徽标。 */
+    transition:
+      inline-size 200ms cubic-bezier(0.4, 0, 0.2, 1),
+      background-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .mdv-navigation-bar-item__visual::before {
@@ -111,12 +116,11 @@
     justify-content: center;
     gap: 4px;
     border-radius: var(--mdv-sys-shape-corner-full);
-    transition: background-color var(--mdv-sys-motion-duration-short-4)
-      var(--mdv-sys-motion-easing-standard);
   }
 
   .mdv-navigation-bar-item__icon-container {
     position: relative;
+    z-index: 2;
     isolation: isolate;
     display: flex;
     inline-size: 64px;
@@ -172,14 +176,19 @@
 
   .mdv-navigation-bar-item--active {
     --mdv-navigation-bar-item-state-color: var(--mdv-sys-color-on-surface);
+    --mdv-navigation-bar-indicator-color: var(--mdv-sys-color-secondary-container);
 
     color: var(--mdv-sys-color-on-surface);
     font-weight: var(--mdv-sys-typescale-label-medium-weight);
   }
 
   .mdv-navigation-bar-item--active .mdv-navigation-bar-item__icon-container {
-    background: var(--mdv-sys-color-secondary-container);
     color: var(--mdv-sys-color-on-secondary-container);
+  }
+
+  .mdv-navigation-bar-item--active .mdv-navigation-bar-item__visual::before,
+  .mdv-navigation-bar-item--active .mdv-navigation-bar-item__icon-container::before {
+    inline-size: 100%;
   }
 
   .mdv-navigation-bar-item--disabled {
@@ -187,9 +196,8 @@
     cursor: not-allowed;
   }
 
-  .mdv-navigation-bar-item--disabled .mdv-navigation-bar-item__visual::before,
-  .mdv-navigation-bar-item--disabled .mdv-navigation-bar-item__icon-container::before {
-    display: none;
+  .mdv-navigation-bar-item--disabled .mdv-navigation-bar-item__icon-container {
+    color: inherit;
   }
 
   .mdv-navigation-bar-item--link.mdv-navigation-bar-item--disabled {
@@ -201,28 +209,30 @@
     outline-offset: -3px;
   }
 
-  .mdv-navigation-bar-item:not(.mdv-navigation-bar-item--disabled):focus-visible
-    .mdv-navigation-bar-item__visual::before,
-  .mdv-navigation-bar-item:not(.mdv-navigation-bar-item--disabled):active
-    .mdv-navigation-bar-item__visual::before,
-  .mdv-navigation-bar-item:not(.mdv-navigation-bar-item--disabled):focus-visible
-    .mdv-navigation-bar-item__icon-container::before,
-  .mdv-navigation-bar-item:not(.mdv-navigation-bar-item--disabled):active
-    .mdv-navigation-bar-item__icon-container::before {
-    opacity: 0.1;
-  }
-
   @media (hover: hover) {
     .mdv-navigation-bar-item:not(.mdv-navigation-bar-item--disabled):not(
         .mdv-navigation-bar-item--active
-      ):hover
+      ):hover:not(:focus-visible, :active)
       .mdv-navigation-bar-item__visual::before,
     .mdv-navigation-bar-item:not(.mdv-navigation-bar-item--disabled):not(
         .mdv-navigation-bar-item--active
-      ):hover
+      ):hover:not(:focus-visible, :active)
       .mdv-navigation-bar-item__icon-container::before {
-      opacity: 0.08;
+      inline-size: 100%;
+      background: color-mix(in srgb, var(--mdv-navigation-bar-item-state-color) 8%, transparent);
     }
+  }
+
+  .mdv-navigation-bar-item:not(.mdv-navigation-bar-item--disabled):is(:focus-visible, :active)
+    .mdv-navigation-bar-item__visual::before,
+  .mdv-navigation-bar-item:not(.mdv-navigation-bar-item--disabled):is(:focus-visible, :active)
+    .mdv-navigation-bar-item__icon-container::before {
+    inline-size: 100%;
+    background: color-mix(
+      in srgb,
+      var(--mdv-navigation-bar-item-state-color) 10%,
+      var(--mdv-navigation-bar-indicator-color)
+    );
   }
 
   @container mdv-navigation-bar (min-width: 600px) {
@@ -255,22 +265,9 @@
     }
 
     .mdv-navigation-bar:not(.mdv-navigation-bar--vertical)
-      .mdv-navigation-bar-item--active
-      .mdv-navigation-bar-item__visual {
-      background: var(--mdv-sys-color-secondary-container);
-    }
-
-    .mdv-navigation-bar:not(.mdv-navigation-bar--vertical)
       .mdv-navigation-bar-item__icon-container {
       inline-size: 24px;
       block-size: 24px;
-      background: transparent;
-    }
-
-    .mdv-navigation-bar:not(.mdv-navigation-bar--vertical)
-      .mdv-navigation-bar-item--active
-      .mdv-navigation-bar-item__icon-container {
-      background: transparent;
     }
   }
 
@@ -290,22 +287,9 @@
     display: none;
   }
 
-  .mdv-navigation-bar--horizontal
-    .mdv-navigation-bar-item--active
-    .mdv-navigation-bar-item__visual {
-    background: var(--mdv-sys-color-secondary-container);
-  }
-
   .mdv-navigation-bar--horizontal .mdv-navigation-bar-item__icon-container {
     inline-size: 24px;
     block-size: 24px;
-    background: transparent;
-  }
-
-  .mdv-navigation-bar--horizontal
-    .mdv-navigation-bar-item--active
-    .mdv-navigation-bar-item__icon-container {
-    background: transparent;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -318,14 +302,16 @@
   }
 
   @media (forced-colors: active) {
-    .mdv-navigation-bar-item--active .mdv-navigation-bar-item__icon-container,
-    .mdv-navigation-bar--horizontal
-      .mdv-navigation-bar-item--active
-      .mdv-navigation-bar-item__visual {
+    .mdv-navigation-bar-item--active .mdv-navigation-bar-item__visual::before,
+    .mdv-navigation-bar-item--active .mdv-navigation-bar-item__icon-container::before {
+      box-sizing: border-box;
       border: 1px solid CanvasText;
       background: Canvas;
-      color: CanvasText;
       forced-color-adjust: none;
+    }
+
+    .mdv-navigation-bar-item--active .mdv-navigation-bar-item__icon-container {
+      color: CanvasText;
     }
 
     .mdv-navigation-bar-item:not(.mdv-navigation-bar-item--disabled):focus-visible {

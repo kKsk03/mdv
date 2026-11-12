@@ -38,6 +38,19 @@ export { default as MdvTab } from './components/MdvTab.vue'
 export { default as MdvTabPanel } from './components/MdvTabPanel.vue'
 export { default as MdvNavigationBar } from './components/MdvNavigationBar.vue'
 export { default as MdvNavigationBarItem } from './components/MdvNavigationBarItem.vue'
+export { default as MdvNavigationRail } from './components/MdvNavigationRail.vue'
+export { default as MdvModalNavigationRail } from './components/MdvModalNavigationRail.vue'
+export { default as MdvNavigationRailItem } from './components/MdvNavigationRailItem.vue'
+export type {
+  MdvNavigationRailAlignment,
+  MdvNavigationRailProps,
+  MdvModalNavigationRailProps,
+  MdvNavigationRailCloseReason,
+  MdvNavigationRailCloseDetail,
+  MdvNavigationRailSlotProps,
+  MdvNavigationRailItemProps,
+  MdvNavigationRailItemSlotProps,
+} from './components/navigation-rail.types'
 export type {
   MdvNavigationBarOrientation,
   MdvNavigationBarProps,

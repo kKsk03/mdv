@@ -158,6 +158,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
+## Material 3 Navigation Rail 规格与动效参考
+
+- 官方规格：https://m3.material.io/components/navigation-rail/specs
+- 布局／键盘：https://m3.material.io/components/navigation-rail/guidelines 、https://m3.material.io/components/navigation-rail/accessibility
+- Material 规格版权：Copyright Google LLC
+- 使用位置：`src/styles/navigation-rail.css`，Navigation Rail 三个公开组件及内部 `NavigationRailSurface.vue`。
+
+MDV 独立实现当前 Expressive 的 96px 收起轨、220–360px 展开范围、内容胶囊、徽标位置、状态颜色、Standard 布局与 Modal 生命周期。未沿用早期参考实现中的 80px 默认宽度、文字省略或固定高标签。
+
+动效参考 https://github.com/SrWither/m3ui-vue/blob/main/src/components/MNavigationRail.vue 的弹簧参数与内容衔接思路（Copyright (c) 2026 Fadel，MIT，完整许可见上节），在 `src/components/navigation-rail-motion.ts` 独立实现连续进度、小步积分、中断保留速度及生命周期清理。0.9／700、0.9／1400 是参考实现参数，非官网 Rail 单独列出的运动令牌。未引入参考库运行时或其他新依赖。
+
+Navigation Rail 与 Navigation Bar 的交互胶囊动画另参考同仓库的 [MNavigationBar.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MNavigationBar.vue)：200ms 的背景宽度／颜色过渡。MDV 在 `src/styles/navigation-rail.css` 与 `src/styles/navigation-bar.css` 中将动画独立于内容布局，保持图标、文字、徽标与点击区域稳定，并适用于展开轨及横排底栏。版权与 MIT 许可同上，不将该过渡参数声称为官网规定值。
+
 ## Material Symbols 图标数据
 
 - 来源：https://github.com/google/material-design-icons

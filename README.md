@@ -19,7 +19,9 @@ MdvSideSheet 与 MdvSideSheetScaffold 已完成模态和 Standard 两款当前�
 
 MdvTabs、MdvTab 与 MdvTabPanel 已完成 Primary／Secondary、固定／滚动、图标／徽标、可选底部分割线、键盘导航与内容生命周期的当前约定范围检查及开发预览验收；真实包消费另行验证。
 
-MdvNavigationBar 与 MdvNavigationBarItem 已完成 Flexible 导航栏当前约定范围的项目检查与开发预览验收，包含紧凑／中等响应布局、选中项 hover 修正、徽标及原生链接／按钮语义；真实包消费另行验证。
+MdvNavigationBar 与 MdvNavigationBarItem 已完成 Flexible 导航栏当前约定范围的项目检查与开发预览验收，包含紧凑／中等响应布局、选中项 hover 修正、200ms 胶囊过渡、徽标及原生链接／按钮语义；真实包消费另行验证。
+
+MdvNavigationRail、MdvModalNavigationRail 与 MdvNavigationRailItem 已完成当前 Expressive 收起／展开、Standard 布局与 Modal 覆盖的当前约定范围项目检查与用户验收，包含胶囊动画、沉浸模式入口、徽标、键盘及嵌套弹窗焦点修正；真实包消费另行验证。
 
 ## 本地开发
 
@@ -84,6 +86,7 @@ pnpm build
 - [MdvSideSheet 与 MdvSideSheetScaffold 侧边面板](./COMPONENTS.md#mdvsidesheet)
 - [MdvTabs、MdvTab 与 MdvTabPanel 标签页](./COMPONENTS.md#mdvtabs)
 - [MdvNavigationBar 与 MdvNavigationBarItem 导航栏](./COMPONENTS.md#mdvnavigationbar)
+- [MdvNavigationRail、MdvModalNavigationRail 与 MdvNavigationRailItem 导航轨](./COMPONENTS.md#mdvnavigationrail)
 
 ## 主题与排版
 
