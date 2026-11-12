@@ -21,6 +21,7 @@
 @import './navigation-bar.css';
 @import './navigation-rail.css';
 @import './navigation-drawer.css';
+@import './app-bar.css';
 
 .mdv-icon {
   display: inline-block;

@@ -27,6 +27,7 @@ import TabsPlayground from './TabsPlayground.vue'
 import NavigationBarPlayground from './NavigationBarPlayground.vue'
 import NavigationRailPlayground from './NavigationRailPlayground.vue'
 import NavigationDrawerPlayground from './NavigationDrawerPlayground.vue'
+import AppBarPlayground from './AppBarPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -185,6 +186,12 @@ const pages = [
     label: 'Navigation Drawer 导航抽屉',
     description: '检查旧版 M3 的 Standard／Modal、分组、键盘、滑动关闭与焦点恢复。',
     component: NavigationDrawerPlayground,
+  },
+  {
+    id: 'app-bar',
+    label: 'App Bar 应用栏',
+    description: '检查三种尺寸、副标题、居中、图像、滚动收合／隐藏、键盘和导航组合。',
+    component: AppBarPlayground,
   },
   {
     id: 'theme',

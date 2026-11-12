@@ -8,6 +8,9 @@
 
 /* 占位随进度变化，内容始终按展开宽度排版。 */
 .mdv-navigation-drawer {
+  --mdv-drawer-app-bar-background: transparent;
+  --mdv-drawer-app-bar-height: 0px;
+
   position: relative;
   box-sizing: border-box;
   inline-size: var(--mdv-drawer-extent);
@@ -16,6 +19,13 @@
   min-block-size: 0;
   flex: 0 0 auto;
   overflow: clip;
+  /* 与 App Bar Scaffold 相邻时，仅在应用栏的可见高度内延伸背景。 */
+  background-image: linear-gradient(
+    var(--mdv-drawer-app-bar-background, transparent),
+    var(--mdv-drawer-app-bar-background, transparent)
+  );
+  background-repeat: no-repeat;
+  background-size: 100% var(--mdv-drawer-app-bar-height, 0px);
 }
 .mdv-navigation-drawer[hidden] {
   display: none;

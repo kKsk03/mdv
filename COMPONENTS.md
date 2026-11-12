@@ -28,6 +28,7 @@
 - [MdvNavigationBar 与 MdvNavigationBarItem 导航栏](#mdvnavigationbar)
 - [MdvNavigationRail、MdvModalNavigationRail 与 MdvNavigationRailItem 导航轨](#mdvnavigationrail)
 - [MdvNavigationDrawer 导航抽屉家族](#mdvnavigationdrawer)
+- [MdvAppBar 应用栏](#mdvappbar)
 
 ## MdvButton
 
@@ -2593,3 +2594,111 @@ active 背景 secondary-container，文字／图标 on-secondary-container；未
 测试规格覆盖语义、取消激活、分组控制、方向键、模态关闭来源、拦截／拒绝／过期、嵌套焦点、滑动、卸载／KeepAlive、运动中断及 SSR／hydration。用户已确认全部项目指令通过并完成当前范围的预览验收，包含最新子项胶囊与折叠箭头修订；触屏／读屏专项和真实包消费另行记录。
 
 公共类型：`MdvNavigationDrawerProps`、`MdvModalNavigationDrawerProps`、`MdvNavigationDrawerCloseReason`、`MdvNavigationDrawerCloseDetail`、`MdvNavigationDrawerSlotProps`、`MdvNavigationDrawerItemProps`、`MdvNavigationDrawerItemSlotProps`、`MdvNavigationDrawerGroupProps`、`MdvNavigationDrawerGroupSlotProps`。
+
+## MdvAppBar
+
+按当前 [App Bar 规范](https://m3.material.io/components/app-bars/specs) 提供 Small、Medium flexible、Large flexible。默认 Small；旧 Center-aligned 对应 Small 的居中配置。Search app bar 与 search view 留到 Search 组件一起实现。
+
+应用布局推荐组合 `MdvAppBarScaffold`：应用栏放在 `appbar` 插槽、正文放在默认插槽，滚动条只出现在正文区，自动关联滚动目标。
+
+```vue
+<script setup lang="ts">
+import { MdvAppBar, MdvAppBarScaffold, MdvIconButton } from 'mdv'
+</script>
+
+<template>
+  <MdvAppBarScaffold style="height: 32rem" :content-attrs="{ 'aria-label': '行程正文' }">
+    <template #appbar>
+      <MdvAppBar
+        variant="large"
+        title="周末去远足"
+        subtitle="收藏沿途的美好风景"
+        collapsed-title="远足计划"
+        scroll-behavior="exit-until-collapsed"
+      >
+        <template #leading>
+          <MdvIconButton variant="standard" aria-label="返回">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="m20 11-12.17 0 5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20Z" />
+            </svg>
+          </MdvIconButton>
+        </template>
+      </MdvAppBar>
+    </template>
+    <main style="padding: 16px"><!-- 页面正文 --></main>
+  </MdvAppBarScaffold>
+</template>
+```
+
+| 属性 | 默认值 | 说明 |
+| --- | --- | --- |
+| `variant` | `'small'` | `small`、`medium`、`large`；中／大对应 Flexible |
+| `appearance` | `'default'` | `default` 无阴影／边框；`elevated` 随滚动进度逐步显示 elevation 2 阴影，初始展开时无阴影；`bordered` 添加 1px 底部分隔线 |
+| `title` | — | 默认标题；也可使用 title 插槽 |
+| `subtitle` | — | 默认副标题；也可使用 subtitle 插槽 |
+| `collapsedTitle` | — | Small／收合后的简短默认标题；完整标题仍作为可访问名称 |
+| `titleAlignment` | `'start'` | `start`、`center`；居中以整栏为基准，为不对称操作保留空间 |
+| `headingLevel` | `1` | `1–6`；按页面层级配置，预览组合通常使用 2 或 3 |
+| `scrollBehavior` | `'none'` | 普通布局、固定、收合或自动隐藏，见下表 |
+| `scrollTarget` | 省略跟随 Scaffold 正文，否则 Window | Window、HTMLElement、选择器，或返回 Window／HTMLElement／null／undefined 的 getter；显式值优先 |
+| `scrolled` | 未提供时自动 | boolean；显式 false／true 将颜色与可选阴影设为初始／完整滚动端点，不改变滚动位置、收合或隐藏 |
+| `transparentOnScroll` | `false` | 随滚动逐步透明，并淡出可选阴影；`bordered` 的分隔线保留，浮动操作建议组合 filled／tonal 按钮 |
+
+| `scrollBehavior` | 行为 |
+| --- | --- |
+| `none` | 普通文档布局；自动滚动外观仍可由 scrolled 覆盖 |
+| `pinned` | 在所在滚动区域内 sticky，始终可见 |
+| `exit-until-collapsed` | 中／大随正文接近顶部的距离连续收合为 Small；正文仍远离顶部时反向滚动不会展开 |
+| `enter-always` | 向下滚动先收合中／大款，再隐藏 Small 操作行；反向滚动立即跟随出现；静止时吸附至最近的展开／Small／隐藏端点 |
+
+`MdvAppBarScaffold` 的父级应提供确定的可用高度，例如上例的 `height:32rem`，或在已有高度的应用布局内使用 `h-full`／`flex-1 min-h-0`。高度需能容纳应用栏和正文，放大文字或长标题时也需留出足够空间。`appbar` 插槽用于一个 `MdvAppBar`，允许中间包装组件；默认插槽不生成 main 地标，由调用方按页面语义组合正文。Scaffold 不设置正文 padding。
+
+| Scaffold API | 说明 |
+| --- | --- |
+| `contentAttrs?: HTMLAttributes` | 正文滚动区原生属性与事件，例如 `aria-label`、`aria-labelledby`、`id`、`tabindex`、`onScroll`；默认 `role="region"`、`aria-label="正文"`、`tabindex="0"`，可覆盖 |
+| `appbar` 插槽 | 放置应用栏，自动跟随本实例的正文滚动；正文里的独立应用栏不继承这个关联，嵌套 Scaffold 各自独立 |
+| 默认插槽 | 正文内容；滚动区支持原生方向键、PageUp／PageDown、Home／End |
+| `element`（Expose） | Scaffold 根元素；class／style／id／dir 等原生属性透传到根元素 |
+| `contentElement`（Expose） | 正文滚动元素；可调用 `scrollTo({ top: 0, behavior: 'smooth' })` 回顶 |
+
+Scaffold 中应用栏位于正文滚动节点之外；收合／隐藏时正文可用高度同步增加，内部起始空间补偿保持滚动范围稳定，正文底端不增加空白。标题、图片和字体尺寸变化由应用栏重新测量。`none` 在这个组合里表示不收合／不隐藏，栏仍由外层布局固定在正文上方；其它滚动行为沿用上表。Scaffold 不锁页面滚动，也不改变导航侧栏高度。
+
+与 Standard Drawer 并排组合时，将 `MdvNavigationDrawer` 放在 `MdvAppBarScaffold` 的紧邻前一个兄弟位置。Scaffold 会把当前应用栏背景延伸到 Drawer 的圆角后方，同步滚动变色、可见高度、透明度和主题；Drawer 自身保留 16px 圆角。共同外层可使用正文底色，无需用相同底色抹平圆角；RTL 会自然镜像。中间不插入其它布局节点，Modal Drawer 保持独立浮层。playground 的导航组合示例采用此结构。
+
+独立使用 `MdvAppBar` 时，省略 scrollTarget 仍跟随 Window；局部滚动可将应用栏置于自己的 `overflow:auto` 容器中，并传入 `:scroll-target="() => content"`（`content` 为模板 ref）。这种结构的滚动条属于外层，会贯穿应用栏；只希望正文出现滚动条时使用 Scaffold。独立模式的 sticky 边界由祖先布局决定，根保留展开高度以稳定 scrollTop。
+
+显式选择器或 getter 没有找到元素时不回退到 Window 或 Scaffold。getter 内的响应式引用变化会切换目标，旧监听会清理；目标稍后由应用外部创建时可调用 refresh()。滚动收合始终以所跟随目标的 scrollTop 为依据。
+
+leading／actions 插槽组合现有 IconButton、Menu 等操作；不自动生成返回按钮或处理路由。title／subtitle 替换文字，image 用于中／大款标题上方的品牌图像；Small 的 logo 放入 title 插槽。全部插槽读取 `{ scrolled, collapsed }`；collapsed 表示中／大款已收合到 Small。插槽只挂载一次，收合不复制自定义标题或按钮。使用 collapsedTitle 时完整标题保持可访问名称，简短副本只用于视觉显示。
+
+右侧尾部自定义内容放入现有 `actions`，例如文字按钮、头像或菜单：
+
+```vue
+<MdvAppBar title="行程" appearance="bordered">
+  <template #actions>
+    <MdvButton variant="text" @click="exportTrip">导出行程</MdvButton>
+  </template>
+</MdvAppBar>
+```
+
+`actions` 容器会参与布局测量，为标题保留空间；不限制其内容必须为图标按钮。playground 的“右侧自定义操作”演示该用法。
+
+class、style、id、ARIA 和原生事件透传到 header；没有额外组件事件或模型。暴露 `element`（header）和 `refresh()`（重新解析目标及测量布局）。首次挂载不抢焦点，Tab／Shift+Tab 按原生顺序访问操作，按钮保持 Enter／Space；键盘焦点进入应用栏会显示完整操作区并保持可见，鼠标操作不因此锁住自动隐藏。图标按钮须提供 aria-label／aria-labelledby，标题插槽应优先使用文字或带可访问名称的品牌图像。
+
+| 尺寸 | 无／有副标题的默认高度 | 标题 | 副标题 |
+| --- | --- | --- | --- |
+| Small | 64／64px | title-large，22／28、400 | label-medium，12／16、500、tracking 0.5 |
+| Medium flexible | 112／136px | headline-medium，28／36、400 | label-large，14／20、500、tracking 0.1 |
+| Large flexible | 120／152px | display-small，36／44、400 | title-medium，16／24、500、tracking 0.15 |
+
+默认高度对应标准单行标题。中／大标题建议控制在两行以内；更长内容和放大文字按真实内容增高，展开时不硬裁标题。Small／收合状态为单行省略，可提供简短 collapsedTitle。自定义图片、字体加载、文字、宽度和操作数量变化会触发重新测量；底部保留 12px，标题区域两侧 16px，操作区两侧 4px，按钮间无额外间隔。复用 IconButton 的 48px 交互区及内部 40px 可见容器，图标默认 24px；自定义头像建议为 32px，置于 48px 交互区域内。
+
+初始为 surface，随滚动连续混合至 surface-container；中／大收合模式以实际收合比例驱动颜色，其余模式与 Small 在一个操作行高度的滚动距离内变化。参考 m3ui 的 FastOutLinearIn `cubic-bezier(0.4, 0, 1, 1)`，直接映射滚动进度，反向滚动与吸附过程中同步恢复颜色，不叠加按时间延迟的背景过渡。`scrolled` 插槽状态仍表示目标已经离开顶部，可用来切换操作按钮，颜色不由该布尔状态直接切换。
+
+默认 `appearance="default"` 始终无阴影／边框，`elevated` 开启随滚动进度渐显的 elevation 2（3dp）阴影：初始展开时无阴影，随收合逐步增强，完全收合后完整显示，回到展开端点时消失。Small／固定模式沿用连续配色的距离进度；`bordered` 显示 outline-variant 的 1px 底部分隔线。三种外观均保留连续配色，分隔线和阴影不改变布局高度。默认无阴影是用户确认的 MDV 选择，官网滚动层级仍记录为 elevation 2。透明模式在阴影渐显的基础上同步淡出，完全展开与完全透明时都无阴影，边框保持可见。
+
+容器直角，标题与前置普通图标 on-surface，副标题与尾部普通图标 on-surface-variant。支持浅深色、局部令牌、动态取色、RTL、reduced-motion 和 forced-colors。吸附参考 m3ui 的 150ms 静止检测及 DefaultEffects 临界阻尼／刚度 1600，均为参考实现参数，非官网公布的固定时长。reduced-motion 保留直接滚动映射，关闭吸附补间。
+
+MdvAppBar 与 MdvAppBarScaffold 当前约定范围已完成用户项目检查与开发预览验收，包含连续配色、三外观、独立正文滚动和 Drawer 圆角背景延伸。已提供滚动／目标切换／焦点／测量／KeepAlive、弹簧中断、SSR／hydration、Scaffold 嵌套隔离与节点保留等测试。协作侧真实浏览器检查了正文滚动条起点、收合中滚动范围、底端与短正文、自动隐藏及键盘恢复、窄容器／RTL／深色／放大文字、导航／菜单／对话框组合和背景延伸，控制台无警告或错误。其余设备专项与真实包消费另行验证。
+
+公共类型：`MdvAppBarProps`、`MdvAppBarVariant`、`MdvAppBarAppearance`、`MdvAppBarTitleAlignment`、`MdvAppBarScrollBehavior`、`MdvAppBarScrollTarget`、`MdvAppBarSlotProps`、`MdvAppBarScaffoldProps`。

@@ -1,0 +1,363 @@
+.mdv-app-bar {
+  --mdv-app-bar-expanded-height: 64px;
+  --mdv-app-bar-row-height: 64px;
+  --mdv-app-bar-start: 16px;
+  --mdv-app-bar-end: 16px;
+  --mdv-app-bar-compact-y: 18px;
+  --mdv-app-bar-progress: 1;
+  --mdv-app-bar-collapse: 0px;
+  --mdv-app-bar-hide: 0px;
+  --mdv-app-bar-auto-color-progress: 0;
+  --mdv-app-bar-color-progress: var(--mdv-app-bar-auto-color-progress);
+  --mdv-app-bar-title-size: var(--mdv-sys-typescale-title-large-size);
+  --mdv-app-bar-title-line: var(--mdv-sys-typescale-title-large-line-height);
+  --mdv-app-bar-subtitle-size: var(--mdv-sys-typescale-label-medium-size);
+  --mdv-app-bar-subtitle-line: var(--mdv-sys-typescale-label-medium-line-height);
+  --mdv-app-bar-subtitle-tracking: var(--mdv-sys-typescale-label-medium-tracking);
+  --mdv-app-bar-gap: 0px;
+
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  inline-size: 100%;
+  block-size: var(--mdv-app-bar-expanded-height);
+  min-inline-size: 0;
+  flex: none;
+  color: var(--mdv-sys-color-on-surface);
+  font-family: var(--mdv-sys-typescale-font-family);
+  pointer-events: none;
+}
+
+.mdv-app-bar--medium {
+  --mdv-app-bar-expanded-height: 112px;
+  --mdv-app-bar-progress: 0;
+  --mdv-app-bar-title-size: var(--mdv-sys-typescale-headline-medium-size);
+  --mdv-app-bar-title-line: var(--mdv-sys-typescale-headline-medium-line-height);
+  --mdv-app-bar-subtitle-size: var(--mdv-sys-typescale-label-large-size);
+  --mdv-app-bar-subtitle-line: var(--mdv-sys-typescale-label-large-line-height);
+  --mdv-app-bar-subtitle-tracking: var(--mdv-sys-typescale-label-large-tracking);
+  --mdv-app-bar-gap: 4px;
+}
+
+.mdv-app-bar--large {
+  --mdv-app-bar-expanded-height: 120px;
+  --mdv-app-bar-progress: 0;
+  --mdv-app-bar-title-size: var(--mdv-sys-typescale-display-small-size);
+  --mdv-app-bar-title-line: var(--mdv-sys-typescale-display-small-line-height);
+  --mdv-app-bar-subtitle-size: var(--mdv-sys-typescale-title-medium-size);
+  --mdv-app-bar-subtitle-line: var(--mdv-sys-typescale-title-medium-line-height);
+  --mdv-app-bar-subtitle-tracking: var(--mdv-sys-typescale-title-medium-tracking);
+  --mdv-app-bar-gap: 8px;
+}
+
+.mdv-app-bar--medium.mdv-app-bar--subtitle {
+  --mdv-app-bar-expanded-height: 136px;
+}
+
+.mdv-app-bar--large.mdv-app-bar--subtitle {
+  --mdv-app-bar-expanded-height: 152px;
+}
+
+.mdv-app-bar--small.mdv-app-bar--subtitle {
+  --mdv-app-bar-compact-y: 10px;
+}
+
+.mdv-app-bar--sticky {
+  position: sticky;
+  z-index: 10;
+  inset-block-start: 0;
+}
+
+.mdv-app-bar-scaffold {
+  --mdv-app-bar-scaffold-height: auto;
+  --mdv-app-bar-scaffold-offset: 0px;
+
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  box-sizing: border-box;
+  min-block-size: 0;
+  min-inline-size: 0;
+  flex-direction: column;
+}
+
+.mdv-app-bar-scaffold__appbar {
+  position: relative;
+  z-index: 1;
+  block-size: var(--mdv-app-bar-scaffold-height, auto);
+  min-inline-size: 0;
+  flex: none;
+}
+
+.mdv-app-bar--scaffold {
+  position: relative;
+  inset-block-start: auto;
+}
+
+.mdv-app-bar-scaffold__content {
+  position: relative;
+  z-index: 0;
+  overflow: auto;
+  min-block-size: 0;
+  min-inline-size: 0;
+  flex: 1;
+  overscroll-behavior: contain;
+  overflow-anchor: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--mdv-sys-color-outline-variant) transparent;
+}
+
+.mdv-app-bar-scaffold__canvas {
+  display: flow-root;
+  /* 起始补偿与视口增高相同，使收合／隐藏期间滚动范围不变，末尾不留空白。 */
+  padding-block-start: var(--mdv-app-bar-scaffold-offset, 0px);
+}
+
+.mdv-app-bar-scaffold__content:focus-visible {
+  outline: 2px solid var(--mdv-sys-color-primary);
+  outline-offset: -2px;
+}
+
+.mdv-app-bar__surface {
+  position: absolute;
+  isolation: isolate;
+  inset: 0 0 auto;
+  box-sizing: border-box;
+  block-size: calc(var(--mdv-app-bar-expanded-height) - var(--mdv-app-bar-collapse));
+  border-radius: 0;
+  background-color: color-mix(
+    in srgb,
+    var(--mdv-sys-color-surface-container) calc(var(--mdv-app-bar-color-progress) * 100%),
+    var(--mdv-sys-color-surface)
+  );
+  pointer-events: auto;
+  transform: translateY(calc(-1 * var(--mdv-app-bar-hide)));
+}
+
+.mdv-app-bar--elevated > .mdv-app-bar__surface::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--mdv-sys-elevation-level-2);
+  content: '';
+  opacity: var(--mdv-app-bar-color-progress);
+  pointer-events: none;
+}
+
+.mdv-app-bar--bordered > .mdv-app-bar__surface::after {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
+  block-size: 1px;
+  background-color: var(--mdv-sys-color-outline-variant);
+  content: '';
+  pointer-events: none;
+}
+
+.mdv-app-bar--transparent > .mdv-app-bar__surface {
+  background-color: color-mix(
+    in srgb,
+    transparent calc(var(--mdv-app-bar-color-progress) * 100%),
+    var(--mdv-sys-color-surface)
+  );
+}
+
+.mdv-app-bar--transparent > .mdv-app-bar__surface::before {
+  opacity: calc(var(--mdv-app-bar-color-progress) * (1 - var(--mdv-app-bar-color-progress)));
+}
+
+.mdv-app-bar__row {
+  display: flex;
+  box-sizing: border-box;
+  block-size: var(--mdv-app-bar-row-height);
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 4px;
+}
+
+.mdv-app-bar__leading,
+.mdv-app-bar__actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-inline-size: 0;
+  flex: none;
+  align-items: center;
+  gap: 0;
+}
+
+.mdv-app-bar__actions {
+  margin-inline-start: auto;
+  color: var(--mdv-sys-color-on-surface-variant);
+}
+
+.mdv-app-bar__leading
+  .mdv-icon-button--standard:not(.mdv-icon-button--colored):not(.mdv-icon-button--disabled):not(
+    .mdv-icon-button--toggle
+  ) {
+  --mdv-icon-button-foreground: var(--mdv-sys-color-on-surface);
+}
+
+.mdv-app-bar__content {
+  position: absolute;
+  inset-block-start: calc(
+    var(--mdv-app-bar-row-height) + (var(--mdv-app-bar-compact-y) - var(--mdv-app-bar-row-height)) *
+      var(--mdv-app-bar-progress)
+  );
+  inset-inline-start: calc(16px + (var(--mdv-app-bar-start) - 16px) * var(--mdv-app-bar-progress));
+  inset-inline-end: calc(16px + (var(--mdv-app-bar-end) - 16px) * var(--mdv-app-bar-progress));
+  display: flex;
+  min-inline-size: 0;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.mdv-app-bar--center .mdv-app-bar__content {
+  text-align: center;
+}
+
+.mdv-app-bar__title {
+  overflow: hidden;
+  max-block-size: calc(
+    var(--mdv-app-bar-title-height, 1000px) * (1 - var(--mdv-app-bar-progress)) +
+      var(--mdv-app-bar-compact-title-height, var(--mdv-sys-typescale-title-large-line-height)) *
+      var(--mdv-app-bar-progress)
+  );
+  margin: 0;
+  font-size: calc(
+    var(--mdv-app-bar-title-size) +
+      (var(--mdv-sys-typescale-title-large-size) - var(--mdv-app-bar-title-size)) *
+      var(--mdv-app-bar-progress)
+  );
+  font-weight: var(--mdv-sys-typescale-title-large-weight);
+  line-height: calc(
+    var(--mdv-app-bar-title-line) +
+      (var(--mdv-sys-typescale-title-large-line-height) - var(--mdv-app-bar-title-line)) *
+      var(--mdv-app-bar-progress)
+  );
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.mdv-app-bar__subtitle {
+  overflow: hidden;
+  margin-block-start: calc(var(--mdv-app-bar-gap) * (1 - var(--mdv-app-bar-progress)));
+  color: var(--mdv-sys-color-on-surface-variant);
+  font-size: calc(
+    var(--mdv-app-bar-subtitle-size) +
+      (var(--mdv-sys-typescale-label-medium-size) - var(--mdv-app-bar-subtitle-size)) *
+      var(--mdv-app-bar-progress)
+  );
+  font-weight: var(--mdv-sys-typescale-label-medium-weight);
+  line-height: calc(
+    var(--mdv-app-bar-subtitle-line) +
+      (var(--mdv-sys-typescale-label-medium-line-height) - var(--mdv-app-bar-subtitle-line)) *
+      var(--mdv-app-bar-progress)
+  );
+  letter-spacing: calc(
+    var(--mdv-app-bar-subtitle-tracking) +
+      (var(--mdv-sys-typescale-label-medium-tracking) - var(--mdv-app-bar-subtitle-tracking)) *
+      var(--mdv-app-bar-progress)
+  );
+  overflow-wrap: anywhere;
+}
+
+.mdv-app-bar__title > :is(img, svg) {
+  display: block;
+  max-inline-size: 100%;
+}
+
+.mdv-app-bar--center .mdv-app-bar__title > :is(img, svg) {
+  margin-inline: auto;
+}
+
+.mdv-app-bar__image {
+  display: flex;
+  overflow: hidden;
+  max-block-size: calc(var(--mdv-app-bar-image-height, 1000px) * (1 - var(--mdv-app-bar-progress)));
+  flex: none;
+  align-items: center;
+  margin-block-end: calc(8px * (1 - var(--mdv-app-bar-progress)));
+  opacity: calc(1 - var(--mdv-app-bar-progress));
+}
+
+.mdv-app-bar--center .mdv-app-bar__image {
+  justify-content: center;
+}
+
+.mdv-app-bar__image > :is(img, svg) {
+  max-inline-size: 100%;
+}
+
+.mdv-app-bar__compact-title {
+  display: none;
+}
+
+.mdv-app-bar:is(.mdv-app-bar--small, .mdv-app-bar--collapsed) .mdv-app-bar__title,
+.mdv-app-bar:is(.mdv-app-bar--small, .mdv-app-bar--collapsed) .mdv-app-bar__subtitle {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mdv-app-bar:is(.mdv-app-bar--small, .mdv-app-bar--collapsed).mdv-app-bar--short-title
+  .mdv-app-bar__full-title {
+  display: none;
+}
+
+.mdv-app-bar:is(.mdv-app-bar--small, .mdv-app-bar--collapsed).mdv-app-bar--short-title
+  .mdv-app-bar__compact-title {
+  display: inline;
+}
+
+/* 同一 DOM 的两次同步测量；测量结束后在下一次绘制前移除。 */
+.mdv-app-bar--measure-small {
+  --mdv-app-bar-progress: 1 !important;
+}
+
+.mdv-app-bar--measure-expanded {
+  --mdv-app-bar-progress: 0 !important;
+}
+
+.mdv-app-bar--measure-expanded .mdv-app-bar__title,
+.mdv-app-bar--measure-expanded .mdv-app-bar__subtitle {
+  max-block-size: none;
+  white-space: normal !important;
+}
+
+.mdv-app-bar--measure-small .mdv-app-bar__title,
+.mdv-app-bar--measure-small .mdv-app-bar__subtitle {
+  max-block-size: none;
+  white-space: nowrap;
+}
+
+.mdv-app-bar--measure-small .mdv-app-bar__image {
+  max-block-size: 0;
+  margin-block-end: 0;
+}
+
+.mdv-app-bar--measure-expanded .mdv-app-bar__image {
+  max-block-size: none;
+}
+
+.mdv-app-bar--measure-expanded .mdv-app-bar__full-title {
+  display: inline !important;
+}
+
+.mdv-app-bar--measure-expanded .mdv-app-bar__compact-title {
+  display: none !important;
+}
+
+@media (forced-colors: active) {
+  .mdv-app-bar__surface {
+    border-block-end: 1px solid CanvasText;
+    background: Canvas;
+    color: CanvasText;
+    box-shadow: none;
+  }
+
+  .mdv-app-bar__surface::before,
+  .mdv-app-bar__surface::after {
+    display: none;
+  }
+}

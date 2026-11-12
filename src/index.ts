@@ -45,6 +45,18 @@ export { default as MdvNavigationDrawer } from './components/MdvNavigationDrawer
 export { default as MdvModalNavigationDrawer } from './components/MdvModalNavigationDrawer.vue'
 export { default as MdvNavigationDrawerItem } from './components/MdvNavigationDrawerItem.vue'
 export { default as MdvNavigationDrawerGroup } from './components/MdvNavigationDrawerGroup.vue'
+export { default as MdvAppBar } from './components/MdvAppBar.vue'
+export { default as MdvAppBarScaffold } from './components/MdvAppBarScaffold.vue'
+export type {
+  MdvAppBarVariant,
+  MdvAppBarAppearance,
+  MdvAppBarTitleAlignment,
+  MdvAppBarScrollBehavior,
+  MdvAppBarScrollTarget,
+  MdvAppBarProps,
+  MdvAppBarSlotProps,
+  MdvAppBarScaffoldProps,
+} from './components/app-bar.types'
 export type {
   MdvNavigationDrawerProps,
   MdvModalNavigationDrawerProps,

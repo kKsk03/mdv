@@ -182,6 +182,14 @@ MDV 根据旧版 M3 的 Standard／Modal 规格独立实现整行胶囊、文字
 
 布局占位与内容分离、分组及滑动思路参考 [MNavigationDrawer.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MNavigationDrawer.vue) 和 [_MDrawerItemList.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/_MDrawerItemList.vue)（Copyright (c) 2026 Fadel，MIT，完整许可见前节）。沿用 MDV 的 `side-sheet-motion.ts`，增加内部可选的布局变量与跟手遮罩；入场 0.9／700、退出 1／3800、半宽或 400px/s 滑动阈值来自参考实现，不冒称官网独立令牌。未引入参考库或新依赖。
 
+## App Bar 规范与滚动参考
+
+尺寸、排版、形状与颜色依据 [Material Design 3 App Bar](https://m3.material.io/components/app-bars/specs) 当前 Small／Medium flexible／Large flexible。MDV 独立实现单份标题测量、整栏居中、稳定布局占位、滚动目标与生命周期管理。
+
+滚动差值、150ms 静止检测和吸附弹簧参考 [MTopAppBar.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MTopAppBar.vue) 及同仓库的 DefaultEffects（Copyright (c) 2026 Fadel，MIT，完整许可见前节）。`src/components/app-bar-scroll.ts` 使用临界阻尼／刚度 1600 和小步积分，并增加分段隐藏、键盘可见性及清理；这些数值来自参考实现，不声称为官方 App Bar 固定参数。未引入 m3ui-vue 运行时或新增依赖。
+
+连续背景配色另参考该文件对收合比例使用 FastOutLinearIn `cubic-bezier(0.4, 0, 1, 1)` 混合 surface／surface-container 的做法。MDV 独立求解该曲线，并为单行及固定模式提供距离映射；外观按用户要求统一为 default／elevated／bordered，默认无阴影，不把滚动配色与阴影开关绑定。m3ui 原实现的 Small／pinned 布尔配色、elevated／bordered 独立布尔属性不直接照搬。
+
 ## Material Symbols 图标数据
 
 - 来源：https://github.com/google/material-design-icons
