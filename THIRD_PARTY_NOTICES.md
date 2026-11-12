@@ -171,6 +171,17 @@ MDV 独立实现当前 Expressive 的 96px 收起轨、220–360px 展开范围�
 
 Navigation Rail 与 Navigation Bar 的交互胶囊动画另参考同仓库的 [MNavigationBar.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MNavigationBar.vue)：200ms 的背景宽度／颜色过渡。MDV 在 `src/styles/navigation-rail.css` 与 `src/styles/navigation-bar.css` 中将动画独立于内容布局，保持图标、文字、徽标与点击区域稳定，并适用于展开轨及横排底栏。版权与 MIT 许可同上，不将该过渡参数声称为官网规定值。
 
+## Material 3 Navigation Drawer 规格与参考
+
+- 官方规格／布局／无障碍：https://m3.material.io/components/navigation-drawer/specs 、https://m3.material.io/components/navigation-drawer/guidelines 、https://m3.material.io/components/navigation-drawer/accessibility
+- 导航 disclosure 语义参考：https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/examples/disclosure-navigation/
+- Material 规格版权：Copyright Google LLC。
+- 使用位置：Navigation Drawer 四个公开组件、内部 `NavigationDrawerSurface.vue` 与 `src/styles/navigation-drawer.css`。
+
+MDV 根据旧版 M3 的 Standard／Modal 规格独立实现整行胶囊、文字计数和分组导航。官方 Expressive 已推荐 Expanded Navigation Rail，本组仍按明确选择覆盖旧版 Drawer；不将旧版视觉声明为当前 Expressive Drawer。
+
+布局占位与内容分离、分组及滑动思路参考 [MNavigationDrawer.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MNavigationDrawer.vue) 和 [_MDrawerItemList.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/_MDrawerItemList.vue)（Copyright (c) 2026 Fadel，MIT，完整许可见前节）。沿用 MDV 的 `side-sheet-motion.ts`，增加内部可选的布局变量与跟手遮罩；入场 0.9／700、退出 1／3800、半宽或 400px/s 滑动阈值来自参考实现，不冒称官网独立令牌。未引入参考库或新依赖。
+
 ## Material Symbols 图标数据
 
 - 来源：https://github.com/google/material-design-icons

@@ -41,6 +41,21 @@ export { default as MdvNavigationBarItem } from './components/MdvNavigationBarIt
 export { default as MdvNavigationRail } from './components/MdvNavigationRail.vue'
 export { default as MdvModalNavigationRail } from './components/MdvModalNavigationRail.vue'
 export { default as MdvNavigationRailItem } from './components/MdvNavigationRailItem.vue'
+export { default as MdvNavigationDrawer } from './components/MdvNavigationDrawer.vue'
+export { default as MdvModalNavigationDrawer } from './components/MdvModalNavigationDrawer.vue'
+export { default as MdvNavigationDrawerItem } from './components/MdvNavigationDrawerItem.vue'
+export { default as MdvNavigationDrawerGroup } from './components/MdvNavigationDrawerGroup.vue'
+export type {
+  MdvNavigationDrawerProps,
+  MdvModalNavigationDrawerProps,
+  MdvNavigationDrawerCloseReason,
+  MdvNavigationDrawerCloseDetail,
+  MdvNavigationDrawerSlotProps,
+  MdvNavigationDrawerItemProps,
+  MdvNavigationDrawerItemSlotProps,
+  MdvNavigationDrawerGroupProps,
+  MdvNavigationDrawerGroupSlotProps,
+} from './components/navigation-drawer.types'
 export type {
   MdvNavigationRailAlignment,
   MdvNavigationRailProps,

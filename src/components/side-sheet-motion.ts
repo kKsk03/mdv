@@ -15,6 +15,8 @@ interface SideSheetMotionOptions {
   track?: () => HTMLElement | null
   direction: () => 1 | -1
   initiallyOpen?: boolean
+  extentProperty?: string
+  dragScrim?: boolean
 }
 
 /** 面板横移、Standard 布局占位、遮罩分别播放；不会缩放或淡出正文。 */
@@ -30,7 +32,8 @@ export function createSideSheetMotion(options: SideSheetMotionOptions) {
   const clamp = (value: number) => Math.max(0, Math.min(1, value))
   const transform = (progress: number) =>
     `translateX(${options.direction() * (1 - progress) * 100}%)`
-  const size = (progress: number) => `calc(var(--mdv-side-sheet-extent) * ${clamp(progress)})`
+  const size = (progress: number) =>
+    `calc(var(${options.extentProperty ?? '--mdv-side-sheet-extent'}) * ${clamp(progress)})`
 
   function write(value: Position) {
     const panel = options.panel()
@@ -75,6 +78,7 @@ export function createSideSheetMotion(options: SideSheetMotionOptions) {
   function drag(progress: number) {
     stop()
     position.progress = clamp(progress)
+    if (options.dragScrim) position.opacity = position.progress
     write(position)
   }
 

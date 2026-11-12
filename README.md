@@ -23,6 +23,8 @@ MdvNavigationBar 与 MdvNavigationBarItem 已完成 Flexible 导航栏当前约�
 
 MdvNavigationRail、MdvModalNavigationRail 与 MdvNavigationRailItem 已完成当前 Expressive 收起／展开、Standard 布局与 Modal 覆盖的当前约定范围项目检查与用户验收，包含胶囊动画、沉浸模式入口、徽标、键盘及嵌套弹窗焦点修正；真实包消费另行验证。
 
+MdvNavigationDrawer、MdvModalNavigationDrawer、MdvNavigationDrawerItem 与 MdvNavigationDrawerGroup 已完成旧版 M3 Standard／Modal 当前约定范围的项目检查与用户预览验收，包含分组嵌套、子项整行缩进、原生导航语义、关闭拦截与滑动；真实包消费另行验证。当前 Expressive 新项目可优先使用 Expanded Navigation Rail。
+
 ## 本地开发
 
 在仓库根目录执行。当前环境基线为 Node.js 24.22.1 和 pnpm 12.14.0。
@@ -87,6 +89,7 @@ pnpm build
 - [MdvTabs、MdvTab 与 MdvTabPanel 标签页](./COMPONENTS.md#mdvtabs)
 - [MdvNavigationBar 与 MdvNavigationBarItem 导航栏](./COMPONENTS.md#mdvnavigationbar)
 - [MdvNavigationRail、MdvModalNavigationRail 与 MdvNavigationRailItem 导航轨](./COMPONENTS.md#mdvnavigationrail)
+- [MdvNavigationDrawer 导航抽屉家族](./COMPONENTS.md#mdvnavigationdrawer)
 
 ## 主题与排版
 

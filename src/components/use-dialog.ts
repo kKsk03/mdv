@@ -40,6 +40,7 @@ interface DialogOptions {
   hasContentSlot: () => boolean
   animate: DialogAnimator
   prepare?: () => void
+  preserveExternalFocus?: boolean
 }
 
 /** 共用模态生命周期，各组件分别维护模板、布局和动画。 */
@@ -157,10 +158,18 @@ export function useDialog(props: MdvDialogProps, emit: DialogEmit, options: Dial
     stopObservers()
     const previousModal = modal
     modal = undefined
-    previousModal?.release()
     const element = dialog.value
+    const doc = element?.ownerDocument
+    const focused = doc?.activeElement
+    const restore =
+      !options.preserveExternalFocus ||
+      !focused ||
+      focused === doc?.body ||
+      focused === doc?.documentElement ||
+      (element?.contains(focused) && focused.closest('dialog') === element)
+    previousModal?.release()
     if (element?.open) element.close(closeDetail.returnValue)
-    previousModal?.restoreFocus()
+    if (restore) previousModal?.restoreFocus()
   }
 
   async function runMotion(entering: boolean, ticket: number) {

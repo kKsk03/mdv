@@ -20,6 +20,7 @@
 @import './tabs.css';
 @import './navigation-bar.css';
 @import './navigation-rail.css';
+@import './navigation-drawer.css';
 
 .mdv-icon {
   display: inline-block;

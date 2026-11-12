@@ -26,6 +26,7 @@ import SideSheetPlayground from './SideSheetPlayground.vue'
 import TabsPlayground from './TabsPlayground.vue'
 import NavigationBarPlayground from './NavigationBarPlayground.vue'
 import NavigationRailPlayground from './NavigationRailPlayground.vue'
+import NavigationDrawerPlayground from './NavigationDrawerPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -178,6 +179,12 @@ const pages = [
     label: 'Navigation Rail 导航轨',
     description: '检查收起／展开、Standard 布局与 Modal 覆盖、内容胶囊、徽标、键盘和长标签。',
     component: NavigationRailPlayground,
+  },
+  {
+    id: 'navigation-drawer',
+    label: 'Navigation Drawer 导航抽屉',
+    description: '检查旧版 M3 的 Standard／Modal、分组、键盘、滑动关闭与焦点恢复。',
+    component: NavigationDrawerPlayground,
   },
   {
     id: 'theme',

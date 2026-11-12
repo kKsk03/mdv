@@ -7,9 +7,13 @@ interface SwipeOptions {
   direction: () => 1 | -1
   motion: ReturnType<typeof createSideSheetMotion>
   close: (velocity: number) => Promise<boolean>
+  shouldStart?: (event: PointerEvent) => boolean
+  dismissFraction?: number
+  flingVelocity?: number
+  towardEdgeOnly?: boolean
 }
 
-/** 仅从窄边缘开始，先判断方向；正文继续使用原生滚动。 */
+/** 先判断横向意图；调用方决定起点，正文继续使用原生纵向滚动。 */
 export function useSideSheetSwipe(options: SwipeOptions) {
   const dragging = ref(false)
   let pointer:
@@ -28,6 +32,7 @@ export function useSideSheetSwipe(options: SwipeOptions) {
     | undefined
   let removeListeners: (() => void) | undefined
   let version = 0
+  let suppressClick = false
 
   function cleanup() {
     const previous = pointer
@@ -56,8 +61,10 @@ export function useSideSheetSwipe(options: SwipeOptions) {
     if (!dragging.value) {
       if (Math.max(Math.abs(dx), Math.abs(dy)) < 6) return
       if (Math.abs(dy) > Math.abs(dx)) return cancel(false)
+      if (options.towardEdgeOnly && dx * options.direction() <= 0) return cancel(false)
       value.startProgress = options.motion.current().progress
       dragging.value = true
+      suppressClick = true
       value.edge.setPointerCapture?.(value.id)
     }
     event.preventDefault()
@@ -76,6 +83,7 @@ export function useSideSheetSwipe(options: SwipeOptions) {
   async function up(event: PointerEvent) {
     const value = pointer
     if (!value || event.pointerId !== value.id) return
+    if (!options.enabled()) return cancel(false)
     if (!dragging.value) return cleanup()
     event.preventDefault()
     // pointerup 的坐标也可能比最后一个 move 更靠近边缘。
@@ -83,8 +91,11 @@ export function useSideSheetSwipe(options: SwipeOptions) {
     const progress = options.motion.current().progress
     const velocity = event.timeStamp - value.lastAt > 100 ? 0 : value.velocity
     const dismiss =
-      (1 - progress) * value.width > Math.min(100, value.width / 2) ||
-      -velocity * value.width > 1000
+      (1 - progress) * value.width >
+        (options.dismissFraction === undefined
+          ? Math.min(100, value.width / 2)
+          : value.width * options.dismissFraction) ||
+      -velocity * value.width > (options.flingVelocity ?? 1000)
     const ticket = ++version
     cleanup()
     if (!dismiss) {
@@ -98,12 +109,15 @@ export function useSideSheetSwipe(options: SwipeOptions) {
   }
 
   function down(event: PointerEvent) {
+    // 新一轮真实按下不属于上一轮滑动的跟随 click，包括输入框等不接管的起点。
+    if (!pointer) suppressClick = false
     if (
       event.defaultPrevented ||
       event.button !== 0 ||
       event.isPrimary === false ||
       pointer ||
-      !options.enabled()
+      !options.enabled() ||
+      options.shouldStart?.(event) === false
     )
       return
     const panel = options.panel()
@@ -151,5 +165,11 @@ export function useSideSheetSwipe(options: SwipeOptions) {
   }
   onDeactivated(suspend)
   onBeforeUnmount(suspend)
-  return { dragging, down, cancel }
+  function click(event: MouseEvent) {
+    if (!suppressClick || event.detail === 0) return
+    suppressClick = false
+    event.preventDefault()
+    event.stopImmediatePropagation()
+  }
+  return { dragging, down, cancel, click }
 }

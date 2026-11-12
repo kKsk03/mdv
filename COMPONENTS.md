@@ -27,6 +27,7 @@
 - [MdvTabs、MdvTab 与 MdvTabPanel 标签页](#mdvtabs)
 - [MdvNavigationBar 与 MdvNavigationBarItem 导航栏](#mdvnavigationbar)
 - [MdvNavigationRail、MdvModalNavigationRail 与 MdvNavigationRailItem 导航轨](#mdvnavigationrail)
+- [MdvNavigationDrawer 导航抽屉家族](#mdvnavigationdrawer)
 
 ## MdvButton
 
@@ -2473,3 +2474,122 @@ const destinations = [
 测试规格覆盖原生语义、键盘、取消导航、受控拒绝、焦点／嵌套、缓存、SSR／hydration 和动效中断；布局、hover、长标签、两倍字号、窄区域和真实设备效果仍须在开发预览中验收。真实包消费另行验证。
 
 公共类型：`MdvNavigationRailAlignment`、`MdvNavigationRailProps`、`MdvModalNavigationRailProps`、`MdvNavigationRailCloseReason`、`MdvNavigationRailCloseDetail`、`MdvNavigationRailSlotProps`、`MdvNavigationRailItemProps`、`MdvNavigationRailItemSlotProps`。
+
+## MdvNavigationDrawer
+
+`MdvNavigationDrawer` 为布局内 Standard，`MdvModalNavigationDrawer` 为覆盖正文的 Modal；共用 `MdvNavigationDrawerItem` 和 `MdvNavigationDrawerGroup`。本组按旧版 M3 Navigation Drawer 实现，当前 Expressive 新项目可优先使用 Expanded Navigation Rail。当前约定范围已完成项目检查与用户预览验收，真实包消费另行验证。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import {
+  MdvButton,
+  MdvNavigationDrawer,
+  MdvNavigationDrawerGroup,
+  MdvNavigationDrawerItem,
+} from 'mdv'
+
+const visible = ref(true)
+const current = ref('inbox')
+const folders = ref(true)
+</script>
+
+<template>
+  <div class="flex h-[36rem] min-w-0">
+    <MdvNavigationDrawer id="mail-navigation" v-model="visible" title="邮箱">
+      <MdvNavigationDrawerItem
+        label="收件箱"
+        :active="current === 'inbox'"
+        :badge="24"
+        @click="current = 'inbox'"
+      />
+      <MdvNavigationDrawerGroup v-model:expanded="folders" label="文件夹" collapsible divider>
+        <MdvNavigationDrawerItem
+          label="归档"
+          :active="current === 'archive'"
+          @click="current = 'archive'"
+        />
+      </MdvNavigationDrawerGroup>
+    </MdvNavigationDrawer>
+    <main class="min-w-0 flex-1 overflow-auto p-6">
+      <MdvButton
+        aria-controls="mail-navigation"
+        :aria-expanded="visible"
+        @click="visible = !visible"
+      >切换导航</MdvButton>
+      <p>{{ current }}</p>
+    </main>
+  </div>
+</template>
+```
+
+Standard 占用父布局中的真实宽度，关闭后占位归零。父级负责高度，推荐使用 flex 布局并令正文 `min-width: 0`；抽屉置于正文之前，逻辑 start 在 RTL 中镜像。初次显示和重新打开均不抢正文焦点，也不锁背景。不会自动依据断点改成 Modal 或折成 Rail。
+
+### 两款共享属性与事件
+
+| 属性 | 默认值 | 说明 |
+| --- | --- | --- |
+| `modelValue` | Standard `true`；Modal `false` | boolean v-model；父级决定是否接受状态请求 |
+| `title` | `''` | 顶部标题；可用 header 插槽替换 |
+| `width` | `'360px'` | CSS 长度，如 `280px`、`24rem`；受父区／视口宽度约束 |
+| `beforeClose` | — | 接收只读关闭详情；同步或异步返回 false 阻止本次关闭 |
+| `destroyOnClose` | `false` | 默认保留内容；true 时退出完成后销毁 |
+
+两款的 `default`、`header`、`footer` 插槽均提供 `{ close }`。default 放导航 Item／Group；header 和 footer 可以放标题、按钮、输入或嵌套浮层。`close(): Promise<boolean>` 表示父级是否接受关闭请求，返回 true 时退出动画可能尚未结束；`focus()` 聚焦当前可用目的地或首个可用行。外部直接修改模型是程序控制，跳过 `beforeClose`。
+
+事件：`update:modelValue(boolean)`、`open`、`opened`、`close(detail)`、`closed(detail)`。open／close 表示开始进入／退出，opened／closed 表示动效结束。`detail.reason` 为 `'action' | 'escape' | 'scrim' | 'select' | 'swipe' | 'model'`。Standard 使用 action／model；Modal 还可由 Escape、遮罩、目的地选择、滑动发起。异步关闭请求合并；父级拒绝更新时不触发退出生命周期，旧请求不会关闭后来重新打开的抽屉。
+
+### MdvModalNavigationDrawer
+
+替换根组件并令初始模型为 false，即可由外部按钮打开 Modal。始终保留可访问的打开入口，并用 `aria-controls` 指向抽屉 id、`aria-expanded` 表达开关状态。
+
+| 属性 | 默认值 | 说明 |
+| --- | --- | --- |
+| `closeOnEsc` | `true` | 最上层 Escape 请求关闭 |
+| `closeOnScrim` | `true` | 完整的遮罩按下／释放请求关闭 |
+| `closeOnSelect` | `true` | 普通目的地激活后请求关闭 |
+| `closeOnSwipe` | `true` | 向逻辑起始边横向滑动关闭 |
+
+Modal 使用原生 dialog 的 top layer、现有模态栈、仅锁文档的滚动锁和焦点恢复。打开优先聚焦显式 autofocus，再选首个可用交互元素；Tab 约束只属于最上层。关闭恢复有效触发器，不覆盖仍在工作的嵌套对话框。未自动添加 X；可通过 footer／header 的 close 方法组合自己的操作。
+
+滑动跟随面板与遮罩，保留纵向滚动及嵌套控件操作；不足阈值、取消或父级拒绝时回弹。位移超过半宽，或朝关闭方向的释放速度超过 400px/s 时请求关闭；这是参考 m3ui 的交互参数，并非官网单独公布的阈值。一次实际滑动后的跟随 click 被取消，键盘激活不受影响。
+
+Standard 的 class、style、id、ARIA 与原生事件透传到 nav，CSS 变量同时用于外层布局。Modal 的 id、dir、ARIA 与原生事件透传到 dialog，class／style 用于可见面板，CSS 变量同时进入遮罩继承链。缺少名称时使用 title／header 或默认“主导航”。SSR 中 Modal 始终关闭，客户端挂载后才响应初始打开模型；内容保留与稳定 ID 支持 hydration。
+
+### MdvNavigationDrawerItem
+
+| 属性 | 默认值 | 说明 |
+| --- | --- | --- |
+| `label` | 必填 | 完整目的地文字；视觉单行省略 |
+| `href` | — | 存在时渲染原生 a，否则为 type=button |
+| `active` | `false` | 由调用方管理，输出 aria-current=page |
+| `disabled` | `false` | 禁用激活；禁用链接移除 href 并退出 Tab |
+| `badge` | — | string／number 尾部文字计数，含数字 0 |
+
+icon／badge 插槽均读取 `{ active }`，可按 active 切换实心图标。badge 默认是右对齐文字，也可以通过插槽组合 `MdvBadge`；通知的具体可访问描述由应用提供。其余原生属性、class、style 和事件作用于实际按钮／链接；暴露 `focus(options?)`、`blur()`。
+
+导航和 active 状态由调用方决定。普通点击会通知 Modal 选择关闭；同步冒泡过程中取消 click、修饰键、新窗口和下载链接均不触发该关闭。组合路由时由应用处理原生链接导航，不依赖 RouterLink。链接保持原生 Enter、按钮保持 Enter／Space 语义。
+
+### MdvNavigationDrawerGroup
+
+| 属性 | 默认值 | 说明 |
+| --- | --- | --- |
+| `label` | 必填 | 分组名称 |
+| `collapsible` | `false` | false 为静态分组标题，true 为 disclosure 按钮 |
+| `expanded` | 未传时内部 `true` | 可选 v-model:expanded；受控拒绝不改变显示状态 |
+| `disabled` | `false` | 禁用折叠按钮，子目的地按各自 disabled 管理 |
+| `divider` | `false` | 在该组之前添加内缩分隔线 |
+
+default／label／icon 插槽读取 `{ expanded }`。default 可嵌套 Item 或 Group；label 替换标题内容，icon 为可选前置图标。点击折叠按钮只改变展开状态，不把它当作 active 目的地，也不关闭 Modal。折叠内容保留在 DOM，但以 inert／aria-hidden 移出交互和读屏顺序；仅当焦点位于即将隐藏的后代中时才移回组按钮。参考 MD3 官网导航的层级外观，可折叠组的子项整行向逻辑起始侧内缩，每级 12px；选中背景、hover、波纹及焦点轮廓共用该行边界，胶囊内仍保留 16px 留白，尾侧保持对齐。静态分组不额外增加层级，RTL 自动镜像。这是 MDV 的嵌套导航设计，非 Drawer 规范公布的独立令牌。
+
+整个抽屉为 nav + ul／li；嵌套组为标记了名称的内层列表，不使用 menu、tree 或 tab 角色。Tab／Shift+Tab 逐项访问，上下方向键、Home／End 在可见可用的导航行／分组按钮间移焦点，不改变 active；组内其他控件和嵌套浮层保留自己的键盘操作。
+
+### 外观与验证
+
+默认宽 360px，朝内容侧两角 16px；Standard 为 surface／无阴影，Modal 为 surface-container-low／elevation 1，遮罩沿用 MDV 的 32% scrim。项目最小高 56px，两侧各 12px，胶囊内水平 16px；图标 24px、图文间距 12px。标签与计数 label-large（14／20、500、tracking 0.1px），active 标签 700；字号增大时行高随内容增长。
+
+active 背景 secondary-container，文字／图标 on-secondary-container；未选中及尾计数 on-surface-variant。整行胶囊 hover 8%、focus／pressed 10%，焦点 secondary／3px／offset -3px。分隔线按内容边界两侧 28px 对齐，仅用于分组。内容区独立滚动并使用局部 thin 滚动条；支持浅深、局部令牌、动态主题、RTL、reduced-motion 和 forced-colors，不额外提供 color API。
+
+测试规格覆盖语义、取消激活、分组控制、方向键、模态关闭来源、拦截／拒绝／过期、嵌套焦点、滑动、卸载／KeepAlive、运动中断及 SSR／hydration。用户已确认全部项目指令通过并完成当前范围的预览验收，包含最新子项胶囊与折叠箭头修订；触屏／读屏专项和真实包消费另行记录。
+
+公共类型：`MdvNavigationDrawerProps`、`MdvModalNavigationDrawerProps`、`MdvNavigationDrawerCloseReason`、`MdvNavigationDrawerCloseDetail`、`MdvNavigationDrawerSlotProps`、`MdvNavigationDrawerItemProps`、`MdvNavigationDrawerItemSlotProps`、`MdvNavigationDrawerGroupProps`、`MdvNavigationDrawerGroupSlotProps`。
