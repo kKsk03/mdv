@@ -29,6 +29,7 @@ import NavigationRailPlayground from './NavigationRailPlayground.vue'
 import NavigationDrawerPlayground from './NavigationDrawerPlayground.vue'
 import AppBarPlayground from './AppBarPlayground.vue'
 import SearchPlayground from './SearchPlayground.vue'
+import ToolbarPlayground from './ToolbarPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -199,6 +200,12 @@ const pages = [
     label: 'Search 搜索',
     description: '检查两种样式、Docked／全屏、输入法、结果、焦点与搜索应用栏组合。',
     component: SearchPlayground,
+  },
+  {
+    id: 'toolbar',
+    label: 'Toolbar 工具栏',
+    description: '对照 Docked／Floating、两套配色、横竖布局、收合、滚动与键盘操作。',
+    component: ToolbarPlayground,
   },
   {
     id: 'theme',

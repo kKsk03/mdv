@@ -1,0 +1,285 @@
+@layer components {
+  .mdv-toolbar {
+    --mdv-toolbar-container: var(--mdv-sys-color-surface-container);
+    --mdv-toolbar-content: var(--mdv-sys-color-on-surface-variant);
+    --mdv-toolbar-selected-container: var(--mdv-sys-color-secondary-container);
+    --mdv-toolbar-selected-content: var(--mdv-sys-color-on-secondary-container);
+    --mdv-toolbar-gap: 32px;
+    --mdv-toolbar-layout-gap: var(--mdv-toolbar-fit-gap, var(--mdv-toolbar-gap));
+    --mdv-toolbar-expansion: 1;
+    --mdv-toolbar-margin: 16px;
+    --mdv-toolbar-safe-start: env(safe-area-inset-left);
+    --mdv-toolbar-safe-end: env(safe-area-inset-right);
+
+    position: relative;
+    display: flex;
+    box-sizing: border-box;
+    min-inline-size: 0;
+    min-block-size: 64px;
+    max-inline-size: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    padding: 8px 16px;
+    background: var(--mdv-toolbar-container);
+    color: var(--mdv-toolbar-content);
+    font-family: var(--mdv-sys-typescale-font-family);
+    transition:
+      translate var(--mdv-sys-motion-duration-short-4) var(--mdv-sys-motion-easing-emphasized),
+      opacity var(--mdv-sys-motion-duration-short-4) var(--mdv-sys-motion-easing-standard);
+  }
+
+  .mdv-toolbar--docked {
+    inline-size: 100%;
+  }
+  .mdv-toolbar:dir(rtl) {
+    --mdv-toolbar-safe-start: env(safe-area-inset-right);
+    --mdv-toolbar-safe-end: env(safe-area-inset-left);
+  }
+  .mdv-toolbar--floating {
+    --mdv-toolbar-gap: 4px;
+
+    inline-size: max-content;
+    border-radius: var(--mdv-sys-shape-corner-full);
+    padding: 8px;
+  }
+  .mdv-toolbar--vibrant {
+    --mdv-toolbar-container: var(--mdv-sys-color-primary-container);
+    --mdv-toolbar-content: var(--mdv-sys-color-on-primary-container);
+    --mdv-toolbar-selected-container: var(--mdv-sys-color-surface-container);
+    --mdv-toolbar-selected-content: var(--mdv-sys-color-on-surface);
+  }
+  .mdv-toolbar--elevated {
+    /* 官方示例的阴影贴近容器，柔光层不增加外扩。 */
+    box-shadow:
+      0 1px 3px 0 color-mix(in srgb, var(--mdv-sys-color-shadow) 30%, transparent),
+      0 4px 8px 0 color-mix(in srgb, var(--mdv-sys-color-shadow) 15%, transparent);
+  }
+  .mdv-toolbar--collapsed {
+    --mdv-toolbar-expansion: 0;
+  }
+  .mdv-toolbar--align-start {
+    justify-content: flex-start;
+  }
+  .mdv-toolbar--align-end {
+    justify-content: flex-end;
+  }
+  .mdv-toolbar--align-between {
+    justify-content: space-between;
+  }
+
+  .mdv-toolbar__items {
+    display: flex;
+    inline-size: max-content;
+    min-inline-size: 0;
+    min-block-size: 48px;
+    flex: none;
+    flex-direction: inherit;
+    align-items: center;
+    gap: var(--mdv-toolbar-layout-gap);
+  }
+  .mdv-toolbar__primary {
+    flex-shrink: 1;
+  }
+  .mdv-toolbar--align-between > .mdv-toolbar__primary {
+    flex-grow: 1;
+    justify-content: space-between;
+  }
+  .mdv-toolbar__region {
+    display: flex;
+    min-inline-size: 0;
+    flex: none;
+    flex-direction: inherit;
+    opacity: clamp(0, var(--mdv-toolbar-expansion), 1);
+  }
+  .mdv-toolbar__region--leading {
+    margin-inline-end: calc(var(--mdv-toolbar-layout-gap) * var(--mdv-toolbar-expansion));
+  }
+  .mdv-toolbar__region--trailing {
+    margin-inline-start: calc(var(--mdv-toolbar-layout-gap) * var(--mdv-toolbar-expansion));
+  }
+  .mdv-toolbar--collapsed > .mdv-toolbar__region,
+  .mdv-toolbar[data-mdv-toolbar-animating] > .mdv-toolbar__region {
+    inline-size: calc(var(--mdv-toolbar-region-size, 0px) * var(--mdv-toolbar-expansion));
+    overflow: clip;
+  }
+  .mdv-toolbar__region--leading {
+    --mdv-toolbar-region-size: var(--mdv-toolbar-leading-size);
+  }
+  .mdv-toolbar__region--trailing {
+    --mdv-toolbar-region-size: var(--mdv-toolbar-trailing-size);
+  }
+  .mdv-toolbar__toggle {
+    display: flex;
+    flex: none;
+    margin-inline-start: var(--mdv-toolbar-layout-gap);
+  }
+  .mdv-toolbar__toggle-icon:dir(rtl) {
+    rotate: 180deg;
+  }
+  .mdv-toolbar--vertical .mdv-toolbar__toggle-icon {
+    rotate: -90deg;
+  }
+
+  .mdv-toolbar--vertical {
+    --mdv-toolbar-margin: 24px;
+
+    min-inline-size: 64px;
+    min-block-size: 0;
+    flex-direction: column;
+  }
+  .mdv-toolbar--vertical > .mdv-toolbar__region--leading {
+    margin-inline-end: 0;
+    margin-block-end: calc(var(--mdv-toolbar-layout-gap) * var(--mdv-toolbar-expansion));
+  }
+  .mdv-toolbar--vertical > .mdv-toolbar__region--trailing {
+    margin-inline-start: 0;
+    margin-block-start: calc(var(--mdv-toolbar-layout-gap) * var(--mdv-toolbar-expansion));
+  }
+  .mdv-toolbar--vertical > .mdv-toolbar__toggle {
+    margin-inline-start: 0;
+    margin-block-start: var(--mdv-toolbar-layout-gap);
+  }
+  .mdv-toolbar--vertical.mdv-toolbar--collapsed > .mdv-toolbar__region,
+  .mdv-toolbar--vertical[data-mdv-toolbar-animating] > .mdv-toolbar__region {
+    inline-size: auto;
+    block-size: calc(var(--mdv-toolbar-region-size, 0px) * var(--mdv-toolbar-expansion));
+  }
+
+  .mdv-toolbar--absolute,
+  .mdv-toolbar--fixed {
+    z-index: 10;
+    max-inline-size: calc(
+      100% - var(--mdv-toolbar-margin) * 2 - env(safe-area-inset-left) - env(safe-area-inset-right)
+    );
+    max-block-size: calc(
+      100% - var(--mdv-toolbar-margin) * 2 - env(safe-area-inset-top) - env(safe-area-inset-bottom)
+    );
+  }
+  .mdv-toolbar--absolute {
+    position: absolute;
+  }
+  .mdv-toolbar--fixed {
+    position: fixed;
+  }
+  .mdv-toolbar--placement-bottom:where(.mdv-toolbar--absolute, .mdv-toolbar--fixed) {
+    inset-block-end: calc(var(--mdv-toolbar-margin) + env(safe-area-inset-bottom));
+    inset-inline: calc(var(--mdv-toolbar-margin) + var(--mdv-toolbar-safe-start))
+      calc(var(--mdv-toolbar-margin) + var(--mdv-toolbar-safe-end));
+    margin-inline: auto;
+  }
+  .mdv-toolbar--docked:where(.mdv-toolbar--absolute, .mdv-toolbar--fixed) {
+    inset-block-end: 0;
+    inset-inline: 0;
+    max-inline-size: 100%;
+    padding-block-end: calc(8px + env(safe-area-inset-bottom));
+    padding-inline: max(16px, var(--mdv-toolbar-safe-start)) max(16px, var(--mdv-toolbar-safe-end));
+  }
+  .mdv-toolbar--floating:is(.mdv-toolbar--placement-start, .mdv-toolbar--placement-end):where(
+      .mdv-toolbar--absolute,
+      .mdv-toolbar--fixed
+    ) {
+    inset-block: calc(var(--mdv-toolbar-margin) + env(safe-area-inset-top))
+      calc(var(--mdv-toolbar-margin) + env(safe-area-inset-bottom));
+    block-size: max-content;
+    margin-block: auto;
+  }
+  .mdv-toolbar--floating.mdv-toolbar--placement-start:where(
+      .mdv-toolbar--absolute,
+      .mdv-toolbar--fixed
+    ) {
+    inset-inline-start: calc(var(--mdv-toolbar-margin) + var(--mdv-toolbar-safe-start));
+  }
+  .mdv-toolbar--floating.mdv-toolbar--placement-end:where(
+      .mdv-toolbar--absolute,
+      .mdv-toolbar--fixed
+    ) {
+    inset-inline-end: calc(var(--mdv-toolbar-margin) + var(--mdv-toolbar-safe-end));
+  }
+
+  .mdv-toolbar--hidden {
+    translate: 0 calc(100% + var(--mdv-toolbar-margin) + env(safe-area-inset-bottom));
+    pointer-events: none;
+    opacity: 0;
+  }
+  .mdv-toolbar--floating.mdv-toolbar--placement-start.mdv-toolbar--hidden {
+    translate: calc(-100% - var(--mdv-toolbar-margin) - env(safe-area-inset-left)) 0;
+  }
+  .mdv-toolbar--floating.mdv-toolbar--placement-end.mdv-toolbar--hidden {
+    translate: calc(100% + var(--mdv-toolbar-margin) + env(safe-area-inset-right)) 0;
+  }
+  .mdv-toolbar--floating.mdv-toolbar--placement-start.mdv-toolbar--hidden:dir(rtl) {
+    translate: calc(100% + var(--mdv-toolbar-margin) + env(safe-area-inset-right)) 0;
+  }
+  .mdv-toolbar--floating.mdv-toolbar--placement-end.mdv-toolbar--hidden:dir(rtl) {
+    translate: calc(-100% - var(--mdv-toolbar-margin) - env(safe-area-inset-left)) 0;
+  }
+  .mdv-toolbar--hidden:focus-within {
+    translate: 0;
+    pointer-events: auto;
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mdv-toolbar {
+      transition: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .mdv-toolbar {
+      border: 1px solid CanvasText;
+      background: Canvas;
+      color: CanvasText;
+      box-shadow: none;
+    }
+  }
+}
+
+/* 只作用于插槽的直接操作；Menu／Tooltip 面板和嵌套 Toolbar 不继承这些适配。 */
+:where(.mdv-toolbar__items, .mdv-toolbar__toggle)
+  > .mdv-icon-button:not(.mdv-icon-button--colored, .mdv-icon-button--disabled):where(
+    .mdv-icon-button--standard
+  ) {
+  --mdv-icon-button-foreground: var(--mdv-toolbar-content);
+}
+:where(.mdv-toolbar__items, .mdv-toolbar__toggle)
+  > .mdv-icon-button:not(.mdv-icon-button--colored, .mdv-icon-button--disabled):where(
+    .mdv-icon-button--tonal
+  ) {
+  --mdv-icon-button-container-color: var(--mdv-toolbar-selected-container);
+  --mdv-icon-button-on-container-color: var(--mdv-toolbar-selected-content);
+}
+:where(.mdv-toolbar__items, .mdv-toolbar__toggle)
+  > .mdv-icon-button:not(.mdv-icon-button--colored, .mdv-icon-button--disabled):where(
+    .mdv-icon-button--standard,
+    .mdv-icon-button--tonal
+  ).mdv-icon-button--toggle {
+  --mdv-icon-button-selected-background: var(--mdv-toolbar-selected-container);
+  --mdv-icon-button-selected-foreground: var(--mdv-toolbar-selected-content);
+}
+:where(.mdv-toolbar__items, .mdv-toolbar__toggle)
+  > .mdv-icon-button:not(.mdv-icon-button--colored, .mdv-icon-button--disabled):where(
+    .mdv-icon-button--standard,
+    .mdv-icon-button--tonal
+  ).mdv-icon-button--selected {
+  --mdv-icon-button-foreground: var(--mdv-toolbar-selected-content);
+  --mdv-icon-button-background: var(--mdv-toolbar-selected-container);
+}
+:where(.mdv-toolbar__items, .mdv-toolbar__toggle)
+  > .mdv-icon-button:not(.mdv-icon-button--colored, .mdv-icon-button--disabled):where(
+    .mdv-icon-button--tonal
+  ).mdv-icon-button--toggle:not(.mdv-icon-button--selected) {
+  --mdv-icon-button-background: var(--mdv-toolbar-container);
+  --mdv-icon-button-foreground: var(--mdv-toolbar-content);
+}
+.mdv-toolbar__items > .mdv-button {
+  min-block-size: 48px;
+}
+.mdv-toolbar__items > .mdv-button--text:not(.mdv-button--colored, .mdv-button--disabled) {
+  --mdv-button-color: var(--mdv-toolbar-content);
+}
+.mdv-toolbar__items > .mdv-button--tonal:not(.mdv-button--colored, .mdv-button--disabled) {
+  --mdv-button-container-color: var(--mdv-toolbar-selected-container);
+  --mdv-button-on-container-color: var(--mdv-toolbar-selected-content);
+}

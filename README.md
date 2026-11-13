@@ -29,6 +29,8 @@ MdvAppBar 与 MdvAppBarScaffold 已完成当前约定范围的项目检查与用
 
 MdvSearchBar、MdvSearchView 与 MdvSearchAppBar 已完成当前约定范围的项目检查与用户开发预览验收。包含独立输入、Contained／Divided 两种样式、Docked／Fullscreen 与自动布局、结果插槽、输入法与焦点，以及复用 App Bar／Scaffold 的搜索应用栏；默认 Contained，无额外阴影。真实包消费另行验证。
 
+MdvToolbar 已完成 Docked／Floating、Standard／Vibrant、Floating 横竖布局、受控收合、可选滚动隐藏／收合与原生操作插槽的当前约定范围项目检查及用户开发预览验收，包含 Floating 阴影修订；真实包消费另行验证。
+
 ## 本地开发
 
 在仓库根目录执行。当前环境基线为 Node.js 24.22.1 和 pnpm 12.14.0。
@@ -96,6 +98,7 @@ pnpm build
 - [MdvNavigationDrawer 导航抽屉家族](./COMPONENTS.md#mdvnavigationdrawer)
 - [MdvAppBar 应用栏](./COMPONENTS.md#mdvappbar)
 - [Search 搜索家族](./COMPONENTS.md#mdvsearchbarmdvsearchview-与-mdvsearchappbar)
+- [MdvToolbar 工具栏](./COMPONENTS.md#mdvtoolbar)
 
 ## 主题与排版
 

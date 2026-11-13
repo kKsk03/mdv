@@ -2,6 +2,16 @@
 
 本文件随 MDV 源码和 npm 包提供，记录当前实际使用的第三方令牌、算法、字体、图标和渲染器。
 
+## Material 3 Toolbar 规格与令牌
+
+- 来源：https://m3.material.io/components/toolbars/specs 、overview、guidelines、accessibility 的当前 Docked／Floating。
+- 版权：Copyright Google LLC。
+- 使用位置：`src/styles/toolbar.css` 的尺寸、间距、形状、颜色和 elevation；`src/components/MdvToolbar.vue` 的布局与键盘语义。
+
+官网 Floating Toolbar 的 elevation 令牌解析为 level 3／6dp；该空间层级不直接规定 CSS box-shadow。MDV 根据官方示例采用双层阴影，柔光层为 `0 4px 8px 0`，收去通用 CSS level 3 的 3px 外扩，颜色保持主题 shadow 角色。
+
+收合分组及连续弹簧的思路参考 [MToolbar.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MToolbar.vue) 与同仓库 `src/composables/motion.ts`（Copyright (c) 2026 Fadel，MIT，完整许可见下文 m3ui-vue Tabs 弹簧算法一节）。`toolbar-motion.ts` 使用 Expressive FastSpatial 的 dampingRatio 0.6／stiffness 800，小步积分并保留反转速度；40px 同方向滚动阈值同样为参考交互选择，不声称是官网 Toolbar 独立令牌。MDV 自行组织 Vue 生命周期、受控状态、焦点与滚动监听，不引入参考库或额外依赖。
+
 ## Material 3 Search 规格与令牌
 
 - 规格来源：https://m3.material.io/components/search/specs 、overview、guidelines、accessibility，以及 https://m3.material.io/components/app-bars/specs 的 Search app bar。
@@ -204,10 +214,10 @@ MDV 根据旧版 M3 的 Standard／Modal 规格独立实现整行胶囊、文字
 - 数据分发：`@iconify-icons/material-symbols`，当前以 2.0.9 为资源基线；https://github.com/iconify/icon-sets
 - 版权：Copyright Google LLC
 - 许可：Apache License 2.0
-- 使用资源：Material Symbols 的本地 SVG 数据，包括 favorite、home、save、search 等预览图形及其填充／风格变体；文本框内置动作使用 close、visibility、visibility-off，Chip 使用 check、close，Segmented Button 使用 check，Menu 使用 check、chevron-right、arrow-back，Snackbar 使用 close，Bottom Sheet 使用 unfold-more，Side Sheet 使用 close、arrow-back。
-- 使用位置：`src/components/MdvTextField.vue`、`src/components/MdvChip.vue`、`src/components/MdvSegmentedButtonItem.vue`、`src/components/MdvFullscreenDialog.vue`、`src/components/MdvMenuItem.vue`、`src/components/_MdvMenuPanel.vue`、`src/components/MdvSnackbar.vue`、`src/components/MdvBottomSheet.vue`、`src/components/MdvBottomSheetScaffold.vue`、`src/components/MdvSideSheet.vue`、`src/components/MdvSideSheetScaffold.vue` 的内置动作、`playground/` 的组件预览、组件测试和 `COMPONENTS.md` 示例。
+- 使用资源：Material Symbols 的本地 SVG 数据，包括 favorite、home、save、search 等预览图形及其填充／风格变体；文本框内置动作使用 close、visibility、visibility-off，Chip 使用 check、close，Segmented Button 使用 check，Menu 使用 check、chevron-right、arrow-back，Snackbar 使用 close，Bottom Sheet 使用 unfold-more，Side Sheet 使用 close、arrow-back，Toolbar 使用 more-horiz、chevron-left。
+- 使用位置：`src/components/MdvTextField.vue`、`src/components/MdvChip.vue`、`src/components/MdvSegmentedButtonItem.vue`、`src/components/MdvFullscreenDialog.vue`、`src/components/MdvMenuItem.vue`、`src/components/_MdvMenuPanel.vue`、`src/components/MdvSnackbar.vue`、`src/components/MdvBottomSheet.vue`、`src/components/MdvBottomSheetScaffold.vue`、`src/components/MdvSideSheet.vue`、`src/components/MdvSideSheetScaffold.vue`、`src/components/MdvToolbar.vue` 的内置动作、`playground/` 的组件预览、组件测试和 `COMPONENTS.md` 示例。
 
-Iconify 分发包提供可单独导入的图标数据，原始图形版权与许可归上游 Google。该包是本仓库的开发依赖；文本框、Chip、Segmented Button、Dialog、Menu、Snackbar、Bottom Sheet 与 Side Sheet 只导入各自固定图形并随组件构建，MDV 不导入或注册整套数据。使用方无需为内置动作安装图标集；自定义图标按自己的静态导入分发，并保留相应许可。
+Iconify 分发包提供可单独导入的图标数据，原始图形版权与许可归上游 Google。该包是本仓库的开发依赖；文本框、Chip、Segmented Button、Dialog、Menu、Snackbar、Bottom Sheet、Side Sheet 与 Toolbar 只导入各自固定图形并随组件构建，MDV 不导入或注册整套数据。使用方无需为内置动作安装图标集；自定义图标按自己的静态导入分发，并保留相应许可。
 
 ## Iconify Vue 渲染器
 

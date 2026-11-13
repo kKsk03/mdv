@@ -29,6 +29,8 @@
 - [MdvNavigationRail、MdvModalNavigationRail 与 MdvNavigationRailItem 导航轨](#mdvnavigationrail)
 - [MdvNavigationDrawer 导航抽屉家族](#mdvnavigationdrawer)
 - [MdvAppBar 应用栏](#mdvappbar)
+- [MdvSearchBar、MdvSearchView 与 MdvSearchAppBar 搜索](#mdvsearchbarmdvsearchview-与-mdvsearchappbar)
+- [MdvToolbar 工具栏](#mdvtoolbar)
 
 ## MdvButton
 
@@ -2807,3 +2809,94 @@ AppBar 另支持 `appearance='default' | 'elevated' | 'bordered'`、`scrollBehav
 已编写输入、IME、模型拒绝、表单字段、焦点、嵌套浮层、响应切换、KeepAlive、动效中断与 SSR／hydration 规格。用户确认当前约定范围的项目指令全部通过，开发预览验收完成。协作侧在现有开发预览核对了四种布局的鼠标／键盘焦点来源和 Tab 焦点框，包含输入栏与结果区的边界；软键盘、触屏、读屏专项和真实包消费另行验证。
 
 公共类型：`MdvSearchVariant`、`MdvSearchLayout`、`MdvSearchCloseReason`、`MdvSearchCloseDetail`、`MdvSearchBeforeClose`、`MdvSearchBarProps`、`MdvSearchViewProps`、`MdvSearchAppBarProps`、`MdvSearchSlotProps`、`MdvSearchTriggerProps`、`MdvSearchTriggerSlotProps`。
+
+## MdvToolbar
+
+按 Material 3 当前 Toolbar 的 Docked／Floating 实现。默认 Docked／Standard／横向；Floating 另支持竖向布局、保留主要操作的展开／收合。旧版 Bottom App Bar 和独立 FAB 不属于这个组件。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvButton, MdvToolbar } from 'mdv'
+
+const expanded = ref(true)
+</script>
+
+<template>
+  <MdvToolbar v-model:expanded="expanded" variant="floating" aria-label="草稿操作">
+    <template #leading>
+      <MdvButton variant="text">撤销</MdvButton>
+    </template>
+    <MdvButton>保存草稿</MdvButton>
+    <template #trailing>
+      <MdvButton variant="text">复制</MdvButton>
+    </template>
+  </MdvToolbar>
+</template>
+```
+
+### 属性与布局
+
+| 属性 | 默认值 | 说明 |
+| --- | --- | --- |
+| `variant` | `'docked'` | docked／floating |
+| `color` | `'standard'` | standard／vibrant |
+| `orientation` | `'horizontal'` | horizontal／vertical；竖向仅用于 Floating |
+| `align` | `'center'` | start／center／end／between，按主轴排列 |
+| `elevated` | Floating 为 true，Docked 为 false | 是否显示柔和阴影，可显式关闭 |
+| `position` | `'static'` | static／absolute／fixed |
+| `placement` | `'bottom'` | bottom／start／end，逻辑方向；Docked 仅 bottom |
+| `v-model:expanded` | 未绑定时 true | Floating 的两侧分组是否展开，绑定时以父级接受值为准 |
+| `scrollBehavior` | `'none'` | none／hide／collapse；Docked 支持 none／hide |
+| `scrollTarget` | Window | Window、HTMLElement、CSS selector 或返回目标的 getter；显式目标不存在时不回退 |
+| `scrollThreshold` | `40` | 同方向累计滚动多少像素后隐藏／收合，反向重新累计；回到顶端恢复 |
+| `expandLabel`／`collapseLabel` | `'展开工具栏'`／`'收起工具栏'` | 默认展开入口的可访问名称 |
+
+Docked 默认直角、填满父级宽度，最小高 64px，两端 16px，项目间距默认 32px；可用空间不足时将间距缩小至 4px，操作本身不缩放。`align='between'` 可在可用宽度中均匀安排默认插槽的操作。Floating 横向最小高／竖向最小宽 64px，内边距 8px、操作间距 4px、全圆角，按内容自然占位。文字和控件需要更多高度时自然增高。可覆盖 `--mdv-toolbar-gap`、`--mdv-toolbar-margin`、`--mdv-toolbar-container`、`--mdv-toolbar-content`、`--mdv-toolbar-selected-container` 和 `--mdv-toolbar-selected-content`；调用方 class／style、ARIA 与事件保留在根节点。
+
+Standard 使用 surface-container／on-surface-variant，切换项选中使用 secondary-container／on-secondary-container。Vibrant 使用 primary-container／on-primary-container，切换项选中使用 surface-container／on-surface。直接放入操作插槽的无显式配色 MdvIconButton（standard／tonal）与 MdvButton（text／tonal）会按工具栏适配；filled 保留主操作的强调色，显式 color 或 style 优先。Menu／Tooltip 弹层和其它独立 Toolbar 保持自己的颜色。自定义包装组件可通过这些颜色变量适配。按钮的 hover／pressed／focus-visible 和禁用行为仍由按钮负责，整个 Toolbar 不叠加状态层。
+
+`static` 参与正常页面布局。`absolute` 需要父级 `position:relative` 和足够高度；`fixed` 相对视口。两种贴边模式由组件处理安全区：Floating 横向至少 16px、竖向至少 24px 的边距，Docked 贴底。贴边模式不替正文预留空间，布局时为正文安排必要的底部或侧边空间。竖向 Floating 避免使用 wide 图标按钮；与 Navigation Rail 组合时放在另一侧，Rail 使用居中排列。底部 Toolbar 与底部 Navigation Bar 应在不同页面或状态展示。
+
+Floating 操作数量超过可用宽度时，将次要操作组合进尾部 MdvMenu，可按应用断点选择展示位置；组件不复制插槽、不隐式搬移有状态控件，也不通过横向滚动或裁掉操作模拟溢出菜单。原生自定义控件应有至少 48×48px 的交互目标。
+
+Floating 阴影按官方示例收紧柔光层的扩散范围，避免容器周围出现厚重的灰色光晕；阴影颜色仍跟随主题的 shadow 角色。
+
+### 插槽、展开与键盘
+
+- `default`：主要操作，收合后保留。
+- `leading`／`trailing`：主要操作两侧的分组，Floating 收合时裁剪并设为 inert，保留 DOM、输入内容和组件状态。
+- `toggle`：自定义展开／收起入口；默认在存在两侧分组的 Floating 中显示图标按钮。必须将 `toggleProps` 绑定到可交互控件。
+- 所有插槽提供 `{ expanded, expand, collapse, toggle, toggleProps }`。`toggleProps` 包含 aria-expanded、aria-controls、aria-label 与 onClick。
+- 事件 `update:expanded(value)` 请求展开／收合；父级拒绝更新时不改变可见性或焦点。未绑定时由组件自行管理。
+- 实例暴露 `element`、`expand()`、`collapse()`、`toggle()`、`refresh()`。前三个状态方法返回 Promise boolean 表示请求是否被接受；refresh 重读分组尺寸与显式滚动目标。
+
+根为 `role='toolbar'`，默认名称“工具栏”，建议提供具体的 aria-label 或 aria-labelledby。挂载不抢焦点；Tab／Shift+Tab 自然遍历所有可访问操作，根本身不额外占 Tab 位。横向左右键（包括 RTL）、竖向上下键、Home／End 在实际可用操作间移动；不更改选中状态，Space／Enter 按原生控件激活。输入框、Slider、嵌套菜单、列表框及其它复杂控件保留自己的按键。
+
+滚动默认关闭。选择 hide 时仅隐藏视觉位置，保留布局与节点，Tab 或焦点进入会恢复整栏；当前有焦点、指针操作或菜单展开时不自动隐藏／收合。选择 collapse 时保留主要操作与展开入口，不再同时移出屏幕。外部接受的收合若影响当前焦点，会先将焦点移至主要操作或展开入口，再使分组不可访问。收合弹簧保留反转速度、只改变分组尺寸，不整体缩放文字；reduced-motion 直接到目标。
+
+```vue
+<div style="position: relative; height: 24rem">
+  <div ref="content" style="height: 100%; overflow: auto; padding-bottom: 7rem">
+    <!-- 正文 -->
+  </div>
+  <MdvToolbar
+    variant="floating"
+    color="vibrant"
+    position="absolute"
+    scroll-behavior="collapse"
+    :scroll-target="() => content"
+    aria-label="画布编辑"
+  >
+    <template #leading><!-- 次要操作 --></template>
+    <!-- 始终保留的主要操作 -->
+    <template #trailing><!-- 更多操作菜单 --></template>
+  </MdvToolbar>
+</div>
+```
+
+`content` 为调用方的模板 ref。目标更换、KeepAlive 停用和卸载会释放旧监听与动画；SSR 不读取浏览器全局，不重新挂载分组来实现收合。
+
+独立 playground 覆盖两款形态与配色、横竖、收合、受控拒绝、滚动目标、菜单／输入、Dialog、Rail、窄容器、RTL、局部主题与放大文字。行为、SSR／hydration、动效规格已编写；用户确认当前约定范围的项目指令全部通过并接受开发预览，包含 Floating 阴影修订。触屏、读屏专项和真实安装包消费另行验证。
+
+公共类型：`MdvToolbarVariant`、`MdvToolbarColor`、`MdvToolbarOrientation`、`MdvToolbarAlignment`、`MdvToolbarPosition`、`MdvToolbarPlacement`、`MdvToolbarScrollBehavior`、`MdvToolbarScrollTarget`、`MdvToolbarProps`、`MdvToolbarToggleProps`、`MdvToolbarSlotProps`。
