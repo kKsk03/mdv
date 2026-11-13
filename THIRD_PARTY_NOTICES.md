@@ -2,6 +2,16 @@
 
 本文件随 MDV 源码和 npm 包提供，记录当前实际使用的第三方令牌、算法、字体、图标和渲染器。
 
+## Material 3 Button Group 规格与动效参考
+
+- 来源：https://m3.material.io/components/button-groups/specs 、Overview／Guidelines／Accessibility 及 `TOKEN_TABLE.082d7fd6e058b011`，官网内容版本 `2026-10-13_06-10-19`。
+- 版权：Copyright Google LLC。
+- 使用位置：`src/styles/button-group.css`、`src/components/button-group-motion.ts` 与两款按钮组组件的尺寸、间距、形状、颜色及键盘规则。
+
+Standard 五档高度采用 32／40／56／96／136px、间距 18／12／8／8／8px，按压增加目标自然宽 15%，邻项以安全内容宽度限制让位；Connected 间距 2px。Connected XS 的测量图和正文均为 4px 内角，令牌却引用 small 的 8px，MDV 采用图文一致的 4px；Square 外角也按图文核对，不把 full token 套到所有方角。
+
+自然宽度、相邻空间分配与连续弹簧的思路参考 [MButtonGroup.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MButtonGroup.vue)、同仓库 `MToggleButton.vue` 和 `src/composables/motion.ts`（Copyright (c) 2026 Fadel，MIT，完整许可见下文 m3ui-vue Tabs 弹簧算法一节）。几何使用当前 MDV 动效体系的 Expressive FastSpatial dampingRatio 0.6／stiffness 800，快速反向保留速度；组的 Standard 变体与 Standard motion scheme 不混为一谈。未沿用参考库的过时尺寸、统一内角、JSON 深比较或 options-only 限制；原生节点、受控选择、表单、焦点和生命周期由 MDV 自行实现，没有引入参考库或新依赖。
+
 ## Material 3 FAB／Extended FAB 规格与动效参考
 
 - 来源：https://m3.material.io/components/floating-action-button/specs 、https://m3.material.io/components/extended-fab/specs 以及 Toolbar 配套 FAB 令牌。

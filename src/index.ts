@@ -50,6 +50,19 @@ export { default as MdvAppBarScaffold } from './components/MdvAppBarScaffold.vue
 export { default as MdvToolbar } from './components/MdvToolbar.vue'
 export { default as MdvFab } from './components/MdvFab.vue'
 export { default as MdvExtendedFab } from './components/MdvExtendedFab.vue'
+export { default as MdvButtonGroup } from './components/MdvButtonGroup.vue'
+export { default as MdvButtonGroupItem } from './components/MdvButtonGroupItem.vue'
+export type {
+  MdvButtonGroupVariant,
+  MdvButtonGroupSelection,
+  MdvButtonGroupValue,
+  MdvButtonGroupModelValue,
+  MdvButtonGroupDensity,
+  MdvButtonGroupItemVariant,
+  MdvButtonGroupProps,
+  MdvButtonGroupItemProps,
+  MdvButtonGroupItemSlotProps,
+} from './components/button-group.types'
 export type {
   MdvFabColor,
   MdvFabSize,

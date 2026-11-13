@@ -32,6 +32,7 @@
 - [MdvSearchBar、MdvSearchView 与 MdvSearchAppBar 搜索](#mdvsearchbarmdvsearchview-与-mdvsearchappbar)
 - [MdvToolbar 工具栏](#mdvtoolbar)
 - [MdvFab 与 MdvExtendedFab 浮动操作按钮](#mdvfab-与-mdvextendedfab)
+- [MdvButtonGroup 与 MdvButtonGroupItem 按钮组](#mdvbuttongroup-与-mdvbuttongroupitem)
 
 ## MdvButton
 
@@ -911,7 +912,7 @@ Chip 不生成隐式表单字段，组模型由业务提交；本轮没有 requi
 
 ## MdvSegmentedButton
 
-此组件实现传统 Material 3 Segmented Button，用于在少量相关选项中进行单选或多选。已完成当前约定范围的本地项目检查与开发预览验收，真实包消费另行验证。M3 Expressive 推荐的 Connected Button Group 将作为后续独立组件讨论。
+此组件实现传统 Material 3 Segmented Button，用于在少量相关选项中进行单选或多选。已完成当前约定范围的本地项目检查与开发预览验收，真实包消费另行验证。M3 Expressive 推荐的 Connected Button Group 由 MdvButtonGroup 的 connected 变体提供。
 
 ```vue
 <script setup lang="ts">
@@ -3029,3 +3030,95 @@ absolute 由有界的定位容器承载，fixed 相对视口；组件处理对�
 独立 playground 覆盖四档 FAB／三档 Extended、七配色、无图标、RTL、局部深色、放大文字、手动与滚动扩缩、受控拒绝、链接／表单、Tooltip、Rail／Scaffold／Toolbar 组合。行为、SSR／hydration 与动效规格已编写；用户确认全部项目指令通过并接受开发预览，包含类型声明生成修订与 Toolbar 配套联动。触屏／读屏及真实包消费另行验证。
 
 公共类型：`MdvFabColor`、`MdvFabSize`、`MdvExtendedFabSize`、`MdvFabType`、`MdvFabPosition`、`MdvFabPlacement`、`MdvExtendedFabScrollBehavior`、`MdvFabScrollTarget`、`MdvFabProps`、`MdvExtendedFabProps`。
+
+## MdvButtonGroup 与 MdvButtonGroupItem
+
+对应 [Material 3 Button groups](https://m3.material.io/components/button-groups/specs) 的 Standard／Connected。Standard 可组合普通操作、独立切换及相关选择；Connected 主要用于单选／多选，推荐各项使用统一外观。旧版 MdvSegmentedButton 独立保留。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvButtonGroup, MdvButtonGroupItem } from 'mdv'
+import type { MdvButtonGroupModelValue } from 'mdv'
+
+const mode = ref<MdvButtonGroupModelValue>('edit')
+const muted = ref(false)
+</script>
+
+<template>
+  <MdvButtonGroup v-model="mode" variant="connected" selection-required aria-label="工作方式">
+    <MdvButtonGroupItem value="edit">编辑</MdvButtonGroupItem>
+    <MdvButtonGroupItem value="review">审阅</MdvButtonGroupItem>
+    <MdvButtonGroupItem value="view">查看</MdvButtonGroupItem>
+  </MdvButtonGroup>
+
+  <MdvButtonGroup aria-label="通话操作">
+    <MdvButtonGroupItem v-model:selected="muted" variant="tonal">静音</MdvButtonGroupItem>
+    <MdvButtonGroupItem color="error">结束通话</MdvButtonGroupItem>
+  </MdvButtonGroup>
+</template>
+```
+
+### 组属性与选择
+
+| 属性 | 默认值 | 说明 |
+| --- | --- | --- |
+| `variant` | `'standard'` | standard／connected |
+| `size` | `'s'` | xs／s／m／l／xl |
+| `shape` | `'round'` | round／square |
+| `selection` | 依布局 | Standard 为 none，Connected 为 single；可显式指定 none／single／multiple |
+| `v-model` | 无初始选择 | 单选 string／number／null，多选为这些值的数组 |
+| `selectionRequired` | `false` | 阻止取消最后一项；不自动选中、不设置原生 required |
+| `disabled` | `false` | 禁用所有项及组的表单字段 |
+| `density` | `0` | 0／-1／-2／-3，每档减 4px 视觉高度，点击区域至少 48px |
+| `fullWidth` | 依布局 | Standard false，Connected true；图标项保持自身宽度，文字项分配空间 |
+| `name`／`form` | — | 隐藏字段的名称和可选外部表单 id |
+
+选择项必须有唯一 `value`，数字 `0` 和字符串 `'0'` 为不同值。未绑定模型时内部保持选择；提供模型时始终以父级接受值绘制颜色、圆角和 aria-pressed。`update:modelValue(value)` 提交新值，父级可拒绝，原数组不会被修改。`selection='none'` 不发组选择事件；独立切换通过每项的 `v-model:selected` 控制，组单选／多选时不再同时提供 selected。
+
+设置 name 后，每个已接受值输出一个同名隐藏字段，可通过 `FormData.getAll(name)` 读取。表单提交时值按 HTML 规则转为字符串，Vue 模型仍保留原类型；没有 name 时不提交组选值。reset 请求恢复挂载时的初始模型，仍服从父级接受或拒绝；取消原生 reset 则保持现状。fieldset 禁用及首个 legend 的原生例外照常生效。
+
+### 按钮项
+
+| 属性 | 默认值 | 说明 |
+| --- | --- | --- |
+| `value` | — | 组选值及原生按钮值 |
+| `variant` | `'filled'` | filled／tonal／outlined／elevated |
+| `color` | 官方默认角色 | 沿用 Button 的七套颜色及 `#RGB`／`#RRGGBB` 局部种子 |
+| `size`／`shape` | 继承组 | Standard 可覆盖；Connected 统一使用组配置 |
+| `iconOnly` | `false` | 纯图标，须有 aria-label／aria-labelledby |
+| `width` | `'default'` | 纯图标 narrow／default／wide |
+| `selected` | 未提供 | 仅 none 模式的受控独立切换，发 update:selected(boolean) |
+| `disabled` | `false` | 禁止原生激活、选择及链接导航 |
+| `loading` | `false` | 指示器；不自动禁用 |
+| `loadingText` | 沿用标签 | 文字项加载时的临时标签，不预留另一状态的宽度 |
+| `type` | `'button'` | 原生 button／submit／reset |
+| `href` | — | 普通操作渲染原生 a；选择项忽略 href |
+
+每项始终只有一个原生交互节点，class、style、ARIA、title、原生事件及适用的 name／form／target／rel／download 等透传到该节点。click 的 preventDefault 阻止组件选择；Enter／Space 采用原生激活，不额外模拟第二次 click，链接不强加 Space 激活。加载状态按当前可见的指示器和标签自然布局；需禁止激活时同时绑定 disabled。
+
+组提供 default 插槽。Item 的 default 为文字或纯图标，leading／trailing 放装饰图标，selected 替换选中图标（文字项替换 leading，纯图标项替换 default）；这些插槽均能读取 `{ selected }`。选中不会自动添加勾选符号。图标槽为装饰内容，不在按钮内部再嵌套链接、输入框或按钮。
+
+### 尺寸与动效
+
+| size | 视觉高度 | Standard 间距 | Connected 内角 | Connected 按压内角 |
+| --- | --- | --- | --- | --- |
+| xs | 32px | 18px | 4px | 4px |
+| s | 40px | 12px | 8px | 4px |
+| m | 56px | 8px | 8px | 4px |
+| l | 96px | 8px | 16px | 12px |
+| xl | 136px | 8px | 20px | 16px |
+
+以上为默认密度与字号；字体放大允许表面自然增高。点击区至少 48×48px；Connected XS／S 视觉宽至少 48px。Standard 纯图标的额外命中留白会从间距扣除；空间不足时优先保证相邻点击区不重叠，因此 XS narrow 的视觉间距可略大于 18px。
+
+Standard 按压以自然宽的额外 15% 为目标，只向直接邻项借用安全空间，组总宽保持稳定。邻项内容、内边距和最小点击宽限制实际幅度，不裁剪标签；释放恢复自然宽，选中只保留 Round／Square 形状互换。Connected 固定 2px 间距，不联动宽度；首尾外角跟随整组形状，选中自身全圆，按压后恢复已接受状态。圆角与宽度采用连续弹簧，快速反向保留速度，reduced-motion 直接到目标。
+
+文字切换项 filled 未选中使用 surface-container／on-surface-variant，选中使用 primary／on-primary；tonal 从 secondary-container 切换至 secondary；outlined 选中使用 inverse-surface；elevated 选中使用 primary。显式 color 使用对应局部角色，纯图标沿用 IconButton 的对应选中色。hover 为 8% 状态层，focus／pressed 为 10%，禁用前景为 38%；支持浅深色、主题覆盖、动态取色及强制颜色。
+
+容器 role=group，不参与 Tab。Tab／Shift+Tab 逐项经过，方向键按实际方向及 RTL 移焦，Home／End 到首尾；移焦不改选择。禁用、hidden、inert 和 fieldset-disabled 项会被跳过。3px 焦点框与 2px 偏移随当前表面圆角，滚动容器预留轮廓空间。组件保持单行，窄容器可横向滚动；长操作优先缩短文字或显式组合 Menu，组件不复制或转移插槽状态。
+
+组暴露 `element`、`focus(options?)`、`blur()`、`refresh()`；focus 聚焦首个可用项。Item 暴露 `element`、`focus(options?)`、`blur()`。动态增删／重排、字体／图片尺寸变化会刷新测量；只在受影响的成员被移除时转移焦点，挂载不抢焦点。KeepAlive 停用和卸载清理监听、计时器与动画；SSR 不访问浏览器全局，hydration 保留原生节点与焦点。
+
+已提供行为、动效、SSR 和 hydration 规格，完成定向静态核对与部分真实浏览器检查；用户确认全部项目指令通过并接受开发预览，包含动效内边距夹具与加载参数更新方式的测试修订，当前约定范围已验收。触屏／读屏及真实包消费另行验证。官网 XS 内角图文为 4px、令牌表引用 8px 的差异按图文 4px 实现，详见第三方来源记录。
+
+公共类型：`MdvButtonGroupVariant`、`MdvButtonGroupSelection`、`MdvButtonGroupValue`、`MdvButtonGroupModelValue`、`MdvButtonGroupDensity`、`MdvButtonGroupItemVariant`、`MdvButtonGroupProps`、`MdvButtonGroupItemProps`、`MdvButtonGroupItemSlotProps`。

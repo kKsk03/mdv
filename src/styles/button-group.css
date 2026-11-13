@@ -1,0 +1,319 @@
+.mdv-button-group {
+  --mdv-group-gap: 12px;
+
+  display: inline-flex;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  vertical-align: middle;
+}
+
+.mdv-button-group--xs {
+  --mdv-group-gap: 18px;
+}
+.mdv-button-group--m,
+.mdv-button-group--l,
+.mdv-button-group--xl {
+  --mdv-group-gap: 8px;
+}
+.mdv-button-group--connected {
+  --mdv-group-gap: 2px;
+}
+
+.mdv-button-group--full-width {
+  display: flex;
+  inline-size: 100%;
+}
+
+.mdv-button-group__viewport {
+  box-sizing: content-box;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  margin: -5px;
+  overflow: auto;
+  padding: 5px;
+  scrollbar-color: var(--mdv-sys-color-outline-variant) transparent;
+  scrollbar-width: thin;
+}
+
+.mdv-button-group--full-width > .mdv-button-group__viewport {
+  flex: 1;
+}
+
+.mdv-button-group__items {
+  display: flex;
+  inline-size: max-content;
+  min-inline-size: 100%;
+  align-items: center;
+  gap: var(--mdv-group-gap);
+}
+
+.mdv-button-group-item {
+  --mdv-group-height: 40px;
+  --mdv-group-visual-height: calc(var(--mdv-group-height) + var(--mdv-group-density, 0) * 4px);
+  --mdv-group-icon-width: var(--mdv-group-height);
+  --mdv-group-narrow-width: 32px;
+  --mdv-group-wide-width: 52px;
+  --mdv-group-square-radius: var(--mdv-sys-shape-corner-medium);
+  --mdv-group-inner-radius: 8px;
+  --mdv-group-pressed-radius: 8px;
+  --mdv-group-rest-radius: calc(var(--mdv-group-visual-height) / 2);
+
+  position: relative;
+  display: inline-flex;
+  box-sizing: border-box;
+  inline-size: var(--mdv-group-motion-width, auto);
+  min-inline-size: 48px;
+  min-block-size: 48px;
+  flex: 0 0 var(--mdv-group-motion-width, auto);
+  align-items: stretch;
+  border: 0;
+  outline: none;
+  padding-block: max(0px, (48px - var(--mdv-group-visual-height)) / 2);
+  padding-inline: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mdv-button-group-item--xs {
+  --mdv-group-height: 32px;
+  --mdv-group-narrow-width: 28px;
+  --mdv-group-wide-width: 40px;
+  /* 当前官网的 XS 测量图和正文均为 4px；令牌指向 8px 的差异见来源说明。 */
+  --mdv-group-inner-radius: 4px;
+}
+.mdv-button-group-item--m {
+  --mdv-group-height: 56px;
+  --mdv-group-narrow-width: 48px;
+  --mdv-group-wide-width: 72px;
+  --mdv-group-square-radius: var(--mdv-sys-shape-corner-large);
+  --mdv-group-pressed-radius: 12px;
+}
+.mdv-button-group-item--l {
+  --mdv-group-height: 96px;
+  --mdv-group-narrow-width: 64px;
+  --mdv-group-wide-width: 128px;
+  --mdv-group-square-radius: var(--mdv-sys-shape-corner-extra-large);
+  --mdv-group-inner-radius: 16px;
+  --mdv-group-pressed-radius: 16px;
+}
+.mdv-button-group-item--xl {
+  --mdv-group-height: 136px;
+  --mdv-group-narrow-width: 104px;
+  --mdv-group-wide-width: 184px;
+  --mdv-group-square-radius: var(--mdv-sys-shape-corner-extra-large);
+  --mdv-group-inner-radius: 20px;
+  --mdv-group-pressed-radius: 16px;
+}
+.mdv-button-group-item--narrow-width {
+  --mdv-group-icon-width: var(--mdv-group-narrow-width);
+}
+.mdv-button-group-item--wide-width {
+  --mdv-group-icon-width: var(--mdv-group-wide-width);
+}
+
+.mdv-button-group-item--icon-only {
+  inline-size: var(--mdv-group-motion-width, max(48px, var(--mdv-group-icon-width)));
+  padding-inline: max(0px, (48px - var(--mdv-group-icon-width)) / 2);
+}
+
+.mdv-button-group--full-width
+  > .mdv-button-group__viewport
+  > .mdv-button-group__items
+  > .mdv-button-group-item:not(.mdv-button-group-item--icon-only) {
+  flex-grow: 1;
+}
+
+.mdv-button-group-item--square,
+.mdv-button-group-item--round.mdv-button-group-item--selected {
+  --mdv-group-rest-radius: var(--mdv-group-square-radius);
+}
+.mdv-button-group-item--square.mdv-button-group-item--selected {
+  --mdv-group-rest-radius: calc(var(--mdv-group-visual-height) / 2);
+}
+
+.mdv-button-group-item__surface.mdv-button {
+  --mdv-button-height: var(--mdv-group-visual-height);
+
+  display: inline-flex;
+  inline-size: 100%;
+  min-inline-size: min(var(--mdv-button-min-width), var(--mdv-group-motion-width, 100000px));
+  max-inline-size: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--mdv-group-rest-radius);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.mdv-button-group-item--icon-only > .mdv-button-group-item__surface.mdv-button {
+  --mdv-button-icon-size: 24px;
+
+  min-inline-size: 0;
+  padding: 0;
+}
+.mdv-button-group-item--icon-only.mdv-button-group-item--xs > .mdv-button-group-item__surface {
+  --mdv-button-icon-size: 20px;
+}
+.mdv-button-group-item--icon-only.mdv-button-group-item--l > .mdv-button-group-item__surface {
+  --mdv-button-icon-size: 32px;
+}
+.mdv-button-group-item--icon-only.mdv-button-group-item--xl > .mdv-button-group-item__surface {
+  --mdv-button-icon-size: 40px;
+}
+
+.mdv-button-group-item__surface.mdv-button::after {
+  content: none;
+}
+.mdv-button-group-item__content {
+  inline-size: max-content;
+  flex: none;
+}
+
+.mdv-button-group--connected
+  > .mdv-button-group__viewport
+  > .mdv-button-group__items
+  > .mdv-button-group-item {
+  --mdv-group-outer-radius: calc(var(--mdv-group-visual-height) / 2);
+  --mdv-group-start-radius: var(--mdv-group-inner-radius);
+  --mdv-group-end-radius: var(--mdv-group-inner-radius);
+
+  padding-inline: 0;
+}
+.mdv-button-group--connected
+  > .mdv-button-group__viewport
+  > .mdv-button-group__items
+  > .mdv-button-group-item--square {
+  --mdv-group-outer-radius: var(--mdv-group-inner-radius);
+}
+.mdv-button-group--connected
+  > .mdv-button-group__viewport
+  > .mdv-button-group__items
+  > .mdv-button-group-item:is(:first-child, [data-mdv-group-first]) {
+  --mdv-group-start-radius: var(--mdv-group-outer-radius);
+}
+.mdv-button-group--connected
+  > .mdv-button-group__viewport
+  > .mdv-button-group__items
+  > .mdv-button-group-item:is(:last-child, [data-mdv-group-last]) {
+  --mdv-group-end-radius: var(--mdv-group-outer-radius);
+}
+.mdv-button-group--connected
+  > .mdv-button-group__viewport
+  > .mdv-button-group__items
+  > .mdv-button-group-item
+  > .mdv-button-group-item__surface {
+  border-start-start-radius: var(--mdv-group-start-radius);
+  border-end-start-radius: var(--mdv-group-start-radius);
+  border-start-end-radius: var(--mdv-group-end-radius);
+  border-end-end-radius: var(--mdv-group-end-radius);
+}
+.mdv-button-group--connected
+  > .mdv-button-group__viewport
+  > .mdv-button-group__items
+  > .mdv-button-group-item--selected
+  > .mdv-button-group-item__surface {
+  border-radius: calc(var(--mdv-group-visual-height) / 2);
+}
+
+.mdv-button-group-item--toggle:not(.mdv-button-group-item--selected) > .mdv-button--filled {
+  background-color: var(--mdv-sys-color-surface-container);
+  color: var(--mdv-sys-color-on-surface-variant);
+}
+.mdv-button-group-item--toggle.mdv-button-group-item--selected > .mdv-button--tonal {
+  background-color: var(--mdv-sys-color-secondary);
+  color: var(--mdv-sys-color-on-secondary);
+}
+.mdv-button-group-item--toggle.mdv-button-group-item--selected
+  > .mdv-button--tonal.mdv-button--colored {
+  background-color: var(--mdv-button-color);
+  color: var(--mdv-button-on-color);
+}
+.mdv-button-group-item--toggle.mdv-button-group-item--selected > .mdv-button--outlined {
+  border-color: transparent;
+  background-color: var(--mdv-sys-color-inverse-surface);
+  color: var(--mdv-sys-color-inverse-on-surface);
+}
+.mdv-button-group-item--icon-only.mdv-button-group-item--toggle.mdv-button-group-item--selected
+  > .mdv-button--outlined.mdv-button--colored {
+  background-color: var(--mdv-button-container-color);
+  color: var(--mdv-button-on-container-color);
+}
+.mdv-button-group-item--toggle.mdv-button-group-item--selected > .mdv-button--elevated {
+  background-color: var(--mdv-button-color);
+  color: var(--mdv-button-on-color);
+}
+
+@media (hover: hover) {
+  .mdv-button-group-item:not(:disabled, [aria-disabled='true']):hover
+    > .mdv-button-group-item__surface::before {
+    opacity: 0.08;
+  }
+}
+.mdv-button-group-item:not(:disabled, [aria-disabled='true']):is(
+    :active,
+    :focus-visible,
+    .mdv-button-group-item--pressed,
+    [data-mdv-menu-trigger-open]
+  )
+  > .mdv-button-group-item__surface::before {
+  opacity: 0.1;
+}
+.mdv-button-group-item:focus-visible {
+  z-index: 2;
+  outline: none;
+}
+.mdv-button-group-item:not(:disabled, [aria-disabled='true']):focus-visible
+  > .mdv-button-group-item__surface {
+  outline: 3px solid var(--mdv-button-color);
+  outline-offset: 2px;
+}
+.mdv-button-group-item:is(:disabled, [aria-disabled='true']) {
+  cursor: not-allowed;
+}
+.mdv-button-group-item:is(:disabled, [aria-disabled='true']) > .mdv-button-group-item__surface {
+  color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 38%, transparent);
+  box-shadow: none;
+}
+.mdv-button-group-item:is(:disabled, [aria-disabled='true'])
+  > .mdv-button-group-item__surface:not(.mdv-button--outlined),
+.mdv-button-group-item:is(:disabled, [aria-disabled='true']).mdv-button-group-item--selected
+  > .mdv-button-group-item__surface {
+  background-color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 10%, transparent);
+}
+.mdv-button-group-item:is(:disabled, [aria-disabled='true']):not(.mdv-button-group-item--selected)
+  > .mdv-button--outlined {
+  border-color: var(--mdv-sys-color-outline-variant);
+}
+
+@media (forced-colors: active) {
+  .mdv-button-group .mdv-button-group-item > .mdv-button-group-item__surface.mdv-button {
+    border: 1px solid ButtonText;
+    background: ButtonFace;
+    color: ButtonText;
+    box-shadow: none;
+    forced-color-adjust: none;
+  }
+  .mdv-button-group
+    .mdv-button-group-item.mdv-button-group-item--selected
+    > .mdv-button-group-item__surface.mdv-button {
+    border-color: Highlight;
+    background: Highlight;
+    color: HighlightText;
+  }
+  .mdv-button-group
+    .mdv-button-group-item:is(:disabled, [aria-disabled='true'])
+    > .mdv-button-group-item__surface.mdv-button {
+    border-color: GrayText;
+    background: ButtonFace;
+    color: GrayText;
+  }
+  .mdv-button-group-item:focus-visible > .mdv-button-group-item__surface {
+    outline-color: Highlight;
+  }
+}

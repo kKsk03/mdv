@@ -31,6 +31,7 @@ import AppBarPlayground from './AppBarPlayground.vue'
 import SearchPlayground from './SearchPlayground.vue'
 import ToolbarPlayground from './ToolbarPlayground.vue'
 import FabPlayground from './FabPlayground.vue'
+import ButtonGroupPlayground from './ButtonGroupPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -213,6 +214,12 @@ const pages = [
     label: 'FAB 浮动操作按钮',
     description: '检查尺寸、七套配色、扩缩、正文滚动及 Rail／Toolbar 组合。',
     component: FabPlayground,
+  },
+  {
+    id: 'button-group',
+    label: 'Button Group 按钮组',
+    description: '检查 Standard／Connected、五档尺寸、形变、独立切换、单多选与键盘。',
+    component: ButtonGroupPlayground,
   },
   {
     id: 'theme',

@@ -33,6 +33,8 @@ MdvToolbar 已完成 Docked／Floating、Standard／Vibrant、Floating 横竖布
 
 MdvFab 与 MdvExtendedFab 已完成当前约定范围的项目检查与用户开发预览验收，包含当前尺寸、七套配色、旧版 40px Small／Surface、原生按钮／链接、定位与扩缩，以及 Floating Toolbar 配套 FAB 联动。声明生成修订已随项目检查通过，真实包消费另行验证。
 
+MdvButtonGroup 与 MdvButtonGroupItem 已完成当前约定范围的项目检查与用户开发预览验收，包含 Standard／Connected、五档尺寸、Round／Square、独立切换及组内单多选、按压形变、键盘、表单和测试夹具修订。真实包消费另行验证。
+
 ## 本地开发
 
 在仓库根目录执行。当前环境基线为 Node.js 24.22.1 和 pnpm 12.14.0。
