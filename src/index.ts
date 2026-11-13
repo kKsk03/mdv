@@ -52,6 +52,13 @@ export { default as MdvFab } from './components/MdvFab.vue'
 export { default as MdvExtendedFab } from './components/MdvExtendedFab.vue'
 export { default as MdvButtonGroup } from './components/MdvButtonGroup.vue'
 export { default as MdvButtonGroupItem } from './components/MdvButtonGroupItem.vue'
+export { default as MdvSplitButton } from './components/MdvSplitButton.vue'
+export type {
+  MdvSplitButtonVariant,
+  MdvSplitButtonActionAttrs,
+  MdvSplitButtonMenuAttrs,
+  MdvSplitButtonProps,
+} from './components/split-button.types'
 export type {
   MdvButtonGroupVariant,
   MdvButtonGroupSelection,

@@ -35,6 +35,8 @@ MdvFab 与 MdvExtendedFab 已完成当前约定范围的项目检查与用户开
 
 MdvButtonGroup 与 MdvButtonGroupItem 已完成当前约定范围的项目检查与用户开发预览验收，包含 Standard／Connected、五档尺寸、Round／Square、独立切换及组内单多选、按压形变、键盘、表单和测试夹具修订。真实包消费另行验证。
 
+MdvSplitButton 已完成当前约定范围的项目检查与用户开发预览验收，包含四种外观、五档尺寸、两个独立原生控件、状态圆角与箭头动效、Menu 组合、独立禁用、主操作加载、表单／链接，以及 ref 测试夹具和真实圆角／展开状态修订。API 与组合示例见 [组件说明](./COMPONENTS.md#mdvsplitbutton)。真实包消费另行验证。
+
 ## 本地开发
 
 在仓库根目录执行。当前环境基线为 Node.js 24.22.1 和 pnpm 12.14.0。

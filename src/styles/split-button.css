@@ -1,0 +1,153 @@
+.mdv-split-button {
+  --mdv-split-direction: 1;
+  --mdv-split-action-outer-radius: calc(var(--mdv-split-height) / 2);
+  --mdv-split-menu-outer-radius: calc(var(--mdv-split-height) / 2);
+  --mdv-split-action-radius: var(--mdv-split-inner);
+  --mdv-split-menu-radius: var(--mdv-split-inner);
+  --mdv-split-angle: 0deg;
+  --mdv-split-offset: calc(0px - var(--mdv-split-shift));
+
+  position: relative;
+  display: inline-flex;
+  box-sizing: border-box;
+  min-block-size: 48px;
+  align-items: stretch;
+  gap: 2px;
+  padding-block: max(0px, (48px - var(--mdv-split-height)) / 2);
+  vertical-align: middle;
+  isolation: isolate;
+}
+.mdv-split-button:dir(rtl) {
+  --mdv-split-direction: -1;
+}
+.mdv-split-button--full-width {
+  display: flex;
+  inline-size: 100%;
+}
+.mdv-split-button--expanded {
+  --mdv-split-menu-radius: var(--mdv-split-menu-outer-radius);
+  --mdv-split-angle: 180deg;
+  --mdv-split-offset: 0px;
+}
+
+.mdv-split-button > .mdv-button {
+  display: inline-flex;
+  min-inline-size: 48px;
+  max-inline-size: none;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+.mdv-split-button > .mdv-button::after {
+  position: absolute;
+  z-index: 2;
+  inset-block: min(0px, (var(--mdv-split-height) - 48px) / 2);
+  inset-inline: 0;
+  width: auto;
+  height: auto;
+  content: '';
+  transform: none;
+}
+.mdv-split-button > .mdv-button:focus-visible {
+  z-index: 3;
+}
+.mdv-split-button > .mdv-split-button__action {
+  flex: 0 0 auto;
+  border-start-start-radius: var(--mdv-split-action-outer-radius);
+  border-end-start-radius: var(--mdv-split-action-outer-radius);
+  border-start-end-radius: var(--mdv-split-action-radius);
+  border-end-end-radius: var(--mdv-split-action-radius);
+  padding-inline-start: calc(var(--mdv-split-start) - var(--mdv-button-border));
+  padding-inline-end: calc(var(--mdv-split-end) - var(--mdv-button-border));
+}
+.mdv-split-button--full-width > .mdv-split-button__action {
+  flex-grow: 1;
+}
+.mdv-split-button--icon-only > .mdv-split-button__action {
+  min-inline-size: max(48px, var(--mdv-split-height));
+}
+.mdv-split-button > .mdv-split-button__menu {
+  inline-size: var(--mdv-split-menu-width);
+  flex: none;
+  border-start-start-radius: var(--mdv-split-menu-radius);
+  border-end-start-radius: var(--mdv-split-menu-radius);
+  border-start-end-radius: var(--mdv-split-menu-outer-radius);
+  border-end-end-radius: var(--mdv-split-menu-outer-radius);
+  padding-block: calc(
+    (var(--mdv-split-height) - var(--mdv-split-icon)) / 2 - var(--mdv-button-border)
+  );
+  padding-inline: 0;
+}
+.mdv-split-button__arrow {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  inline-size: var(--mdv-split-icon);
+  block-size: var(--mdv-split-icon);
+  flex: none;
+  transform: translateX(calc(var(--mdv-split-offset) * var(--mdv-split-direction)))
+    rotate(calc(var(--mdv-split-angle) * var(--mdv-split-direction)));
+  pointer-events: none;
+}
+.mdv-split-button__arrow > svg {
+  inline-size: 100%;
+  block-size: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  stroke-width: 2;
+}
+.mdv-split-button.mdv-split-button--expanded
+  > .mdv-split-button__menu:not(.mdv-button--disabled)::before,
+.mdv-split-button
+  > .mdv-button.mdv-split-button__control--pressed:not(.mdv-button--disabled)::before {
+  opacity: 0.1;
+}
+.mdv-split-button > .mdv-button:is(:disabled, [aria-disabled='true']) {
+  color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 38%, transparent);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.mdv-split-button
+  > .mdv-button:is(.mdv-button--disabled, :disabled, [aria-disabled='true']):not(
+    .mdv-button--outlined
+  ) {
+  background-color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 12%, transparent);
+}
+.mdv-split-button > .mdv-button--outlined:is(:disabled, [aria-disabled='true']) {
+  border-color: var(--mdv-sys-color-outline-variant);
+}
+.mdv-split-button
+  > .mdv-button:is(.mdv-split-button__action, .mdv-split-button__menu):is(
+    :disabled,
+    [aria-disabled='true']
+  )::before {
+  opacity: 0;
+}
+
+@media (forced-colors: active) {
+  .mdv-split-button > .mdv-button {
+    border: 1px solid ButtonText;
+    background: ButtonFace;
+    color: ButtonText;
+    box-shadow: none;
+    forced-color-adjust: none;
+  }
+  .mdv-split-button--expanded > .mdv-split-button__menu {
+    border-color: Highlight;
+  }
+  .mdv-split-button > .mdv-button:is(:disabled, [aria-disabled='true']) {
+    border-color: GrayText;
+    color: GrayText;
+  }
+  .mdv-split-button
+    > .mdv-button:is(.mdv-button--disabled, :disabled, [aria-disabled='true']):not(
+      .mdv-button--outlined
+    ) {
+    background-color: ButtonFace;
+  }
+  .mdv-split-button > .mdv-button:focus-visible {
+    outline-color: Highlight;
+  }
+}

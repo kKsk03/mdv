@@ -2,6 +2,16 @@
 
 本文件随 MDV 源码和 npm 包提供，记录当前实际使用的第三方令牌、算法、字体、图标和渲染器。
 
+## Material 3 Split Button 规格与动效参考
+
+- 来源：https://m3.material.io/components/split-button/specs 、Guidelines／Accessibility 及 `TOKEN_TABLE.624e8f2da4007fc8`，官网内容版本 `2026-10-13_06-10-19`。
+- 版权：Copyright Google LLC。
+- 使用位置：`src/components/MdvSplitButton.vue`、`split-button-motion.ts`、`src/styles/split-button.css` 的五档尺寸、间距、内外角、光学偏移、状态与箭头动效。
+
+五档高度 32／40／56／96／136px；尾表面宽 48／48／56／96／136px；主起始与结束留白分别为 12／16／24／48／64px 和 10／12／24／48／64px。默认内角 4／4／4／8／12px，交互内角 8／12／12／20／20px；展开尾部全圆，箭头偏移归零并向内旋转。Guidelines 明确要求箭头使用 Standard motion scheme，MDV 采用 Standard FastSpatial dampingRatio 0.9／stiffness 1400，沿用既有连续积分与保速反向思路；该方案不使用 Button Group 的 Expressive 参数。
+
+主操作和尾入口的分工参考 [MSplitButton.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MSplitButton.vue)（Copyright (c) 2026 Fadel，MIT，完整许可见下文 m3ui-vue Tabs 弹簧算法一节）。MDV 按官网测量修正参考实现的 XS／S 尾宽、非对称留白、光学校正和交互内角，自行组织原生语义、ref 转交、独立反馈与生命周期；复用 MDV Menu／Floating UI，没有引入第三方自建菜单、路由或新依赖。
+
 ## Material 3 Button Group 规格与动效参考
 
 - 来源：https://m3.material.io/components/button-groups/specs 、Overview／Guidelines／Accessibility 及 `TOKEN_TABLE.082d7fd6e058b011`，官网内容版本 `2026-10-13_06-10-19`。

@@ -33,6 +33,7 @@
 - [MdvToolbar 工具栏](#mdvtoolbar)
 - [MdvFab 与 MdvExtendedFab 浮动操作按钮](#mdvfab-与-mdvextendedfab)
 - [MdvButtonGroup 与 MdvButtonGroupItem 按钮组](#mdvbuttongroup-与-mdvbuttongroupitem)
+- [MdvSplitButton 拆分按钮](#mdvsplitbutton)
 
 ## MdvButton
 
@@ -3122,3 +3123,77 @@ Standard 按压以自然宽的额外 15% 为目标，只向直接邻项借用安
 已提供行为、动效、SSR 和 hydration 规格，完成定向静态核对与部分真实浏览器检查；用户确认全部项目指令通过并接受开发预览，包含动效内边距夹具与加载参数更新方式的测试修订，当前约定范围已验收。触屏／读屏及真实包消费另行验证。官网 XS 内角图文为 4px、令牌表引用 8px 的差异按图文 4px 实现，详见第三方来源记录。
 
 公共类型：`MdvButtonGroupVariant`、`MdvButtonGroupSelection`、`MdvButtonGroupValue`、`MdvButtonGroupModelValue`、`MdvButtonGroupDensity`、`MdvButtonGroupItemVariant`、`MdvButtonGroupProps`、`MdvButtonGroupItemProps`、`MdvButtonGroupItemSlotProps`。
+
+## MdvSplitButton
+
+将一个常用主操作与相关的其他操作组合。主操作和尾部入口各为一个原生控件；菜单由现有 `MdvMenu` 管理，拆分按钮只反映菜单已接受的展开状态。
+
+```vue
+<script setup lang="ts">
+import { MdvMenu, MdvMenuItem, MdvSplitButton } from 'mdv'
+
+function save() {
+  // 保存当前文档。
+}
+function saveCopy() {
+  // 保存副本。
+}
+</script>
+
+<template>
+  <MdvMenu>
+    <template #trigger="{ triggerProps, open }">
+      <MdvSplitButton
+        :expanded="open"
+        :menu-button-attrs="triggerProps"
+        menu-button-label="更多保存选项"
+        @click="save"
+      >保存</MdvSplitButton>
+    </template>
+    <MdvMenuItem label="保存副本" @select="saveCopy" />
+    <MdvMenuItem label="导出 PDF" />
+  </MdvMenu>
+</template>
+```
+
+| Prop | 默认值 | 说明 |
+| --- | --- | --- |
+| `variant` | `'filled'` | `'filled'`、`'tonal'`、`'outlined'`、`'elevated'` |
+| `size` | `'s'` | `'xs'`、`'s'`、`'m'`、`'l'`、`'xl'` |
+| `color` | 省略 | 沿用 Button 预设色与 hex 种子色；省略时使用对应外观的官方颜色角色 |
+| `expanded` | `false` | 外部弹层已经接受的展开状态；不会自行切换或产生 `update:expanded` |
+| `menuButtonLabel` | 必填 | 尾入口的可访问名称，例如“更多保存选项” |
+| `disabled` | `false` | 禁用两侧 |
+| `actionDisabled`／`menuDisabled` | `false` | 分别禁用主操作／尾入口 |
+| `loading`／`loadingText` | `false`／省略 | 只影响主操作，加载不自动禁用；省略文案时保留原标签 |
+| `iconOnly` | `false` | 主操作为纯图标；须通过 `actionAttrs` 提供 `aria-label` 或 `aria-labelledby` |
+| `type` | `'button'` | 主操作原生按钮类型，支持 `'submit'`／`'reset'`；尾入口始终为 button |
+| `href` | 省略 | 主操作改为原生链接，也可通过 `actionAttrs.href` 提供 |
+| `hoverShadow` | `false` | Filled／Tonal／Elevated 的可选悬停阴影；Elevated 常态保留 level 1 |
+| `fullWidth` | `false` | 主侧填满剩余宽度，尾侧保留对应尺寸 |
+| `actionAttrs` | 省略 | 主按钮／链接的原生属性、样式和事件，例如 `name`／`value`／`form`／`target` |
+| `menuButtonAttrs` | 省略 | 尾按钮的原生属性、事件与函数／Vue ref；可直接传入 Menu 的 `triggerProps` |
+
+常规 `id`／`class`／`style`／`dir`／组级 ARIA 等透传至外层 `role="group"`，外层不进入 Tab 顺序。两侧的原生属性须放在各自的 attrs 对象中。组件管理的 `type`、禁用状态、尾名称与 `aria-expanded` 优先于透传值，避免语义与行为冲突；`aria-disabled="true"` 也会阻止激活，原生禁用 fieldset 中的按钮保持禁用。禁用链接移除 href、退出 Tab 并阻止导航。
+
+`click(event: MouseEvent)` 只通知主操作；`menu-click(event: MouseEvent)` 只通知尾入口。先通知对应组件事件，再调用 attrs 中的 `onClick`；同步调用 `event.preventDefault()` 可取消后续回调、菜单展开及原生表单／链接默认行为。原生键盘事件仍透传；组件不额外模拟原生 click。`menuButtonAttrs.ref` 转交真实尾按钮，替换／卸载时旧 ref 收到 null；不要使用依赖父组件模板上下文的字符串 ref。
+
+`expanded` 应与 Menu trigger 插槽的 `open` 绑定；受控 Menu 拒绝请求时，箭头和圆角保持已接受状态。单多选、子菜单及菜单生命周期继续使用现有 Menu API；选择菜单项后是否更新主标签或业务回调由应用决定。不要把 `triggerProps` 直接绑定到拆分按钮外层。
+
+| 尺寸 | 表面高 | 尾表面宽 | 主起始／结束留白 | 主图标 | 尾箭头 | 默认／交互内角 | 未展开箭头向逻辑 start 偏移 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| xs | 32px | 48px | 12／10px | 20px | 22px | 4／8px | 1px |
+| s | 40px | 48px | 16／12px | 20px | 22px | 4／12px | 1px |
+| m | 56px | 56px | 24／24px | 24px | 26px | 4／12px | 2px |
+| l | 96px | 96px | 48／48px | 32px | 38px | 8／20px | 3px |
+| xl | 136px | 136px | 64／64px | 40px | 50px | 12／20px | 6px |
+
+两侧间距固定 2px，外端全圆；hover、focus-visible、pressed 只改变当前侧的内角。展开时尾按钮全圆、箭头居中并向内旋转 180°，底色保持对应外观，仅增加 10% 状态层。圆角、旋转和偏移采用 Standard FastSpatial 弹簧，反向从当前状态继续；RTL 镜像，reduced-motion 直接到目标。静止／hover／focus／pressed 使用现有 Button 颜色角色，hover 8%、focus／pressed 10%，禁用前景 38%、适用实底 12%。支持局部色、主题和强制颜色。
+
+以上默认几何以默认字号为准；放大文字允许表面增高。两侧命中区域至少 48×48px，XS／S 通过垂直扩展及外层占位满足，不改变尾按钮视觉边框盒。Menu 默认 `bottom-start`／4px 仍从尾部可见表面定位，空间不足时由现有 Floating UI 翻转／移位。组件保持单行及自然内容宽度；长标签可在应用布局中横向滚动，滚动容器应预留至少 5px 焦点轮廓空间，不自动缩字或裁剪文字。加载不保留隐藏文案宽度，也不锁定尾入口。
+
+`default` 为主标签；`leading`／`trailing` 为可选装饰图标，加载时隐藏。纯图标时 default 放图标并通过 `actionAttrs` 命名；装饰插槽不能放交互控件。尾箭头固定，无替换插槽。Expose：`element`、`actionElement`、`menuButtonElement`、`focus(options?)`、`focusMenu(options?)`、`blur()`；挂载和重新激活不抢焦点。
+
+Tab／Shift+Tab 分别经过两侧；主 button 的 Enter／Space、链接的 Enter 保持原生行为。组合 Menu 后，尾入口方向键打开菜单、菜单内导航／Escape／Tab／关闭返回尾部继续由 Menu 管理。也可用 `menuButtonElement` 锚定自定义 Card 浮层，再通过 `menu-click`／`expanded` 接入；自定义浮层须自行管理语义、定位与焦点，playground 提供示例。
+
+已提供独立预览及行为、动效、SSR／hydration 规格。协作侧完成定向只读 lint／格式、Vue／TypeScript 语义及内存声明生成核对；真实浏览器检查四外观×五尺寸、菜单间距、命中、键盘与焦点、受控展开、单多选、表单、RTL／深色、文字放大／窄容器以及 Dialog／Card 组合。用户确认全部项目指令通过并接受开发预览，包含 ref 测试夹具、真实内外圆角及尾部展开形状／状态层修订，当前约定范围已验收。真实触屏／读屏和新包消费另行验证。公共类型：`MdvSplitButtonVariant`、`MdvSplitButtonActionAttrs`、`MdvSplitButtonMenuAttrs`、`MdvSplitButtonProps`。

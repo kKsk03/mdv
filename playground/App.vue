@@ -32,6 +32,7 @@ import SearchPlayground from './SearchPlayground.vue'
 import ToolbarPlayground from './ToolbarPlayground.vue'
 import FabPlayground from './FabPlayground.vue'
 import ButtonGroupPlayground from './ButtonGroupPlayground.vue'
+import SplitButtonPlayground from './SplitButtonPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -220,6 +221,12 @@ const pages = [
     label: 'Button Group 按钮组',
     description: '检查 Standard／Connected、五档尺寸、形变、独立切换、单多选与键盘。',
     component: ButtonGroupPlayground,
+  },
+  {
+    id: 'split-button',
+    label: 'Split Button 拆分按钮',
+    description: '检查四种外观、五档尺寸、独立操作、菜单、圆角与箭头动效。',
+    component: SplitButtonPlayground,
   },
   {
     id: 'theme',

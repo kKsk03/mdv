@@ -26,6 +26,7 @@
 @import './toolbar.css';
 @import './fab.css';
 @import './button-group.css';
+@import './split-button.css';
 
 .mdv-icon {
   display: inline-block;
