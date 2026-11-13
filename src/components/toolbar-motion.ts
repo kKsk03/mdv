@@ -2,11 +2,12 @@ interface ToolbarMotionOptions {
   element: () => HTMLElement | null
   leading: () => HTMLElement | null
   trailing: () => HTMLElement | null
+  body?: () => HTMLElement | null
   vertical: () => boolean
   expanded: () => boolean
 }
 
-/** 仅改变两侧分组的布局尺寸；原节点与中央主要操作保持稳定。 */
+/** 改变分组或配套 FAB 操作区的几何尺寸，保留原节点。 */
 export function createToolbarMotion(options: ToolbarMotionOptions) {
   let position = options.expanded() ? 1 : 0
   let target = position
@@ -20,6 +21,7 @@ export function createToolbarMotion(options: ToolbarMotionOptions) {
     for (const [name, element] of [
       ['leading', options.leading()],
       ['trailing', options.trailing()],
+      ['body', options.body?.()],
     ] as const) {
       const size = element?.getBoundingClientRect()[axis] ?? 0
       root?.style.setProperty(`--mdv-toolbar-${name}-size`, `${Math.max(0, size)}px`)

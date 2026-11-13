@@ -79,10 +79,18 @@
     align-items: center;
     gap: var(--mdv-toolbar-layout-gap);
   }
+  .mdv-toolbar__body,
+  .mdv-toolbar__body-content {
+    display: contents;
+    flex-direction: inherit;
+  }
   .mdv-toolbar__primary {
     flex-shrink: 1;
   }
-  .mdv-toolbar--align-between > .mdv-toolbar__primary {
+  .mdv-toolbar--align-between
+    > .mdv-toolbar__body
+    > .mdv-toolbar__body-content
+    > .mdv-toolbar__primary {
     flex-grow: 1;
     justify-content: space-between;
   }
@@ -99,8 +107,11 @@
   .mdv-toolbar__region--trailing {
     margin-inline-start: calc(var(--mdv-toolbar-layout-gap) * var(--mdv-toolbar-expansion));
   }
-  .mdv-toolbar--collapsed > .mdv-toolbar__region,
-  .mdv-toolbar[data-mdv-toolbar-animating] > .mdv-toolbar__region {
+  .mdv-toolbar--collapsed > .mdv-toolbar__body > .mdv-toolbar__body-content > .mdv-toolbar__region,
+  .mdv-toolbar[data-mdv-toolbar-animating]
+    > .mdv-toolbar__body
+    > .mdv-toolbar__body-content
+    > .mdv-toolbar__region {
     inline-size: calc(var(--mdv-toolbar-region-size, 0px) * var(--mdv-toolbar-expansion));
     overflow: clip;
   }
@@ -129,11 +140,17 @@
     min-block-size: 0;
     flex-direction: column;
   }
-  .mdv-toolbar--vertical > .mdv-toolbar__region--leading {
+  .mdv-toolbar--vertical
+    > .mdv-toolbar__body
+    > .mdv-toolbar__body-content
+    > .mdv-toolbar__region--leading {
     margin-inline-end: 0;
     margin-block-end: calc(var(--mdv-toolbar-layout-gap) * var(--mdv-toolbar-expansion));
   }
-  .mdv-toolbar--vertical > .mdv-toolbar__region--trailing {
+  .mdv-toolbar--vertical
+    > .mdv-toolbar__body
+    > .mdv-toolbar__body-content
+    > .mdv-toolbar__region--trailing {
     margin-inline-start: 0;
     margin-block-start: calc(var(--mdv-toolbar-layout-gap) * var(--mdv-toolbar-expansion));
   }
@@ -141,10 +158,125 @@
     margin-inline-start: 0;
     margin-block-start: var(--mdv-toolbar-layout-gap);
   }
-  .mdv-toolbar--vertical.mdv-toolbar--collapsed > .mdv-toolbar__region,
-  .mdv-toolbar--vertical[data-mdv-toolbar-animating] > .mdv-toolbar__region {
+  .mdv-toolbar--vertical.mdv-toolbar--collapsed
+    > .mdv-toolbar__body
+    > .mdv-toolbar__body-content
+    > .mdv-toolbar__region,
+  .mdv-toolbar--vertical[data-mdv-toolbar-animating]
+    > .mdv-toolbar__body
+    > .mdv-toolbar__body-content
+    > .mdv-toolbar__region {
     inline-size: auto;
     block-size: calc(var(--mdv-toolbar-region-size, 0px) * var(--mdv-toolbar-expansion));
+  }
+
+  .mdv-toolbar--with-fab {
+    --mdv-toolbar-fab-size: calc(80px - 24px * clamp(0, var(--mdv-toolbar-expansion), 1));
+    min-block-size: 80px;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .mdv-toolbar--with-fab > .mdv-toolbar__body {
+    display: flex;
+    min-inline-size: 0;
+    flex: none;
+    flex-direction: inherit;
+    overflow: clip;
+    border-radius: var(--mdv-sys-shape-corner-full);
+    margin-inline-end: calc(8px * clamp(0, var(--mdv-toolbar-expansion), 1));
+    background: var(--mdv-toolbar-container);
+    opacity: clamp(0, var(--mdv-toolbar-expansion), 1);
+  }
+  .mdv-toolbar--with-fab.mdv-toolbar--elevated > .mdv-toolbar__body {
+    box-shadow:
+      0 1px 3px 0 color-mix(in srgb, var(--mdv-sys-color-shadow) 30%, transparent),
+      0 4px 8px 0 color-mix(in srgb, var(--mdv-sys-color-shadow) 15%, transparent);
+  }
+  .mdv-toolbar--with-fab > .mdv-toolbar__body > .mdv-toolbar__body-content {
+    display: flex;
+    box-sizing: border-box;
+    inline-size: max-content;
+    min-block-size: 64px;
+    flex: none;
+    flex-direction: inherit;
+    align-items: center;
+    padding: 8px;
+  }
+  .mdv-toolbar--with-fab.mdv-toolbar--fab-start > .mdv-toolbar__body {
+    margin-inline: calc(8px * clamp(0, var(--mdv-toolbar-expansion), 1)) 0;
+  }
+  .mdv-toolbar--with-fab > .mdv-toolbar__fab {
+    display: flex;
+    inline-size: var(--mdv-toolbar-fab-size);
+    block-size: var(--mdv-toolbar-fab-size);
+    flex: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .mdv-toolbar--with-fab > .mdv-toolbar__toggle {
+    margin-inline-start: 8px;
+  }
+  .mdv-toolbar--with-fab:is(.mdv-toolbar--collapsed, [data-mdv-toolbar-animating])
+    > .mdv-toolbar__body {
+    inline-size: calc(var(--mdv-toolbar-body-size, 0px) * var(--mdv-toolbar-expansion));
+  }
+  .mdv-toolbar--with-fab > .mdv-toolbar__body > .mdv-toolbar__body-content > .mdv-toolbar__region {
+    inline-size: auto;
+    block-size: auto;
+    overflow: visible;
+    opacity: 1;
+  }
+  .mdv-toolbar--with-fab
+    > .mdv-toolbar__body
+    > .mdv-toolbar__body-content
+    > .mdv-toolbar__region--leading {
+    margin-inline-end: 4px;
+  }
+  .mdv-toolbar--with-fab
+    > .mdv-toolbar__body
+    > .mdv-toolbar__body-content
+    > .mdv-toolbar__region--trailing {
+    margin-inline-start: 4px;
+  }
+  .mdv-toolbar--with-fab.mdv-toolbar--vertical {
+    min-block-size: 0;
+    min-inline-size: 80px;
+  }
+  .mdv-toolbar--with-fab.mdv-toolbar--vertical > .mdv-toolbar__body {
+    margin-inline: 0;
+    margin-block-end: calc(8px * clamp(0, var(--mdv-toolbar-expansion), 1));
+  }
+  .mdv-toolbar--with-fab.mdv-toolbar--vertical.mdv-toolbar--fab-start > .mdv-toolbar__body {
+    margin-block: calc(8px * clamp(0, var(--mdv-toolbar-expansion), 1)) 0;
+  }
+  .mdv-toolbar--with-fab.mdv-toolbar--vertical > .mdv-toolbar__body > .mdv-toolbar__body-content {
+    min-inline-size: 64px;
+    min-block-size: 0;
+  }
+  .mdv-toolbar--with-fab.mdv-toolbar--vertical:is(
+      .mdv-toolbar--collapsed,
+      [data-mdv-toolbar-animating]
+    )
+    > .mdv-toolbar__body {
+    inline-size: auto;
+    block-size: calc(var(--mdv-toolbar-body-size, 0px) * var(--mdv-toolbar-expansion));
+  }
+  .mdv-toolbar--with-fab.mdv-toolbar--vertical > .mdv-toolbar__toggle {
+    margin-inline: 0;
+    margin-block-start: 8px;
+  }
+  .mdv-toolbar--with-fab.mdv-toolbar--vertical
+    > .mdv-toolbar__body
+    > .mdv-toolbar__body-content
+    > .mdv-toolbar__region--leading {
+    margin: 0 0 4px;
+  }
+  .mdv-toolbar--with-fab.mdv-toolbar--vertical
+    > .mdv-toolbar__body
+    > .mdv-toolbar__body-content
+    > .mdv-toolbar__region--trailing {
+    margin: 4px 0 0;
   }
 
   .mdv-toolbar--absolute,

@@ -1,0 +1,278 @@
+.mdv-fab {
+  --mdv-fab-size: 56px;
+  --mdv-fab-icon-size: 24px;
+  --mdv-fab-radius: 16px;
+  --mdv-fab-container: var(--mdv-sys-color-primary-container);
+  --mdv-fab-content: var(--mdv-sys-color-on-primary-container);
+  --mdv-fab-shadow:
+    0 1px 3px 0 color-mix(in srgb, var(--mdv-sys-color-shadow) 30%, transparent),
+    0 4px 8px 0 color-mix(in srgb, var(--mdv-sys-color-shadow) 15%, transparent);
+  --mdv-fab-hover-shadow:
+    0 2px 3px 0 color-mix(in srgb, var(--mdv-sys-color-shadow) 30%, transparent),
+    0 6px 10px 0 color-mix(in srgb, var(--mdv-sys-color-shadow) 15%, transparent);
+  --mdv-fab-state-opacity: 0;
+  --mdv-fab-safe-start: env(safe-area-inset-left);
+  --mdv-fab-safe-end: env(safe-area-inset-right);
+
+  position: relative;
+  display: inline-flex;
+  box-sizing: border-box;
+  inline-size: max-content;
+  min-inline-size: max(48px, var(--mdv-fab-size));
+  min-block-size: max(48px, var(--mdv-fab-size));
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: var(--mdv-fab-radius);
+  padding: 0;
+  outline: none;
+  background: transparent;
+  color: var(--mdv-fab-content);
+  font-family: var(--mdv-sys-typescale-font-family);
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.mdv-fab--small {
+  --mdv-fab-size: 40px;
+  --mdv-fab-radius: 12px;
+}
+.mdv-fab--medium,
+.mdv-extended-fab--medium {
+  --mdv-fab-size: 80px;
+  --mdv-fab-icon-size: 28px;
+  --mdv-fab-radius: 20px;
+}
+.mdv-fab--large,
+.mdv-extended-fab--large {
+  --mdv-fab-size: 96px;
+  --mdv-fab-icon-size: 36px;
+  --mdv-fab-radius: 28px;
+}
+.mdv-fab--secondary-container {
+  --mdv-fab-container: var(--mdv-sys-color-secondary-container);
+  --mdv-fab-content: var(--mdv-sys-color-on-secondary-container);
+}
+.mdv-fab--tertiary-container {
+  --mdv-fab-container: var(--mdv-sys-color-tertiary-container);
+  --mdv-fab-content: var(--mdv-sys-color-on-tertiary-container);
+}
+.mdv-fab--primary {
+  --mdv-fab-container: var(--mdv-sys-color-primary);
+  --mdv-fab-content: var(--mdv-sys-color-on-primary);
+}
+.mdv-fab--secondary {
+  --mdv-fab-container: var(--mdv-sys-color-secondary);
+  --mdv-fab-content: var(--mdv-sys-color-on-secondary);
+}
+.mdv-fab--tertiary {
+  --mdv-fab-container: var(--mdv-sys-color-tertiary);
+  --mdv-fab-content: var(--mdv-sys-color-on-tertiary);
+}
+.mdv-fab--surface {
+  --mdv-fab-container: var(--mdv-sys-color-surface-container-high);
+  --mdv-fab-content: var(--mdv-sys-color-primary);
+}
+.mdv-fab__surface {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  box-sizing: border-box;
+  inline-size: var(--mdv-fab-size);
+  min-block-size: var(--mdv-fab-size);
+  align-items: center;
+  justify-content: center;
+  overflow: clip;
+  border-radius: inherit;
+  background: var(--mdv-fab-container);
+  transition: box-shadow var(--mdv-sys-motion-duration-short-4)
+    var(--mdv-sys-motion-easing-standard);
+}
+.mdv-fab__surface::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: currentcolor;
+  content: '';
+  opacity: var(--mdv-fab-state-opacity);
+  pointer-events: none;
+  transition: opacity var(--mdv-sys-motion-duration-short-2) var(--mdv-sys-motion-easing-standard);
+}
+.mdv-fab--elevated > .mdv-fab__surface {
+  box-shadow: var(--mdv-fab-shadow);
+}
+@media (hover: hover) {
+  .mdv-fab:hover {
+    --mdv-fab-state-opacity: 0.08;
+  }
+  .mdv-fab--elevated:hover > .mdv-fab__surface {
+    box-shadow: var(--mdv-fab-hover-shadow);
+  }
+}
+.mdv-fab:focus-visible {
+  --mdv-fab-state-opacity: 0.1;
+}
+.mdv-fab:focus-visible > .mdv-fab__surface {
+  outline: 3px solid var(--mdv-sys-color-secondary);
+  outline-offset: 2px;
+}
+.mdv-fab:active {
+  --mdv-fab-state-opacity: 0.1;
+}
+.mdv-fab--elevated:is(:focus-visible, :active) > .mdv-fab__surface {
+  box-shadow: var(--mdv-fab-shadow);
+}
+.mdv-fab__icon {
+  display: inline-flex;
+  inline-size: var(--mdv-fab-icon-size);
+  block-size: var(--mdv-fab-icon-size);
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.mdv-fab__icon > :is(svg, .mdv-icon) {
+  inline-size: 100%;
+  block-size: 100%;
+  width: 100%;
+  height: 100%;
+}
+.mdv-fab__ripple {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+}
+.mdv-fab__ripple--released {
+  animation: mdv-button-ripple-fade 180ms linear forwards;
+}
+.mdv-fab__ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  background: currentcolor;
+  opacity: 0.1;
+  transform: translate(-50%, -50%);
+  animation: mdv-button-ripple-grow 450ms var(--mdv-sys-motion-easing-standard) both;
+}
+.mdv-extended-fab {
+  --mdv-fab-padding: 16px;
+  --mdv-fab-gap: 8px;
+  --mdv-fab-line-height: var(--mdv-sys-typescale-title-medium-line-height);
+  font-size: var(--mdv-sys-typescale-title-medium-size);
+  font-weight: var(--mdv-sys-typescale-title-medium-weight);
+  line-height: var(--mdv-fab-line-height);
+  letter-spacing: var(--mdv-sys-typescale-title-medium-tracking);
+}
+.mdv-extended-fab--medium {
+  --mdv-fab-padding: 26px;
+  --mdv-fab-gap: 12px;
+  --mdv-fab-line-height: var(--mdv-sys-typescale-title-large-line-height);
+  font-size: var(--mdv-sys-typescale-title-large-size);
+  font-weight: var(--mdv-sys-typescale-title-large-weight);
+  letter-spacing: var(--mdv-sys-typescale-title-large-tracking);
+}
+.mdv-extended-fab--large {
+  --mdv-fab-padding: 28px;
+  --mdv-fab-gap: 16px;
+  --mdv-fab-line-height: var(--mdv-sys-typescale-headline-small-line-height);
+  font-size: var(--mdv-sys-typescale-headline-small-size);
+  font-weight: var(--mdv-sys-typescale-headline-small-weight);
+  letter-spacing: var(--mdv-sys-typescale-headline-small-tracking);
+}
+.mdv-extended-fab > .mdv-fab__surface {
+  inline-size: 100%;
+  min-inline-size: var(--mdv-fab-size);
+  justify-content: start;
+  gap: var(--mdv-fab-gap);
+  padding-block: max(
+    0px,
+    calc((var(--mdv-fab-size) - max(var(--mdv-fab-icon-size), var(--mdv-fab-line-height))) / 2)
+  );
+  padding-inline: var(--mdv-fab-leading-space, var(--mdv-fab-padding)) var(--mdv-fab-padding);
+}
+.mdv-extended-fab__label {
+  flex: none;
+  white-space: nowrap;
+  opacity: var(--mdv-fab-label-opacity, 1);
+}
+.mdv-extended-fab--collapsed,
+.mdv-extended-fab[data-mdv-fab-animating] {
+  inline-size: var(--mdv-fab-width, var(--mdv-fab-size));
+}
+.mdv-extended-fab--collapsed:not([data-mdv-fab-animating]) > .mdv-fab__surface {
+  justify-content: center;
+  padding: 0;
+}
+.mdv-extended-fab--collapsed > .mdv-fab__surface {
+  min-block-size: max(var(--mdv-fab-size), var(--mdv-fab-icon-size));
+}
+.mdv-extended-fab--collapsed:not([data-mdv-fab-animating]) .mdv-extended-fab__label {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  opacity: 0;
+}
+.mdv-fab:dir(rtl) {
+  --mdv-fab-safe-start: env(safe-area-inset-right);
+  --mdv-fab-safe-end: env(safe-area-inset-left);
+}
+.mdv-fab--absolute,
+.mdv-fab--fixed {
+  z-index: 10;
+  inset-block-end: calc(var(--mdv-fab-offset, 16px) + env(safe-area-inset-bottom));
+}
+.mdv-fab--absolute {
+  position: absolute;
+}
+.mdv-fab--fixed {
+  position: fixed;
+}
+.mdv-fab--bottom-start:where(.mdv-fab--absolute, .mdv-fab--fixed) {
+  inset-inline-start: calc(var(--mdv-fab-offset, 16px) + var(--mdv-fab-safe-start));
+}
+.mdv-fab--bottom-end:where(.mdv-fab--absolute, .mdv-fab--fixed) {
+  inset-inline-end: calc(var(--mdv-fab-offset, 16px) + var(--mdv-fab-safe-end));
+}
+.mdv-fab--bottom-center:where(.mdv-fab--absolute, .mdv-fab--fixed) {
+  inset-inline: calc(var(--mdv-fab-offset, 16px) + var(--mdv-fab-safe-start))
+    calc(var(--mdv-fab-offset, 16px) + var(--mdv-fab-safe-end));
+  margin-inline: auto;
+}
+.mdv-fab--toolbar {
+  --mdv-fab-size: var(--mdv-toolbar-fab-size, 56px);
+  --mdv-fab-icon-size: calc(24px + 4px * (1 - clamp(0, var(--mdv-toolbar-expansion, 1), 1)));
+  --mdv-fab-radius: calc(16px + 4px * (1 - clamp(0, var(--mdv-toolbar-expansion, 1), 1)));
+  --mdv-fab-shadow:
+    0 1px 2px 0 color-mix(in srgb, var(--mdv-sys-color-shadow) 30%, transparent),
+    0 calc(2px - clamp(0, var(--mdv-toolbar-expansion, 1), 1) * 1px)
+      calc(6px - clamp(0, var(--mdv-toolbar-expansion, 1), 1) * 3px) 0
+      color-mix(in srgb, var(--mdv-sys-color-shadow) 15%, transparent);
+  --mdv-fab-hover-shadow: var(--mdv-fab-shadow);
+}
+@media (prefers-reduced-motion: reduce) {
+  .mdv-fab__surface,
+  .mdv-fab__surface::before {
+    transition: none;
+  }
+  .mdv-fab__ripple {
+    display: none;
+  }
+}
+@media (forced-colors: active) {
+  .mdv-fab > .mdv-fab__surface,
+  .mdv-fab:is(:hover, :focus-visible, :active) > .mdv-fab__surface {
+    border: 1px solid ButtonText;
+    background: ButtonFace;
+    color: ButtonText;
+    box-shadow: none;
+  }
+  .mdv-fab:focus-visible > .mdv-fab__surface {
+    outline-color: Highlight;
+  }
+}

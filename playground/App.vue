@@ -30,6 +30,7 @@ import NavigationDrawerPlayground from './NavigationDrawerPlayground.vue'
 import AppBarPlayground from './AppBarPlayground.vue'
 import SearchPlayground from './SearchPlayground.vue'
 import ToolbarPlayground from './ToolbarPlayground.vue'
+import FabPlayground from './FabPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -206,6 +207,12 @@ const pages = [
     label: 'Toolbar 工具栏',
     description: '对照 Docked／Floating、两套配色、横竖布局、收合、滚动与键盘操作。',
     component: ToolbarPlayground,
+  },
+  {
+    id: 'fab',
+    label: 'FAB 浮动操作按钮',
+    description: '检查尺寸、七套配色、扩缩、正文滚动及 Rail／Toolbar 组合。',
+    component: FabPlayground,
   },
   {
     id: 'theme',

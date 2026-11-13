@@ -24,6 +24,7 @@
 @import './app-bar.css';
 @import './search.css';
 @import './toolbar.css';
+@import './fab.css';
 
 .mdv-icon {
   display: inline-block;

@@ -2,6 +2,16 @@
 
 本文件随 MDV 源码和 npm 包提供，记录当前实际使用的第三方令牌、算法、字体、图标和渲染器。
 
+## Material 3 FAB／Extended FAB 规格与动效参考
+
+- 来源：https://m3.material.io/components/floating-action-button/specs 、https://m3.material.io/components/extended-fab/specs 以及 Toolbar 配套 FAB 令牌。
+- 版权：Copyright Google LLC。
+- 使用位置：`src/styles/fab.css`、`src/components/fab.types.ts`、两款 FAB 组件及 Floating Toolbar 的配套布局。
+
+尺寸、图标、间距、形状、颜色与状态层按官网当前内容版本 `2026-10-13_06-10-19` 的两份 TOKEN_TABLE 及测量图核对，旧版 40px Small／Surface 按项目选择保留。Large 图标为 36px，Standard 配套 FAB 为 secondary-container；未照搬参考库在这两处的不同数值。独立 FAB 的层级为默认 3／hover 4，Toolbar 配套为 1→2；CSS 阴影采用贴近官方示例的双层柔光映射。
+
+扩缩、标签淡化与 Toolbar 配套布局的思路参考 [MFab.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MFab.vue)、同仓库 `_MToolbarFab.vue`、`MToolbar.vue` 和 `src/composables/motion.ts`（Copyright (c) 2026 Fadel，MIT，完整许可见下文 m3ui-vue Tabs 弹簧算法一节）。`fab-motion.ts` 的几何采用 FastSpatial dampingRatio 0.6／stiffness 800，透明度采用 FastEffects dampingRatio 1／stiffness 3800；40px 滚动阈值为交互选择，不称为官网 FAB 令牌。MDV 自行组织原生按钮／链接、受控状态、单份插槽测量、焦点、SSR 和生命周期，没有引入参考库、菜单、路由或其它依赖。
+
 ## Material 3 Toolbar 规格与令牌
 
 - 来源：https://m3.material.io/components/toolbars/specs 、overview、guidelines、accessibility 的当前 Docked／Floating。

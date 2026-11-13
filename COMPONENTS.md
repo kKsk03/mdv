@@ -31,6 +31,7 @@
 - [MdvAppBar 应用栏](#mdvappbar)
 - [MdvSearchBar、MdvSearchView 与 MdvSearchAppBar 搜索](#mdvsearchbarmdvsearchview-与-mdvsearchappbar)
 - [MdvToolbar 工具栏](#mdvtoolbar)
+- [MdvFab 与 MdvExtendedFab 浮动操作按钮](#mdvfab-与-mdvextendedfab)
 
 ## MdvButton
 
@@ -2812,7 +2813,7 @@ AppBar 另支持 `appearance='default' | 'elevated' | 'bordered'`、`scrollBehav
 
 ## MdvToolbar
 
-按 Material 3 当前 Toolbar 的 Docked／Floating 实现。默认 Docked／Standard／横向；Floating 另支持竖向布局、保留主要操作的展开／收合。旧版 Bottom App Bar 和独立 FAB 不属于这个组件。
+按 Material 3 当前 Toolbar 的 Docked／Floating 实现。默认 Docked／Standard／横向；Floating 另支持竖向布局、保留主要操作的展开／收合，以及通过 fab 插槽组合独立的 MdvFab。旧版 Bottom App Bar 不属于这个组件。
 
 ```vue
 <script setup lang="ts">
@@ -2846,7 +2847,8 @@ const expanded = ref(true)
 | `elevated` | Floating 为 true，Docked 为 false | 是否显示柔和阴影，可显式关闭 |
 | `position` | `'static'` | static／absolute／fixed |
 | `placement` | `'bottom'` | bottom／start／end，逻辑方向；Docked 仅 bottom |
-| `v-model:expanded` | 未绑定时 true | Floating 的两侧分组是否展开，绑定时以父级接受值为准 |
+| `fabPosition` | `'end'` | Floating 配套 FAB 的 start／end，按主轴与逻辑方向排列 |
+| `v-model:expanded` | 未绑定时 true | Floating 两侧分组是否展开；有 fab 插槽时控制整个操作区，绑定时以父级接受值为准 |
 | `scrollBehavior` | `'none'` | none／hide／collapse；Docked 支持 none／hide |
 | `scrollTarget` | Window | Window、HTMLElement、CSS selector 或返回目标的 getter；显式目标不存在时不回退 |
 | `scrollThreshold` | `40` | 同方向累计滚动多少像素后隐藏／收合，反向重新累计；回到顶端恢复 |
@@ -2864,9 +2866,10 @@ Floating 阴影按官方示例收紧柔光层的扩散范围，避免容器周�
 
 ### 插槽、展开与键盘
 
-- `default`：主要操作，收合后保留。
+- `default`：主要操作；未配套 FAB 时收合后保留，配套 FAB 时随操作区收合。
 - `leading`／`trailing`：主要操作两侧的分组，Floating 收合时裁剪并设为 inert，保留 DOM、输入内容和组件状态。
-- `toggle`：自定义展开／收起入口；默认在存在两侧分组的 Floating 中显示图标按钮。必须将 `toggleProps` 绑定到可交互控件。
+- `fab`：仅 Floating 生效，放一个 MdvFab；收合时保留主操作，Standard 默认 secondary-container，Vibrant 默认 tertiary-container。
+- `toggle`：自定义展开／收起入口；默认在存在两侧分组或配套 FAB 的 Floating 中显示图标按钮。必须将 `toggleProps` 绑定到可交互控件。
 - 所有插槽提供 `{ expanded, expand, collapse, toggle, toggleProps }`。`toggleProps` 包含 aria-expanded、aria-controls、aria-label 与 onClick。
 - 事件 `update:expanded(value)` 请求展开／收合；父级拒绝更新时不改变可见性或焦点。未绑定时由组件自行管理。
 - 实例暴露 `element`、`expand()`、`collapse()`、`toggle()`、`refresh()`。前三个状态方法返回 Promise boolean 表示请求是否被接受；refresh 重读分组尺寸与显式滚动目标。
@@ -2899,4 +2902,130 @@ Floating 阴影按官方示例收紧柔光层的扩散范围，避免容器周�
 
 独立 playground 覆盖两款形态与配色、横竖、收合、受控拒绝、滚动目标、菜单／输入、Dialog、Rail、窄容器、RTL、局部主题与放大文字。行为、SSR／hydration、动效规格已编写；用户确认当前约定范围的项目指令全部通过并接受开发预览，包含 Floating 阴影修订。触屏、读屏专项和真实安装包消费另行验证。
 
-公共类型：`MdvToolbarVariant`、`MdvToolbarColor`、`MdvToolbarOrientation`、`MdvToolbarAlignment`、`MdvToolbarPosition`、`MdvToolbarPlacement`、`MdvToolbarScrollBehavior`、`MdvToolbarScrollTarget`、`MdvToolbarProps`、`MdvToolbarToggleProps`、`MdvToolbarSlotProps`。
+### 配套 FAB
+
+```vue
+<MdvToolbar v-model:expanded="expanded" variant="floating" aria-label="笔记编辑">
+  <MdvIconButton variant="standard" aria-label="撤销"><MdvIcon :icon="undoIcon" /></MdvIconButton>
+  <MdvIconButton variant="standard" aria-label="重做"><MdvIcon :icon="redoIcon" /></MdvIconButton>
+  <template #fab>
+    <MdvFab aria-label="保存笔记" @click="save"><MdvIcon :icon="editIcon" /></MdvFab>
+  </template>
+</MdvToolbar>
+```
+
+配套时操作区和 FAB 分为两个表面，相隔 8px。收合操作区时 FAB 从 56px 增至 80px，图标 24→28px、圆角 16→20px、elevation 1→2；不使用独立 FAB 的 level 3 阴影。此插槽中的 FAB 尺寸和定位由 Toolbar 管理，显式 color 与 elevated 仍可覆盖；没有配套 FAB 的旧布局保持原有语义。
+
+FAB 的 click 始终执行业务主操作，旁边的展开入口负责切换工具栏。操作区收合后 inert／aria-hidden，保留原节点；只有焦点原本在将隐藏的操作区内时才转到 FAB 或展开入口。fabPosition 改变 DOM 顺序且保留控件状态，竖向按顶部／底部排列，RTL 镜像横向顺序。不要在 fab 插槽放 Extended FAB。
+
+配套 FAB 联动已随两款 FAB 完成本轮项目检查与用户开发预览验收，真实包消费另行验证。
+
+公共类型：`MdvToolbarVariant`、`MdvToolbarColor`、`MdvToolbarOrientation`、`MdvToolbarAlignment`、`MdvToolbarPosition`、`MdvToolbarPlacement`、`MdvToolbarFabPosition`、`MdvToolbarScrollBehavior`、`MdvToolbarScrollTarget`、`MdvToolbarProps`、`MdvToolbarToggleProps`、`MdvToolbarSlotProps`。
+
+## MdvFab 与 MdvExtendedFab
+
+FAB 用于页面的主要操作。MdvFab 为纯图标，MdvExtendedFab 为短标签和可选前导图标；两款默认 primary-container、带柔和阴影、参与正常布局。保留用户选择的旧版 Small FAB 和 Surface 配色。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import addIcon from '@iconify-icons/material-symbols/add'
+import editIcon from '@iconify-icons/material-symbols/edit'
+import { MdvExtendedFab, MdvFab, MdvIcon } from 'mdv'
+
+const expanded = ref(true)
+function createNote() {
+  // 应用的主要操作。
+}
+</script>
+
+<template>
+  <MdvFab aria-label="新建笔记" @click="createNote"><MdvIcon :icon="addIcon" /></MdvFab>
+  <MdvExtendedFab v-model:expanded="expanded" @click="createNote">
+    <template #leading><MdvIcon :icon="editIcon" /></template>
+    新建笔记
+  </MdvExtendedFab>
+</template>
+```
+
+### 尺寸、颜色与原生行为
+
+| 组件与 size | 表面尺寸／高度 | 圆角 | 图标 | 标签 |
+| --- | --- | --- | --- | --- |
+| FAB small（旧版） | 40px | 12px | 24px | — |
+| FAB regular（默认） | 56px | 16px | 24px | — |
+| FAB medium | 80px | 20px | 28px | — |
+| FAB large | 96px | 28px | 36px | — |
+| Extended small（默认） | 56px | 16px | 24px | 16／24px、500 |
+| Extended medium | 80px | 20px | 28px | 22／28px、400 |
+| Extended large | 96px | 28px | 36px | 24／32px、400 |
+
+FAB 默认 regular 是本库的 API 选择；官网当前使用建议优先推荐 medium。Small 的可见表面保持 40px，原生点击区域为 48×48px，排布时为整个点击区域留空间。Extended 的宽度按内容计算，三档两端留白为 16／26／28px，图文间距 8／12／16px；没有图标时不预留 gap。文字放大可使高度自然增加。
+
+| 公共属性 | 默认值 | 说明 |
+| --- | --- | --- |
+| `color` | `'primary-container'` | primary-container／secondary-container／tertiary-container／primary／secondary／tertiary／surface |
+| `elevated` | `true` | 显示阴影；false 仅移除阴影 |
+| `type` | `'button'` | 原生 button／submit／reset |
+| `href` | — | 提供后渲染原生 a |
+| `position` | `'static'` | static／absolute／fixed |
+| `placement` | `'bottom-end'` | bottom-start／bottom-center／bottom-end |
+| `offset` | `16` | 贴边距离，单位 px，另计安全区 |
+
+六套当前配色使用同名主题角色和对应 on-*；primary 表示强调色，不是 primary-container 的别名。旧版 surface 使用 surface-container-high／primary。局部主题、动态取色和自定义令牌继承现有作用域。
+
+独立 FAB 的默认／focus／pressed 为 elevation 3，hover 为 4；柔和阴影颜色取主题 shadow。hover 状态层 8%，focus／pressed 10%；键盘 focus-visible 为 3px 外框、2px 间隔，波纹裁剪在表面内。图标通过 default（FAB）或 leading（Extended）插槽放入，推荐使用 MdvIcon 或 SVG，作为装饰隐藏于读屏。
+
+图标 FAB 必须有 aria-label／aria-labelledby。Extended 使用默认插槽的短标签作为名称，收合后文字仅视觉隐藏、名称仍保留；不要在图标或标签中嵌套交互控件。原生 Tab／Shift+Tab、Enter／Space、表单关联、click 与 preventDefault 正常保留；链接不人工增加 Space 激活。class／style、ARIA、name／value／form、target／rel／download 及事件透传到实际原生元素。
+
+官方不推荐禁用 FAB；操作暂不可用时优先隐藏它。本组件没有 disabled／loading 视觉变体，原生 disabled 仍可透传给 button。不要通过 aria-disabled 期望浏览器自动阻止链接导航，需要应用处理事件。
+
+### Extended 扩缩与滚动
+
+| Extended 专用属性 | 默认值 | 说明 |
+| --- | --- | --- |
+| `v-model:expanded` | 未绑定时 true | 展开视觉标签；受控时等待父级接受 |
+| `scrollBehavior` | `'none'` | none／collapse |
+| `scrollTarget` | Window | Window／HTMLElement／selector／getter；显式目标不存在时不回退 |
+| `scrollThreshold` | `40` | 同方向累计滚动阈值，反向重新累计 |
+
+只有存在 leading 图标时允许收合；没有图标时保持文字按钮。扩缩保持同一个按钮、图标与标签节点，宽度和文字透明度分别运动，快速反向保留速度，不整体缩放内容。这里的 expanded 只改变视觉呈现，不披露内容，因此不自动添加 aria-expanded。标签单行、不截断、不换行；在窄区域使用短标签或显式收合，保留空间容纳可见内容。
+
+开启 collapse 后，下滚达到阈值收合、上滚展开，回到顶部或正文末尾恢复展开；焦点、按压或关联菜单活跃时不自动收合。组件只监听指定目标，不扫描页面寻找滚动区。下面通过已存在的 App Bar Scaffold 获取正文目标，滚动条只在正文出现：
+
+```vue
+<script setup lang="ts">
+import { useTemplateRef } from 'vue'
+import { MdvAppBar, MdvAppBarScaffold, MdvExtendedFab, MdvIcon } from 'mdv'
+import editIcon from '@iconify-icons/material-symbols/edit'
+
+const scaffold = useTemplateRef<InstanceType<typeof MdvAppBarScaffold>>('scaffold')
+</script>
+
+<template>
+  <div style="position: relative; height: 28rem">
+    <MdvAppBarScaffold ref="scaffold" style="height: 100%">
+      <template #appbar><MdvAppBar title="我的笔记" /></template>
+      <div style="padding: 1.5rem 1.5rem 7rem"><!-- 正文 --></div>
+    </MdvAppBarScaffold>
+    <MdvExtendedFab
+      position="absolute"
+      scroll-behavior="collapse"
+      :scroll-target="() => scaffold?.contentElement"
+    >
+      <template #leading><MdvIcon :icon="editIcon" /></template>
+      新建笔记
+    </MdvExtendedFab>
+  </div>
+</template>
+```
+
+absolute 由有界的定位容器承载，fixed 相对视口；组件处理对应边距与安全区，正文需要预留操作区域。与 Navigation Bar／Snackbar／Sheet 同屏时，由布局或 offset 明确安排位置，不隐式猜测其它组件的高度。Rail 的 fab 插槽可组合 MdvFab，或将 MdvExtendedFab 的 expanded 与 Rail 展开状态关联。
+
+两款实例均暴露 `element`、`focus(options?)` 和 `blur()`。Extended 另有 `expand()`／`collapse()`／`toggle()`，返回 Promise boolean 表示目标状态是否被接受；`refresh()` 重读标签、图标与滚动目标。`update:expanded(value)` 是状态请求，不改变业务操作；父级拒绝时不提前收合或移动焦点。
+
+尺寸、标签、字体和图片变化会更新测量；目标替换、KeepAlive 停用及卸载清理监听／动画，reduced-motion 直接到目标。SSR 首屏保留原节点与名称，不读取浏览器全局。未包含 FAB Menu、Speed Dial、路由适配或自定义展开面板。
+
+独立 playground 覆盖四档 FAB／三档 Extended、七配色、无图标、RTL、局部深色、放大文字、手动与滚动扩缩、受控拒绝、链接／表单、Tooltip、Rail／Scaffold／Toolbar 组合。行为、SSR／hydration 与动效规格已编写；用户确认全部项目指令通过并接受开发预览，包含类型声明生成修订与 Toolbar 配套联动。触屏／读屏及真实包消费另行验证。
+
+公共类型：`MdvFabColor`、`MdvFabSize`、`MdvExtendedFabSize`、`MdvFabType`、`MdvFabPosition`、`MdvFabPlacement`、`MdvExtendedFabScrollBehavior`、`MdvFabScrollTarget`、`MdvFabProps`、`MdvExtendedFabProps`。

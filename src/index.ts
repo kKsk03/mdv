@@ -48,6 +48,20 @@ export { default as MdvNavigationDrawerGroup } from './components/MdvNavigationD
 export { default as MdvAppBar } from './components/MdvAppBar.vue'
 export { default as MdvAppBarScaffold } from './components/MdvAppBarScaffold.vue'
 export { default as MdvToolbar } from './components/MdvToolbar.vue'
+export { default as MdvFab } from './components/MdvFab.vue'
+export { default as MdvExtendedFab } from './components/MdvExtendedFab.vue'
+export type {
+  MdvFabColor,
+  MdvFabSize,
+  MdvExtendedFabSize,
+  MdvFabType,
+  MdvFabPosition,
+  MdvFabPlacement,
+  MdvExtendedFabScrollBehavior,
+  MdvFabScrollTarget,
+  MdvFabProps,
+  MdvExtendedFabProps,
+} from './components/fab.types'
 export type {
   MdvToolbarVariant,
   MdvToolbarColor,
@@ -55,6 +69,7 @@ export type {
   MdvToolbarAlignment,
   MdvToolbarPosition,
   MdvToolbarPlacement,
+  MdvToolbarFabPosition,
   MdvToolbarScrollBehavior,
   MdvToolbarScrollTarget,
   MdvToolbarProps,

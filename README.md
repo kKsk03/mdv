@@ -31,6 +31,8 @@ MdvSearchBar、MdvSearchView 与 MdvSearchAppBar 已完成当前约定范围的�
 
 MdvToolbar 已完成 Docked／Floating、Standard／Vibrant、Floating 横竖布局、受控收合、可选滚动隐藏／收合与原生操作插槽的当前约定范围项目检查及用户开发预览验收，包含 Floating 阴影修订；真实包消费另行验证。
 
+MdvFab 与 MdvExtendedFab 已完成当前约定范围的项目检查与用户开发预览验收，包含当前尺寸、七套配色、旧版 40px Small／Surface、原生按钮／链接、定位与扩缩，以及 Floating Toolbar 配套 FAB 联动。声明生成修订已随项目检查通过，真实包消费另行验证。
+
 ## 本地开发
 
 在仓库根目录执行。当前环境基线为 Node.js 24.22.1 和 pnpm 12.14.0。
@@ -99,6 +101,7 @@ pnpm build
 - [MdvAppBar 应用栏](./COMPONENTS.md#mdvappbar)
 - [Search 搜索家族](./COMPONENTS.md#mdvsearchbarmdvsearchview-与-mdvsearchappbar)
 - [MdvToolbar 工具栏](./COMPONENTS.md#mdvtoolbar)
+- [MdvFab 与 MdvExtendedFab 浮动操作按钮](./COMPONENTS.md#mdvfab-与-mdvextendedfab)
 
 ## 主题与排版
 

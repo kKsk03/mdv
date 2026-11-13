@@ -4,6 +4,7 @@ import {
   nextTick,
   onActivated,
   onBeforeUnmount,
+  onBeforeUpdate,
   onDeactivated,
   onMounted,
   onUpdated,
@@ -13,11 +14,12 @@ import {
   useTemplateRef,
   watch,
 } from 'vue'
-import type { VNode, WatchStopHandle } from 'vue'
+import type { ComponentPublicInstance, VNode, WatchStopHandle } from 'vue'
 import moreIcon from '@iconify-icons/material-symbols/more-horiz'
 import lessIcon from '@iconify-icons/material-symbols/chevron-left'
 import MdvIcon from './MdvIcon.vue'
 import MdvIconButton from './MdvIconButton.vue'
+import ToolbarFab from './_MdvToolbarFab.vue'
 import { navigateToolbar, toolbarControls } from './toolbar-focus'
 import { createToolbarMotion } from './toolbar-motion'
 import { dismissTooltipsWithin } from './tooltip-layer'
@@ -32,6 +34,7 @@ const props = withDefaults(defineProps<MdvToolbarProps>(), {
   elevated: undefined,
   position: 'static',
   placement: 'bottom',
+  fabPosition: 'end',
   expanded: undefined,
   scrollBehavior: 'none',
   scrollThreshold: 40,
@@ -44,23 +47,62 @@ const slots = defineSlots<{
   default?(state: MdvToolbarSlotProps): VNode[]
   trailing?(state: MdvToolbarSlotProps): VNode[]
   toggle?(state: MdvToolbarSlotProps): VNode[]
+  fab?(state: MdvToolbarSlotProps): VNode[]
 }>()
 const attrs = useAttrs()
 const id = `mdv-toolbar-${useId()}`
 const element = useTemplateRef<HTMLElement>('element')
-const leading = useTemplateRef<HTMLElement>('leading')
-const trailing = useTemplateRef<HTMLElement>('trailing')
-const leadingItems = useTemplateRef<HTMLElement>('leadingItems')
-const trailingItems = useTemplateRef<HTMLElement>('trailingItems')
-const primary = useTemplateRef<HTMLElement>('primary')
-const toggleElement = useTemplateRef<HTMLElement>('toggleElement')
+const leading = ref<HTMLElement | null>(null)
+const trailing = ref<HTMLElement | null>(null)
+const leadingItems = ref<HTMLElement | null>(null)
+const trailingItems = ref<HTMLElement | null>(null)
+const primary = ref<HTMLElement | null>(null)
+const toggleElement = ref<HTMLElement | null>(null)
+const body = ref<HTMLElement | null>(null)
+const bodyItems = ref<HTMLElement | null>(null)
+const fabElement = ref<HTMLElement | null>(null)
+const partsRefs = {
+  leading,
+  trailing,
+  leadingItems,
+  trailingItems,
+  primary,
+  toggleElement,
+  body,
+  bodyItems,
+  fabElement,
+}
+function setPart(name: keyof typeof partsRefs, node: Element | ComponentPublicInstance | null) {
+  partsRefs[name].value = node as HTMLElement | null
+}
+const hasFab = ref(!!slots.fab)
+let previousFabPosition = props.fabPosition
+let movingFocus: HTMLElement | null = null
+onBeforeUpdate(() => {
+  hasFab.value = !!slots.fab
+  if (previousFabPosition !== props.fabPosition) {
+    const focused = element.value?.ownerDocument.activeElement
+    movingFocus = focused && element.value?.contains(focused) ? (focused as HTMLElement) : null
+    previousFabPosition = props.fabPosition
+  }
+})
+onUpdated(() => {
+  const node = movingFocus
+  movingFocus = null
+  if (node?.isConnected && node.ownerDocument.activeElement === node.ownerDocument.body)
+    node.focus({ preventScroll: true })
+})
 const internalExpanded = ref(true)
 const hidden = ref(false)
 const floating = computed(() => props.variant === 'floating')
+const paired = computed(() => floating.value && hasFab.value)
+const parts = computed(() =>
+  props.fabPosition === 'start' ? ['fab', 'body', 'toggle'] : ['body', 'fab', 'toggle'],
+)
 const vertical = computed(() => floating.value && props.orientation === 'vertical')
 const expanded = computed(() => !floating.value || (props.expanded ?? internalExpanded.value))
 function canCollapse() {
-  return floating.value && !!(slots.leading || slots.trailing)
+  return floating.value && !!(paired.value || slots.leading || slots.trailing)
 }
 function scrollBehavior() {
   if (props.scrollBehavior === 'collapse' && !canCollapse()) return 'none'
@@ -75,12 +117,11 @@ function slotState(): MdvToolbarSlotProps {
     toggle,
     toggleProps: {
       'aria-expanded': expanded.value,
-      'aria-controls': [
-        slots.leading ? `${id}-leading` : '',
-        slots.trailing ? `${id}-trailing` : '',
-      ]
-        .filter(Boolean)
-        .join(' '),
+      'aria-controls': paired.value
+        ? `${id}-body`
+        : [slots.leading ? `${id}-leading` : '', slots.trailing ? `${id}-trailing` : '']
+            .filter(Boolean)
+            .join(' '),
       'aria-label': expanded.value ? props.collapseLabel : props.expandLabel,
       onClick: () => {
         void toggle()
@@ -117,6 +158,7 @@ const motion = createToolbarMotion({
   element: () => element.value,
   leading: () => leadingItems.value,
   trailing: () => trailingItems.value,
+  body: () => bodyItems.value,
   vertical: () => vertical.value,
   expanded: () => expanded.value,
 })
@@ -145,12 +187,14 @@ function protectFocus() {
   if (
     !root ||
     !focused ||
-    (!leading.value?.contains(focused) && !trailing.value?.contains(focused))
+    !(paired.value
+      ? body.value?.contains(focused)
+      : leading.value?.contains(focused) || trailing.value?.contains(focused))
   )
     return
   const candidates = toolbarControls(root)
   const destination =
-    candidates.find((node) => primary.value?.contains(node)) ??
+    candidates.find((node) => (paired.value ? fabElement.value : primary.value)?.contains(node)) ??
     candidates.find((node) => toggleElement.value?.contains(node)) ??
     root
   destination.focus({ preventScroll: true })
@@ -162,12 +206,13 @@ watch(
       protectFocus()
       if (leading.value) dismissTooltipsWithin(leading.value)
       if (trailing.value) dismissTooltipsWithin(trailing.value)
+      if (paired.value && body.value) dismissTooltipsWithin(body.value)
     }
   },
   { flush: 'pre' },
 )
 watch(
-  [expanded, vertical, floating],
+  [expanded, vertical, floating, paired],
   () => {
     if (!active) return
     if (floating.value) motion.play(expanded.value)
@@ -249,9 +294,13 @@ function attachTarget() {
   reveal()
 }
 function observeItems() {
-  const nodes = [element.value, primary.value, leadingItems.value, trailingItems.value].filter(
-    (node): node is HTMLElement => node !== null,
-  )
+  const nodes = [
+    element.value,
+    primary.value,
+    leadingItems.value,
+    trailingItems.value,
+    bodyItems.value,
+  ].filter((node): node is HTMLElement => node !== null)
   for (const node of observed)
     if (!nodes.includes(node as HTMLElement)) {
       resizeObserver?.unobserve(node)
@@ -418,6 +467,8 @@ defineExpose({ element, expand, collapse, toggle, refresh })
         'mdv-toolbar--collapsed': !expanded,
         'mdv-toolbar--elevated': props.elevated ?? floating,
         'mdv-toolbar--hidden': hidden,
+        'mdv-toolbar--with-fab': paired,
+        'mdv-toolbar--fab-start': paired && props.fabPosition === 'start',
       },
     ]"
     data-mdv-toolbar
@@ -427,39 +478,70 @@ defineExpose({ element, expand, collapse, toggle, refresh })
     @focusin="onFocus"
     @pointerdown="pointerDown = true"
   >
-    <div
-      v-if="slots.leading"
-      :id="`${id}-leading`"
-      ref="leading"
-      class="mdv-toolbar__region mdv-toolbar__region--leading"
-      :inert="!expanded || undefined"
-      :aria-hidden="!expanded || undefined"
-    >
-      <div ref="leadingItems" class="mdv-toolbar__items">
-        <slot name="leading" v-bind="slotState()" />
+    <template v-for="part in parts" :key="part">
+      <div
+        v-if="part === 'fab' && paired"
+        :ref="(node) => setPart('fabElement', node)"
+        class="mdv-toolbar__fab"
+      >
+        <ToolbarFab
+          :color="props.color === 'vibrant' ? 'tertiary-container' : 'secondary-container'"
+        >
+          <slot name="fab" v-bind="slotState()" />
+        </ToolbarFab>
       </div>
-    </div>
-    <div ref="primary" class="mdv-toolbar__items mdv-toolbar__primary">
-      <slot v-bind="slotState()" />
-    </div>
-    <div
-      v-if="slots.trailing"
-      :id="`${id}-trailing`"
-      ref="trailing"
-      class="mdv-toolbar__region mdv-toolbar__region--trailing"
-      :inert="!expanded || undefined"
-      :aria-hidden="!expanded || undefined"
-    >
-      <div ref="trailingItems" class="mdv-toolbar__items">
-        <slot name="trailing" v-bind="slotState()" />
+      <div
+        v-else-if="part === 'body'"
+        :id="`${id}-body`"
+        :ref="(node) => setPart('body', node)"
+        class="mdv-toolbar__body"
+        :inert="(paired && !expanded) || undefined"
+        :aria-hidden="(paired && !expanded) || undefined"
+      >
+        <div :ref="(node) => setPart('bodyItems', node)" class="mdv-toolbar__body-content">
+          <div
+            v-if="slots.leading"
+            :id="`${id}-leading`"
+            :ref="(node) => setPart('leading', node)"
+            class="mdv-toolbar__region mdv-toolbar__region--leading"
+            :inert="!expanded || undefined"
+            :aria-hidden="!expanded || undefined"
+          >
+            <div :ref="(node) => setPart('leadingItems', node)" class="mdv-toolbar__items">
+              <slot name="leading" v-bind="slotState()" />
+            </div>
+          </div>
+          <div
+            :ref="(node) => setPart('primary', node)"
+            class="mdv-toolbar__items mdv-toolbar__primary"
+          >
+            <slot v-bind="slotState()" />
+          </div>
+          <div
+            v-if="slots.trailing"
+            :id="`${id}-trailing`"
+            :ref="(node) => setPart('trailing', node)"
+            class="mdv-toolbar__region mdv-toolbar__region--trailing"
+            :inert="!expanded || undefined"
+            :aria-hidden="!expanded || undefined"
+          >
+            <div :ref="(node) => setPart('trailingItems', node)" class="mdv-toolbar__items">
+              <slot name="trailing" v-bind="slotState()" />
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-    <div v-if="canCollapse()" ref="toggleElement" class="mdv-toolbar__toggle">
-      <slot name="toggle" v-bind="slotState()">
-        <MdvIconButton variant="standard" v-bind="slotState().toggleProps">
-          <MdvIcon :icon="expanded ? lessIcon : moreIcon" class="mdv-toolbar__toggle-icon" />
-        </MdvIconButton>
-      </slot>
-    </div>
+      <div
+        v-else-if="part === 'toggle' && canCollapse()"
+        :ref="(node) => setPart('toggleElement', node)"
+        class="mdv-toolbar__toggle"
+      >
+        <slot name="toggle" v-bind="slotState()">
+          <MdvIconButton variant="standard" v-bind="slotState().toggleProps">
+            <MdvIcon :icon="expanded ? lessIcon : moreIcon" class="mdv-toolbar__toggle-icon" />
+          </MdvIconButton>
+        </slot>
+      </div>
+    </template>
   </div>
 </template>

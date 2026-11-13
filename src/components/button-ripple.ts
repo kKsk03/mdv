@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue'
 
-interface ButtonRipple {
+export interface ButtonRipple {
   x: number
   y: number
   size: number

@@ -4,6 +4,7 @@ export type MdvToolbarOrientation = 'horizontal' | 'vertical'
 export type MdvToolbarAlignment = 'start' | 'center' | 'end' | 'between'
 export type MdvToolbarPosition = 'static' | 'absolute' | 'fixed'
 export type MdvToolbarPlacement = 'bottom' | 'start' | 'end'
+export type MdvToolbarFabPosition = 'start' | 'end'
 export type MdvToolbarScrollBehavior = 'none' | 'hide' | 'collapse'
 export type MdvToolbarScrollTarget =
   Window | HTMLElement | string | (() => Window | HTMLElement | null | undefined)
@@ -19,7 +20,9 @@ export interface MdvToolbarProps {
   position?: MdvToolbarPosition
   /** Docked 仅支持 bottom；start／end 使用逻辑方向。 */
   placement?: MdvToolbarPlacement
-  /** 仅 Floating 收合 leading／trailing；不销毁插槽节点。 */
+  /** Floating 的配套 FAB 在主轴上的位置，默认 end。 */
+  fabPosition?: MdvToolbarFabPosition
+  /** Floating 收合两侧分组；有 fab 插槽时收合整个操作区，不销毁节点。 */
   expanded?: boolean
   scrollBehavior?: MdvToolbarScrollBehavior
   /** 省略跟随 window；显式目标不存在时不监听其它滚动区。 */
