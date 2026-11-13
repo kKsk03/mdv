@@ -37,6 +37,8 @@ MdvButtonGroup 与 MdvButtonGroupItem 已完成当前约定范围的项目检查
 
 MdvSplitButton 已完成当前约定范围的项目检查与用户开发预览验收，包含四种外观、五档尺寸、两个独立原生控件、状态圆角与箭头动效、Menu 组合、独立禁用、主操作加载、表单／链接，以及 ref 测试夹具和真实圆角／展开状态修订。API 与组合示例见 [组件说明](./COMPONENTS.md#mdvsplitbutton)。真实包消费另行验证。
 
+MdvFabMenu 与 MdvFabMenuItem 已完成当前约定范围的项目检查与用户开发预览验收，包含 Expressive 胶囊操作项与 Web Baseline 普通菜单（默认 Expressive）、三色系、三种入口尺寸、受控展开、自然宽标签、短窗口滚动、键盘与 Dialog 组合，以及入口圆角裁切和焦点边框修订。触屏／读屏及真实包消费另行验证。API 见 [组件说明](./COMPONENTS.md#mdvfabmenu-与-mdvfabmenuitem)。
+
 ## 本地开发
 
 在仓库根目录执行。当前环境基线为 Node.js 24.22.1 和 pnpm 12.14.0。

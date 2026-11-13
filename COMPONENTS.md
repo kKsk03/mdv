@@ -34,6 +34,7 @@
 - [MdvFab 与 MdvExtendedFab 浮动操作按钮](#mdvfab-与-mdvextendedfab)
 - [MdvButtonGroup 与 MdvButtonGroupItem 按钮组](#mdvbuttongroup-与-mdvbuttongroupitem)
 - [MdvSplitButton 拆分按钮](#mdvsplitbutton)
+- [MdvFabMenu 与 MdvFabMenuItem 浮动操作菜单](#mdvfabmenu-与-mdvfabmenuitem)
 
 ## MdvButton
 
@@ -3026,7 +3027,7 @@ absolute 由有界的定位容器承载，fixed 相对视口；组件处理对�
 
 两款实例均暴露 `element`、`focus(options?)` 和 `blur()`。Extended 另有 `expand()`／`collapse()`／`toggle()`，返回 Promise boolean 表示目标状态是否被接受；`refresh()` 重读标签、图标与滚动目标。`update:expanded(value)` 是状态请求，不改变业务操作；父级拒绝时不提前收合或移动焦点。
 
-尺寸、标签、字体和图片变化会更新测量；目标替换、KeepAlive 停用及卸载清理监听／动画，reduced-motion 直接到目标。SSR 首屏保留原节点与名称，不读取浏览器全局。未包含 FAB Menu、Speed Dial、路由适配或自定义展开面板。
+尺寸、标签、字体和图片变化会更新测量；目标替换、KeepAlive 停用及卸载清理监听／动画，reduced-motion 直接到目标。SSR 首屏保留原节点与名称，不读取浏览器全局。FAB Menu 由独立组件提供；本组件未包含 Speed Dial、路由适配或自定义展开面板。
 
 独立 playground 覆盖四档 FAB／三档 Extended、七配色、无图标、RTL、局部深色、放大文字、手动与滚动扩缩、受控拒绝、链接／表单、Tooltip、Rail／Scaffold／Toolbar 组合。行为、SSR／hydration 与动效规格已编写；用户确认全部项目指令通过并接受开发预览，包含类型声明生成修订与 Toolbar 配套联动。触屏／读屏及真实包消费另行验证。
 
@@ -3197,3 +3198,67 @@ function saveCopy() {
 Tab／Shift+Tab 分别经过两侧；主 button 的 Enter／Space、链接的 Enter 保持原生行为。组合 Menu 后，尾入口方向键打开菜单、菜单内导航／Escape／Tab／关闭返回尾部继续由 Menu 管理。也可用 `menuButtonElement` 锚定自定义 Card 浮层，再通过 `menu-click`／`expanded` 接入；自定义浮层须自行管理语义、定位与焦点，playground 提供示例。
 
 已提供独立预览及行为、动效、SSR／hydration 规格。协作侧完成定向只读 lint／格式、Vue／TypeScript 语义及内存声明生成核对；真实浏览器检查四外观×五尺寸、菜单间距、命中、键盘与焦点、受控展开、单多选、表单、RTL／深色、文字放大／窄容器以及 Dialog／Card 组合。用户确认全部项目指令通过并接受开发预览，包含 ref 测试夹具、真实内外圆角及尾部展开形状／状态层修订，当前约定范围已验收。真实触屏／读屏和新包消费另行验证。公共类型：`MdvSplitButtonVariant`、`MdvSplitButtonActionAttrs`、`MdvSplitButtonMenuAttrs`、`MdvSplitButtonProps`。
+
+## MdvFabMenu 与 MdvFabMenuItem
+
+将 FAB 展开成一组相关操作。`expressive` 使用各自自然宽度的胶囊项，`baseline` 组合普通 Menu；默认 Expressive 是本库已确认的选择。建议提供 2–6 项，每项应有清晰文字标签；组件不会裁减或补齐业务操作。
+
+```vue
+<script setup lang="ts">
+import { MdvFabMenu, MdvFabMenuItem } from 'mdv'
+import noteAdd from '@iconify-icons/material-symbols/note-add'
+import addPhoto from '@iconify-icons/material-symbols/add-photo-alternate'
+
+function createDocument() {
+  // 创建文档。
+}
+</script>
+
+<template>
+  <MdvFabMenu label="新建内容" position="fixed">
+    <MdvFabMenuItem label="新建文档" :icon="noteAdd" @select="createDocument" />
+    <MdvFabMenuItem label="上传图片" :icon="addPhoto" />
+  </MdvFabMenu>
+
+  <MdvFabMenu label="其他创建方式" variant="baseline">
+    <MdvFabMenuItem label="从模板创建" />
+    <MdvFabMenuItem label="导入文件" />
+  </MdvFabMenu>
+</template>
+```
+
+| 主组件 Prop | 默认值 | 说明 |
+| --- | --- | --- |
+| `modelValue` | 省略 | boolean；省略时内部管理，初始关闭；提供后由调用方接受 `update:modelValue` |
+| `variant` | `'expressive'` | `'expressive'`／`'baseline'`，分别使用胶囊操作序列／普通菜单 |
+| `color` | `'primary-container'` | `'primary'`／`'secondary'`／`'tertiary'` 及对应 `-container` 六种入口色 |
+| `size` | `'regular'` | `'regular'`／`'medium'`／`'large'`，入口分别为 56／80／96px |
+| `elevated` | `true` | 入口、关闭按钮与胶囊 hover 阴影开关；Baseline 菜单表面仍沿用 Menu |
+| `position` | `'static'` | `'static'`／`'absolute'`／`'fixed'`；后两者位于宿主／窗口逻辑 bottom-end |
+| `offset` | 自适应 | 普通窗口 16px、1200px 起 24px，另计安全区；显式非负数覆盖 |
+| `label` | 必填 | 入口和操作区的可访问名称，例如“新建内容” |
+| `closeLabel` | `'关闭菜单'` | Expressive 展开后的入口名称 |
+| `triggerAttrs` | 省略 | 真实入口 button 的原生属性、事件和函数／Vue ref |
+
+外层接收普通 `class`／`style`／`id`／`dir` 等属性；入口属性放在 `triggerAttrs`。入口固定 `type="button"`，组件管理其 id、名称、展开状态与控制关联。`disabled`／`aria-disabled="true"` 阻止入口激活，原生 fieldset 禁用同样有效；外部 click／keydown 的 `preventDefault()` 可取消对应内部处理。Vue ref 指向真实按钮，替换／卸载时旧 ref 收到 null，不使用字符串 ref。入口关闭前的图标可用 `icon` 插槽替换，默认加号；关闭图标固定。
+
+| 操作项 Prop | 默认值 | 说明 |
+| --- | --- | --- |
+| `label` | `''` | 文字标签，或通过 default 插槽提供文字 |
+| `icon` | 省略 | `MdvIconData` 装饰图标，可用 leading 插槽替代 |
+| `value` | 省略 | `string`／`number`，作为 select 事件的业务值 |
+| `href` | 省略 | 渲染原生链接；target／rel／download 等原生属性透传 |
+| `disabled` | `false` | 阻止激活、回调和导航；Expressive 禁用项退出 Tab |
+| `keepOpen` | `false` | 执行选择后保留展开 |
+
+Expressive 项为原生 button／a，按钮默认 type=button，可通过原生 type／form 等参与表单；Baseline 项沿用 MenuItem 的原生属性及按钮类型规则。`default` 放文字，`leading` 放装饰图标，不在交互项内部嵌套按钮、输入框或链接。每次激活仅发一次可取消 `select(event)`，`event.detail` 沿用 Menu 的 `{ value, selected, originalEvent }`，此组件没有选择模型，selected 为 false。同步调用 `event.preventDefault()` 同时取消默认链接导航与自动关闭；原生 click 的 preventDefault 也会取消 select。`keepOpen` 只控制自动关闭，不改变业务选择状态。
+
+主组件提供 `update:modelValue`、`open`／`opened`、`close`／`closed`。前后两个生命周期分别对应接受状态开始变化／动效完成，拒绝请求时不提前展开或收起。关闭详情沿用 Menu 的 `{ reason }`，包括 trigger／escape／outside／focus-out／tab／select／model／programmatic。Expose：`open()`、`close()`、`toggle()`、`focus(options?)`、`triggerElement`；操作项提供 `focus(options?)`。挂载不抢焦点，切换呈现和 KeepAlive 停用会释放相应浮层资源。
+
+Expressive 操作项默认高 56px、图标 24px、左右留白 24px、图文间距 8px、项间距 4px、末项至关闭按钮 8px。关闭按钮固定 56px、图标 20px，展开时对齐原入口的顶部末端角；80／96px 入口保留原占位。项使用对应色系 container／on-container，关闭按钮使用实色／on-color；项默认无阴影，关闭按钮默认 level 3，hover 为 level 4，可用 elevated 关闭。hover 状态层 8%，focus／pressed 10%。胶囊自然宽，长文字允许换行增高，短窗口内列表独立滚动，关闭按钮保持可达。
+
+Expressive 保持同一入口节点，打开焦点留在关闭按钮；Tab 到最顶部项，再从上到下，Shift+Tab 逆序，不使用方向键选择或循环困焦。Escape 关闭并回入口；Tab 离开、外部点击／聚焦关闭时保留用户目标。动态移除或禁用当前操作会把焦点移回可用入口。操作区使用有名称的 group，不冒充 menu。Baseline 默认在入口上方末端、间隔 4px，空间不足时沿用 Menu 的翻转／位移；打开进入首项，方向键、Home／End、字符导航、Tab 和 Escape 均沿用 Menu。两款均为非模态，不加遮罩或整页滚动锁。
+
+逐项揭示与入口形变支持连续反向，不缩放文字；reduced-motion 直接到目标。阴影、颜色和字体来自主题令牌，支持局部浅深、动态色、RTL、文字放大和强制颜色。顶部末端锚点需要入口位于可用视口内；实际宿主仍应给内容区和固定 FAB 留出空间，避免覆盖页面操作。
+
+已提供开发预览及行为、动效、SSR／hydration 规格；用户确认全部项目指令通过并接受开发预览，包含入口圆角裁切与键盘焦点边框层级修订。触屏／读屏与真实包消费另行验证。公共类型：`MdvFabMenuVariant`、`MdvFabMenuColor`、`MdvFabMenuSize`、`MdvFabMenuTriggerAttrs`、`MdvFabMenuCloseReason`、`MdvFabMenuCloseDetail`、`MdvFabMenuSelectEvent`、`MdvFabMenuProps`、`MdvFabMenuItemProps`。

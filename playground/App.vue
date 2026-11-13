@@ -33,6 +33,7 @@ import ToolbarPlayground from './ToolbarPlayground.vue'
 import FabPlayground from './FabPlayground.vue'
 import ButtonGroupPlayground from './ButtonGroupPlayground.vue'
 import SplitButtonPlayground from './SplitButtonPlayground.vue'
+import FabMenuPlayground from './FabMenuPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -227,6 +228,12 @@ const pages = [
     label: 'Split Button 拆分按钮',
     description: '检查四种外观、五档尺寸、独立操作、菜单、圆角与箭头动效。',
     component: SplitButtonPlayground,
+  },
+  {
+    id: 'fab-menu',
+    label: 'FAB Menu 浮动操作菜单',
+    description: '检查双呈现、展开锚点、自然宽度、短窗口滚动与键盘焦点。',
+    component: FabMenuPlayground,
   },
   {
     id: 'theme',
