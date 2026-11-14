@@ -311,6 +311,21 @@ export { default as MdvSearchView } from './components/MdvSearchView.vue'
 export { default as MdvSearchAppBar } from './components/MdvSearchAppBar.vue'
 export { default as MdvDatePicker } from './components/MdvDatePicker.vue'
 export { default as MdvDateRangePicker } from './components/MdvDateRangePicker.vue'
+export { default as MdvTimePicker } from './components/MdvTimePicker.vue'
+export type {
+  MdvTimeValue,
+  MdvTimePickerView,
+  MdvTimePickerOrientation,
+  MdvTimePickerHourCycle,
+  MdvTimePickerCloseReason,
+  MdvTimePickerCloseDetail,
+  MdvTimePickerLabels,
+  MdvTimePickerProps,
+  MdvTimePickerTriggerProps,
+  MdvTimePickerTriggerSlotProps,
+  MdvTimePickerSlots,
+  MdvTimePickerExpose,
+} from './components/time-picker.types'
 export type {
   MdvDateValue,
   MdvDateRange,

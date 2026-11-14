@@ -35,6 +35,7 @@ import ButtonGroupPlayground from './ButtonGroupPlayground.vue'
 import SplitButtonPlayground from './SplitButtonPlayground.vue'
 import FabMenuPlayground from './FabMenuPlayground.vue'
 import DatePickerPlayground from './DatePickerPlayground.vue'
+import TimePickerPlayground from './TimePickerPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -241,6 +242,12 @@ const pages = [
     label: 'Date Picker 日期选择器',
     description: '检查单日／范围、自动布局、文本输入、日期限制、键盘与原生表单。',
     component: DatePickerPlayground,
+  },
+  {
+    id: 'time-picker',
+    label: 'Time Picker 时间选择器',
+    description: '检查拨盘／数字输入、12／24 小时、自动布局、时间限制、拖动和表单。',
+    component: TimePickerPlayground,
   },
   {
     id: 'theme',

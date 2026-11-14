@@ -1,0 +1,417 @@
+.mdv-time-picker {
+  display: inline-flex;
+  max-width: 100%;
+  flex-direction: column;
+}
+.mdv-time-picker > .mdv-text-field {
+  width: 100%;
+}
+.mdv-time-picker .mdv-text-field__trailing {
+  gap: 0;
+}
+.mdv-time-picker__layer {
+  padding: 24px 16px;
+}
+.mdv-time-picker__container {
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  width: 328px;
+  max-width: 100%;
+  max-height: 100%;
+  flex: 0 0 auto;
+  border-radius: var(--mdv-sys-shape-corner-extra-large);
+  color: var(--mdv-sys-color-on-surface);
+}
+.mdv-time-picker__background {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--mdv-sys-color-surface-container-high);
+  box-shadow: var(--mdv-sys-elevation-level-3);
+  pointer-events: none;
+}
+.mdv-time-picker__sheet {
+  position: relative;
+  box-sizing: border-box;
+  max-height: calc(100dvh - 48px);
+  border-radius: inherit;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--mdv-sys-color-outline) transparent;
+  overscroll-behavior: contain;
+}
+.mdv-time-picker__layer:not(.mdv-time-picker__layer--input) .mdv-time-picker__sheet {
+  overflow: clip;
+}
+.mdv-time-picker__header {
+  padding: 24px 24px 0;
+}
+.mdv-time-picker__header h2 {
+  margin: 0;
+  font-size: var(--mdv-sys-typescale-label-medium-size);
+  font-weight: var(--mdv-sys-typescale-label-medium-weight);
+  line-height: var(--mdv-sys-typescale-label-medium-line-height);
+  letter-spacing: var(--mdv-sys-typescale-label-medium-tracking);
+  overflow-wrap: anywhere;
+}
+.mdv-time-picker__content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+  padding: 20px 24px 0;
+}
+.mdv-time-picker__selection {
+  display: flex;
+  min-width: 0;
+  flex-shrink: 0;
+  align-items: flex-start;
+  gap: 12px;
+}
+.mdv-time-picker__numbers {
+  display: flex;
+  align-items: flex-start;
+}
+.mdv-time-picker__field {
+  display: flex;
+  width: 96px;
+  flex: 0 0 96px;
+  flex-direction: column;
+  gap: 7px;
+}
+.mdv-time-picker__field input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 80px;
+  border: 2px solid transparent;
+  border-radius: var(--mdv-sys-shape-corner-small);
+  padding: 0 2px;
+  background: var(--mdv-sys-color-surface-container-highest);
+  color: var(--mdv-sys-color-on-surface);
+  caret-color: var(--mdv-sys-color-primary);
+  font-family: inherit;
+  font-size: var(--mdv-sys-typescale-display-large-size);
+  font-weight: var(--mdv-sys-typescale-display-large-weight);
+  line-height: var(--mdv-sys-typescale-display-large-line-height);
+  letter-spacing: var(--mdv-sys-typescale-display-large-tracking);
+  text-align: center;
+  outline: none;
+}
+.mdv-time-picker__field--selected input {
+  background: var(--mdv-sys-color-primary-container);
+  color: var(--mdv-sys-color-on-primary-container);
+}
+.mdv-time-picker__field input:focus-visible {
+  border-color: var(--mdv-sys-color-primary);
+}
+.mdv-time-picker__field input[aria-invalid='true']:focus-visible {
+  border-color: var(--mdv-sys-color-error);
+}
+.mdv-time-picker__field > span {
+  display: none;
+  color: var(--mdv-sys-color-on-surface-variant);
+  font-size: var(--mdv-sys-typescale-body-small-size);
+  line-height: var(--mdv-sys-typescale-body-small-line-height);
+}
+.mdv-time-picker__separator {
+  width: 24px;
+  height: 80px;
+  flex: 0 0 24px;
+  font-size: var(--mdv-sys-typescale-display-large-size);
+  font-weight: 400;
+  line-height: 72px;
+  text-align: center;
+}
+.mdv-time-picker__period {
+  display: flex;
+  box-sizing: border-box;
+  width: 52px;
+  height: 80px;
+  min-width: 0;
+  flex: 0 0 52px;
+  flex-direction: column;
+  margin: 0;
+  border: 1px solid var(--mdv-sys-color-outline);
+  border-radius: var(--mdv-sys-shape-corner-small);
+  padding: 0;
+  overflow: hidden;
+}
+.mdv-time-picker__period > label {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  color: var(--mdv-sys-color-on-surface-variant);
+  font-size: var(--mdv-sys-typescale-title-medium-size);
+  font-weight: var(--mdv-sys-typescale-title-medium-weight);
+  line-height: var(--mdv-sys-typescale-title-medium-line-height);
+  cursor: pointer;
+}
+.mdv-time-picker__period > label + label {
+  border-block-start: 1px solid var(--mdv-sys-color-outline);
+}
+.mdv-time-picker__period > .mdv-time-picker__period--selected {
+  background: var(--mdv-sys-color-tertiary-container);
+  color: var(--mdv-sys-color-on-tertiary-container);
+}
+.mdv-time-picker__period input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+.mdv-time-picker__period span {
+  pointer-events: none;
+}
+.mdv-time-picker__period label:focus-within {
+  outline: 2px solid var(--mdv-sys-color-primary);
+  outline-offset: -3px;
+}
+.mdv-time-picker__period label:has(:disabled) {
+  opacity: 0.38;
+  cursor: default;
+}
+.mdv-time-picker__dial {
+  position: relative;
+  width: 256px;
+  height: 256px;
+  flex: 0 0 256px;
+  border-radius: 50%;
+  background: var(--mdv-sys-color-surface-container-highest);
+  touch-action: none;
+  user-select: none;
+  cursor: pointer;
+  outline: none;
+}
+.mdv-time-picker__dial:focus-visible {
+  outline: 3px solid var(--mdv-sys-color-primary);
+  outline-offset: 3px;
+}
+.mdv-time-picker__dial > svg {
+  position: absolute;
+  inset: 0;
+  width: 256px;
+  height: 256px;
+  overflow: visible;
+  fill: var(--mdv-sys-color-primary);
+  pointer-events: none;
+}
+.mdv-time-picker__dial line {
+  stroke: var(--mdv-sys-color-primary);
+  stroke-width: 2;
+}
+.mdv-time-picker__dial .mdv-time-picker__minute-dot {
+  fill: var(--mdv-sys-color-on-primary);
+}
+.mdv-time-picker__tick {
+  position: absolute;
+  display: flex;
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  font-size: var(--mdv-sys-typescale-body-large-size);
+  line-height: var(--mdv-sys-typescale-body-large-line-height);
+  pointer-events: none;
+}
+.mdv-time-picker__tick--inner {
+  font-size: var(--mdv-sys-typescale-body-small-size);
+}
+.mdv-time-picker__tick--selected {
+  color: var(--mdv-sys-color-on-primary);
+}
+.mdv-time-picker__tick--disabled {
+  color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 38%, transparent);
+}
+.mdv-time-picker__status {
+  min-height: 20px;
+  margin: 0;
+  padding: 8px 24px 0;
+  color: var(--mdv-sys-color-error);
+  font-size: var(--mdv-sys-typescale-body-small-size);
+  line-height: 20px;
+  overflow-wrap: anywhere;
+}
+.mdv-time-picker__status:empty {
+  display: none;
+}
+.mdv-time-picker__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px 12px;
+}
+.mdv-time-picker__buttons {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.mdv-time-picker__icon {
+  position: relative;
+  display: inline-flex;
+  box-sizing: border-box;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  padding: 12px;
+  background: transparent;
+  color: var(--mdv-sys-color-on-surface-variant);
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.mdv-time-picker__icon::before {
+  position: absolute;
+  inset: 4px;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0;
+  content: '';
+  pointer-events: none;
+}
+.mdv-time-picker__icon:focus-visible {
+  outline: 3px solid var(--mdv-sys-color-primary);
+  outline-offset: -3px;
+}
+.mdv-time-picker__icon:focus-visible::before,
+.mdv-time-picker__icon:active:not(:disabled)::before {
+  opacity: 0.1;
+}
+.mdv-time-picker__icon:disabled {
+  color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 38%, transparent);
+  cursor: default;
+}
+.mdv-time-picker__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.mdv-time-picker__layer--h24 .mdv-time-picker__container {
+  width: 304px;
+}
+.mdv-time-picker__layer--h24:not(.mdv-time-picker__layer--input):not(
+    .mdv-time-picker__layer--horizontal
+  )
+  .mdv-time-picker__field {
+  width: 114px;
+  flex-basis: 114px;
+}
+.mdv-time-picker__layer--input .mdv-time-picker__field input,
+.mdv-time-picker__layer--input .mdv-time-picker__separator,
+.mdv-time-picker__layer--input .mdv-time-picker__period {
+  height: 72px;
+}
+.mdv-time-picker__layer--input .mdv-time-picker__field > span {
+  display: block;
+}
+.mdv-time-picker__layer--input.mdv-time-picker__layer--h24 .mdv-time-picker__container {
+  width: 264px;
+}
+.mdv-time-picker__layer--horizontal .mdv-time-picker__container {
+  width: 568px;
+}
+.mdv-time-picker__layer--horizontal .mdv-time-picker__sheet {
+  display: grid;
+  grid-template-columns: 264px 304px;
+}
+.mdv-time-picker__layer--horizontal .mdv-time-picker__header {
+  grid-area: 1 / 1;
+}
+.mdv-time-picker__layer--horizontal .mdv-time-picker__content {
+  display: contents;
+}
+.mdv-time-picker__layer--horizontal .mdv-time-picker__selection {
+  grid-area: 2 / 1;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  padding: 20px 24px 0;
+}
+.mdv-time-picker__layer--horizontal .mdv-time-picker__period {
+  width: 216px;
+  height: 38px;
+  flex: 0 0 38px;
+  flex-direction: row;
+}
+.mdv-time-picker__layer--horizontal .mdv-time-picker__period > label + label {
+  border-block-start: 0;
+  border-inline-start: 1px solid var(--mdv-sys-color-outline);
+}
+.mdv-time-picker__layer--horizontal .mdv-time-picker__dial {
+  grid-area: 1 / 2 / 3;
+  align-self: start;
+  margin: 24px 24px 0;
+}
+.mdv-time-picker__layer--horizontal .mdv-time-picker__status {
+  grid-column: 1 / -1;
+}
+.mdv-time-picker__layer--horizontal .mdv-time-picker__actions {
+  grid-column: 1 / -1;
+}
+@media (hover: hover) {
+  .mdv-time-picker__icon:hover:not(:disabled)::before {
+    opacity: 0.08;
+  }
+  .mdv-time-picker__field input:hover:not(:disabled):not(:focus) {
+    background-image: linear-gradient(
+      color-mix(in srgb, currentColor 8%, transparent),
+      color-mix(in srgb, currentColor 8%, transparent)
+    );
+  }
+  .mdv-time-picker__period label:hover:not(:has(:disabled)) {
+    background-image: linear-gradient(
+      color-mix(in srgb, currentColor 8%, transparent),
+      color-mix(in srgb, currentColor 8%, transparent)
+    );
+  }
+}
+@media (max-width: 375px) {
+  .mdv-time-picker__layer--input {
+    padding-inline: 8px;
+  }
+  .mdv-time-picker__layer--input .mdv-time-picker__content {
+    padding-inline: 12px;
+  }
+}
+@media (forced-colors: active) {
+  .mdv-time-picker__background,
+  .mdv-time-picker__dial,
+  .mdv-time-picker__field input {
+    outline: 1px solid CanvasText;
+  }
+  .mdv-time-picker__dial svg {
+    fill: Highlight;
+    forced-color-adjust: none;
+  }
+  .mdv-time-picker__dial line {
+    stroke: Highlight;
+  }
+  .mdv-time-picker__tick--selected {
+    color: HighlightText;
+    forced-color-adjust: none;
+  }
+  .mdv-time-picker__tick--disabled {
+    color: GrayText;
+  }
+}

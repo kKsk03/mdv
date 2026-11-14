@@ -3,6 +3,7 @@
 本文记录已实现组件的 API、示例与使用注意事项。使用前请先完成 [样式接入](./README.md#使用方样式入口)。
 
 - [MdvDatePicker 与 MdvDateRangePicker 日期选择器](#mdvdatepicker-与-mdvdaterangepicker)
+- [MdvTimePicker 时间选择器](#mdvtimepicker)
 
 - [MdvButton 按钮](#mdvbutton)
 - [MdvIconButton 图标按钮](#mdviconbutton)
@@ -37,6 +38,68 @@
 - [MdvButtonGroup 与 MdvButtonGroupItem 按钮组](#mdvbuttongroup-与-mdvbuttongroupitem)
 - [MdvSplitButton 拆分按钮](#mdvsplitbutton)
 - [MdvFabMenu 与 MdvFabMenuItem 浮动操作菜单](#mdvfabmenu-与-mdvfabmenuitem)
+
+## MdvTimePicker
+
+用于分钟精度的纯时间选择，提供 Modal 拨盘与数字输入、12／24 小时制、纵向／横向拨盘及模式切换。当前约定范围已完成项目检查与用户预览验收，包含指针事件测试修订；触屏／读屏、跨浏览器和真实包消费专项另行验证。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvTimePicker } from 'mdv'
+import type { MdvTimeValue } from 'mdv'
+
+const time = ref<MdvTimeValue>('13:05')
+</script>
+
+<template>
+  <MdvTimePicker
+    v-model="time"
+    label="预约时间"
+    name="appointment"
+    min="09:00"
+    max="18:00"
+    :minute-step="5"
+    required
+    clearable
+  />
+</template>
+```
+
+| Props | 默认值 | 说明 |
+| --- | --- | --- |
+| `modelValue`／`v-model` | `null` | `HH:mm` 或 `null`，范围 `00:00`–`23:59` |
+| `open`／`v-model:open` | `false` | 独立打开状态，未绑定时内部管理 |
+| `initialView` | `'auto'` | auto／dial／input；auto 在打开时按主指针能力选择，fine 优先输入，其余优先拨盘 |
+| `orientation` | `'auto'` | auto／vertical／horizontal，用于拨盘 |
+| `hourCycle` | `'auto'` | auto／h12／h23；auto 随 locale |
+| `locale` | `'zh-CN'` | 控制数字、时分格式和 AM／PM 显示 |
+| `min`／`max` | 未设置 | 当天上下界，包含端点，格式为 `HH:mm`；倒序为无效配置 |
+| `minuteStep` | `1` | 60 的正整数约数，按每小时 00 分锚定 |
+| `disabledTime` | 未设置 | `(time: string) => boolean`，true 表示该分钟禁用 |
+| `disabled`／`readonly`／`required` | `false` | 禁用、只读与原生表单校验，尊重禁用 fieldset |
+| `clearable` | `false` | 清除提交 null，必填仍会报错 |
+| `label` | `'时间'` | 外部输入框标签 |
+| `supportingText` | 格式提示 | 外部辅助文字 |
+| `error`／`errorText` | `false`／未设置 | 业务错误状态与错误文字 |
+| `name` | 未设置 | 表单字段名，序列化为 `HH:mm` |
+| `labels` | 中文文案 | `Partial<MdvTimePickerLabels>`，覆盖标题、操作、错误及键盘说明 |
+
+聚焦或编辑外部输入框不会自动打开。点击时钟入口打开后，两种视图都先修改草稿，确定才提交；取消、Escape、遮罩和外部关闭放弃草稿。父级拒绝模型更新时不触发 confirm 或关闭；拒绝关闭时保留模态。外部输入在关闭态下通过 Enter／失焦提交有效文本，不逐键格式化或自动舍入；无效文本保留并显示错误。
+
+模型不包含日期、时区或秒；12 小时显示不改变模型，`24:00` 无效。12 小时文本需要本地时段或 AM／PM，例如 `1:05 PM`，不猜测缺失时段。支持当前 locale 生成的格式、ASCII 时分冒号和全角数字。操作文案由 labels 覆盖。
+
+min/max 表示当天连续区间。每天只允许 22:00–02:00 时，可省略 min/max 并设置 `:disabled-time="time => time > '02:00' && time < '22:00'"`。谓词应为同步、无副作用函数，可选项按一天最多 1440 个分钟缓存，响应式依赖变化会重新计算。步长、边界和禁用规则同时应用于拨盘、文本和提交。整个小时或半天无可用分钟时，该小时／时段不可选；全部不可选时提供原因并禁用确定。动态限制不替换外部模型。空模型打开以当前时间附近的可用分钟初始化草稿，不立即写回。
+
+拨盘为 256px，常规拨盘时分框 96×80px，24 小时纵向时分框 114×80px，输入时分框 96×72px。容器按形态确定尺寸，不随大窗口放大。auto 根据空间选择纵横布局，放不下时使用输入；显式拨盘或方向也遵守空间回退。窗口调整、软键盘或模式切换保留时分输入节点与草稿，拨盘不产生滚动条；极小窗口中的数字输入允许必要的内容滚动。Modal 复用普通 Dialog 动效，内容裁切与背景同步，支持快速反向和 reduced-motion。
+
+拨盘使用单个 slider Tab 停点，方向键在当前小时／分钟中递增或递减并跳过不可选项，Home／End 到首末可选项。24 小时键盘按 00–23 顺序，12 小时按当前 AM／PM 的 12 个小时；Space／Enter 在小时拨盘上切到分钟。两种视图都可直接编辑时分，输入内 Enter 明确确认。AM／PM 为原生单选组。Modal 约束焦点，关闭后返回入口；命中、读屏和真实触控仍需随预览验证。
+
+事件：`update:modelValue(value)`、`update:open(boolean)`、`confirm(value)`、`cancel(detail)`，以及 `open()`／`opened()`／`close(detail)`／`closed(detail)`。`detail.reason` 为 confirm、cancel、escape、scrim、model、programmatic 或 disabled；非确认关闭发出 cancel。opened／closed 等待全部动效完成。
+
+插槽：title 覆盖弹窗标题；trigger 获得 `{ open, close, triggerProps }`，将 triggerProps 绑定到真实 button。Expose：`open(event?)`／`close()` 返回 Promise<boolean>，表示请求是否接受；`focus(options?)`、`checkValidity()`、`reportValidity()`、`setCustomValidity(message)` 用于焦点与校验。class/style/dir/lang 作用于组件根，局部主题由弹窗继承；form、ID、适用原生输入属性和事件透传到外部输入，隐藏字段使用相同 form。reset 请求恢复初始模型值。内部 AM／PM 不进入业务 FormData。
+
+主要类型：`MdvTimeValue`、`MdvTimePickerProps`、`MdvTimePickerView`、`MdvTimePickerOrientation`、`MdvTimePickerHourCycle`、`MdvTimePickerLabels`、`MdvTimePickerCloseReason`、`MdvTimePickerCloseDetail`、`MdvTimePickerTriggerProps`、`MdvTimePickerTriggerSlotProps`、`MdvTimePickerSlots`、`MdvTimePickerExpose`。
 
 ## MdvDatePicker 与 MdvDateRangePicker
 

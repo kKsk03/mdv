@@ -41,6 +41,8 @@ MdvFabMenu 与 MdvFabMenuItem 已完成当前约定范围的项目检查与用�
 
 MdvDatePicker 与 MdvDateRangePicker 当前约定范围已完成项目检查与用户预览验收，提供 Docked 单日、Modal 单日／范围、全屏与文本输入模式，默认自动布局，包含月份／年份选择、贴边滚动条与三种布局的打开／关闭动效。API 见 [日期选择器说明](./COMPONENTS.md#mdvdatepicker-与-mdvdaterangepicker)。
 
+MdvTimePicker 当前约定范围已完成项目检查与用户预览验收，提供 Modal 拨盘／数字输入、12／24 小时制、纵横拨盘、auto 默认模式、分钟步长和禁用规则，以及表单、键盘与普通 Modal 动效。触屏／读屏及真实包消费另行验证。API 见 [时间选择器说明](./COMPONENTS.md#mdvtimepicker)。
+
 ## 本地开发
 
 在仓库根目录执行。当前环境基线为 Node.js 24.22.1 和 pnpm 12.14.0。
@@ -81,6 +83,7 @@ pnpm build
 组件的示例、Props、插槽、状态与使用限制见 [COMPONENTS.md](./COMPONENTS.md)。
 
 - [MdvDatePicker 与 MdvDateRangePicker 日期选择器](./COMPONENTS.md#mdvdatepicker-与-mdvdaterangepicker)
+- [MdvTimePicker 时间选择器](./COMPONENTS.md#mdvtimepicker)
 
 - [MdvButton 按钮](./COMPONENTS.md#mdvbutton)
 - [MdvIconButton 图标按钮](./COMPONENTS.md#mdviconbutton)

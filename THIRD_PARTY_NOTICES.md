@@ -2,6 +2,13 @@
 
 本文件随 MDV 源码和 npm 包提供，记录当前实际使用的第三方令牌、算法、字体、图标和渲染器。
 
+## Material 3 Time Picker 规格
+
+- 官方规范：[Specs](https://m3.material.io/components/time-pickers/specs)、[Guidelines](https://m3.material.io/components/time-pickers/guidelines)、[Accessibility](https://m3.material.io/components/time-pickers/accessibility)。
+- 使用位置：MdvTimePicker、time-picker-time 与 time-picker.css 的拨盘／输入几何、颜色、小时制及基本交互；time-picker-motion 复用下述 Material Web 普通 Dialog 时序，增加 MDV 的完整内容裁切。
+
+模型、分钟约束、本地化解析、拨盘坐标、Vue 草稿／表单生命周期与 Web slider 键盘由 MDV 自行实现，未复制第三方 Time Picker 源码，未新增运行时依赖。auto 按指针能力、视口和内容空间回退输入是本库的适配决定。24 小时双圈依据 Specs 图示的 00–11 外圈与 12–23 内圈，未采用 Guidelines 正文中与示意图不一致的奇偶分圈表述。
+
 ## Material 3 Date Picker 规格与 Web 键盘参考
 
 - 来源：[Specs](https://m3.material.io/components/date-pickers/specs)、[Guidelines](https://m3.material.io/components/date-pickers/guidelines)、[Accessibility](https://m3.material.io/components/date-pickers/accessibility)，Copyright Google LLC。
