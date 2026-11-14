@@ -2,6 +2,8 @@
 
 本文记录已实现组件的 API、示例与使用注意事项。使用前请先完成 [样式接入](./README.md#使用方样式入口)。
 
+- [MdvDatePicker 与 MdvDateRangePicker 日期选择器](#mdvdatepicker-与-mdvdaterangepicker)
+
 - [MdvButton 按钮](#mdvbutton)
 - [MdvIconButton 图标按钮](#mdviconbutton)
 - [MdvIcon 图标](#mdvicon)
@@ -35,6 +37,80 @@
 - [MdvButtonGroup 与 MdvButtonGroupItem 按钮组](#mdvbuttongroup-与-mdvbuttongroupitem)
 - [MdvSplitButton 拆分按钮](#mdvsplitbutton)
 - [MdvFabMenu 与 MdvFabMenuItem 浮动操作菜单](#mdvfabmenu-与-mdvfabmenuitem)
+
+## MdvDatePicker 与 MdvDateRangePicker
+
+用于公历单日或完整日期范围。当前约定范围已完成项目检查与用户预览验收，包含三种布局、文本输入、月份／年份选择、滚动条与打开／关闭动效；提供独立预览及行为、SSR、hydration 规格。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvDatePicker, MdvDateRangePicker } from 'mdv'
+import type { MdvDateValue, MdvDateRangeValue } from 'mdv'
+
+const date = ref<MdvDateValue>(null)
+const stay = ref<MdvDateRangeValue>(null)
+const unavailable = (value: string) => value === '2026-11-16'
+</script>
+
+<template>
+  <MdvDatePicker v-model="date" label="预约日期" name="appointment" required />
+  <MdvDateRangePicker
+    v-model="stay"
+    start-label="入住"
+    end-label="离店"
+    start-name="arrival"
+    end-name="departure"
+    min="2026-11-01"
+    max="2027-12-31"
+    :disabled-date="unavailable"
+    clearable
+  />
+</template>
+```
+
+单日模型为 `string | null`，范围为 `{ start: string; end: string } | null`。日期字符串固定为 `YYYY-MM-DD`，支持公历 `0001` 至 `9999` 年；模型不包含时间和时区。范围包含两端，允许同日，不提交半个范围。日历选择更早的第二端点会重新开始；文本中的倒序范围报错，不自动交换。
+
+| 共同 Prop                              | 默认值        | 说明                                                                 |
+| -------------------------------------- | ------------- | -------------------------------------------------------------------- |
+| `modelValue`                           | `null`        | 已提交的单日／完整范围；未绑定时内部管理                             |
+| `open`                                 | `false`       | 独立的 `v-model:open`；未绑定时内部管理                              |
+| `layout`                               | `'auto'`      | 单日：auto／docked／modal／fullscreen；范围：auto／modal／fullscreen |
+| `initialView`                          | `'calendar'`  | Modal 打开时的 calendar／input；Docked 始终展示日历                  |
+| `locale`                               | `'zh-CN'`     | 日期显示、月份／星期名称及输入顺序；公历、拉丁数字                   |
+| `firstDayOfWeek`                       | 随 locale     | 0 为周日，6 为周六，可显式覆盖                                       |
+| `min`／`max`                           | 省略          | 含端点的 ISO 日期限制；无效或倒序限制阻止提交                        |
+| `disabledDate`                         | 省略          | `(date: string) => boolean`；范围内任意一天禁用即整个区间无效        |
+| `disabled`／`readonly`／`required`     | `false`       | 禁用、只读和原生必填；只读仍可提交已接受的模型                       |
+| `clearable`                            | `false`       | 在字段尾部提供清除操作，提交 null                                    |
+| `supportingText`／`error`／`errorText` | 空／false／空 | 辅助说明与外部错误；省略说明时提供日期格式提示                       |
+| `labels`                               | 中文文案      | `Partial<MdvDatePickerLabels>`，覆盖操作、错误和无障碍文字           |
+
+单日额外提供 `label`、`name`；范围提供 `startLabel`／`endLabel`、`startName`／`endName`。未提供 label 时使用对应 labels 中的默认字段名称。默认 auto 在小于 600 CSS px 的窗口使用全屏 Modal，宽屏单日为 Docked、范围为 Modal；显式布局不受此阈值限制。尺寸、布局和视图切换保留未提交草稿，不隐式确认。
+
+Docked 提供独立的月份／年份导航与纵向下拉列表，入口在日历与列表之间切换时保持宽度和位置；补齐浅色月外日期，选择月外日期会转到对应月份。Modal 单日使用本地化星期、月份和日期作为大标题，合并的月年入口打开三列年份选择；选择列表与底部取消／确定之间显示分割线。年份列表和范围月份的滚动条贴着面板边缘，内容保留左右留白。范围日历使用顶部关闭／保存、简短范围标题及固定星期行，月份纵向滚动。全屏保留顶部关闭／保存，日历内容按可用宽度适配。面板内的滚动区域统一使用跟随局部主题的细滚动条与透明轨道。
+
+日历视图不显示底部错误文字，保留辅助技术状态播报；无效或不完整的范围仍禁止保存。文本输入模式继续显示错误说明，便于修正原文。
+
+Modal 单日、范围和输入模式复用 MdvDialog 的分层动效：背景展开与内容、操作区、遮罩分别过渡，内容按背景展开进度裁切，文字不缩放；进入为 500ms，退出为 150ms。Docked 整个面板（含背景与阴影）从输入框下方轻移、展开并淡入，进入为 220ms，退出为 120ms；全屏复用 MdvFullscreenDialog 的底部滑入／滑出与遮罩渐变，进入为 300ms，退出为 200ms。快速反向从当前动画状态衔接，退出完成后才释放模态与恢复焦点；减少动态效果时直接完成。
+
+日历图标是独立入口，聚焦或编辑输入框不会自动展开。Docked 和 Modal 的日历操作先修改草稿，通过确定／保存提交；取消、Escape、遮罩、外部点击或外部关闭放弃草稿。受控日期更新被父级拒绝时不会发出 confirm 或自动关闭；受控关闭请求被拒绝时保留面板。动态 disabled／readonly／fieldset 禁用会释放已打开浮层。
+
+面板关闭时，外部文本字段在 Enter／失焦时独立校验并提交。输入过程保留原文，不逐字插入分隔符；接受明确的 ISO 年月日和地区顺序的斜杠、短横线、点或空格，月日可为一位数字。无分隔文本只接受地区顺序明确的八位数字，不猜测两位年份；无效文本保留并显示错误。组合输入期间 Enter 不提交。Modal 内可在日历／输入间切换；输入视图大标题与编辑按钮名称共用 `labels.input`，默认为“输入日期”。范围输入并排展示，空间不足时换行；错误原文会保留，直到用户修正或重新进行日历选择。
+
+`class`／`style` 作用于外层，`dir`／`lang` 同时传给字段。其他原生属性和事件路由至单日输入／范围开始输入，范围结束输入保留自己的 label；`form` 同时关联两个文本字段和模型隐藏字段。使用 `name` 或 `startName`／`endName` 后，FormData 只包含 ISO 模型值，不会重复提交显示文本。面板草稿输入不参与外部表单。原生 required、表单 reset、被取消的 reset、fieldset 禁用和外部 form 关联遵循原生约定；reset 请求恢复组件建立时的值，仍服从父级接受状态。
+
+事件：`update:modelValue`、`update:open`、`confirm(value)`、`cancel({ reason })`、`open`／`opened`、`close({ reason })`／`closed({ reason })`。confirm 仅在有效模型被接受后发出；cancel 表示实际放弃草稿的关闭。reason 为 confirm／cancel／escape／scrim／outside／blur／model／programmatic／disabled。前后生命周期分别对应开始变化和动效完成；窗口布局变化不伪造一次取消／打开。
+
+`trigger` 插槽提供 `{ open, close, triggerProps }`，替换字段内的默认日历按钮。把 `triggerProps` 绑定到一个真实 button，保留名称、ARIA、禁用和事件；`title` 替换面板标题，Docked 中该标题仅供辅助技术读取。Expose：`open(event?)`、`close()`、`focus(options?)`、`checkValidity()`、`reportValidity()`、`setCustomValidity(message)`。打开／关闭返回 `Promise<boolean>` 表示父级是否接受请求；focus 不展开日历。
+
+日期网格只保留一个 Tab 停点，方向键按日／周移动，Home／End 到本周首末，PageUp／PageDown 翻月，配合 Shift 翻年。Docked 中 Shift+M／Shift+Y 聚焦月份／年份入口，Modal 单日中两者聚焦共用的月年入口。Space 选择草稿；单日 Enter 选择并确认，范围 Enter 只选择端点。禁用日期可通过网格键盘读取其完整日期和不可选状态。Modal 使用原生 dialog 并困焦，Docked 使用非模态 Popover 与 Floating UI；Escape 返回入口，外部点击／失焦关闭保持用户目标焦点。
+
+范围日历纵向浏览月份，每次扩展三个月，自动滚动最多保留 18 个月，之后通过“更早／更晚月份”继续浏览，避免一次渲染全部年份。禁用谓词须为快速、无副作用的同步函数；长范围需逐日校验，遇到首个禁用日停止，没有谓词时只检查端点和上下限。动态限制重校验当前值与草稿，不擅自修改模型。SSR 输出确定的关闭态，挂载后才解析布局和打开请求；hydration 保留外部字段节点和提前输入的原文。
+
+配色、字体和阴影继承局部主题，范围中段使用 secondary-container，端点使用 primary。默认日期表面为 40px，日期行高和图标按钮为 48px。Docked 固定标准宽度 360px，完整展开当月日期行，六周时高 460px；面板位于输入框下方 4px，按逻辑起始侧对齐，随页面或祖先容器滚动保持相同间距。窗口边缘不会让面板翻转、移位或压缩；滚出视口时自然离开可见区域。月份／年份列表及范围月份保留自身需要的滚动，Modal／全屏内容随可用空间适配。显式 Docked 在空间不足时可超出视口，可按使用场景选择全屏。提供 reduced-motion、RTL 和 forced-colors 样式。真实触控、读屏、跨浏览器及包消费仍需单独验证。
+
+主要类型：`MdvDateValue`、`MdvDateRange`、`MdvDateRangeValue`、`MdvDatePickerProps`、`MdvDateRangePickerProps`、`MdvDatePickerLayout`、`MdvDateRangePickerLayout`、`MdvDatePickerView`、`MdvDatePickerLabels`、`MdvDatePickerCloseReason`、`MdvDatePickerCloseDetail`、`MdvDatePickerTriggerProps`、`MdvDatePickerTriggerSlotProps`、`MdvDatePickerSlots`、`MdvDatePickerExpose`。
 
 ## MdvButton
 

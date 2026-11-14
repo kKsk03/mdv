@@ -34,6 +34,7 @@ import FabPlayground from './FabPlayground.vue'
 import ButtonGroupPlayground from './ButtonGroupPlayground.vue'
 import SplitButtonPlayground from './SplitButtonPlayground.vue'
 import FabMenuPlayground from './FabMenuPlayground.vue'
+import DatePickerPlayground from './DatePickerPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -234,6 +235,12 @@ const pages = [
     label: 'FAB Menu 浮动操作菜单',
     description: '检查双呈现、展开锚点、自然宽度、短窗口滚动与键盘焦点。',
     component: FabMenuPlayground,
+  },
+  {
+    id: 'date-picker',
+    label: 'Date Picker 日期选择器',
+    description: '检查单日／范围、自动布局、文本输入、日期限制、键盘与原生表单。',
+    component: DatePickerPlayground,
   },
   {
     id: 'theme',

@@ -309,6 +309,26 @@ export type { MdvColorRole, MdvColorScheme } from './dynamic-color'
 export { default as MdvSearchBar } from './components/MdvSearchBar.vue'
 export { default as MdvSearchView } from './components/MdvSearchView.vue'
 export { default as MdvSearchAppBar } from './components/MdvSearchAppBar.vue'
+export { default as MdvDatePicker } from './components/MdvDatePicker.vue'
+export { default as MdvDateRangePicker } from './components/MdvDateRangePicker.vue'
+export type {
+  MdvDateValue,
+  MdvDateRange,
+  MdvDateRangeValue,
+  MdvDatePickerLayout,
+  MdvDateRangePickerLayout,
+  MdvDatePickerView,
+  MdvDatePickerCloseReason,
+  MdvDatePickerCloseDetail,
+  MdvDatePickerLabels,
+  MdvDatePickerCommonProps,
+  MdvDatePickerProps,
+  MdvDateRangePickerProps,
+  MdvDatePickerTriggerProps,
+  MdvDatePickerTriggerSlotProps,
+  MdvDatePickerSlots,
+  MdvDatePickerExpose,
+} from './components/date-picker.types'
 export type {
   MdvSearchVariant,
   MdvSearchLayout,

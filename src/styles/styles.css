@@ -28,6 +28,7 @@
 @import './button-group.css';
 @import './split-button.css';
 @import './fab-menu.css';
+@import './date-picker.css';
 
 .mdv-icon {
   display: inline-block;

@@ -2,6 +2,16 @@
 
 本文件随 MDV 源码和 npm 包提供，记录当前实际使用的第三方令牌、算法、字体、图标和渲染器。
 
+## Material 3 Date Picker 规格与 Web 键盘参考
+
+- 来源：[Specs](https://m3.material.io/components/date-pickers/specs)、[Guidelines](https://m3.material.io/components/date-pickers/guidelines)、[Accessibility](https://m3.material.io/components/date-pickers/accessibility)，Copyright Google LLC。
+- Web 日期网格交叉参考：[WAI-ARIA APG Date Picker Dialog](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/)。
+- 使用位置：`src/styles/date-picker.css`、日期选择器组件及其内部日历的尺寸、颜色角色、状态和键盘操作。
+
+Docked 图示为 360×460dp，Modal 为 360×524dp、28dp 圆角与 6dp elevation；40dp 日期表面和 72×36dp 年份表面置于至少 48dp 的交互目标内。高度随周数、字号与窗口可滚动，图示高度不作为裁切上限。范围中段采用 secondary-container，端点采用 primary；hover 8%，focus／pressed 10%。操作文案与响应阈值属于 MDV 的 API 选择。
+
+输入框与日历图标按 Accessibility 分别可达，聚焦输入不自动打开。官网键盘表中的 Home／End 与 Enter 描述存在缺漏，MDV 结合 APG 实现方向键、周首末、翻月／翻年和 roving Tab 停点。日期运算、文本解析、草稿、表单与 Vue 生命周期由 MDV 自行实现；未复制第三方 Date Picker 源码，没有新增日期运行时依赖。
+
 ## Material 3 Split Button 规格与动效参考
 
 - 来源：https://m3.material.io/components/split-button/specs 、Guidelines／Accessibility 及 `TOKEN_TABLE.624e8f2da4007fc8`，官网内容版本 `2026-10-13_06-10-19`。
@@ -298,7 +308,7 @@ MDV 使用自己的 Vue 与 SVG 几何、动画时钟和资源生命周期实现
 - 动效时序依据：https://github.com/material-components/material-web/blob/main/dialog/internal/animations.ts
 - 动效版权：Copyright 2023 Google LLC；AndroidX 令牌版权：Copyright 2022 The Android Open Source Project。
 - 许可：Apache License 2.0。
-- 使用位置：`src/styles/dialog.css`／`src/styles/fullscreen-dialog.css` 的几何、色彩与排版，以及 `src/components/dialog-motion.ts` 的基本款进入／退出、遮罩与内容分层时序。
+- 使用位置：`src/styles/dialog.css`／`src/styles/fullscreen-dialog.css` 的几何、色彩与排版，以及 `src/components/dialog-motion.ts` 的基本款进入／退出、遮罩与内容分层时序；Date Picker 通过 `use-date-picker-layer.ts` 复用普通款与全屏款动效，Modal 内容裁切与背景展开同步。
 
 MDV 使用 Vue、原生 dialog 与自己的关闭拦截、焦点、滚动锁和生命周期实现；基本款参考官方 Web 时序，全屏纵向过渡为 MDV 的实现选择。未引入 Material Web 或 Compose 运行时；下文保留 Apache License 2.0 原文。
 
