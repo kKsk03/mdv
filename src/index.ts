@@ -312,6 +312,23 @@ export { default as MdvSearchAppBar } from './components/MdvSearchAppBar.vue'
 export { default as MdvDatePicker } from './components/MdvDatePicker.vue'
 export { default as MdvDateRangePicker } from './components/MdvDateRangePicker.vue'
 export { default as MdvTimePicker } from './components/MdvTimePicker.vue'
+export { default as MdvCarousel } from './components/MdvCarousel.vue'
+export type {
+  MdvCarouselKey,
+  MdvCarouselVariant,
+  MdvCarouselAlignment,
+  MdvCarouselFlingBehavior,
+  MdvCarouselChangeReason,
+  MdvCarouselItem,
+  MdvCarouselLabels,
+  MdvCarouselProps,
+  MdvCarouselNavigateOptions,
+  MdvCarouselChangeDetail,
+  MdvCarouselControlsSlotProps,
+  MdvCarouselItemSlotProps,
+  MdvCarouselSlots,
+  MdvCarouselExpose,
+} from './components/carousel.types'
 export type {
   MdvTimeValue,
   MdvTimePickerView,

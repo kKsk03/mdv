@@ -1,0 +1,270 @@
+.mdv-carousel {
+  --mdv-carousel-radius: var(--mdv-sys-shape-corner-extra-large, 28px);
+  --mdv-carousel-background: var(--mdv-sys-color-surface-container-highest);
+  --mdv-carousel-foreground: var(--mdv-sys-color-on-surface);
+
+  position: relative;
+  display: flex;
+  box-sizing: border-box;
+  min-width: 0;
+  flex-direction: column;
+  color: var(--mdv-carousel-foreground);
+  font-family: var(--mdv-sys-typescale-font-family);
+  font-size: var(--mdv-sys-typescale-body-medium-size);
+  line-height: var(--mdv-sys-typescale-body-medium-line-height);
+}
+
+.mdv-carousel[hidden] {
+  display: none;
+}
+.mdv-carousel__header {
+  padding: 8px 16px;
+}
+.mdv-carousel__viewport {
+  position: relative;
+  min-width: 0;
+  height: var(--mdv-carousel-height, 205px);
+  flex: none;
+}
+.mdv-carousel__track {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  isolation: isolate;
+  touch-action: pan-y pinch-zoom;
+  overflow-anchor: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.mdv-carousel--vertical {
+  height: 100%;
+  min-height: 0;
+}
+.mdv-carousel--vertical .mdv-carousel__viewport {
+  height: var(--mdv-carousel-height, 100%);
+  min-height: 0;
+  flex: 1 1 auto;
+}
+.mdv-carousel--vertical .mdv-carousel__track {
+  inset: 0;
+  touch-action: pan-x pinch-zoom;
+}
+.mdv-carousel--vertical {
+  --mdv-carousel-radius: 0px;
+}
+
+.mdv-carousel__item {
+  --mdv-carousel-mask-start: 0px;
+  --mdv-carousel-mask-size: 100%;
+  --mdv-carousel-label-opacity: 1;
+
+  position: relative;
+  box-sizing: border-box;
+  width: min(var(--mdv-carousel-item-size, 186px), 100%);
+  height: 100%;
+  flex: none;
+  overflow: hidden;
+  border-radius: var(--mdv-carousel-radius);
+  background: var(--mdv-carousel-background);
+  outline: none;
+}
+/* SSR 保留一份可读、无随机测量的内容；客户端复用相同节点建立关键线。 */
+.mdv-carousel:not(.mdv-carousel--ready) .mdv-carousel__track {
+  display: flex;
+  gap: var(--mdv-carousel-gap, 8px);
+}
+.mdv-carousel--vertical:not(.mdv-carousel--ready) .mdv-carousel__track {
+  flex-direction: column;
+  gap: var(--mdv-carousel-gap, 16px);
+}
+.mdv-carousel--vertical:not(.mdv-carousel--ready) .mdv-carousel__item {
+  width: 100%;
+  height: 100%;
+}
+.mdv-carousel--ready .mdv-carousel__item {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.mdv-carousel__item::after {
+  position: absolute;
+  z-index: 3;
+  inset-block: 3px;
+  inset-inline-start: calc(var(--mdv-carousel-mask-start) + 3px);
+  box-sizing: border-box;
+  width: max(0px, calc(var(--mdv-carousel-mask-size) - 6px));
+  border: 3px solid transparent;
+  border-radius: max(0px, calc(var(--mdv-carousel-radius) - 3px));
+  content: '';
+  pointer-events: none;
+}
+.mdv-carousel--vertical .mdv-carousel__item::after {
+  inset-block-start: calc(var(--mdv-carousel-mask-start) + 3px);
+  inset-block-end: auto;
+  inset-inline: 3px;
+  width: auto;
+  height: max(0px, calc(var(--mdv-carousel-mask-size) - 6px));
+}
+.mdv-carousel__item:focus-visible::after,
+.mdv-carousel__item:has(:focus-visible)::after {
+  border-color: var(--mdv-sys-color-primary);
+  box-shadow: 0 0 0 2px var(--mdv-sys-color-surface);
+}
+.mdv-carousel__track[data-dragging] {
+  cursor: grabbing;
+}
+.mdv-carousel__track[data-dragging] * {
+  cursor: grabbing;
+  user-select: none;
+}
+.mdv-carousel__empty {
+  display: grid;
+  box-sizing: border-box;
+  height: 100%;
+  place-items: center;
+  padding: 16px;
+  color: var(--mdv-sys-color-on-surface-variant);
+}
+.mdv-carousel__controls {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 4px 16px;
+  flex-wrap: wrap;
+}
+.mdv-carousel__position {
+  font-variant-numeric: tabular-nums;
+}
+.mdv-carousel__skip {
+  position: absolute;
+  z-index: 5;
+  top: 8px;
+  inset-inline-start: 16px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.mdv-carousel__skip:focus-visible {
+  width: auto;
+  height: auto;
+  clip-path: none;
+  border-radius: var(--mdv-sys-shape-corner-small);
+  padding: 12px 16px;
+  background: var(--mdv-sys-color-surface);
+  color: var(--mdv-sys-color-primary);
+  outline: 3px solid currentColor;
+}
+.mdv-carousel__end {
+  height: 0;
+  outline: none;
+}
+
+.mdv-carousel-media {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.mdv-carousel-media:focus-visible {
+  outline: none;
+}
+.mdv-carousel-media__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  pointer-events: none;
+}
+.mdv-carousel-media__scrim {
+  position: absolute;
+  z-index: 1;
+  inset-inline: 0;
+  bottom: 0;
+  height: 96px;
+  background: linear-gradient(0deg, rgb(0 0 0 / 0.64), transparent);
+  pointer-events: none;
+}
+.mdv-carousel-media__label {
+  position: absolute;
+  z-index: 2;
+  inset-inline-start: calc(var(--mdv-carousel-mask-start) + 16px);
+  bottom: 16px;
+  box-sizing: border-box;
+  max-width: max(0px, calc(var(--mdv-carousel-mask-size) - 32px));
+  overflow: hidden;
+  color: #fff;
+  font-size: var(--mdv-sys-typescale-title-medium-size);
+  font-weight: var(--mdv-sys-typescale-title-medium-weight);
+  line-height: var(--mdv-sys-typescale-title-medium-line-height);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: var(--mdv-carousel-label-opacity);
+  pointer-events: none;
+}
+.mdv-carousel-media__state {
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--mdv-sys-motion-duration-short-2) linear;
+}
+@media (hover: hover) {
+  .mdv-carousel-media:not(:disabled, [aria-disabled='true']):hover .mdv-carousel-media__state {
+    opacity: 0.08;
+  }
+}
+.mdv-carousel-media:not(:disabled, [aria-disabled='true']):is(:focus-visible, :active)
+  .mdv-carousel-media__state {
+  opacity: 0.1;
+}
+.mdv-carousel-media:is(:disabled, [aria-disabled='true']) {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+.mdv-carousel--vertical .mdv-carousel-media__label {
+  inset-inline-start: 16px;
+  max-width: calc(100% - 32px);
+  bottom: calc(var(--mdv-carousel-mask-start) + 16px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .mdv-carousel-media__state {
+    transition: none;
+  }
+}
+@media (forced-colors: active) {
+  .mdv-carousel__item {
+    border: 1px solid CanvasText;
+  }
+  .mdv-carousel__item:focus-visible::after,
+  .mdv-carousel__item:has(:focus-visible)::after {
+    border-color: Highlight;
+    box-shadow: none;
+  }
+  .mdv-carousel-media__scrim {
+    background: none;
+  }
+  .mdv-carousel-media__label {
+    color: CanvasText;
+    text-shadow: 0 0 2px Canvas;
+  }
+  .mdv-carousel-media:is(:disabled, [aria-disabled='true']) {
+    opacity: 1;
+    color: GrayText;
+  }
+}

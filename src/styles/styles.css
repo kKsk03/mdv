@@ -30,6 +30,7 @@
 @import './fab-menu.css';
 @import './date-picker.css';
 @import './time-picker.css';
+@import './carousel.css';
 
 .mdv-icon {
   display: inline-block;

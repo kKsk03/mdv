@@ -43,6 +43,8 @@ MdvDatePicker 与 MdvDateRangePicker 当前约定范围已完成项目检查与�
 
 MdvTimePicker 当前约定范围已完成项目检查与用户预览验收，提供 Modal 拨盘／数字输入、12／24 小时制、纵横拨盘、auto 默认模式、分钟步长和禁用规则，以及表单、键盘与普通 Modal 动效。触屏／读屏及真实包消费另行验证。API 见 [时间选择器说明](./COMPONENTS.md#mdvtimepicker)。
 
+MdvCarousel 已完成当前约定范围，包含四类布局、居中 Hero、多宽高比 Uncontained、动态关键线遮罩、稳定 key 定位、拖动／滚轮、键盘和 reduced-motion；布局与媒体样式按 m3ui-vue 参考效果重对齐。用户已确认项目指令全部通过且样式符合预期。真实包消费另行验证，API 见 [轮播说明](./COMPONENTS.md#mdvcarousel)。
+
 ## 本地开发
 
 在仓库根目录执行。当前环境基线为 Node.js 24.22.1 和 pnpm 12.14.0。

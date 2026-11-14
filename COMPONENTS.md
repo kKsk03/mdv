@@ -4,6 +4,7 @@
 
 - [MdvDatePicker 与 MdvDateRangePicker 日期选择器](#mdvdatepicker-与-mdvdaterangepicker)
 - [MdvTimePicker 时间选择器](#mdvtimepicker)
+- [MdvCarousel 轮播](#mdvcarousel)
 
 - [MdvButton 按钮](#mdvbutton)
 - [MdvIconButton 图标按钮](#mdviconbutton)
@@ -38,6 +39,68 @@
 - [MdvButtonGroup 与 MdvButtonGroupItem 按钮组](#mdvbuttongroup-与-mdvbuttongroupitem)
 - [MdvSplitButton 拆分按钮](#mdvsplitbutton)
 - [MdvFabMenu 与 MdvFabMenuItem 浮动操作菜单](#mdvfabmenu-与-mdvfabmenuitem)
+
+## MdvCarousel
+
+当前约定范围已完成。布局、首尾变形、遮罩层级和媒体文字呈现按本地 m3ui-vue Carousel 效果重对齐，并保留 MDV 的 key 模型、无障碍及 hydration 约束；用户确认项目指令全部通过且样式符合预期。依据 [Specs](https://m3.material.io/components/carousel/specs)、[Guidelines](https://m3.material.io/components/carousel/guidelines) 和 [Accessibility](https://m3.material.io/components/carousel/accessibility)。触屏／读屏、跨浏览器和真实包消费另行验证。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvCarousel } from 'mdv'
+import type { MdvCarouselKey } from 'mdv'
+
+const current = ref<MdvCarouselKey | null>('mountain')
+const photos = [
+  { id: 'mountain', src: '/mountain.webp', alt: '日出时的雪山', label: '高山清晨' },
+  { id: 'ocean', src: '/ocean.webp', alt: '蓝色海岸与沙滩', label: '海边假日' },
+  { id: 'forest', src: '/forest.webp', alt: '阳光穿过森林', label: '林间漫步' },
+]
+</script>
+
+<template>
+  <MdvCarousel v-model="current" :items="photos" item-key="id" aria-label="旅行照片" />
+</template>
+```
+
+| Prop | 默认值 | 说明 |
+| --- | --- | --- |
+| `items` | 必填 | 泛型只读数组；每一项必须有唯一稳定的 string／number key |
+| `itemKey` | `'key'` | 业务字段名或 `(item) => key`；缺失、非有限数字或重复 key 抛出 TypeError，不回退为索引 |
+| `modelValue` | 省略 | 当前浏览项的 key；省略时内部管理、默认首项，null 为显式无锚点 |
+| `variant` | `'multi-browse'` | `multi-browse`／`uncontained`／`hero`／`full-screen` |
+| `alignment` | 普通 `start`，Hero `center` | `start`／`center`；Hero 默认居中并展示两侧预览，可显式指定；少项或窄容器由关键线策略调整 |
+| `itemSize` | 186px；Hero 省略时尽量填满容器 | Multi-browse／Hero 的首选大项宽；Uncontained 的固定项宽；关键线排列会依据可用空间调整 |
+| `height` | 普通 205px，Full-screen 填满容器 | 数字按 px，或 CSS 长度；Full-screen 宿主须提供明确高度 |
+| `gap` | 普通 8px，全屏 16px | 项间距，非负数 |
+| `flingBehavior` | `'auto'` | `auto`／`single-advance`／`multi-browse`／`no-snap`；自由滚动仅 Uncontained 使用，Full-screen 始终吸附 |
+| `userScrollEnabled` | `true` | 控制拖动／滚轮；不禁用键盘、外置控制或程序定位 |
+| `showControls` | 横向 true，全屏 false | 轮播下方的控制区域；可通过 controls 插槽替换 |
+| `labels` | 中文 | 局部覆盖 carousel／slide／previous／next／skip／empty，以及 `item(index, count)` 项序号文案 |
+
+`v-model` 表示浏览锚点，不是表单选择或 DOM 焦点。拖动过程中不逐帧提交；完成停靠或自由滚动后才请求更新。父级拒绝请求时恢复原位置，且不发出已接受的 change。多个大项共享一个停靠位置时仍能使用不同 key 定位。重排保留条目节点与 key；删除当前项会请求就近目标，空列表请求 null。受控值无效或父级拒绝删除后的目标时，不伪造替代 active。
+
+Multi-browse、Hero 与 Full-screen 默认采用单项快甩吸附；低速长拖动仍按实际距离定位。Uncontained 默认自由滚动，可设置吸附；接受自由滚动的锚点不会自动把它重新吸附。普通布局使用 28px 圆角，轨道不添加额外端部留白；Hero 默认居中，Multi-browse 默认从容器起点排列；Uncontained 项目可经过容器边缘；小项可见宽度 40–56px。少项或窄容器由关键线策略调整排列。186px 与 205px 是参考实现的默认设置，不是 Material 3 强制尺寸。
+
+Full-screen 采用竖向整页定位、零外围留白和 16px 页间隔，供紧凑／中等竖屏的沉浸内容区域使用。它填充宿主内容区，不调用浏览器全屏或创建弹层；横屏应由业务改用其他布局。业务负责媒体播放和数据加载，不内置自动播放、无限循环或视频管理。
+
+默认条目支持 `MdvCarouselItem` 的 key、src、alt、label、href、target、rel、disabled 和 aspectRatio。无 href 时为 type=button，有 href 时为原生链接；disabled 禁用默认操作和导航，但仍允许浏览该项。`aspectRatio` 仅用于 Uncontained，以共同媒体高度计算首选宽度，并约束到 9:16–16:9；容器不足时宽度限制为可用空间、媒体按 object-fit 裁切，省略时等宽。默认标签应简短，复杂文字或控件宜用 Uncontained 与自定义内容。
+
+插槽 `item({ item, index, active })` 完整替代默认媒体，保留自己的原生操作；组件不会在它外面套按钮，也不会把内部按钮／输入的事件当整项激活。自定义内容自行处理 disabled、名称及业务操作。`header`／`controls` 获得 `{ key, index, count, canPrevious, canNext, previous, next }`，显示于遮罩内容区域之外；empty 覆盖空状态。视觉尺寸可读取 `--mdv-carousel-mask-start`、`--mdv-carousel-mask-size` 和 `--mdv-carousel-label-opacity`，无需让 Vue 每帧重渲染内容。
+
+SSR／hydration 复用条目和内容节点，尺寸测量与系统动效偏好变化不重新渲染内容插槽。输入字段的模型和 hydration 初始化由字段自身管理：原生 input 的受控 value 遵循 Vue 的写入行为；需要接纳挂载前编辑或自动填充值时，可组合已有 MdvTextField。Carousel 不接管或恢复业务输入值。
+
+事件：`update:modelValue(key | null)` 是定位请求；`change({ key, index, item, reason })` 只在接受新锚点后触发，reason 为 drag／wheel／keyboard／control／item／programmatic／items。外部直接改变模型不额外发请求。默认条目激活发出 `itemClick({ key, index, item, originalEvent })`，同步 `originalEvent.preventDefault()` 可取消导航和默认定位；自定义插槽自行处理激活。所有事件中的 index 从 0 开始。
+
+Expose：`scrollTo(key, options?)`、`next(options?)`、`prev(options?)` 返回 `Promise<boolean>` 表示请求是否被接受，不表示动效已完成；options 为 `{ animate?: boolean, focus?: boolean }`。focus=true 直接显露目标并聚焦内容，避免焦点处于裁切区域。`focus(options?)` 聚焦当前项；`element` 为外层原生元素。若要等待实际视觉结束，请由应用自己的交互流程处理，不轮询内部动画状态。
+
+容器通过 aria-label／aria-labelledby 命名，Tab 进入实际项目与内部控件。方向键、Home／End 浏览，RTL 镜像左右键；Tab 在项目内部按原生顺序移动，离开当前项时显露下一项，最后一项可正常离开。输入、Slider 等保留自己的编辑按键；自行处理拖动的插槽内容可设置 `data-mdv-carousel-no-drag`，组件不接管其拖动、滚轮和方向键。Offscreen 项退出 Tab 与读屏，聚焦目标先进入可见范围，挂载不抢焦点。提供跳过轮播的链接。
+
+纵向页面上的横向轮播须有无需横向手势的替代操作。默认在下方提供上一项／下一项，可用 controls 插槽替换为“查看全部”链接或展开列表，业务负责其实际目标；不要仅隐藏控制，也不要把箭头覆盖在图片上。Full-screen 的竖向浏览不受此要求限制。
+
+系统 reduced-motion 开启时去掉视差和动态展开，所有同类项目保持稳定尺寸，经过容器边缘，Hero 保留邻项部分预览；Full-screen 仍按整页定位。偏好变化、resize、重排、拖动取消和 KeepAlive 停用会清理适用动画／监听并保持有效锚点。主题使用现有 surface、文字、状态层与焦点令牌，可在组件上设置 `--mdv-carousel-radius`、`--mdv-carousel-background`、`--mdv-carousel-foreground`；支持浅深、局部覆盖、动态色、RTL 与 forced-colors。
+
+已编写纯几何、模型／交互、动效及 SSR／hydration 规格。用户确认当前项目指令全部通过；未提供逐项日志或测试数量，不补记具体结果。真实拖动设备手感、读屏、跨浏览器和新包消费仍待专项验证。
 
 ## MdvTimePicker
 

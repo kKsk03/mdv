@@ -2,6 +2,16 @@
 
 本文件随 MDV 源码和 npm 包提供，记录当前实际使用的第三方令牌、算法、字体、图标和渲染器。
 
+## Material 3 Carousel 规格、关键线与滚动参考
+
+- 官方依据：[Specs](https://m3.material.io/components/carousel/specs)、[Guidelines](https://m3.material.io/components/carousel/guidelines)、[Accessibility](https://m3.material.io/components/carousel/accessibility)。
+- 关键线来源：[m3ui-vue _carouselStrategy.ts](https://github.com/SrWither/m3ui-vue/blob/main/src/composables/_carouselStrategy.ts)，TypeScript 移植版权 Copyright (c) 2026 Fadel，MIT；其文件注明部分来自 The Android Open Source Project，Apache License 2.0。
+- 上游算法：AndroidX Compose Material3 Carousel 的 Arrangement.kt、KeylineList.kt、Keylines.kt、Strategy.kt 和 KeylineSnapPosition.kt。
+- 手势／惯性与弹簧参考：[MCarousel.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MCarousel.vue)，Copyright (c) 2026 Fadel，MIT。
+- 使用位置：`src/components/carousel-keylines.ts` 的排列、关键线插值、首尾移位与吸附位置；`carousel-layout.ts` 为四种官方形态统一接入关键线；`MdvCarousel.vue` 与 `carousel-motion.ts` 的连续跟手、轴判断、速度采样、惯性、焦点层级和标签渐显思路。
+
+MDV 增加居中布局、稳定 key 与受控请求、独立焦点、可变宽高比 Uncontained、reduced-motion 的稳定尺寸呈现、SSR／hydration 和资源清理，未引入第三方运行时依赖。186px 首选宽度、205px 默认高度及 400／40 弹簧、4 的惯性系数是参考实现或本库的默认设置，不冒称官网 Carousel 独立令牌。MIT 完整许可见下文“m3ui-vue Tabs 弹簧算法”，Apache License 2.0 完整原文见文末；源文件保留相关版权和来源说明。
+
 ## Material 3 Time Picker 规格
 
 - 官方规范：[Specs](https://m3.material.io/components/time-pickers/specs)、[Guidelines](https://m3.material.io/components/time-pickers/guidelines)、[Accessibility](https://m3.material.io/components/time-pickers/accessibility)。
