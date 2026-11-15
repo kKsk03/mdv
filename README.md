@@ -8,7 +8,7 @@
 
 基于 Vue 3、TypeScript 和 Tailwind CSS v4 的 Material Design 3 组件库。Tailwind 工具类由使用方安装并编译；MDV 提供组件、主题入口和必要的普通 CSS。
 
-当前版本为 **0.1.0**，npm 包名为 `@mdv-ui/mdv`，采用 [MIT 许可](./LICENSE)。此前的 `@kksk03/mdv@0.1.0` 是迁移前包名；后续安装请使用新包名。下列组件的约定范围、本批组合验收、整库安装包消费及 Button 按需导入体积对照已通过；生产预览实测范围为 Windows Chrome，版本未记录。正式文档站后期在独立仓库建设，本仓库使用 playground 调试与验证组件。
+当前版本为 **0.1.1**，npm 包名为 `@mdv-ui/mdv`，采用 [MIT 许可](./LICENSE)。此前的 `@kksk03/mdv@0.1.0` 是迁移前包名；后续安装请使用新包名。下列组件的约定范围、本批组合验收、整库安装包消费及 Button 按需导入体积对照已通过；生产预览实测范围为 Windows Chrome，版本未记录。正式文档站后期在独立仓库建设，本仓库使用 playground 调试与验证组件。
 
 ## 本地开发
 
@@ -31,7 +31,7 @@ pnpm format:check
 pnpm build
 ```
 
-包使用 Changesets 管理版本和 CHANGELOG。普通开发提交不会直接发布；合并到 `main` 后，GitHub Actions 会创建或更新发布 PR。审核并合并发布 PR 后，工作流会重新执行检查和构建，创建版本标签与 GitHub Release，并通过 npm Trusted Publishing 发布公开包。
+包使用 Changesets 管理版本和 CHANGELOG。普通开发提交不会直接发布；合并到 `main` 后，GitHub Actions 会创建或更新发布 PR。审核并合并发布 PR 后，工作流会重新检查、构建并通过 npm Trusted Publishing 暂存包，同时创建版本 Git 标签。维护者在 npm 检查并以 2FA 批准后，手动运行 `Finalize Release` 工作流；该工作流确认版本已公开，再创建 GitHub Release。
 
 ### 发布流程
 
@@ -39,7 +39,7 @@ pnpm build
 
 #### 首次发布新包
 
-当前 `package.json` 已切换到 `@mdv-ui/mdv@0.1.0`。由具备 `mdv-ui` 组织发布权限的账号在仓库根目录手动执行：
+首次迁移 scope 时发布的是 `@mdv-ui/mdv@0.1.0`；当前版本已升至 0.1.1。首次发布由具备 `mdv-ui` 组织发布权限的账号在仓库根目录手动执行：
 
 ```powershell
 pnpm install
@@ -64,7 +64,7 @@ pnpm view @mdv-ui/mdv@0.1.0 version --registry https://registry.npmjs.org
 首次发布成功后，npm 才会出现 `@mdv-ui/mdv` 的包设置页。之后完成以下平台设置：
 
 1. 在 GitHub 仓库 Settings → Actions → General 中允许工作流使用读写权限，并允许 Actions 创建和批准 Pull Request。
-2. 在 npm 的 `@mdv-ui/mdv` 包设置中添加 GitHub Actions Trusted Publisher：仓库所有者填 `kKsk03`，仓库填 `mdv`，工作流文件填 `release.yml`，不设置环境。选择直接发布权限；如果选择 staged publishing，每次还需要手动批准。
+2. 在 npm 的 `@mdv-ui/mdv` 包设置中添加 GitHub Actions Trusted Publisher：仓库所有者填 `kKsk03`，仓库填 `mdv`，工作流文件填 `release.yml`，不设置环境。保持允许 `npm stage publish`；不要开启直接 `npm publish`。
 
 日常开发完成一项需要进入下个版本的改动后，在仓库根目录执行：
 
@@ -72,7 +72,7 @@ pnpm view @mdv-ui/mdv@0.1.0 version --registry https://registry.npmjs.org
 pnpm changeset
 ```
 
-选择版本级别并填写面向使用者的说明，把生成的 `.changeset/*.md` 文件和代码一起提交。代码合并到 `main` 后，机器人会创建或更新发布 PR。你审核版本号和 CHANGELOG 后合并这个 PR；发布工作流通过后，npm 会出现新版本。
+选择版本级别并填写面向使用者的说明，把生成的 `.changeset/*.md` 文件和代码一起提交。代码合并到 `main` 后，机器人会创建或更新发布 PR。你审核版本号和 CHANGELOG 后合并这个 PR；Release 工作流会把包提交到 npm 的 Staged Packages，并推送对应的 `vX.Y.Z` Git 标签。等待 npm 扫描完成后，检查暂存包并使用 2FA 批准。确认 `pnpm view @mdv-ui/mdv@X.Y.Z version --registry https://registry.npmjs.org` 能查到该版本后，在 GitHub Actions 手动运行 `Finalize Release`，输入 `X.Y.Z` 创建 GitHub Release。
 
 修复和兼容优化使用 `patch`，新增向后兼容能力使用 `minor`，破坏性 API 调整使用 `major`。当前版本策略是 `0.1.x` 承载修复，新增能力按后续次版本规划；在 0.x 阶段选择 `major` 可能直接进入 `1.0.0`，请只在明确决定首个稳定版本时使用。
 
@@ -89,7 +89,7 @@ pnpm remove @kksk03/mdv
 pnpm add @mdv-ui/mdv@0.1.0
 ```
 
-如果发布工作流在 npm 上传后于标签或 Release 步骤失败，先查询该版本是否已存在，再从 GitHub Actions 重跑工作流；不要修改同一个已发布版本或重新上传不同内容。
+若 Release 工作流已成功创建暂存包，不要重跑它；先在 npm 完成检查和批准，再运行 `Finalize Release`。若暂存工作流失败，先检查 npm 的 Staged Packages 和 Git 标签状态，再决定是否重跑，避免重复提交同一版本。
 
 ## 使用方样式入口
 

@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v6
@@ -33,6 +35,9 @@ jobs:
           node-version: 24.22.1
           registry-url: https://registry.npmjs.org
           cache: pnpm
+
+      - name: Set up npm staged publishing
+        run: npm install --global npm@11.15.0
 
       - name: Install
         run: pnpm install --frozen-lockfile
@@ -61,10 +66,10 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           version-script: pnpm changeset version
-          publish-script: pnpm changeset publish
+          publish-script: node scripts/stage-publish.mjs
           commit-message: 'chore: version packages'
           pr-title: 'chore: release packages'
-          create-github-releases: true
+          create-github-releases: false
           push-git-tags: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

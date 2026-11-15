@@ -1,0 +1,61 @@
+name: Finalize Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Published npm version to create a GitHub Release for
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    if: github.repository == 'kKsk03/mdv'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24.22.1
+          registry-url: https://registry.npmjs.org
+
+      - name: Verify npm publication and version tag
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          if [[ ! "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid release version: $RELEASE_VERSION" >&2
+            exit 1
+          fi
+
+          published_version="$(npm view "@mdv-ui/mdv@$RELEASE_VERSION" version --registry=https://registry.npmjs.org)"
+          if [[ "$published_version" != "$RELEASE_VERSION" ]]; then
+            echo "The npm version is not publicly available yet." >&2
+            exit 1
+          fi
+
+          git show-ref --verify --quiet "refs/tags/v$RELEASE_VERSION"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          tag="v$RELEASE_VERSION"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "GitHub Release $tag already exists."
+          else
+            gh release create "$tag" \
+              --repo "$GITHUB_REPOSITORY" \
+              --verify-tag \
+              --title "$tag" \
+              --generate-notes
+          fi
