@@ -2,6 +2,14 @@
 
 本文件随 MDV 源码和 npm 包提供，记录当前实际使用的第三方令牌、算法、字体、图标和渲染器。
 
+## Material 3 Loading Indicator 规格与动效参考
+
+- 官方依据：[Specs](https://m3.material.io/components/loading-indicator/specs)、[Guidelines](https://m3.material.io/components/loading-indicator/guidelines)、[Accessibility](https://m3.material.io/components/loading-indicator/accessibility)。
+- 形状采样与弹簧／旋转参考：[m3ui-vue MLoadingIndicator.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MLoadingIndicator.vue)，Copyright (c) 2026 Fadel，MIT；实际研究使用本地源码副本。
+- 使用位置：`src/components/loading-indicator-geometry.ts` 的七形状解析轮廓、共同角度采样、Catmull-Rom 转三次 Bézier 的变形与弹簧／旋转思路。该文件保留来源和版权；MIT 许可全文见下文“m3ui-vue Tabs 弹簧算法”。
+
+MDV 将轮廓归一化到共同圆形边界，对弹簧每段末值归一以保证循环连续，并约束控制点以避免旋转／过冲裁切。650ms 变形间隔、4666ms 整体旋转、0.6 阻尼与 200 刚度来自参考实现，不作为官网独立动效令牌或官方顶点数据的精确移植声明。组件的 48／38 尺寸、Default／Contained 颜色与 progressbar 语义按官网处理；SSR、暂停、静态 reduced-motion、可见性与 KeepAlive 生命周期、主题和属性透传由 MDV 实现，没有引入第三方运行时依赖。
+
 ## Material 3 Carousel 规格、关键线与滚动参考
 
 - 官方依据：[Specs](https://m3.material.io/components/carousel/specs)、[Guidelines](https://m3.material.io/components/carousel/guidelines)、[Accessibility](https://m3.material.io/components/carousel/accessibility)。
@@ -85,6 +93,8 @@ MDV 自行实现 Vue 输入、组合、模态生命周期、定位和动效采�
 - 使用位置：`src/styles/tokens.css`、`src/styles/typography.css`。
 
 MDV 将 v0.192 设计令牌中的默认颜色、排版、圆角和动效数值整理为自己的 CSS 变量与 Tailwind 映射，并增加主题作用域、动态配色、阴影和减少动态效果规则；未将 Material Web 组件纳入运行时依赖。
+
+默认浅色 `on-primary-container` 按现行 Material 3 Loading Indicator 规格与 Material Color Utilities 的标准对比度角色更新为 tone 30（`#4f378b`），替代旧版 tone 10；动态配色仍由 Material Color Utilities 生成。
 
 ## Material 3 图标按钮规格与令牌
 

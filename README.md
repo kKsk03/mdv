@@ -45,6 +45,8 @@ MdvTimePicker 当前约定范围已完成项目检查与用户预览验收，提
 
 MdvCarousel 已完成当前约定范围，包含四类布局、居中 Hero、多宽高比 Uncontained、动态关键线遮罩、稳定 key 定位、拖动／滚轮、键盘和 reduced-motion；布局与媒体样式按 m3ui-vue 参考效果重对齐。用户已确认项目指令全部通过且样式符合预期。真实包消费另行验证，API 见 [轮播说明](./COMPONENTS.md#mdvcarousel)。
 
+MdvLoadingIndicator 已完成当前约定范围，提供 Default／Contained、七形状循环、24–240px 尺寸、暂停与装饰模式，以及静态 reduced-motion、SSR／hydration 和生命周期清理。用户已确认项目指令全部通过且样式符合预期；真实包消费另行验证，API 见 [加载指示器说明](./COMPONENTS.md#mdvloadingindicator)。
+
 ## 本地开发
 
 在仓库根目录执行。当前环境基线为 Node.js 24.22.1 和 pnpm 12.14.0。

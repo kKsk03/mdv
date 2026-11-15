@@ -5,6 +5,7 @@
 - [MdvDatePicker 与 MdvDateRangePicker 日期选择器](#mdvdatepicker-与-mdvdaterangepicker)
 - [MdvTimePicker 时间选择器](#mdvtimepicker)
 - [MdvCarousel 轮播](#mdvcarousel)
+- [MdvLoadingIndicator 加载指示器](#mdvloadingindicator)
 
 - [MdvButton 按钮](#mdvbutton)
 - [MdvIconButton 图标按钮](#mdviconbutton)
@@ -39,6 +40,61 @@
 - [MdvButtonGroup 与 MdvButtonGroupItem 按钮组](#mdvbuttongroup-与-mdvbuttongroupitem)
 - [MdvSplitButton 拆分按钮](#mdvsplitbutton)
 - [MdvFabMenu 与 MdvFabMenuItem 浮动操作菜单](#mdvfabmenu-与-mdvfabmenuitem)
+
+## MdvLoadingIndicator
+
+当前约定范围已完成用户项目检查与预览验收。依据 [Specs](https://m3.material.io/components/loading-indicator/specs)、[Guidelines](https://m3.material.io/components/loading-indicator/guidelines) 和 [Accessibility](https://m3.material.io/components/loading-indicator/accessibility)。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvLoadingIndicator } from 'mdv'
+
+const loading = ref(true)
+</script>
+
+<template>
+  <section :aria-busy="loading" aria-label="推荐文章">
+    <div v-if="loading" class="grid min-h-48 place-items-center">
+      <MdvLoadingIndicator label="正在加载推荐文章" />
+    </div>
+    <div v-else>推荐内容</div>
+  </section>
+</template>
+```
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| contained | boolean | false | 圆形 primary-container 背景，前景改用 on-primary-container |
+| size | number | 48 | 整体 CSS px，有限值限制在 24–240；NaN／Infinity 回退 48 |
+| label | string | 加载中 | 仅供辅助技术读取的名称；空白内容回退“加载中” |
+| paused | boolean | false | 暂停在当前形状和相位，恢复后继续 |
+| decorative | boolean | false | 隐藏角色和名称，供已有加载说明的组件组合使用 |
+
+两种配置的内部图形区域均按整体尺寸的 38/48 缩放；默认无背景时使用 primary。七种形状循环变换并旋转，形状几何与时序参考 m3ui-vue 的解析近似实现，未移植 Android 官方多边形数据；出处与许可见 [第三方记录](./THIRD_PARTY_NOTICES.md#material-3-loading-indicator-规格与动效参考)。组件没有插槽、专有事件或 Expose 方法，公开属性类型为 `MdvLoadingIndicatorProps`。
+
+默认 `role="progressbar"`，不确定进度不设置 aria-valuenow／valuemin／valuemax／valuetext；透传的数值属性也会移除。`aria-label`／`aria-labelledby` 可替代 label，原生属性、事件监听、class 和 style 进入根 span。组件不创建 Tab 停靠点，不自动移动焦点；label 不产生可见文字，业务可以在旁边展示说明，并在实际加载区域设置 aria-busy。需要宣布完成时由业务的状态文本负责，动画本身不反复触发播报。
+
+Contained 用于叠放在其他内容上、需要背景对比的场合。颜色可以通过 `--mdv-loading-indicator-active-color` 与 `--mdv-loading-indicator-container-color` 局部覆盖；需保持图形与承载背景至少 3:1 的对比。嵌入按钮时，可使用装饰模式并选择与按钮匹配的前景：
+
+```vue
+<MdvButton aria-busy="true" style="--mdv-button-icon-size: 24px">
+  <template #leading>
+    <MdvLoadingIndicator
+      :size="24"
+      decorative
+      style="--mdv-loading-indicator-active-color: currentColor"
+    />
+  </template>
+  正在保存…
+</MdvButton>
+```
+
+暂停、页面隐藏、离开可视区域及 KeepAlive 停用均停止帧循环，恢复后沿用保存的相位。系统启用减少动态效果时呈现静态首帧并保留加载语义；关闭该偏好后继续原相位。卸载清理动画、观察器和监听。服务端输出稳定、非空 SVG，客户端复用图形节点。
+
+官方建议用于约 200ms–5s 的短暂等待，更长或需要从未知进度切换到百分比的过程适合已有 Progress。不确定／确定两种 Progress 均已提供；加载指示器没有百分比、完成检测或请求时长判断。挂载与隐藏由业务控制，v-show 仅控制显示，手动隐藏且需要立即停帧时可同时设置 paused；可视区域观察器支持时也会停止不可见组件。下拉刷新、全屏遮罩和既有按钮 loading 行为不属于本组件 API。
+
+独立 playground 提供两款、24／48／96／240px、暂停恢复、内容区与按钮组合、浅深色、局部颜色、RTL 和 KeepAlive 示例，并配套几何、行为、SSR 和 hydration 规格。用户已确认全部项目指令通过、样式符合预期；读屏、跨浏览器及真实包消费另行验证。
 
 ## MdvCarousel
 

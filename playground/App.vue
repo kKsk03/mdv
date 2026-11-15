@@ -37,6 +37,7 @@ import FabMenuPlayground from './FabMenuPlayground.vue'
 import DatePickerPlayground from './DatePickerPlayground.vue'
 import TimePickerPlayground from './TimePickerPlayground.vue'
 import CarouselPlayground from './CarouselPlayground.vue'
+import LoadingIndicatorPlayground from './LoadingIndicatorPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
 
 const pages = [
@@ -255,6 +256,12 @@ const pages = [
     label: 'Carousel 轮播',
     description: '检查动态遮罩、四类布局、居中、多宽高比、拖动、key 定位和键盘。',
     component: CarouselPlayground,
+  },
+  {
+    id: 'loading-indicator',
+    label: 'Loading Indicator 加载指示器',
+    description: '检查两种形态、形状变换、尺寸、暂停、减少动画、主题与内容区组合。',
+    component: LoadingIndicatorPlayground,
   },
   {
     id: 'theme',

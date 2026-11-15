@@ -18,7 +18,7 @@
     var(--mdv-dynamic-dark-color-primary-container, #4f378b)
   );
   --mdv-sys-color-on-primary-container: light-dark(
-    var(--mdv-dynamic-light-color-on-primary-container, #21005d),
+    var(--mdv-dynamic-light-color-on-primary-container, #4f378b),
     var(--mdv-dynamic-dark-color-on-primary-container, #eaddff)
   );
   --mdv-sys-color-secondary: light-dark(

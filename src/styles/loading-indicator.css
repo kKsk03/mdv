@@ -1,0 +1,47 @@
+.mdv-loading-indicator {
+  display: inline-flex;
+  box-sizing: border-box;
+  inline-size: var(--mdv-loading-indicator-size, 48px);
+  block-size: var(--mdv-loading-indicator-size, 48px);
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+.mdv-loading-indicator--contained {
+  border-radius: 50%;
+  background: var(--mdv-loading-indicator-container-color, var(--mdv-sys-color-primary-container));
+}
+
+.mdv-loading-indicator__graphic {
+  display: block;
+  inline-size: calc(100% * 38 / 48);
+  block-size: calc(100% * 38 / 48);
+  flex: none;
+  overflow: hidden;
+}
+
+.mdv-loading-indicator__shape {
+  fill: var(--mdv-loading-indicator-active-color, var(--mdv-sys-color-primary));
+}
+
+.mdv-loading-indicator--contained .mdv-loading-indicator__shape {
+  fill: var(--mdv-loading-indicator-active-color, var(--mdv-sys-color-on-primary-container));
+}
+
+@media (forced-colors: active) {
+  .mdv-loading-indicator {
+    forced-color-adjust: none;
+  }
+
+  .mdv-loading-indicator--contained {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
+    background: Canvas;
+  }
+
+  .mdv-loading-indicator .mdv-loading-indicator__shape {
+    fill: CanvasText;
+  }
+}
