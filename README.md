@@ -25,7 +25,33 @@ pnpm format:check
 pnpm build
 ```
 
-包已配置为公开发布，由维护者手动执行最终打包与发布；CI 仅运行检查，不会自动发布。
+包使用 Changesets 管理版本和 CHANGELOG。普通开发提交不会直接发布；合并到 `main` 后，GitHub Actions 会创建或更新发布 PR。审核并合并发布 PR 后，工作流会重新执行检查和构建，创建版本标签与 GitHub Release，并通过 npm Trusted Publishing 发布公开包。
+
+### 发布流程
+
+首次启用自动发布前，需要完成本地依赖和两项平台设置：
+
+1. 在仓库根目录运行一次 `pnpm install`，提交更新后的 `pnpm-lock.yaml`。
+2. 在 GitHub 仓库 Settings → Actions → General 中允许工作流使用读写权限，并允许 Actions 创建和批准 Pull Request。
+3. 在 npm 的 `@kksk03/mdv` 包设置中添加 GitHub Actions Trusted Publisher：仓库所有者填 `kKsk03`，仓库填 `mdv`，工作流文件填 `release.yml`，不设置环境。选择直接发布权限；如果选择 staged publishing，每次还需要手动批准。
+
+日常开发完成一项需要进入下个版本的改动后，在仓库根目录执行：
+
+```powershell
+pnpm changeset
+```
+
+选择版本级别并填写面向使用者的说明，把生成的 `.changeset/*.md` 文件和代码一起提交。代码合并到 `main` 后，机器人会创建或更新发布 PR。你审核版本号和 CHANGELOG 后合并这个 PR；发布工作流通过后，npm 会出现新版本。
+
+修复和兼容优化使用 `patch`，新增向后兼容能力使用 `minor`，破坏性 API 调整使用 `major`。当前版本策略是 `0.1.x` 承载修复，新增能力按后续次版本规划；在 0.x 阶段选择 `major` 可能直接进入 `1.0.0`，请只在明确决定首个稳定版本时使用。
+
+发布后，在业务项目中按需升级：
+
+```powershell
+pnpm add @kksk03/mdv@0.1.1
+```
+
+如果发布工作流在 npm 上传后于标签或 Release 步骤失败，先查询该版本是否已存在，再从 GitHub Actions 重跑工作流；不要修改同一个已发布版本或重新上传不同内容。
 
 ## 使用方样式入口
 
