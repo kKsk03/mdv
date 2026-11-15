@@ -4,6 +4,7 @@ import { defineComponent, h, nextTick, onMounted, ref } from 'vue'
 import MdvIconButton from '../components/MdvIconButton.vue'
 
 enableAutoUnmount(afterEach)
+afterEach(() => vi.restoreAllMocks())
 
 describe('MdvIconButton', () => {
   it('uses ordinary button semantics when selected is omitted and forwards native attributes', () => {
@@ -122,20 +123,26 @@ describe('MdvIconButton', () => {
     expect(wrapper.findAll('svg')).toHaveLength(1)
   })
 
-  it('lets a native click listener cancel a toggle update', async () => {
-    const onClick = vi.fn<(event: MouseEvent) => void>((event) => event.preventDefault())
-    const wrapper = mount(MdvIconButton, {
-      props: { selected: false },
-      attrs: { 'aria-label': '收藏', onClick },
-    })
-    const event = new MouseEvent('click', { bubbles: true, cancelable: true })
+  it.each(['real', 'fixed'])(
+    'lets a native click listener cancel a toggle update (%s clock)',
+    async (clock) => {
+      if (clock === 'fixed') vi.spyOn(Date, 'now').mockReturnValue(Date.now())
+      const onClickCapture = vi.fn<(event: MouseEvent) => void>()
+      const onClick = vi.fn<(event: MouseEvent) => void>((event) => event.preventDefault())
+      const wrapper = mount(MdvIconButton, {
+        props: { selected: false },
+        attrs: { 'aria-label': '收藏', onClickCapture, onClick },
+      })
 
-    wrapper.get('button').element.dispatchEvent(event)
-    await nextTick()
-    expect(onClick).toHaveBeenCalledExactlyOnceWith(event)
-    expect(event.defaultPrevented).toBe(true)
-    expect(wrapper.emitted('update:selected')).toBeUndefined()
-  })
+      await wrapper.get('button').trigger('click')
+      expect(onClickCapture).toHaveBeenCalledExactlyOnceWith(expect.any(MouseEvent))
+      const event = onClickCapture.mock.calls[0]![0]
+      expect(onClick).toHaveBeenCalledExactlyOnceWith(event)
+      expect(event.target).toBe(wrapper.get('button').element)
+      expect(event.defaultPrevented).toBe(true)
+      expect(wrapper.emitted('update:selected')).toBeUndefined()
+    },
+  )
 
   it('uses toggle semantics over href and restores native link mode when selected is cleared', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
@@ -161,35 +168,43 @@ describe('MdvIconButton', () => {
     }
   })
 
-  it('forwards link attributes and native cancelable events, including an empty href', async () => {
-    const onClick = vi.fn<(event: MouseEvent) => void>((event) => event.preventDefault())
-    const wrapper = mount(MdvIconButton, {
-      props: { href: '/report' },
-      attrs: {
-        'aria-label': '下载报告',
+  it.each(['real', 'fixed'])(
+    'forwards link attributes and native cancelable events, including an empty href (%s clock)',
+    async (clock) => {
+      if (clock === 'fixed') vi.spyOn(Date, 'now').mockReturnValue(Date.now())
+      const onClickCapture = vi.fn<(event: MouseEvent) => void>()
+      const onClick = vi.fn<(event: MouseEvent) => void>((event) => event.preventDefault())
+      const wrapper = mount(MdvIconButton, {
+        props: { href: '/report' },
+        attrs: {
+          'aria-label': '下载报告',
+          target: '_blank',
+          rel: 'noopener noreferrer',
+          download: 'report.pdf',
+          onClickCapture,
+          onClick,
+        },
+      })
+      const link = wrapper.get('a')
+
+      expect(link.attributes()).toMatchObject({
+        href: '/report',
         target: '_blank',
         rel: 'noopener noreferrer',
         download: 'report.pdf',
-        onClick,
-      },
-    })
-    const link = wrapper.get('a')
-    const event = new MouseEvent('click', { bubbles: true, cancelable: true })
+      })
+      await link.trigger('click')
+      expect(onClickCapture).toHaveBeenCalledExactlyOnceWith(expect.any(MouseEvent))
+      const event = onClickCapture.mock.calls[0]![0]
+      expect(onClick).toHaveBeenCalledExactlyOnceWith(event)
+      expect(event.target).toBe(link.element)
+      expect(event.defaultPrevented).toBe(true)
+      expect(wrapper.emitted('update:selected')).toBeUndefined()
 
-    expect(link.attributes()).toMatchObject({
-      href: '/report',
-      target: '_blank',
-      rel: 'noopener noreferrer',
-      download: 'report.pdf',
-    })
-    link.element.dispatchEvent(event)
-    expect(onClick).toHaveBeenCalledExactlyOnceWith(event)
-    expect(event.defaultPrevented).toBe(true)
-    expect(wrapper.emitted('update:selected')).toBeUndefined()
-
-    await wrapper.setProps({ href: '' })
-    expect(link.attributes('href')).toBe('')
-  })
+      await wrapper.setProps({ href: '' })
+      expect(link.attributes('href')).toBe('')
+    },
+  )
 
   it('blocks disabled toggle activation and restores listeners when enabled', async () => {
     const onClick = vi.fn<(event: MouseEvent) => void>()
@@ -211,7 +226,7 @@ describe('MdvIconButton', () => {
     expect(wrapper.emitted('update:selected')).toBeUndefined()
 
     await wrapper.setProps({ disabled: false })
-    button.element.click()
+    await button.trigger('click')
     expect(onClick).toHaveBeenCalledOnce()
     expect(onClickCapture).toHaveBeenCalledOnce()
     expect(wrapper.emitted('update:selected')).toEqual([[true]])
@@ -291,8 +306,7 @@ describe('MdvIconButton', () => {
     expect(wrapper.get('.mdv-icon-button__icon').classes()).toContain(
       'mdv-icon-button__icon--hidden',
     )
-    button.element.click()
-    button.element.click()
+    await Promise.all([button.trigger('click'), button.trigger('click')])
     expect(onClick).toHaveBeenCalledTimes(2)
     expect(wrapper.emitted('update:selected')).toEqual([[true], [true]])
 

@@ -113,7 +113,7 @@ describe('MdvButton', () => {
     const wrapper = mount(MdvButton, { attrs: { onClick } })
     const button = wrapper.get('button')
 
-    button.element.click()
+    await button.trigger('click')
     expect(onClick).toHaveBeenCalledOnce()
 
     await wrapper.setProps({ disabled: true })
@@ -122,7 +122,7 @@ describe('MdvButton', () => {
     expect(onClick).toHaveBeenCalledOnce()
 
     await wrapper.setProps({ disabled: false })
-    button.element.click()
+    await button.trigger('click')
     expect(onClick).toHaveBeenCalledTimes(2)
   })
 
@@ -165,14 +165,21 @@ describe('MdvButton', () => {
   })
 
   it('forwards native anchor attributes and cancelable click events', async () => {
+    const onClickCapture = vi.fn<(event: MouseEvent) => void>()
     const onClick = vi.fn<(event: MouseEvent) => void>((event) => event.preventDefault())
     const onFocus = vi.fn<(event: FocusEvent) => void>()
     const wrapper = mount(MdvButton, {
       props: { href: '/guide', variant: 'filled' },
-      attrs: { target: '_blank', rel: 'noopener', download: 'guide.pdf', onClick, onFocus },
+      attrs: {
+        target: '_blank',
+        rel: 'noopener',
+        download: 'guide.pdf',
+        onClickCapture,
+        onClick,
+        onFocus,
+      },
     })
     const link = wrapper.get('a')
-    const click = new MouseEvent('click', { bubbles: true, cancelable: true })
 
     expect(link.attributes()).toMatchObject({
       href: '/guide',
@@ -181,8 +188,11 @@ describe('MdvButton', () => {
       download: 'guide.pdf',
     })
     expect(link.attributes('disabled')).toBeUndefined()
-    link.element.dispatchEvent(click)
+    await link.trigger('click')
+    expect(onClickCapture).toHaveBeenCalledExactlyOnceWith(expect.any(MouseEvent))
+    const click = onClickCapture.mock.calls[0]![0]
     expect(onClick).toHaveBeenCalledExactlyOnceWith(click)
+    expect(click.target).toBe(link.element)
     expect(click.defaultPrevented).toBe(true)
 
     await link.trigger('focus')
@@ -252,8 +262,7 @@ describe('MdvButton', () => {
     expect(content.get('.mdv-button__spinner').attributes('aria-hidden')).toBe('true')
     expect(content.findAll('.mdv-button__icon')).toHaveLength(0)
 
-    button.element.click()
-    button.element.click()
+    await Promise.all([button.trigger('click'), button.trigger('click')])
     expect(onClick).toHaveBeenCalledTimes(2)
 
     await wrapper.setProps({ loading: false })

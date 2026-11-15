@@ -104,13 +104,13 @@ describe('MdvChip', () => {
       attrs: { onClick: click },
     })
     const primary = wrapper.get<HTMLButtonElement>('.mdv-chip__primary')
-    const event = new MouseEvent('click', { bubbles: true, cancelable: true })
-    primary.element.dispatchEvent(event)
+    await primary.trigger('click')
     await settle()
-    expect(click).toHaveBeenCalledExactlyOnceWith(event)
+    expect(click).toHaveBeenCalledExactlyOnceWith(expect.any(MouseEvent))
+    expect(click.mock.calls[0]![0].target).toBe(primary.element)
     expect(primary.attributes('aria-pressed')).toBe('true')
     expect(wrapper.emitted('update:selected')).toEqual([[true]])
-    primary.element.click()
+    await primary.trigger('click')
     await settle()
     expect(primary.attributes('aria-pressed')).toBe('false')
     expect(wrapper.emitted('update:selected')).toEqual([[true], [false]])
@@ -121,7 +121,7 @@ describe('MdvChip', () => {
     const wrapper = mount(MdvChip, {
       props: { variant: 'filter', selected: false, label: '图片', 'onUpdate:selected': update },
     })
-    wrapper.get<HTMLButtonElement>('button').element.click()
+    await wrapper.get('button').trigger('click')
     await settle()
     expect(update).toHaveBeenCalledExactlyOnceWith(true)
     expect(wrapper.get('button').attributes('aria-pressed')).toBe('false')
@@ -144,9 +144,9 @@ describe('MdvChip', () => {
           }),
       }),
     )
-    const primary = wrapper.get<HTMLButtonElement>('button').element
-    primary.click()
-    primary.click()
+    const primary = wrapper.get('button')
+    // 两次 trigger 同步派发，先收集 Promise 再等待，保留父级渲染前的连续切换。
+    await Promise.all([primary.trigger('click'), primary.trigger('click')])
     await settle()
     expect(selected.value).toBe(false)
     expect(wrapper.getComponent(MdvChip).emitted('update:selected')).toEqual([[true], [false]])
@@ -157,7 +157,7 @@ describe('MdvChip', () => {
       props: { variant: 'filter', label: '图片' },
       attrs: { onClick: (event: MouseEvent) => event.preventDefault() },
     })
-    wrapper.get<HTMLButtonElement>('button').element.click()
+    await wrapper.get('button').trigger('click')
     await settle()
     expect(wrapper.emitted('update:selected')).toBeUndefined()
     await wrapper.setProps({ selectable: false })
@@ -170,13 +170,13 @@ describe('MdvChip', () => {
       props: { variant: 'input', label: '收件人' },
       attrs: { onClick: click },
     })
-    wrapper.get<HTMLButtonElement>('.mdv-chip__primary').element.click()
+    await wrapper.get('.mdv-chip__primary').trigger('click')
     await settle()
     expect(click).toHaveBeenCalledTimes(1)
     expect(wrapper.emitted('update:selected')).toBeUndefined()
     expect(wrapper.get('.mdv-chip__primary').attributes('aria-pressed')).toBeUndefined()
     await wrapper.setProps({ selectable: true })
-    wrapper.get<HTMLButtonElement>('.mdv-chip__primary').element.click()
+    await wrapper.get('.mdv-chip__primary').trigger('click')
     await settle()
     expect(wrapper.get('.mdv-chip__primary').attributes('aria-pressed')).toBe('true')
     expect(wrapper.find('.mdv-chip__check').exists()).toBe(false)
@@ -193,10 +193,12 @@ describe('MdvChip', () => {
     expect(wrapper.find('button button').exists()).toBe(false)
     const button = wrapper.get<HTMLButtonElement>('.mdv-chip__remove')
     expect(button.attributes('aria-label')).toBe('删除林同学')
-    const event = new MouseEvent('click', { bubbles: true, cancelable: true })
-    button.element.dispatchEvent(event)
+    await button.trigger('click')
     await settle()
-    expect(remove).toHaveBeenCalledExactlyOnceWith(event)
+    expect(remove).toHaveBeenCalledExactlyOnceWith(expect.any(MouseEvent))
+    const event = remove.mock.calls[0]![0]
+    expect(event.target).toBe(button.element)
+    expect(wrapper.emitted('remove')).toEqual([[event]])
     expect(click).not.toHaveBeenCalled()
     expect(wrapper.emitted('update:selected')).toBeUndefined()
     expect(wrapper.exists()).toBe(true)
@@ -220,24 +222,28 @@ describe('MdvChip', () => {
     expect(remove).toHaveBeenCalledTimes(1)
   })
 
-  it('merges a remove-only Input into one action with its delete name', async () => {
-    const wrapper = mount(MdvChip, {
-      props: {
-        variant: 'input',
-        label: '收件人',
-        removeOnly: true,
-        removeLabel: '移除联系人',
-        selectable: true,
-      },
-    })
-    expect(wrapper.findAll('button')).toHaveLength(1)
-    expect(wrapper.get('button').attributes('aria-label')).toBe('移除联系人')
-    expect(wrapper.get('button').attributes('aria-pressed')).toBeUndefined()
-    wrapper.get<HTMLButtonElement>('button').element.click()
-    await settle()
-    expect(wrapper.emitted('remove')).toHaveLength(1)
-    expect(wrapper.emitted('update:selected')).toBeUndefined()
-  })
+  it.each(['real', 'fixed'])(
+    'merges a remove-only Input into one action with its delete name (%s clock)',
+    async (clock) => {
+      if (clock === 'fixed') vi.spyOn(Date, 'now').mockReturnValue(Date.now())
+      const wrapper = mount(MdvChip, {
+        props: {
+          variant: 'input',
+          label: '收件人',
+          removeOnly: true,
+          removeLabel: '移除联系人',
+          selectable: true,
+        },
+      })
+      expect(wrapper.findAll('button')).toHaveLength(1)
+      expect(wrapper.get('button').attributes('aria-label')).toBe('移除联系人')
+      expect(wrapper.get('button').attributes('aria-pressed')).toBeUndefined()
+      await wrapper.get('button').trigger('click')
+      await settle()
+      expect(wrapper.emitted('remove')).toHaveLength(1)
+      expect(wrapper.emitted('update:selected')).toBeUndefined()
+    },
+  )
 
   it('lets removable and trailing choose the end content without losing the built-in delete action', async () => {
     const wrapper = mount(MdvChip, {
@@ -245,7 +251,7 @@ describe('MdvChip', () => {
       slots: { trailing: () => h('span', { 'data-custom-close': '' }, '移除') },
     })
     expect(wrapper.find('.mdv-chip__remove [data-custom-close]').exists()).toBe(true)
-    wrapper.get<HTMLButtonElement>('.mdv-chip__remove').element.click()
+    await wrapper.get('.mdv-chip__remove').trigger('click')
     expect(wrapper.emitted('remove')).toHaveLength(1)
     await wrapper.setProps({ removable: false })
     expect(wrapper.find('.mdv-chip__remove').exists()).toBe(false)
@@ -402,11 +408,11 @@ describe('MdvChipSet', () => {
     )
     const buttons = wrapper.findAll<HTMLButtonElement>('button')
     expect(buttons.map((button) => button.attributes('aria-pressed'))).toEqual(['false', 'true'])
-    buttons[0]!.element.click()
+    await buttons[0]!.trigger('click')
     await settle()
     expect(model.value).toBe(1)
     expect(buttons.map((button) => button.attributes('aria-pressed'))).toEqual(['true', 'false'])
-    buttons[0]!.element.click()
+    await buttons[0]!.trigger('click')
     await settle()
     expect(model.value).toBeNull()
     expect(
@@ -419,8 +425,7 @@ describe('MdvChipSet', () => {
     const model = ref<MdvChipSetModelValue>(initial)
     const wrapper = mount(filterExample(model, 'multiple'))
     const buttons = wrapper.findAll<HTMLButtonElement>('button')
-    buttons[2]!.element.click()
-    buttons[0]!.element.click()
+    await Promise.all([buttons[2]!.trigger('click'), buttons[0]!.trigger('click')])
     await settle()
     expect(model.value).toEqual(['c'])
     expect(initial).toEqual(['a'])
@@ -441,7 +446,7 @@ describe('MdvChipSet', () => {
       },
       slots: { default: () => h(MdvChip, { variant: 'filter', value: 'a', label: 'A' }) },
     })
-    wrapper.get<HTMLButtonElement>('button').element.click()
+    await wrapper.get('button').trigger('click')
     await settle()
     expect(update).toHaveBeenCalledExactlyOnceWith([])
     expect(wrapper.get('button').attributes('aria-pressed')).toBe('true')
@@ -535,7 +540,7 @@ describe('MdvChipSet', () => {
     chips[1]!.get<HTMLButtonElement>('.mdv-chip__primary').element.focus()
     await chips[1]!.get('.mdv-chip__primary').trigger('keydown', { key: 'ArrowRight' })
     expect(document.activeElement).toBe(chips[1]!.get('.mdv-chip__remove').element)
-    chips[1]!.get<HTMLButtonElement>('.mdv-chip__remove').element.click()
+    await chips[1]!.get('.mdv-chip__remove').trigger('click')
     await settle()
     expect(document.activeElement?.textContent).toBe('c')
     await wrapper.findAllComponents(MdvChip)[1]!.get('button').trigger('keydown', { key: 'Delete' })
@@ -574,9 +579,9 @@ describe('MdvChipSet', () => {
       }),
       { attachTo: document.body },
     )
-    const remove = wrapper.get<HTMLButtonElement>('.mdv-chip__remove').element
-    remove.focus()
-    remove.click()
+    const remove = wrapper.get<HTMLButtonElement>('.mdv-chip__remove')
+    remove.element.focus()
+    await remove.trigger('click')
     await settle()
     expect(document.activeElement).toBe(external)
   })
@@ -591,7 +596,7 @@ describe('MdvChipSet', () => {
         ],
       },
     })
-    wrapper.get<HTMLButtonElement>('button').element.click()
+    await wrapper.get('button').trigger('click')
     await settle()
     expect(wrapper.get('button').attributes('aria-pressed')).toBe('true')
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
