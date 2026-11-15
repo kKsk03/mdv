@@ -1,7 +1,9 @@
-import { describe, expect, it, vi } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { defineComponent, h, nextTick, onMounted, ref } from 'vue'
 import MdvIconButton from '../components/MdvIconButton.vue'
+
+enableAutoUnmount(afterEach)
 
 describe('MdvIconButton', () => {
   it('uses ordinary button semantics when selected is omitted and forwards native attributes', () => {
