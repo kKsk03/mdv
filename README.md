@@ -1,8 +1,14 @@
+<h1 align="center">Material Design Vue</h1>
+
+<p align="center">
+  A web component library based on Material Design.
+</p>
+
 # MDV · Material Design Vue
 
 基于 Vue 3、TypeScript 和 Tailwind CSS v4 的 Material Design 3 组件库。Tailwind 工具类由使用方安装并编译；MDV 提供组件、主题入口和必要的普通 CSS。
 
-当前版本为 **0.1.0**，npm 包名为 `@kksk03/mdv`，采用 [MIT 许可](./LICENSE)。下列组件的约定范围、本批组合验收、整库安装包消费及 Button 按需导入体积对照已通过；生产预览实测范围为 Windows Chrome，版本未记录。正式文档站后期在独立仓库建设，本仓库使用 playground 调试与验证组件。
+当前版本为 **0.1.0**，npm 包名为 `@mdv-ui/mdv`，采用 [MIT 许可](./LICENSE)。此前的 `@kksk03/mdv@0.1.0` 是迁移前包名；后续安装请使用新包名。下列组件的约定范围、本批组合验收、整库安装包消费及 Button 按需导入体积对照已通过；生产预览实测范围为 Windows Chrome，版本未记录。正式文档站后期在独立仓库建设，本仓库使用 playground 调试与验证组件。
 
 ## 本地开发
 
@@ -29,11 +35,36 @@ pnpm build
 
 ### 发布流程
 
-首次启用自动发布前，需要完成本地依赖和两项平台设置：
+组织创建后不需要、也不能先创建一个空的 npm 包。第一次发布 `@mdv-ui/mdv` 时，npm 会自动在 `mdv-ui` 组织下创建它。
 
-1. 在仓库根目录运行一次 `pnpm install`，提交更新后的 `pnpm-lock.yaml`。
-2. 在 GitHub 仓库 Settings → Actions → General 中允许工作流使用读写权限，并允许 Actions 创建和批准 Pull Request。
-3. 在 npm 的 `@kksk03/mdv` 包设置中添加 GitHub Actions Trusted Publisher：仓库所有者填 `kKsk03`，仓库填 `mdv`，工作流文件填 `release.yml`，不设置环境。选择直接发布权限；如果选择 staged publishing，每次还需要手动批准。
+#### 首次发布新包
+
+当前 `package.json` 已切换到 `@mdv-ui/mdv@0.1.0`。由具备 `mdv-ui` 组织发布权限的账号在仓库根目录手动执行：
+
+```powershell
+pnpm install
+pnpm type-check
+pnpm test:unit
+pnpm lint:check
+pnpm format:check
+pnpm build
+pnpm publish --access public
+```
+
+发布完成后验证：
+
+```powershell
+pnpm view @mdv-ui/mdv@0.1.0 version --registry https://registry.npmjs.org
+```
+
+如果 npm 页面将新包置于 staged publishing 阶段，先按 npm 页面完成扫描后的批准流程，再复查上面的版本命令。
+
+#### 启用后续自动发布
+
+首次发布成功后，npm 才会出现 `@mdv-ui/mdv` 的包设置页。之后完成以下平台设置：
+
+1. 在 GitHub 仓库 Settings → Actions → General 中允许工作流使用读写权限，并允许 Actions 创建和批准 Pull Request。
+2. 在 npm 的 `@mdv-ui/mdv` 包设置中添加 GitHub Actions Trusted Publisher：仓库所有者填 `kKsk03`，仓库填 `mdv`，工作流文件填 `release.yml`，不设置环境。选择直接发布权限；如果选择 staged publishing，每次还需要手动批准。
 
 日常开发完成一项需要进入下个版本的改动后，在仓库根目录执行：
 
@@ -48,7 +79,14 @@ pnpm changeset
 发布后，在业务项目中按需升级：
 
 ```powershell
-pnpm add @kksk03/mdv@0.1.1
+pnpm add @mdv-ui/mdv@0.1.1
+```
+
+从旧包迁移时，在业务项目中执行：
+
+```powershell
+pnpm remove @kksk03/mdv
+pnpm add @mdv-ui/mdv@0.1.0
 ```
 
 如果发布工作流在 npm 上传后于标签或 Release 步骤失败，先查询该版本是否已存在，再从 GitHub Actions 重跑工作流；不要修改同一个已发布版本或重新上传不同内容。
@@ -59,54 +97,54 @@ pnpm add @kksk03/mdv@0.1.1
 
 ```css
 @import 'tailwindcss';
-@import '@kksk03/mdv/theme';
-@import '@kksk03/mdv/styles';
+@import '@mdv-ui/mdv/theme';
+@import '@mdv-ui/mdv/styles';
 ```
 
-`@kksk03/mdv/theme` 提供字体、系统令牌、Tailwind 映射和包内组件的 `@source` 扫描入口；`@kksk03/mdv/styles` 提供必要的普通组件样式。JavaScript 入口不隐式导入 CSS。库不预编译整套 Tailwind 工具类。
+`@mdv-ui/mdv/theme` 提供字体、系统令牌、Tailwind 映射和包内组件的 `@source` 扫描入口；`@mdv-ui/mdv/styles` 提供必要的普通组件样式。JavaScript 入口不隐式导入 CSS。库不预编译整套 Tailwind 工具类。
 
 ## 组件覆盖
 
 以下按 [Material Design 3 官方目录](https://m3.material.io/components) 的 36 个家族列出当前支持的主要形态；Props、事件、插槽、Expose 和详细限制见各行的使用说明。家族覆盖包含传统 M3 和 Expressive，不表示已实现官网全部可选能力。
 
-| 官方家族／使用说明 | 组件 | 当前支持范围 |
-| --- | --- | --- |
-| [App bars](./COMPONENTS.md#mdvappbar) | MdvAppBar、MdvAppBarScaffold | Small／Medium／Large、滚动收合与隐藏、导航组合 |
-| [Badges](./COMPONENTS.md#mdvbadge) | MdvBadge | Small 圆点、Large 标签、逻辑方向定位 |
-| [Button groups](./COMPONENTS.md#mdvbuttongroup-与-mdvbuttongroupitem) | MdvButtonGroup、MdvButtonGroupItem | Standard／Connected、操作与单多选、五档尺寸 |
-| [Buttons](./COMPONENTS.md#mdvbutton) | MdvButton | 五种官方配色外观、五档尺寸、Round／Square；另有 link 扩展 |
-| [Extended FABs](./COMPONENTS.md#mdvfab-与-mdvextendedfab) | MdvExtendedFab | 三档尺寸、扩缩、滚动与 Toolbar 联动 |
-| [FAB menu](./COMPONENTS.md#mdvfabmenu-与-mdvfabmenuitem) | MdvFabMenu、MdvFabMenuItem | Expressive／Baseline、展开、键盘与浮层组合 |
-| [FABs](./COMPONENTS.md#mdvfab-与-mdvextendedfab) | MdvFab | 四档尺寸、七套配色、按钮／链接与定位 |
-| [Icon buttons](./COMPONENTS.md#mdviconbutton) | MdvIconButton | 四种配色外观、五档尺寸、三档宽度、形状与 toggle |
-| [Segmented buttons](./COMPONENTS.md#mdvsegmentedbutton) | MdvSegmentedButton、MdvSegmentedButtonItem | 传统 M3 单选／多选、密度与表单 |
-| [Split buttons](./COMPONENTS.md#mdvsplitbutton) | MdvSplitButton | 四种外观、五档尺寸、独立操作与菜单入口 |
-| [Cards](./COMPONENTS.md#mdvcard) | MdvCard | Filled／Outlined／Elevated、按钮／链接与 dragged 视觉 |
-| [Carousel](./COMPONENTS.md#mdvcarousel) | MdvCarousel | 四类布局、居中、多宽高比、稳定 key 与动态遮罩 |
-| [Checkbox](./COMPONENTS.md#mdvcheckbox) | MdvCheckbox | 布尔／数组选择、mixed、表单与校验 |
-| [Chips](./COMPONENTS.md#mdvchip) | MdvChip、MdvChipSet | Assist／Filter／Input／Suggestion、选择与删除 |
-| [Date pickers](./COMPONENTS.md#mdvdatepicker-与-mdvdaterangepicker) | MdvDatePicker、MdvDateRangePicker | Docked 单日、Modal／Fullscreen 单日和范围、输入模式 |
-| [Time pickers](./COMPONENTS.md#mdvtimepicker) | MdvTimePicker | Modal 拨盘／输入、12／24 小时、纵横与自动模式 |
-| [Dialogs](./COMPONENTS.md#mdvdialog) | MdvDialog、MdvFullscreenDialog | 普通／全屏、关闭拦截、焦点与滚动管理 |
-| [Divider](./COMPONENTS.md#mdvdivider) | MdvDivider | 横竖、Full-width／Inset／Middle-inset 与语义 |
-| [Lists](./COMPONENTS.md#mdvlist) | MdvList、MdvListItem、MdvListSubheader | Expressive／Baseline × Standard／Segmented、内容与选择 |
-| [Loading indicator](./COMPONENTS.md#mdvloadingindicator) | MdvLoadingIndicator | Default／Contained、七形状、暂停／装饰和静态减弱动画 |
-| [Progress indicators](./COMPONENTS.md#mdvlinearprogress-与-mdvcircularprogress) | MdvLinearProgress、MdvCircularProgress | Flat／Wavy、确定／不确定进度 |
-| [Menus](./COMPONENTS.md#mdvmenu) | MdvMenu、MdvContextMenu、MdvMenuItem、MdvMenuGroup | Expressive／Baseline、分组／选择、Flyout／Push 子菜单 |
-| [Navigation bar](./COMPONENTS.md#mdvnavigationbar) | MdvNavigationBar、MdvNavigationBarItem | 当前 Flexible 形态、紧凑／中等窗口布局 |
-| [Navigation drawer](./COMPONENTS.md#mdvnavigationdrawer) | MdvNavigationDrawer、MdvModalNavigationDrawer、MdvNavigationDrawerItem、MdvNavigationDrawerGroup | 传统 M3 Standard／Modal、分组与关闭拦截 |
-| [Navigation rail](./COMPONENTS.md#mdvnavigationrail) | MdvNavigationRail、MdvModalNavigationRail、MdvNavigationRailItem | 收起／展开、Standard／Modal、内容与焦点管理 |
-| [Radio button](./COMPONENTS.md#mdvradio) | MdvRadio、MdvRadioGroup | 互斥选择、键盘、表单与校验 |
-| [Search](./COMPONENTS.md#mdvsearchbarmdvsearchview-与-mdvsearchappbar) | MdvSearchBar、MdvSearchView、MdvSearchAppBar | Contained／Divided、Docked／Fullscreen／auto 与应用栏组合 |
-| [Bottom sheets](./COMPONENTS.md#mdvbottomsheet) | MdvBottomSheet、MdvBottomSheetScaffold | Standard／Modal、预设高度、手势与键盘替代操作 |
-| [Side sheets](./COMPONENTS.md#mdvsidesheet) | MdvSideSheet、MdvSideSheetScaffold | Standard／Modal、Start／End、贴边／分离与布局让位 |
-| [Sliders](./COMPONENTS.md#mdvslider) | MdvSlider | 单值／中心／范围、五档尺寸、横竖与离散步进 |
-| [Snackbar](./COMPONENTS.md#mdvsnackbar) | MdvSnackbar、MdvSnackbarProvider、useSnackbar | 消息、操作、队列、显式作用域与计时 |
-| [Switch](./COMPONENTS.md#mdvswitch) | MdvSwitch | 原生表单、校验、标签与状态图标 |
-| [Tabs](./COMPONENTS.md#mdvtabs) | MdvTabs、MdvTab、MdvTabPanel | Primary／Secondary、固定／滚动、键盘与可选横滑 |
-| [Text fields](./COMPONENTS.md#mdvtextfield) | MdvTextField | Filled／Outlined、单行／多行、错误、计数与原生表单 |
-| [Toolbars](./COMPONENTS.md#mdvtoolbar) | MdvToolbar | Docked／Floating、Standard／Vibrant、收合／隐藏与配套 FAB |
-| [Tooltips](./COMPONENTS.md#mdvtooltip) | MdvTooltip、MdvRichTooltip | 普通／富内容、临时／持久提示与键盘进入 |
+| 官方家族／使用说明                                                              | 组件                                                                                             | 当前支持范围                                              |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------- |
+| [App bars](./COMPONENTS.md#mdvappbar)                                           | MdvAppBar、MdvAppBarScaffold                                                                     | Small／Medium／Large、滚动收合与隐藏、导航组合            |
+| [Badges](./COMPONENTS.md#mdvbadge)                                              | MdvBadge                                                                                         | Small 圆点、Large 标签、逻辑方向定位                      |
+| [Button groups](./COMPONENTS.md#mdvbuttongroup-与-mdvbuttongroupitem)           | MdvButtonGroup、MdvButtonGroupItem                                                               | Standard／Connected、操作与单多选、五档尺寸               |
+| [Buttons](./COMPONENTS.md#mdvbutton)                                            | MdvButton                                                                                        | 五种官方配色外观、五档尺寸、Round／Square；另有 link 扩展 |
+| [Extended FABs](./COMPONENTS.md#mdvfab-与-mdvextendedfab)                       | MdvExtendedFab                                                                                   | 三档尺寸、扩缩、滚动与 Toolbar 联动                       |
+| [FAB menu](./COMPONENTS.md#mdvfabmenu-与-mdvfabmenuitem)                        | MdvFabMenu、MdvFabMenuItem                                                                       | Expressive／Baseline、展开、键盘与浮层组合                |
+| [FABs](./COMPONENTS.md#mdvfab-与-mdvextendedfab)                                | MdvFab                                                                                           | 四档尺寸、七套配色、按钮／链接与定位                      |
+| [Icon buttons](./COMPONENTS.md#mdviconbutton)                                   | MdvIconButton                                                                                    | 四种配色外观、五档尺寸、三档宽度、形状与 toggle           |
+| [Segmented buttons](./COMPONENTS.md#mdvsegmentedbutton)                         | MdvSegmentedButton、MdvSegmentedButtonItem                                                       | 传统 M3 单选／多选、密度与表单                            |
+| [Split buttons](./COMPONENTS.md#mdvsplitbutton)                                 | MdvSplitButton                                                                                   | 四种外观、五档尺寸、独立操作与菜单入口                    |
+| [Cards](./COMPONENTS.md#mdvcard)                                                | MdvCard                                                                                          | Filled／Outlined／Elevated、按钮／链接与 dragged 视觉     |
+| [Carousel](./COMPONENTS.md#mdvcarousel)                                         | MdvCarousel                                                                                      | 四类布局、居中、多宽高比、稳定 key 与动态遮罩             |
+| [Checkbox](./COMPONENTS.md#mdvcheckbox)                                         | MdvCheckbox                                                                                      | 布尔／数组选择、mixed、表单与校验                         |
+| [Chips](./COMPONENTS.md#mdvchip)                                                | MdvChip、MdvChipSet                                                                              | Assist／Filter／Input／Suggestion、选择与删除             |
+| [Date pickers](./COMPONENTS.md#mdvdatepicker-与-mdvdaterangepicker)             | MdvDatePicker、MdvDateRangePicker                                                                | Docked 单日、Modal／Fullscreen 单日和范围、输入模式       |
+| [Time pickers](./COMPONENTS.md#mdvtimepicker)                                   | MdvTimePicker                                                                                    | Modal 拨盘／输入、12／24 小时、纵横与自动模式             |
+| [Dialogs](./COMPONENTS.md#mdvdialog)                                            | MdvDialog、MdvFullscreenDialog                                                                   | 普通／全屏、关闭拦截、焦点与滚动管理                      |
+| [Divider](./COMPONENTS.md#mdvdivider)                                           | MdvDivider                                                                                       | 横竖、Full-width／Inset／Middle-inset 与语义              |
+| [Lists](./COMPONENTS.md#mdvlist)                                                | MdvList、MdvListItem、MdvListSubheader                                                           | Expressive／Baseline × Standard／Segmented、内容与选择    |
+| [Loading indicator](./COMPONENTS.md#mdvloadingindicator)                        | MdvLoadingIndicator                                                                              | Default／Contained、七形状、暂停／装饰和静态减弱动画      |
+| [Progress indicators](./COMPONENTS.md#mdvlinearprogress-与-mdvcircularprogress) | MdvLinearProgress、MdvCircularProgress                                                           | Flat／Wavy、确定／不确定进度                              |
+| [Menus](./COMPONENTS.md#mdvmenu)                                                | MdvMenu、MdvContextMenu、MdvMenuItem、MdvMenuGroup                                               | Expressive／Baseline、分组／选择、Flyout／Push 子菜单     |
+| [Navigation bar](./COMPONENTS.md#mdvnavigationbar)                              | MdvNavigationBar、MdvNavigationBarItem                                                           | 当前 Flexible 形态、紧凑／中等窗口布局                    |
+| [Navigation drawer](./COMPONENTS.md#mdvnavigationdrawer)                        | MdvNavigationDrawer、MdvModalNavigationDrawer、MdvNavigationDrawerItem、MdvNavigationDrawerGroup | 传统 M3 Standard／Modal、分组与关闭拦截                   |
+| [Navigation rail](./COMPONENTS.md#mdvnavigationrail)                            | MdvNavigationRail、MdvModalNavigationRail、MdvNavigationRailItem                                 | 收起／展开、Standard／Modal、内容与焦点管理               |
+| [Radio button](./COMPONENTS.md#mdvradio)                                        | MdvRadio、MdvRadioGroup                                                                          | 互斥选择、键盘、表单与校验                                |
+| [Search](./COMPONENTS.md#mdvsearchbarmdvsearchview-与-mdvsearchappbar)          | MdvSearchBar、MdvSearchView、MdvSearchAppBar                                                     | Contained／Divided、Docked／Fullscreen／auto 与应用栏组合 |
+| [Bottom sheets](./COMPONENTS.md#mdvbottomsheet)                                 | MdvBottomSheet、MdvBottomSheetScaffold                                                           | Standard／Modal、预设高度、手势与键盘替代操作             |
+| [Side sheets](./COMPONENTS.md#mdvsidesheet)                                     | MdvSideSheet、MdvSideSheetScaffold                                                               | Standard／Modal、Start／End、贴边／分离与布局让位         |
+| [Sliders](./COMPONENTS.md#mdvslider)                                            | MdvSlider                                                                                        | 单值／中心／范围、五档尺寸、横竖与离散步进                |
+| [Snackbar](./COMPONENTS.md#mdvsnackbar)                                         | MdvSnackbar、MdvSnackbarProvider、useSnackbar                                                    | 消息、操作、队列、显式作用域与计时                        |
+| [Switch](./COMPONENTS.md#mdvswitch)                                             | MdvSwitch                                                                                        | 原生表单、校验、标签与状态图标                            |
+| [Tabs](./COMPONENTS.md#mdvtabs)                                                 | MdvTabs、MdvTab、MdvTabPanel                                                                     | Primary／Secondary、固定／滚动、键盘与可选横滑            |
+| [Text fields](./COMPONENTS.md#mdvtextfield)                                     | MdvTextField                                                                                     | Filled／Outlined、单行／多行、错误、计数与原生表单        |
+| [Toolbars](./COMPONENTS.md#mdvtoolbar)                                          | MdvToolbar                                                                                       | Docked／Floating、Standard／Vibrant、收合／隐藏与配套 FAB |
+| [Tooltips](./COMPONENTS.md#mdvtooltip)                                          | MdvTooltip、MdvRichTooltip                                                                       | 普通／富内容、临时／持久提示与键盘进入                    |
 
 [MdvIcon](./COMPONENTS.md#mdvicon) 是配套的本地 SVG 图标渲染器，不额外计为官方组件家族。
 
@@ -148,7 +186,7 @@ pnpm add @kksk03/mdv@0.1.1
 完整主题生成和 DOM 应用从独立入口导入。Button、IconButton 和 Checkbox 的局部种子色能力共用 HCT／TonalPalette 基础算法，因此组件入口会包含相应计算代码；它不导入这里的完整主题生成与 DOM 管理逻辑。预设色直接引用 CSS 变量，自定义种子色按规范化色号复用有容量上限的计算结果。
 
 ```ts
-import { applyMdvColorScheme, createMdvColorScheme } from '@kksk03/mdv/dynamic-color'
+import { applyMdvColorScheme, createMdvColorScheme } from '@mdv-ui/mdv/dynamic-color'
 
 const colors = createMdvColorScheme('#006c4c')
 const restore = applyMdvColorScheme(document.documentElement, colors)
@@ -168,7 +206,7 @@ restore()
 ```vue
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, useTemplateRef } from 'vue'
-import { applyMdvColorScheme, createMdvColorScheme } from '@kksk03/mdv/dynamic-color'
+import { applyMdvColorScheme, createMdvColorScheme } from '@mdv-ui/mdv/dynamic-color'
 
 const panel = useTemplateRef<HTMLElement>('panel')
 const colors = createMdvColorScheme('#006c4c')
