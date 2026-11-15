@@ -39,6 +39,7 @@ import TimePickerPlayground from './TimePickerPlayground.vue'
 import CarouselPlayground from './CarouselPlayground.vue'
 import LoadingIndicatorPlayground from './LoadingIndicatorPlayground.vue'
 import ThemePlayground from './ThemePlayground.vue'
+import IntegrationPlayground from './IntegrationPlayground.vue'
 
 const pages = [
   {
@@ -268,6 +269,12 @@ const pages = [
     label: '主题基础',
     description: '检查颜色角色、字体排版、局部覆盖、阴影、圆角与动效。',
     component: ThemePlayground,
+  },
+  {
+    id: 'integration',
+    label: '组合验收',
+    description: '检查真实表单、导航页面、嵌套浮层、焦点恢复与局部消息。',
+    component: IntegrationPlayground,
   },
 ] as const
 

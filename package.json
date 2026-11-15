@@ -1,7 +1,27 @@
 {
-  "name": "mdv",
-  "version": "0.0.0",
-  "private": true,
+  "name": "@kksk03/mdv",
+  "version": "0.1.0",
+  "description": "Material Design Vue: Material Design 3 components for Vue 3 and Tailwind CSS v4.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kKsk03/mdv.git"
+  },
+  "homepage": "https://github.com/kKsk03/mdv#readme",
+  "bugs": {
+    "url": "https://github.com/kKsk03/mdv/issues"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "material-design",
+    "material-design-3",
+    "tailwindcss",
+    "components"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "packageManager": "pnpm@12.14.0",
   "main": "./dist/index.js",
@@ -24,6 +44,7 @@
     "src/components",
     "src/styles",
     "COMPONENTS.md",
+    "CHANGELOG.md",
     "THIRD_PARTY_NOTICES.md"
   ],
   "sideEffects": [

@@ -48,7 +48,7 @@
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvLoadingIndicator } from 'mdv'
+import { MdvLoadingIndicator } from '@kksk03/mdv'
 
 const loading = ref(true)
 </script>
@@ -71,7 +71,7 @@ const loading = ref(true)
 | paused | boolean | false | 暂停在当前形状和相位，恢复后继续 |
 | decorative | boolean | false | 隐藏角色和名称，供已有加载说明的组件组合使用 |
 
-两种配置的内部图形区域均按整体尺寸的 38/48 缩放；默认无背景时使用 primary。七种形状循环变换并旋转，形状几何与时序参考 m3ui-vue 的解析近似实现，未移植 Android 官方多边形数据；出处与许可见 [第三方记录](./THIRD_PARTY_NOTICES.md#material-3-loading-indicator-规格与动效参考)。组件没有插槽、专有事件或 Expose 方法，公开属性类型为 `MdvLoadingIndicatorProps`。
+两种配置的内部图形区域均按整体尺寸的 38/48 缩放；默认无背景时使用 primary。七种形状连续变换并旋转，使用解析轮廓近似，未移植 Android 官方多边形数据；出处与许可见 [第三方记录](./THIRD_PARTY_NOTICES.md#material-3-loading-indicator-规格与动效参考)。组件没有插槽、专有事件或 Expose 方法，公开属性类型为 `MdvLoadingIndicatorProps`。
 
 默认 `role="progressbar"`，不确定进度不设置 aria-valuenow／valuemin／valuemax／valuetext；透传的数值属性也会移除。`aria-label`／`aria-labelledby` 可替代 label，原生属性、事件监听、class 和 style 进入根 span。组件不创建 Tab 停靠点，不自动移动焦点；label 不产生可见文字，业务可以在旁边展示说明，并在实际加载区域设置 aria-busy。需要宣布完成时由业务的状态文本负责，动画本身不反复触发播报。
 
@@ -103,8 +103,8 @@ Contained 用于叠放在其他内容上、需要背景对比的场合。颜色�
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvCarousel } from 'mdv'
-import type { MdvCarouselKey } from 'mdv'
+import { MdvCarousel } from '@kksk03/mdv'
+import type { MdvCarouselKey } from '@kksk03/mdv'
 
 const current = ref<MdvCarouselKey | null>('mountain')
 const photos = [
@@ -165,8 +165,8 @@ Expose：`scrollTo(key, options?)`、`next(options?)`、`prev(options?)` 返回 
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvTimePicker } from 'mdv'
-import type { MdvTimeValue } from 'mdv'
+import { MdvTimePicker } from '@kksk03/mdv'
+import type { MdvTimeValue } from '@kksk03/mdv'
 
 const time = ref<MdvTimeValue>('13:05')
 </script>
@@ -227,8 +227,8 @@ min/max 表示当天连续区间。每天只允许 22:00–02:00 时，可省略
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvDatePicker, MdvDateRangePicker } from 'mdv'
-import type { MdvDateValue, MdvDateRangeValue } from 'mdv'
+import { MdvDatePicker, MdvDateRangePicker } from '@kksk03/mdv'
+import type { MdvDateValue, MdvDateRangeValue } from '@kksk03/mdv'
 
 const date = ref<MdvDateValue>(null)
 const stay = ref<MdvDateRangeValue>(null)
@@ -299,7 +299,7 @@ Modal 单日、范围和输入模式复用 MdvDialog 的分层动效：背景展
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvButton } from 'mdv'
+import { MdvButton } from '@kksk03/mdv'
 
 const loading = ref(false)
 </script>
@@ -408,7 +408,7 @@ MDV 为短内容设置最小宽度，普通外观按两侧留白加 32px、text�
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvIcon, MdvIconButton } from 'mdv'
+import { MdvIcon, MdvIconButton } from '@kksk03/mdv'
 import favorite from '@iconify-icons/material-symbols/favorite'
 import favoriteOutline from '@iconify-icons/material-symbols/favorite-outline'
 
@@ -524,7 +524,7 @@ pnpm add @iconify-icons/material-symbols
 
 ```vue
 <script setup lang="ts">
-import { MdvButton, MdvIcon } from 'mdv'
+import { MdvButton, MdvIcon } from '@kksk03/mdv'
 import homeOutline from '@iconify-icons/material-symbols/home-outline'
 import save from '@iconify-icons/material-symbols/save'
 </script>
@@ -568,7 +568,7 @@ import save from '@iconify-icons/material-symbols/save'
 
 在带文字的按钮内保持图标装饰语义；只有图标的操作使用 `MdvIconButton`，把名称提供给按钮。图标的 `@click` 和原生属性可以透传，但图标本身不提供按钮的键盘或表单行为。`title` 可按原生属性透传，不替代可访问名称或 Tooltip。
 
-`class`、`style`、`id`、ARIA、`data-*` 和原生事件透传至根 SVG；没有自定义事件、插槽或额外 expose 方法。数据中的原始图形坐标保留在 `viewBox` 内。Material Symbols 的纯路径数据可在 SSR 首屏同步输出；本轮提供了 SSR／hydration 测试，执行结果仍待验收。自定义数据若含渐变、裁剪或内部 ID，需要在自己的 SSR 页面额外验证引用与 hydration，当前不承诺覆盖全部自定义 SVG。
+`class`、`style`、`id`、ARIA、`data-*` 和原生事件透传至根 SVG；没有自定义事件、插槽或额外 expose 方法。数据中的原始图形坐标保留在 `viewBox` 内。Material Symbols 的纯路径数据可在 SSR 首屏同步输出；相关 SSR／hydration 规格已随当前约定范围的用户项目检查通过。自定义数据若含渐变、裁剪或内部 ID，需要在自己的 SSR 页面额外验证引用与 hydration，当前不承诺覆盖全部自定义 SVG。
 
 公共类型可从 `mdv` 导入：`MdvIconData`、`MdvIconSize`。渲染器作为 MDV 的正常依赖提供；整套 Material Symbols 数据仅用于本仓库开发，使用方按需安装数据包。
 
@@ -577,7 +577,7 @@ import save from '@iconify-icons/material-symbols/save'
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvTextField } from 'mdv'
+import { MdvTextField } from '@kksk03/mdv'
 
 const name = ref('')
 const password = ref('')
@@ -654,7 +654,7 @@ const quantity = ref<string | number>('')
 <script setup lang="ts">
 import { ref } from 'vue'
 import search from '@iconify-icons/material-symbols/search'
-import { MdvIcon, MdvTextField } from 'mdv'
+import { MdvIcon, MdvTextField } from '@kksk03/mdv'
 
 const query = ref('')
 </script>
@@ -701,7 +701,7 @@ const query = ref('')
 
 ```ts
 import { useTemplateRef } from 'vue'
-import { MdvTextField } from 'mdv'
+import { MdvTextField } from '@kksk03/mdv'
 
 const field = useTemplateRef<InstanceType<typeof MdvTextField>>('field')
 field.value?.focus({ preventScroll: true })
@@ -714,8 +714,8 @@ field.value?.focus({ preventScroll: true })
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvCheckbox } from 'mdv'
-import type { MdvCheckboxValue } from 'mdv'
+import { MdvCheckbox } from '@kksk03/mdv'
+import type { MdvCheckboxValue } from '@kksk03/mdv'
 
 const accepted = ref(false)
 const channels = ref<MdvCheckboxValue[]>(['email'])
@@ -756,8 +756,8 @@ const channels = ref<MdvCheckboxValue[]>(['email'])
 ```vue
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { MdvCheckbox } from 'mdv'
-import type { MdvCheckboxModelValue } from 'mdv'
+import { MdvCheckbox } from '@kksk03/mdv'
+import type { MdvCheckboxModelValue } from '@kksk03/mdv'
 
 const options = ['email', 'sms']
 const selected = ref<string[]>(['email'])
@@ -828,7 +828,7 @@ FormData 只包含有 name、选中且未禁用的控件，值取自 value；数
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvRadio, MdvRadioGroup } from 'mdv'
+import { MdvRadio, MdvRadioGroup } from '@kksk03/mdv'
 
 const plan = ref<string | number | null>(null)
 </script>
@@ -907,7 +907,7 @@ const plan = ref<string | number | null>(null)
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvSwitch } from 'mdv'
+import { MdvSwitch } from '@kksk03/mdv'
 
 const enabled = ref(false)
 </script>
@@ -976,8 +976,8 @@ Switch 的状态层、选中移动、hover／focus／pressed、reduced-motion、
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvSlider } from 'mdv'
-import type { MdvSliderModelValue } from 'mdv'
+import { MdvSlider } from '@kksk03/mdv'
+import type { MdvSliderModelValue } from '@kksk03/mdv'
 
 const volume = ref<MdvSliderModelValue>(40)
 const exposure = ref<MdvSliderModelValue>(0)
@@ -1072,8 +1072,8 @@ stops 开启时，手柄及轨道在拖动、点击和键盘切换档位时保�
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvChip, MdvChipSet } from 'mdv'
-import type { MdvChipSetModelValue } from 'mdv'
+import { MdvChip, MdvChipSet } from '@kksk03/mdv'
+import type { MdvChipSetModelValue } from '@kksk03/mdv'
 
 const filters = ref<MdvChipSetModelValue>(['image'])
 const tags = ref(['设计讨论', '发布准备'])
@@ -1177,8 +1177,8 @@ Chip 不生成隐式表单字段，组模型由业务提交；本轮没有 requi
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvSegmentedButton, MdvSegmentedButtonItem } from 'mdv'
-import type { MdvSegmentedButtonModelValue } from 'mdv'
+import { MdvSegmentedButton, MdvSegmentedButtonItem } from '@kksk03/mdv'
+import type { MdvSegmentedButtonModelValue } from '@kksk03/mdv'
 
 const period = ref<MdvSegmentedButtonModelValue>('week')
 const details = ref<MdvSegmentedButtonModelValue>(['summary'])
@@ -1283,7 +1283,7 @@ const details = ref<MdvSegmentedButtonModelValue>(['summary'])
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvButton, MdvCard } from 'mdv'
+import { MdvButton, MdvCard } from '@kksk03/mdv'
 
 const opens = ref(0)
 const saved = ref(false)
@@ -1392,7 +1392,7 @@ disabled 的按钮使用原生 disabled，并支持禁用 fieldset；禁用链�
 
 ```vue
 <script setup lang="ts">
-import { MdvButton, MdvDivider } from 'mdv'
+import { MdvButton, MdvDivider } from '@kksk03/mdv'
 </script>
 
 <template>
@@ -1483,7 +1483,7 @@ class、style、id、dir、lang、hidden、ARIA、data-* 和原生监听均透�
 </div>
 ```
 
-无需单独导入新样式或安装依赖，继续使用统一的 `mdv/theme`、`mdv/styles` 入口。公共类型：`MdvDividerOrientation`、`MdvDividerVariant`。
+无需单独导入新样式或安装依赖，继续使用统一的 `@kksk03/mdv/theme`、`@kksk03/mdv/styles` 入口。公共类型：`MdvDividerOrientation`、`MdvDividerVariant`。
 
 ## MdvBadge
 
@@ -1491,7 +1491,7 @@ class、style、id、dir、lang、hidden、ARIA、data-* 和原生监听均透�
 
 ```vue
 <script setup lang="ts">
-import { MdvBadge, MdvButton, MdvIcon, MdvIconButton } from 'mdv'
+import { MdvBadge, MdvButton, MdvIcon, MdvIconButton } from '@kksk03/mdv'
 import notifications from '@iconify-icons/material-symbols/notifications-outline'
 </script>
 
@@ -1546,7 +1546,7 @@ Segmented 使用 8px 列表内边距与 2px 条目间距。Subheader 或其他�
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvList, MdvListItem, MdvListSubheader } from 'mdv'
+import { MdvList, MdvListItem, MdvListSubheader } from '@kksk03/mdv'
 import person from '@iconify-icons/material-symbols/person-outline'
 import security from '@iconify-icons/material-symbols/security'
 
@@ -1688,7 +1688,7 @@ Standard 的 `full-width` 分隔线铺满相邻条目之间，`inset` 随 leadin
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvCircularProgress, MdvLinearProgress } from 'mdv'
+import { MdvCircularProgress, MdvLinearProgress } from '@kksk03/mdv'
 
 const uploaded = ref(35)
 const waiting = ref(true)
@@ -1764,7 +1764,7 @@ RTL 下线性进度从右向左增长，不确定移动方向随之镜像；圆�
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvButton, MdvDialog } from 'mdv'
+import { MdvButton, MdvDialog } from '@kksk03/mdv'
 
 const visible = ref(false)
 const result = ref('')
@@ -1821,7 +1821,7 @@ const result = ref('')
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvButton, MdvFullscreenDialog, MdvTextField } from 'mdv'
+import { MdvButton, MdvFullscreenDialog, MdvTextField } from '@kksk03/mdv'
 
 const visible = ref(false)
 const name = ref('')
@@ -1903,8 +1903,8 @@ class 和普通 style 作用于可见容器，id、dir、lang、ARIA、data 和�
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvButton, MdvDivider, MdvMenu, MdvMenuGroup, MdvMenuItem } from 'mdv'
-import type { MdvMenuModelValue, MdvMenuSelectEvent } from 'mdv'
+import { MdvButton, MdvDivider, MdvMenu, MdvMenuGroup, MdvMenuItem } from '@kksk03/mdv'
+import type { MdvMenuModelValue, MdvMenuSelectEvent } from '@kksk03/mdv'
 
 const styles = ref<MdvMenuModelValue>(['bold'])
 function rename() {
@@ -2040,7 +2040,7 @@ reason 为 `escape`、`outside`、`focus-out`、`tab`、`select`、`trigger`、`
 <script setup lang="ts">
 import { ref } from 'vue'
 import refresh from '@iconify-icons/material-symbols/refresh'
-import { MdvButton, MdvIcon, MdvIconButton, MdvRichTooltip, MdvTooltip } from 'mdv'
+import { MdvButton, MdvIcon, MdvIconButton, MdvRichTooltip, MdvTooltip } from '@kksk03/mdv'
 
 const introduction = ref(false)
 
@@ -2130,7 +2130,7 @@ Snackbar 在页面底部显示简短消息和至多一个业务操作，支持�
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvButton, MdvSnackbar } from 'mdv'
+import { MdvButton, MdvSnackbar } from '@kksk03/mdv'
 
 const visible = ref(false)
 
@@ -2153,7 +2153,7 @@ function undo() {
 
 ```vue
 <script setup lang="ts">
-import { MdvSnackbarProvider } from 'mdv'
+import { MdvSnackbarProvider } from '@kksk03/mdv'
 import PageContent from './PageContent.vue'
 </script>
 
@@ -2168,7 +2168,7 @@ import PageContent from './PageContent.vue'
 
 ```vue
 <script setup lang="ts">
-import { MdvButton, useSnackbar } from 'mdv'
+import { MdvButton, useSnackbar } from '@kksk03/mdv'
 
 const snackbar = useSnackbar()
 
@@ -2242,8 +2242,8 @@ function save() {
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvBottomSheet, MdvBottomSheetScaffold, MdvButton } from 'mdv'
-import type { MdvBottomSheetState } from 'mdv'
+import { MdvBottomSheet, MdvBottomSheetScaffold, MdvButton } from '@kksk03/mdv'
+import type { MdvBottomSheetState } from '@kksk03/mdv'
 
 const open = ref(false)
 const expanded = ref(false)
@@ -2357,7 +2357,7 @@ Specs 的宽屏测量图仍标注顶部 72，而表格／替代文本为 56；�
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvButton, MdvSideSheet, MdvSideSheetScaffold } from 'mdv'
+import { MdvButton, MdvSideSheet, MdvSideSheetScaffold } from '@kksk03/mdv'
 
 const open = ref(false)
 const details = ref(true)
@@ -2438,8 +2438,8 @@ Standard 使用 surface、elevation 0、贴边直角；Modal 使用 surface-cont
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvBadge, MdvTab, MdvTabPanel, MdvTabs } from 'mdv'
-import type { MdvTabValue } from 'mdv'
+import { MdvBadge, MdvTab, MdvTabPanel, MdvTabs } from '@kksk03/mdv'
+import type { MdvTabValue } from '@kksk03/mdv'
 
 const category = ref<MdvTabValue>('overview')
 </script>
@@ -2536,7 +2536,7 @@ Primary 指示线高 3px，按可见内容包络两侧各内缩 2px、最小 24p
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvIcon, MdvNavigationBar, MdvNavigationBarItem } from 'mdv'
+import { MdvIcon, MdvNavigationBar, MdvNavigationBarItem } from '@kksk03/mdv'
 import home from '@iconify-icons/material-symbols/home-outline'
 import bookmark from '@iconify-icons/material-symbols/bookmark-outline'
 import person from '@iconify-icons/material-symbols/person-outline'
@@ -2608,7 +2608,7 @@ import home from '@iconify-icons/material-symbols/home'
 import bookmark from '@iconify-icons/material-symbols/bookmark'
 import person from '@iconify-icons/material-symbols/person'
 import menu from '@iconify-icons/material-symbols/menu'
-import { MdvIcon, MdvIconButton, MdvNavigationRail, MdvNavigationRailItem } from 'mdv'
+import { MdvIcon, MdvIconButton, MdvNavigationRail, MdvNavigationRailItem } from '@kksk03/mdv'
 
 const expanded = ref(false)
 const current = ref('home')
@@ -2752,7 +2752,7 @@ import {
   MdvNavigationDrawer,
   MdvNavigationDrawerGroup,
   MdvNavigationDrawerItem,
-} from 'mdv'
+} from '@kksk03/mdv'
 
 const visible = ref(true)
 const current = ref('inbox')
@@ -2867,7 +2867,7 @@ active 背景 secondary-container，文字／图标 on-secondary-container；未
 
 ```vue
 <script setup lang="ts">
-import { MdvAppBar, MdvAppBarScaffold, MdvIconButton } from 'mdv'
+import { MdvAppBar, MdvAppBarScaffold, MdvIconButton } from '@kksk03/mdv'
 </script>
 
 <template>
@@ -2976,7 +2976,7 @@ MdvAppBar 与 MdvAppBarScaffold 当前约定范围已完成用户项目检查与
 ```vue
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { MdvSearchView, MdvList, MdvListItem } from 'mdv'
+import { MdvSearchView, MdvList, MdvListItem } from '@kksk03/mdv'
 
 const query = ref('')
 const open = ref(false)
@@ -3079,7 +3079,7 @@ AppBar 另支持 `appearance='default' | 'elevated' | 'bordered'`、`scrollBehav
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvButton, MdvToolbar } from 'mdv'
+import { MdvButton, MdvToolbar } from '@kksk03/mdv'
 
 const expanded = ref(true)
 </script>
@@ -3192,7 +3192,7 @@ FAB 用于页面的主要操作。MdvFab 为纯图标，MdvExtendedFab 为短标
 import { ref } from 'vue'
 import addIcon from '@iconify-icons/material-symbols/add'
 import editIcon from '@iconify-icons/material-symbols/edit'
-import { MdvExtendedFab, MdvFab, MdvIcon } from 'mdv'
+import { MdvExtendedFab, MdvFab, MdvIcon } from '@kksk03/mdv'
 
 const expanded = ref(true)
 function createNote() {
@@ -3257,7 +3257,7 @@ FAB 默认 regular 是本库的 API 选择；官网当前使用建议优先推�
 ```vue
 <script setup lang="ts">
 import { useTemplateRef } from 'vue'
-import { MdvAppBar, MdvAppBarScaffold, MdvExtendedFab, MdvIcon } from 'mdv'
+import { MdvAppBar, MdvAppBarScaffold, MdvExtendedFab, MdvIcon } from '@kksk03/mdv'
 import editIcon from '@iconify-icons/material-symbols/edit'
 
 const scaffold = useTemplateRef<InstanceType<typeof MdvAppBarScaffold>>('scaffold')
@@ -3298,8 +3298,8 @@ absolute 由有界的定位容器承载，fixed 相对视口；组件处理对�
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MdvButtonGroup, MdvButtonGroupItem } from 'mdv'
-import type { MdvButtonGroupModelValue } from 'mdv'
+import { MdvButtonGroup, MdvButtonGroupItem } from '@kksk03/mdv'
+import type { MdvButtonGroupModelValue } from '@kksk03/mdv'
 
 const mode = ref<MdvButtonGroupModelValue>('edit')
 const muted = ref(false)
@@ -3389,7 +3389,7 @@ Standard 按压以自然宽的额外 15% 为目标，只向直接邻项借用安
 
 ```vue
 <script setup lang="ts">
-import { MdvMenu, MdvMenuItem, MdvSplitButton } from 'mdv'
+import { MdvMenu, MdvMenuItem, MdvSplitButton } from '@kksk03/mdv'
 
 function save() {
   // 保存当前文档。
@@ -3463,7 +3463,7 @@ Tab／Shift+Tab 分别经过两侧；主 button 的 Enter／Space、链接的 En
 
 ```vue
 <script setup lang="ts">
-import { MdvFabMenu, MdvFabMenuItem } from 'mdv'
+import { MdvFabMenu, MdvFabMenuItem } from '@kksk03/mdv'
 import noteAdd from '@iconify-icons/material-symbols/note-add'
 import addPhoto from '@iconify-icons/material-symbols/add-photo-alternate'
 
