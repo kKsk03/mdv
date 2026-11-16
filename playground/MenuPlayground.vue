@@ -29,7 +29,7 @@ import type {
 
 const variants: MdvMenuVariant[] = ['expressive', 'baseline']
 const schemes: MdvMenuColorScheme[] = ['standard', 'vibrant']
-const single = ref<MdvMenuModelValue>('single')
+const single = ref<MdvMenuModelValue>('custom')
 const multiple = ref<MdvMenuModelValue>(['bold'])
 const textSize = ref<MdvMenuModelValue>(14)
 const showCheck = ref(true)

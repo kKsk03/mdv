@@ -6,14 +6,14 @@ MDV has completed its initial component and delivery milestones and is now maint
 
 ## Current status
 
-| Milestone                           | Status                                                                                                                                                                   |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Single-package foundation           | Complete: Vue 3, TypeScript, Tailwind CSS v4, playground, library builds, declarations, and package consumption.                                                         |
-| Design system                       | Accepted scope complete: light/dark/system and local themes, semantic tokens, typography, shapes, motion, local fonts, icons, and seed-based dynamic color.              |
-| Initial official component coverage | Accepted scope across 36 official component families delivered in 0.1.0. Supported variants and limitations remain documented in [COMPONENTS.md](./COMPONENTS.md).       |
-| Initial integration and delivery    | Form, navigation, and nested-overlay compositions; a real packed-library consumer; and a Button import size comparison were accepted.                                    |
-| Versioned publishing                | 0.1.0, 0.1.1, and 0.1.2 published. Changesets and npm staged approval remain in use; automatic GitHub Release finalization is configured, pending its first Actions run. |
-| Select and Autocomplete             | Accepted scope complete and released in 0.1.2, including Expressive/Baseline dropdowns, free-text autocomplete, and remote-search events/loading state.                  |
+| Milestone                           | Status                                                                                                                                                             |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Single-package foundation           | Complete: Vue 3, TypeScript, Tailwind CSS v4, playground, library builds, declarations, and package consumption.                                                   |
+| Design system                       | Accepted scope complete: light/dark/system and local themes, semantic tokens, typography, shapes, motion, local fonts, icons, and seed-based dynamic color.        |
+| Initial official component coverage | Accepted scope across 36 official component families delivered in 0.1.0. Supported variants and limitations remain documented in [COMPONENTS.md](./COMPONENTS.md). |
+| Initial integration and delivery    | Form, navigation, and nested-overlay compositions; a real packed-library consumer; and a Button import size comparison were accepted.                              |
+| Versioned publishing                | 0.1.0-0.1.2 published; the 0.1.3 patch changeset awaits checks and release PR. Changesets and npm staged approval remain in use.                                   |
+| Select and Autocomplete             | Accepted scope complete and released in 0.1.2, including Expressive/Baseline dropdowns, free-text autocomplete, and remote-search events/loading state.            |
 
 Completion refers to the agreed scope for each component. It does not imply every optional Material variant, browser, device, or assistive technology has been validated. No next component has been selected.
 
@@ -40,12 +40,15 @@ Until that migration is complete, keep `COMPONENTS.md` as the maintained API and
 - [ ] Use MDV in the consuming application and turn concrete integration problems into reproducible issues.
 - [ ] Prioritize fixes and additional components from those needs, agreeing on API scope and release impact before implementation.
 
+The documentation site is now an active integration surface. The selected final menu-item corner mismatch found there is included in the pending 0.1.3 patch.
+
 Application feedback takes priority over adding components merely to expand the catalog. Documentation-site work and a new component can be planned independently.
 
 ### Validation follow-up
 
 Existing evidence includes component checks and previews, selected SSR/hydration tests, and first-release package consumption with a production preview in Chrome on Windows. That browser version was not recorded.
 
+- [ ] Validate the pending 0.1.3 menu corner fix and theme-color transition in the playground and a consuming application; cover light, dark, system, local themes, dynamic colors, and reduced motion.
 - [ ] Define a supported browser/device matrix and record actual versions and results before expanding compatibility claims.
 - [ ] Check real touch and screen-reader interactions, especially pickers, Carousel, comboboxes, navigation, and nested overlays.
 - [ ] Extend targeted SSR/hydration coverage as consuming applications require it, including stable IDs, request isolation, focus, and edits made before hydration.
@@ -83,6 +86,7 @@ Maps, charts, rich-text/code editors, diagrams, Gantt views, and PDF viewers rem
 
 - Follow the relevant official Material Design specification for each component. Record classic/Expressive choices individually. m3ui-vue is a reference implementation; preserve attribution for adapted code and algorithms in [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).
 - Keep system tokens under `--mdv-sys-*` with centralized Tailwind mappings. Use `data-mdv-theme="light"`, `"dark"`, or `"system"` on the document or a local container. Success, warning, and info colors are MDV extensions.
+- Register semantic color tokens as interpolable colors and transition them for 250ms when a theme changes; reduced-motion settings use the existing near-zero duration tokens.
 - Dynamic color uses Material Color Utilities with Tonal Spot, the `2021` specification, the `phone` platform, and standard contrast. The global API remains under `@mdv-ui/mdv/dynamic-color`; it accepts `#RRGGBB` seeds and supports scoped application and cleanup. Generated colors need not equal the seed or the fixed default palette.
 - Load Roboto 400/500 locally through the theme entry, with system CJK fallbacks. `MdvIcon` uses local Iconify data and offline SVG rendering; consumers select their icon data. Do not add a mandatory remote font/icon service or bundle a full CJK font or icon collection.
 - Add shared helpers and dependencies for demonstrated needs. Existing Floating UI positioning and overlay lifecycle conventions should be reviewed before introducing another mechanism. Preserve local theme inheritance, focus ownership, and resource cleanup.

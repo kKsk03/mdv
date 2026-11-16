@@ -47,6 +47,14 @@ Finally, in the application's CSS entry point, such as `src/style.css`, add the 
 
 Please ensure that the CSS file is referenced in `src/main.ts`.
 
+## 3. Install icon data package (optional)
+
+`MdvIcon` renders local Iconify icon data. MDV includes the renderer but does not bundle an icon set. If your application uses `MdvIcon`, install an icon data package. For example, to use Material Symbols:
+
+```sh
+pnpm add @iconify-icons/material-symbols
+```
+
 ## Development and maintenance
 
 Read [MAINTENANCE](./MAINTENANCE.md) to learn how to develop and maintain it.

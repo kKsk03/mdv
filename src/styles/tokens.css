@@ -4,6 +4,373 @@
  * MDV uses its own CSS variable names and Tailwind mappings.
  */
 
+/* Typed color tokens let light-dark() values interpolate during theme changes. */
+@property --mdv-sys-color-primary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-primary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-primary-container {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-primary-container {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-secondary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-secondary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-secondary-container {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-secondary-container {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-tertiary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-tertiary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-tertiary-container {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-tertiary-container {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-error {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-error {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-error-container {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-error-container {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-success {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-success {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-success-container {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-success-container {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-warning {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-warning {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-warning-container {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-warning-container {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-info {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-info {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-info-container {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-info-container {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-background {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-background {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-surface {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-surface {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-surface-variant {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-surface-variant {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-surface-dim {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-surface-bright {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-surface-container-lowest {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-surface-container-low {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-surface-container {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-surface-container-high {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-surface-container-highest {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-surface-tint {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-outline {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-outline-variant {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-inverse-surface {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-inverse-on-surface {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-inverse-primary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-scrim {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-shadow {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-primary-fixed {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-primary-fixed-dim {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-primary-fixed {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-primary-fixed-variant {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-secondary-fixed {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-secondary-fixed-dim {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-secondary-fixed {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-secondary-fixed-variant {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-tertiary-fixed {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-tertiary-fixed-dim {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-tertiary-fixed {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --mdv-sys-color-on-tertiary-fixed-variant {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
 :where(:root, [data-mdv-theme], [data-mdv-color-scheme]) {
   --mdv-sys-color-primary: light-dark(
     var(--mdv-dynamic-light-color-primary, #6750a4),
@@ -264,6 +631,36 @@
   --mdv-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
   --mdv-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
   --mdv-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+}
+
+:where(:root, [data-mdv-theme], [data-mdv-color-scheme]) {
+  transition-property:
+    --mdv-sys-color-primary, --mdv-sys-color-on-primary, --mdv-sys-color-primary-container,
+    --mdv-sys-color-on-primary-container, --mdv-sys-color-secondary, --mdv-sys-color-on-secondary,
+    --mdv-sys-color-secondary-container, --mdv-sys-color-on-secondary-container,
+    --mdv-sys-color-tertiary, --mdv-sys-color-on-tertiary, --mdv-sys-color-tertiary-container,
+    --mdv-sys-color-on-tertiary-container, --mdv-sys-color-error, --mdv-sys-color-on-error,
+    --mdv-sys-color-error-container, --mdv-sys-color-on-error-container, --mdv-sys-color-success,
+    --mdv-sys-color-on-success, --mdv-sys-color-success-container,
+    --mdv-sys-color-on-success-container, --mdv-sys-color-warning, --mdv-sys-color-on-warning,
+    --mdv-sys-color-warning-container, --mdv-sys-color-on-warning-container, --mdv-sys-color-info,
+    --mdv-sys-color-on-info, --mdv-sys-color-info-container, --mdv-sys-color-on-info-container,
+    --mdv-sys-color-background, --mdv-sys-color-on-background, --mdv-sys-color-surface,
+    --mdv-sys-color-on-surface, --mdv-sys-color-surface-variant, --mdv-sys-color-on-surface-variant,
+    --mdv-sys-color-surface-dim, --mdv-sys-color-surface-bright,
+    --mdv-sys-color-surface-container-lowest, --mdv-sys-color-surface-container-low,
+    --mdv-sys-color-surface-container, --mdv-sys-color-surface-container-high,
+    --mdv-sys-color-surface-container-highest, --mdv-sys-color-surface-tint,
+    --mdv-sys-color-outline, --mdv-sys-color-outline-variant, --mdv-sys-color-inverse-surface,
+    --mdv-sys-color-inverse-on-surface, --mdv-sys-color-inverse-primary, --mdv-sys-color-scrim,
+    --mdv-sys-color-shadow, --mdv-sys-color-primary-fixed, --mdv-sys-color-primary-fixed-dim,
+    --mdv-sys-color-on-primary-fixed, --mdv-sys-color-on-primary-fixed-variant,
+    --mdv-sys-color-secondary-fixed, --mdv-sys-color-secondary-fixed-dim,
+    --mdv-sys-color-on-secondary-fixed, --mdv-sys-color-on-secondary-fixed-variant,
+    --mdv-sys-color-tertiary-fixed, --mdv-sys-color-tertiary-fixed-dim,
+    --mdv-sys-color-on-tertiary-fixed, --mdv-sys-color-on-tertiary-fixed-variant;
+  transition-duration: var(--mdv-sys-motion-duration-medium-1);
+  transition-timing-function: var(--mdv-sys-motion-easing-standard);
 }
 
 :where([data-mdv-theme='light']) {

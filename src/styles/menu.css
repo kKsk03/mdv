@@ -215,6 +215,11 @@
     color: var(--mdv-menu-selected-foreground);
   }
 
+  .mdv-menu .mdv-menu-item:first-child > .mdv-menu-item__control--selected,
+  .mdv-menu .mdv-menu-item:last-child > .mdv-menu-item__control--selected {
+    border-radius: 12px;
+  }
+
   .mdv-menu-item__control[aria-disabled='true'] {
     color: color-mix(in srgb, var(--mdv-menu-foreground) 38%, transparent);
     cursor: default;
