@@ -92,7 +92,7 @@ describe('MdvCard', () => {
     expect(wrapper.get('.mdv-card__content').attributes('aria-hidden')).toBeUndefined()
   })
 
-  it('uses a named native button without nesting block content or submitting a form', () => {
+  it('uses a named native button without nesting block content or submitting a form', async () => {
     const onClick = vi.fn<(event: MouseEvent) => void>()
     const onSubmit = vi.fn<(event: SubmitEvent) => void>((event) => event.preventDefault())
     const wrapper = mount(
@@ -116,13 +116,14 @@ describe('MdvCard', () => {
     )
     expect(primary.element.children).toHaveLength(0)
     expect(card.get('.mdv-card__body h3').element.closest('button')).toBeNull()
-    primary.element.click()
+    await primary.trigger('click')
     expect(onClick).toHaveBeenCalledTimes(1)
     expect(onClick.mock.calls[0]![0].target).toBe(primary.element)
     expect(onSubmit).not.toHaveBeenCalled()
   })
 
-  it('forwards layout attributes outside and native action attributes and events to the primary', () => {
+  it('forwards layout attributes outside and native action attributes and events to the primary', async () => {
+    const onClickCapture = vi.fn<(event: MouseEvent) => void>()
     const onClick = vi.fn<(event: MouseEvent) => void>()
     const wrapper = mount(MdvCard, {
       props: { clickable: true, title: '默认名称' },
@@ -137,6 +138,7 @@ describe('MdvCard', () => {
         'aria-describedby': 'trip-help',
         form: 'external-form',
         tabindex: '2',
+        onClickCapture,
         onClick,
       },
     })
@@ -160,7 +162,9 @@ describe('MdvCard', () => {
     })
     expect(primary.attributes('aria-labelledby')).toBeUndefined()
     expect(primary.attributes('id')).toBeUndefined()
-    const event = pointer(primary.element, 'click')
+    await primary.trigger('click')
+    expect(onClickCapture).toHaveBeenCalledExactlyOnceWith(expect.any(MouseEvent))
+    const event = onClickCapture.mock.calls[0]![0]
     expect(onClick).toHaveBeenCalledExactlyOnceWith(event)
   })
 
@@ -207,6 +211,8 @@ describe('MdvCard', () => {
   })
 
   it('preserves native link attributes, empty href, modifier clicks and middle clicks', async () => {
+    const mountedAt = Date.now()
+    const clock = vi.spyOn(Date, 'now').mockReturnValue(mountedAt)
     const seen: boolean[] = []
     const onClick = vi.fn<(event: MouseEvent) => void>((event) => {
       seen.push(event.defaultPrevented)
@@ -235,10 +241,14 @@ describe('MdvCard', () => {
       hreflang: 'zh-CN',
       referrerpolicy: 'no-referrer',
     })
+    // VTU 未提供 auxclick 的 MouseEvent 映射，保留原生事件并推进测试时钟。
+    clock.mockReturnValue(mountedAt + 1)
     const click = pointer(primary.element, 'click', { ctrlKey: true })
     const middle = pointer(primary.element, 'auxclick', { button: 1 })
     expect(onClick).toHaveBeenCalledExactlyOnceWith(click)
     expect(onAuxclick).toHaveBeenCalledExactlyOnceWith(middle)
+    expect(click.ctrlKey).toBe(true)
+    expect(middle.button).toBe(1)
     expect(seen).toEqual([false])
     expect(middle.defaultPrevented).toBe(false)
     await wrapper.setProps({ href: '' })
@@ -246,24 +256,34 @@ describe('MdvCard', () => {
     expect(wrapper.find('button').exists()).toBe(false)
   })
 
-  it('respects cancelled click and keyboard activation without redispatching events', async () => {
-    const onClick = vi.fn<(event: MouseEvent) => void>((event) => event.preventDefault())
-    const onKeydown = vi.fn<(event: KeyboardEvent) => void>((event) => event.preventDefault())
-    const wrapper = mount(MdvCard, {
-      props: { clickable: true, title: '取消操作' },
-      attrs: { onClick, onKeydown },
-    })
-    const primary = wrapper.get('.mdv-card__primary')
-    const click = pointer(primary.element, 'click')
-    const keydown = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true })
-    primary.element.dispatchEvent(keydown)
-    await nextTick()
-    expect(onClick).toHaveBeenCalledExactlyOnceWith(click)
-    expect(onKeydown).toHaveBeenCalledExactlyOnceWith(keydown)
-    expect(click.defaultPrevented).toBe(true)
-    expect(keydown.defaultPrevented).toBe(true)
-    expect(wrapper.find('.mdv-card__ripple').exists()).toBe(false)
-  })
+  it.each(['real', 'fixed'])(
+    'respects cancelled click and keyboard activation without redispatching events (%s clock)',
+    async (clock) => {
+      if (clock === 'fixed') vi.spyOn(Date, 'now').mockReturnValue(Date.now())
+      const onClickCapture = vi.fn<(event: MouseEvent) => void>()
+      const onKeydownCapture = vi.fn<(event: KeyboardEvent) => void>()
+      const onClick = vi.fn<(event: MouseEvent) => void>((event) => event.preventDefault())
+      const onKeydown = vi.fn<(event: KeyboardEvent) => void>((event) => event.preventDefault())
+      const wrapper = mount(MdvCard, {
+        props: { clickable: true, title: '取消操作' },
+        attrs: { onClickCapture, onKeydownCapture, onClick, onKeydown },
+      })
+      const primary = wrapper.get('.mdv-card__primary')
+      await primary.trigger('click')
+      await primary.trigger('keydown', { key: ' ' })
+      expect(onClickCapture).toHaveBeenCalledExactlyOnceWith(expect.any(MouseEvent))
+      expect(onKeydownCapture).toHaveBeenCalledExactlyOnceWith(expect.any(KeyboardEvent))
+      const click = onClickCapture.mock.calls[0]![0]
+      const keydown = onKeydownCapture.mock.calls[0]![0]
+      expect(onClick).toHaveBeenCalledExactlyOnceWith(click)
+      expect(onKeydown).toHaveBeenCalledExactlyOnceWith(keydown)
+      expect(click.target).toBe(primary.element)
+      expect(keydown.target).toBe(primary.element)
+      expect(click.defaultPrevented).toBe(true)
+      expect(keydown.defaultPrevented).toBe(true)
+      expect(wrapper.find('.mdv-card__ripple').exists()).toBe(false)
+    },
+  )
 
   it('disables native buttons and respects a disabled fieldset', () => {
     const onClick = vi.fn<(event: MouseEvent) => void>()
@@ -333,9 +353,10 @@ describe('MdvCard', () => {
     expect(link.attributes('href')).toBe('/trips')
     expect(link.attributes('aria-disabled')).toBeUndefined()
     expect(link.attributes('tabindex')).toBeUndefined()
-    const event = pointer(link.element, 'click')
+    await link.trigger('click')
+    expect(onCapture).toHaveBeenCalledExactlyOnceWith(expect.any(MouseEvent))
+    const event = onCapture.mock.calls[0]![0]
     expect(onClick).toHaveBeenCalledExactlyOnceWith(event)
-    expect(onCapture).toHaveBeenCalledExactlyOnceWith(event)
   })
 
   it('releases ripples independently of the persistent state layer and clears them on disable', async () => {
