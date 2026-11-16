@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.1.2
+
+### Patch Changes
+
+- bd500e7: Add Select and Autocomplete components with Expressive and Baseline dropdown styles.
+
 ## 0.1.1
 
 ### Patch Changes
