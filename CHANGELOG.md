@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3
+
+### Patch Changes
+
+- 8c9b133: Fix selected menu-item corner consistency and smoothly transition semantic colors when the theme changes.
+
 ## 0.1.2
 
 ### Patch Changes
