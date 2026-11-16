@@ -214,9 +214,10 @@ Code and changesets reach main
   → Maintainer reviews and merges the release PR
   → Checks and library build
   → npm staged package and vX.Y.Z Git tag
+  → Automatic Finalize Release attempt (fails if npm approval is still pending)
   → Maintainer reviews and approves the package on npm with 2FA
   → Version becomes publicly available
-  → Maintainer runs Finalize Release manually
+  → Maintainer reruns Finalize Release if needed
   → GitHub Release with generated notes
 ```
 
@@ -224,7 +225,7 @@ Code and changesets reach main
 
 Run the local checks, review the diff, and commit the code, documentation, and changeset. Use a feature branch and pull request for review, or the maintainer's agreed direct-to-main workflow.
 
-The [CI workflow](./.github/workflows/ci.yml) checks pushes and pull requests. The [Release workflow](./.github/workflows/release.yml) runs on pushes to `main` and can also be started manually.
+The [CI workflow](./.github/workflows/ci.yml) checks pushes to every repository branch and supports manual runs. It does not subscribe to pull-request events: Changesets PRs created with `GITHUB_TOKEN` otherwise start approval-gated runs that fail if approval expires. Repository branches are checked on push, and the merged commit is checked again on `main`; fork PRs require maintainer-led validation. The [Release workflow](./.github/workflows/release.yml) runs on pushes to `main` and can also be started manually, independently repeating the checks before staging.
 
 When pending changesets exist on `main`, Release creates or updates a PR titled **chore: release packages**, with commits titled **chore: version packages**. Multiple development commits can update the same release PR.
 
@@ -232,7 +233,7 @@ When pending changesets exist on `main`, Release creates or updates a PR titled 
 
 Check the proposed package version, CHANGELOG entries, consumed changesets, and workflow results. For example, a single patch release from `0.1.1` should propose `0.1.2`.
 
-After merging, Release runs the checks again, builds JavaScript and declarations, and invokes `scripts/stage-publish.mjs`. Successful staging causes Changesets to push the corresponding `vX.Y.Z` tag. GitHub Release creation is deferred until npm approval.
+After merging, Release runs the checks again, builds JavaScript and declarations, and invokes `scripts/stage-publish.mjs`. Successful staging causes Changesets to push the corresponding `vX.Y.Z` tag. When Release completes successfully, Finalize Release starts automatically once. If npm approval is still pending, this attempt fails with instructions to approve the package and rerun finalization.
 
 ### 3. Review the npm staged package
 
@@ -253,11 +254,11 @@ Confirm the version can be queried and the intended default release is listed un
 
 ### 5. Create the GitHub Release
 
-The [Finalize Release workflow](./.github/workflows/finalize-release.yml) is manual. It does not publish npm packages and does not run on a schedule. Run it after npm has made the approved package version publicly available.
+The [Finalize Release workflow](./.github/workflows/finalize-release.yml) runs once after a successful Release workflow on `main` in this repository. Failed Release runs do not run the finalization job. It also supports manual runs, does not publish npm packages, and has no scheduled checks or automatic retries. A successful Release run that only updated a release PR may finish finalization without changes when no matching Releases are missing.
 
 Each run checks stable `vX.Y.Z` tags against existing GitHub Releases and the public npm registry. Before creating a missing Release with generated notes, it verifies that the tag's `package.json` matches the package name and published version. If any candidate version is not publicly available on npm, the job fails before creating Releases; publish and approve the package, then rerun the workflow. Existing Releases are unchanged. Historical tags for a different package name or version are reported and skipped, so they do not block matching versions. Older published tags without Releases can be finalized by leaving the version input empty. A backfilled version is marked latest only if it is the npm `latest` version.
 
-Open [Actions → Finalize Release](https://github.com/kKsk03/mdv/actions/workflows/finalize-release.yml), choose **Run workflow** on `main`, and enter `X.Y.Z` without a leading `v`. Leave the version empty to check all stable version tags. A manually requested version must have a tag and be publicly available on npm. If the job fails because a version is not public yet, publish and approve it on npm, then rerun the workflow with that version.
+If the automatic attempt failed while npm approval was pending, approve the package and verify public availability, then use **Re-run failed jobs** on that Finalize Release run. Alternatively, open [Actions → Finalize Release](https://github.com/kKsk03/mdv/actions/workflows/finalize-release.yml), choose **Run workflow** on `main`, and enter `X.Y.Z` without a leading `v`. Leave the version empty to check all stable version tags. A manually requested version must have a tag and be publicly available on npm. Rerun Finalize Release rather than the npm staging workflow when only the GitHub Release is missing.
 
 ### 6. Synchronize and consume the release
 

@@ -1,6 +1,13 @@
 name: Finalize Release
 
 on:
+  workflow_run:
+    workflows:
+      - Release
+    types:
+      - completed
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       version:
@@ -17,7 +24,12 @@ concurrency:
 
 jobs:
   finalize:
-    if: github.repository == 'kKsk03/mdv'
+    if: >-
+      github.repository == 'kKsk03/mdv' &&
+      (github.event_name == 'workflow_dispatch' ||
+        (github.event.workflow_run.conclusion == 'success' &&
+          github.event.workflow_run.head_branch == 'main' &&
+          github.event.workflow_run.head_repository.full_name == github.repository))
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

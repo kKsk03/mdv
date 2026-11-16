@@ -1,6 +1,6 @@
 # Roadmap
 
-Updated: 2026-11-17. Published baseline: **@mdv-ui/mdv 0.1.3**.
+Updated: 2026-11-17. Published baseline: **@mdv-ui/mdv 0.1.4**.
 
 MDV has completed its initial component and delivery milestones and is now maintained through versioned releases. This roadmap records current priorities, remaining work, and decisions that future development should preserve. New components and public capabilities are scoped before implementation; candidate work has no assigned release or deadline.
 
@@ -12,7 +12,7 @@ MDV has completed its initial component and delivery milestones and is now maint
 | Design system                       | Accepted scope complete: light/dark/system and local themes, semantic tokens, typography, shapes, motion, local fonts, icons, and seed-based dynamic color.        |
 | Initial official component coverage | Accepted scope across 36 official component families delivered in 0.1.0. Supported variants and limitations remain documented in [COMPONENTS.md](./COMPONENTS.md). |
 | Initial integration and delivery    | Form, navigation, and nested-overlay compositions; a real packed-library consumer; and a Button import size comparison were accepted.                              |
-| Versioned publishing                | 0.1.0-0.1.3 published; Changesets and npm staged approval remain in use. GitHub Releases are finalized manually after npm publication.                              |
+| Versioned publishing                | 0.1.0-0.1.4 published; Changesets and npm staged approval remain in use. Finalization runs once after Release and is rerun manually after npm approval when needed. |
 | Select and Autocomplete             | Accepted scope complete and released in 0.1.2, including Expressive/Baseline dropdowns, free-text autocomplete, and remote-search events/loading state.            |
 
 Completion refers to the agreed scope for each component. It does not imply every optional Material variant, browser, device, or assistive technology has been validated. No next component has been selected.
@@ -21,10 +21,11 @@ Completion refers to the agreed scope for each component. It does not imply ever
 
 ### Release process
 
-- [ ] Manually finalize the published `v0.1.3` GitHub Release after this workflow update reaches `main`.
-- Finalize Release is workflow-dispatch only. It verifies public npm availability and the tag's package identity before creating a missing Release; it fails before creating Releases when npm has not made a candidate version public, so publish and approve the package before rerunning it.
+- [ ] Finalize the published `v0.1.4` GitHub Release after this workflow update reaches `main`; `v0.1.3` already has a Release.
+- Finalize Release runs once after a successful Release workflow on this repository's `main` branch and also supports manual runs. It verifies public npm availability and the tag's package identity before creating a missing Release; it fails before creating Releases when npm has not made a candidate version public, so publish and approve the package before manually rerunning it. There are no scheduled checks or automatic retries.
+- CI uses repository branch pushes and manual runs, avoiding approval-gated pull-request runs for Changesets automation. Every merge to `main` and the Release workflow retain full checks; fork PR validation remains a maintainer responsibility.
 - Regression coverage for pending npm approval, backfills, existing Releases, tag/package mismatches, manual finalization, and registry failures is provided in `scripts/finalize-release.spec.mjs`; execution remains pending user validation.
-- Validate the updated workflow and documentation after implementation; no checks are claimed for this change until run by the maintainer.
+- Local validation passed: workflow YAML parsing, inline JavaScript syntax, targeted workflow formatting, and `git diff --check`. Automatic and manual finalization still need GitHub validation after this update is pushed.
 
 ### Formal documentation
 
@@ -40,7 +41,7 @@ Until that migration is complete, keep `COMPONENTS.md` as the maintained API and
 - [ ] Use MDV in the consuming application and turn concrete integration problems into reproducible issues.
 - [ ] Prioritize fixes and additional components from those needs, agreeing on API scope and release impact before implementation.
 
-The documentation site is now an active integration surface. The selected final menu-item corner fix and theme-color transitions shipped in 0.1.3. A follow-up fix keeps the Standard Drawer's App Bar background extension synchronized throughout inherited color transitions, including quick theme reversals, and cancels pending frames on cleanup. The documentation layout uses `surface-container-low` for its content background, matching the playground composition; the Scaffold itself keeps that choice with the consumer.
+The documentation site is now an active integration surface. The selected final menu-item corner fix and theme-color transitions shipped in 0.1.3. The 0.1.4 follow-up keeps the Standard Drawer's App Bar background extension synchronized throughout inherited color transitions, including quick theme reversals, and cancels pending frames on cleanup. The documentation layout uses `surface-container-low` for its content background, matching the playground composition; the Scaffold itself keeps that choice with the consumer.
 
 Application feedback takes priority over adding components merely to expand the catalog. Documentation-site work and a new component can be planned independently.
 
