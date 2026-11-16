@@ -6,18 +6,25 @@ MDV has completed its initial component and delivery milestones and is now maint
 
 ## Current status
 
-| Milestone                           | Status                                                                                                                                                                |
-| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Single-package foundation           | Complete: Vue 3, TypeScript, Tailwind CSS v4, playground, library builds, declarations, and package consumption.                                                      |
-| Design system                       | Accepted scope complete: light/dark/system and local themes, semantic tokens, typography, shapes, motion, local fonts, icons, and seed-based dynamic color.           |
-| Initial official component coverage | Accepted scope across 36 official component families delivered in 0.1.0. Supported variants and limitations remain documented in [COMPONENTS.md](./COMPONENTS.md).    |
-| Initial integration and delivery    | Form, navigation, and nested-overlay compositions; a real packed-library consumer; and a Button import size comparison were accepted.                                 |
-| Versioned publishing                | 0.1.0, 0.1.1, and 0.1.2 published. The current workflow uses Changesets, npm staged publishing, maintainer approval, and a separate GitHub Release finalization step. |
-| Select and Autocomplete             | Accepted scope complete and released in 0.1.2, including Expressive/Baseline dropdowns, free-text autocomplete, and remote-search events/loading state.               |
+| Milestone                           | Status                                                                                                                                                                   |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Single-package foundation           | Complete: Vue 3, TypeScript, Tailwind CSS v4, playground, library builds, declarations, and package consumption.                                                         |
+| Design system                       | Accepted scope complete: light/dark/system and local themes, semantic tokens, typography, shapes, motion, local fonts, icons, and seed-based dynamic color.              |
+| Initial official component coverage | Accepted scope across 36 official component families delivered in 0.1.0. Supported variants and limitations remain documented in [COMPONENTS.md](./COMPONENTS.md).       |
+| Initial integration and delivery    | Form, navigation, and nested-overlay compositions; a real packed-library consumer; and a Button import size comparison were accepted.                                    |
+| Versioned publishing                | 0.1.0, 0.1.1, and 0.1.2 published. Changesets and npm staged approval remain in use; automatic GitHub Release finalization is configured, pending its first Actions run. |
+| Select and Autocomplete             | Accepted scope complete and released in 0.1.2, including Expressive/Baseline dropdowns, free-text autocomplete, and remote-search events/loading state.                  |
 
 Completion refers to the agreed scope for each component. It does not imply every optional Material variant, browser, device, or assistive technology has been validated. No next component has been selected.
 
 ## Next work
+
+### Release automation
+
+- [ ] Verify automatic GitHub Release creation after the workflow update reaches `main`, including the missing `v0.1.2` Release. The npm registry was checked and exposes 0.1.2 as `latest`; the tag was confirmed locally. The automation itself has not been run against GitHub yet.
+- Finalize Release now checks after successful Release runs and every 15 minutes, creates Releases only for publicly available npm versions with matching tags, and skips existing Releases. npm review and 2FA approval remain manual; GitHub scheduling can delay the next check.
+- Regression coverage for waiting approvals, backfills, existing Releases, tag/package mismatches, manual recovery, registry failures, and concurrent creation is provided in `scripts/finalize-release.spec.mjs`; execution remains pending user validation.
+- Static validation passed for script syntax, targeted Oxlint/ESLint, workflow YAML and embedded JavaScript parsing, formatting, UTF-8/LF, and documentation links. This does not replace the pending regression run or first automatic Actions result.
 
 ### Formal documentation
 

@@ -1,61 +1,67 @@
 name: Finalize Release
 
 on:
+  workflow_run:
+    workflows:
+      - Release
+    types:
+      - completed
+    branches:
+      - main
+  schedule:
+    - cron: '7,22,37,52 * * * *'
   workflow_dispatch:
     inputs:
       version:
-        description: Published npm version to create a GitHub Release for
-        required: true
+        description: Published npm version to finalize (leave empty to check all version tags)
+        required: false
         type: string
 
 permissions:
   contents: write
 
+concurrency:
+  group: finalize-release
+  cancel-in-progress: false
+
 jobs:
   finalize:
-    if: github.repository == 'kKsk03/mdv'
+    if: >-
+      github.repository == 'kKsk03/mdv' &&
+      (github.event_name != 'workflow_run' ||
+        (github.event.workflow_run.conclusion == 'success' &&
+          github.event.workflow_run.head_repository.full_name == github.repository))
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
-          fetch-depth: 0
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v5
+      - name: Finalize publicly available versions
+        uses: actions/github-script@v8
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
         with:
-          node-version: 24.22.1
-          registry-url: https://registry.npmjs.org
-
-      - name: Verify npm publication and version tag
-        env:
-          RELEASE_VERSION: ${{ inputs.version }}
-        run: |
-          if [[ ! "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Invalid release version: $RELEASE_VERSION" >&2
-            exit 1
-          fi
-
-          published_version="$(npm view "@mdv-ui/mdv@$RELEASE_VERSION" version --registry=https://registry.npmjs.org)"
-          if [[ "$published_version" != "$RELEASE_VERSION" ]]; then
-            echo "The npm version is not publicly available yet." >&2
-            exit 1
-          fi
-
-          git show-ref --verify --quiet "refs/tags/v$RELEASE_VERSION"
-
-      - name: Create GitHub Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_VERSION: ${{ inputs.version }}
-        run: |
-          tag="v$RELEASE_VERSION"
-          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            echo "GitHub Release $tag already exists."
-          else
-            gh release create "$tag" \
-              --repo "$GITHUB_REPOSITORY" \
-              --verify-tag \
-              --title "$tag" \
-              --generate-notes
-          fi
+          script: |
+            const { pathToFileURL } = await import('node:url')
+            const scriptUrl = pathToFileURL(`${process.env.GITHUB_WORKSPACE}/scripts/finalize-release.mjs`)
+            const { finalizeReleases } = await import(scriptUrl.href)
+            const result = await finalizeReleases({
+              github,
+              ...context.repo,
+              version: process.env.RELEASE_VERSION,
+              log: (message) => core.info(message),
+            })
+            await core.summary
+              .addHeading('GitHub Release finalization')
+              .addTable([
+                [{ data: 'Result', header: true }, { data: 'Versions', header: true }],
+                ['Created', result.created.join(', ') || 'None'],
+                ['Waiting for npm', result.waiting.join(', ') || 'None'],
+                ['Already present', result.existing.join(', ') || 'None'],
+                ['Skipped package/tag mismatch', result.skipped.join(', ') || 'None'],
+              ])
+              .write()
