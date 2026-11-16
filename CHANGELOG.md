@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.4
+
+### Patch Changes
+
+- efd6466: Fix mismatched colors behind `MdvNavigationDrawer` corners when composed with `MdvAppBarScaffold`. Keep the background synchronized with the adjacent App Bar throughout theme transitions, including rapid theme changes.
+
 ## 0.1.3
 
 ### Patch Changes
