@@ -12,8 +12,6 @@ function setup({
   latest = '0.1.2',
   manifests = {},
   registryStatus = 200,
-  createError,
-  concurrentRelease = false,
 } = {}) {
   const created = []
   const requests = []
@@ -43,13 +41,8 @@ function setup({
           }
         },
         createRelease: async (input) => {
-          if (createError) throw createError
           created.push(input)
           return { data: input }
-        },
-        getReleaseByTag: async () => {
-          if (concurrentRelease) return { data: { tag_name: 'v0.1.2' } }
-          throw Object.assign(new Error('Not found'), { status: 404 })
         },
       },
     },
@@ -194,19 +187,5 @@ describe('GitHub Release finalization', () => {
     const { run, created } = setup({ registryStatus: 503 })
     await expect(run()).rejects.toThrow('Could not read the npm registry: HTTP 503')
     expect(created).toEqual([])
-  })
-
-  it('accepts concurrent creation without hiding other GitHub errors', async () => {
-    const validationError = Object.assign(new Error('Validation failed'), { status: 422 })
-    const concurrent = setup({ createError: validationError, concurrentRelease: true })
-    expect(await concurrent.run()).toEqual({
-      created: [],
-      waiting: [],
-      existing: ['v0.1.2'],
-      skipped: [],
-    })
-    await expect(setup({ createError: validationError }).run()).rejects.toBe(validationError)
-    const permissionError = Object.assign(new Error('Forbidden'), { status: 403 })
-    await expect(setup({ createError: permissionError }).run()).rejects.toBe(permissionError)
   })
 })

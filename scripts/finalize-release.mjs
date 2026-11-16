@@ -107,27 +107,15 @@ export async function finalizeReleases({
       continue
     }
 
-    try {
-      await github.rest.repos.createRelease({
-        ...repository,
-        tag_name: tag,
-        name: tag,
-        generate_release_notes: true,
-        draft: false,
-        prerelease: false,
-        make_latest: metadata['dist-tags']?.latest === tagVersion ? 'true' : 'false',
-      })
-    } catch (error) {
-      if (error.status !== 422) throw error
-      try {
-        await github.rest.repos.getReleaseByTag({ ...repository, tag })
-      } catch {
-        throw error
-      }
-      result.existing.push(tag)
-      log(`${tag} was finalized concurrently; leaving the existing Release unchanged.`)
-      continue
-    }
+    await github.rest.repos.createRelease({
+      ...repository,
+      tag_name: tag,
+      name: tag,
+      generate_release_notes: true,
+      draft: false,
+      prerelease: false,
+      make_latest: metadata['dist-tags']?.latest === tagVersion ? 'true' : 'false',
+    })
 
     result.created.push(tag)
     log(`Created the GitHub Release for ${tag}.`)

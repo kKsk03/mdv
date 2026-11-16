@@ -216,7 +216,7 @@ Code and changesets reach main
   → npm staged package and vX.Y.Z Git tag
   → Maintainer reviews and approves the package on npm with 2FA
   → Version becomes publicly available
-  → Finalize Release verifies publication automatically
+  → Maintainer runs Finalize Release manually
   → GitHub Release with generated notes
 ```
 
@@ -251,15 +251,13 @@ pnpm view @mdv-ui/mdv dist-tags --registry https://registry.npmjs.org
 
 Confirm the version can be queried and the intended default release is listed under `latest`. Registry metadata can take time to propagate immediately after approval; check again before diagnosing a missing release.
 
-### 5. Automatic GitHub Release
+### 5. Create the GitHub Release
 
-The [Finalize Release workflow](./.github/workflows/finalize-release.yml) runs automatically after a successful **Release** workflow on `main`, and checks again every 15 minutes so approval can happen after staging finishes. Its automatic triggers use the workflow and script on the default branch. GitHub schedules can be delayed; the interval is not a guaranteed publication deadline.
+The [Finalize Release workflow](./.github/workflows/finalize-release.yml) is manual. It does not publish npm packages and does not run on a schedule. Run it after npm has made the approved package version publicly available.
 
-Each run checks stable `vX.Y.Z` tags against existing GitHub Releases and the public npm registry. Before creating a missing Release with generated notes, it verifies that the tag's `package.json` matches the package name and published version. Versions still awaiting npm approval are left for a later run; existing Releases are unchanged. Historical tags for a different package name or version are reported and skipped, so they do not block matching versions. Older published tags without Releases, including `v0.1.2`, can be filled in automatically. A backfilled version is marked latest only if it is the npm `latest` version.
+Each run checks stable `vX.Y.Z` tags against existing GitHub Releases and the public npm registry. Before creating a missing Release with generated notes, it verifies that the tag's `package.json` matches the package name and published version. Versions still awaiting npm approval are reported under **Waiting for npm**; publish and approve them, then run the workflow again. Existing Releases are unchanged. Historical tags for a different package name or version are reported and skipped, so they do not block matching versions. Older published tags without Releases can be finalized by leaving the version input empty. A backfilled version is marked latest only if it is the npm `latest` version.
 
-Routine releases require no extra GitHub button click after npm approval. For immediate recovery, open [Actions → Finalize Release](https://github.com/kKsk03/mdv/actions/workflows/finalize-release.yml), choose **Run workflow** on `main`, and optionally enter `X.Y.Z` without a leading `v`. Leave the version empty to check all stable version tags. A manually requested version must have a tag and be publicly available on npm.
-
-If automatic checks stop, inspect workflow failures and whether GitHub has disabled the schedule after repository inactivity. See [GitHub workflow event documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
+Open [Actions → Finalize Release](https://github.com/kKsk03/mdv/actions/workflows/finalize-release.yml), choose **Run workflow** on `main`, and enter `X.Y.Z` without a leading `v`. Leave the version empty to check all stable version tags. A manually requested version must have a tag and be publicly available on npm. If a run reports a version under **Waiting for npm**, publish and approve it on npm, then rerun the workflow with that version.
 
 ### 6. Synchronize and consume the release
 
@@ -284,11 +282,11 @@ pnpm add @mdv-ui/mdv@X.Y.Z
 | No release PR appears                                   | Inspect the Release run and confirm a pending changeset reached `main`. Check Actions pull-request permissions. A `main` push without changesets does not request a version bump. |
 | npm returns `OIDC permission denied for this action`    | Check the package's Trusted Publisher identity and `npm stage publish` permission. Direct publish permission is not needed for this workflow.                                     |
 | Staging succeeds but the version cannot be installed    | Complete npm scanning/review/approval, then allow for registry propagation.                                                                                                       |
-| Finalize Release is waiting for npm                     | Complete npm approval and registry propagation. The next scheduled check will retry; no new version or tag is needed.                                                             |
-| The npm version is public but no GitHub Release appears | Inspect Finalize Release runs on the default branch. Correct failures or re-enable a disabled schedule; use an optional manual run for immediate recovery.                        |
+| Finalize Release is waiting for npm                     | Complete npm approval and registry propagation, then rerun Finalize Release with that version. No new version or tag is needed.                                                     |
+| The npm version is public but no GitHub Release appears | Run Finalize Release manually with that version. Inspect its summary and logs if it still does not create the Release.                                                            |
 | The Git tag exists but the package is absent            | Inspect npm's staged packages and the Release logs. The staging script skips versions with existing tags; rerunning it does not resubmit that version.                            |
 
-Before rerunning a failed staging step, check both npm's staged packages and the version's Git tag. npm can accept a submission before a later workflow step fails. A successfully staged package should proceed through npm approval and automatic Finalize Release checks.
+Before rerunning a failed staging step, check both npm's staged packages and the version's Git tag. npm can accept a submission before a later workflow step fails. A successfully staged package should proceed through npm approval, followed by a manual Finalize Release run.
 
 Keep recovery tied to the intended version. Do not create another version or remove tags merely to retry a failed check. If npm rejected or discarded a staged package, reconcile its registry and tag state before deciding how to submit it again. An already-public npm version is immutable; ship a new version for a correction.
 

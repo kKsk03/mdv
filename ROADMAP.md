@@ -1,6 +1,6 @@
 # Roadmap
 
-Updated: 2026-11-16. Published baseline: **@mdv-ui/mdv 0.1.2**.
+Updated: 2026-11-16. Published baseline: **@mdv-ui/mdv 0.1.3**.
 
 MDV has completed its initial component and delivery milestones and is now maintained through versioned releases. This roadmap records current priorities, remaining work, and decisions that future development should preserve. New components and public capabilities are scoped before implementation; candidate work has no assigned release or deadline.
 
@@ -12,19 +12,19 @@ MDV has completed its initial component and delivery milestones and is now maint
 | Design system                       | Accepted scope complete: light/dark/system and local themes, semantic tokens, typography, shapes, motion, local fonts, icons, and seed-based dynamic color.        |
 | Initial official component coverage | Accepted scope across 36 official component families delivered in 0.1.0. Supported variants and limitations remain documented in [COMPONENTS.md](./COMPONENTS.md). |
 | Initial integration and delivery    | Form, navigation, and nested-overlay compositions; a real packed-library consumer; and a Button import size comparison were accepted.                              |
-| Versioned publishing                | 0.1.0-0.1.2 published; the 0.1.3 patch changeset awaits checks and release PR. Changesets and npm staged approval remain in use.                                   |
+| Versioned publishing                | 0.1.0-0.1.3 published; Changesets and npm staged approval remain in use. GitHub Releases are finalized manually after npm publication.                              |
 | Select and Autocomplete             | Accepted scope complete and released in 0.1.2, including Expressive/Baseline dropdowns, free-text autocomplete, and remote-search events/loading state.            |
 
 Completion refers to the agreed scope for each component. It does not imply every optional Material variant, browser, device, or assistive technology has been validated. No next component has been selected.
 
 ## Next work
 
-### Release automation
+### Release process
 
-- [ ] Verify automatic GitHub Release creation after the workflow update reaches `main`, including the missing `v0.1.2` Release. The npm registry was checked and exposes 0.1.2 as `latest`; the tag was confirmed locally. The automation itself has not been run against GitHub yet.
-- Finalize Release now checks after successful Release runs and every 15 minutes, creates Releases only for publicly available npm versions with matching tags, and skips existing Releases. npm review and 2FA approval remain manual; GitHub scheduling can delay the next check.
-- Regression coverage for waiting approvals, backfills, existing Releases, tag/package mismatches, manual recovery, registry failures, and concurrent creation is provided in `scripts/finalize-release.spec.mjs`; execution remains pending user validation.
-- Static validation passed for script syntax, targeted Oxlint/ESLint, workflow YAML and embedded JavaScript parsing, formatting, UTF-8/LF, and documentation links. This does not replace the pending regression run or first automatic Actions result.
+- [ ] Manually finalize the published `v0.1.3` GitHub Release after this workflow update reaches `main`.
+- Finalize Release is workflow-dispatch only. It verifies public npm availability and the tag's package identity before creating a missing Release; rerun it after npm approval when an earlier run reports a version under `Waiting for npm`.
+- Regression coverage for pending npm approval, backfills, existing Releases, tag/package mismatches, manual finalization, and registry failures is provided in `scripts/finalize-release.spec.mjs`; execution remains pending user validation.
+- Validate the updated workflow and documentation after implementation; no checks are claimed for this change until run by the maintainer.
 
 ### Formal documentation
 
