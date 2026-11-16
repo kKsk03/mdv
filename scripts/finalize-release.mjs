@@ -39,7 +39,7 @@ export async function finalizeReleases({
     throw new Error(`Missing version tag: v${requestedVersion}`)
   }
 
-  const result = { created: [], waiting: [], existing: [], skipped: [] }
+  const result = { created: [], existing: [], skipped: [] }
   if (candidates.length === 0) {
     log('No stable version tags to finalize.')
     return result
@@ -75,21 +75,24 @@ export async function finalizeReleases({
     throw new Error(`Unexpected npm metadata for ${packageName}`)
   }
 
-  for (const tag of pendingTags) {
+  const unpublished = pendingTags.filter((tag) => {
     const tagVersion = tag.slice(1)
     const published = metadata?.versions[tagVersion]
-    if (
+    return (
       published?.name !== packageName ||
       published.version !== tagVersion ||
       !published.dist?.tarball
-    ) {
-      if (requestedVersion) {
-        throw new Error(`${packageName}@${tagVersion} is not publicly available on npm yet.`)
-      }
-      result.waiting.push(tag)
-      log(`${tag} is not publicly available on npm yet; a later run will check again.`)
-      continue
-    }
+    )
+  })
+  if (unpublished.length > 0) {
+    const versions = unpublished.map((tag) => `${packageName}@${tag.slice(1)}`).join(', ')
+    throw new Error(
+      `${versions} is not publicly available on npm yet. Publish and approve the package, then rerun the Finalize Release workflow.`,
+    )
+  }
+
+  for (const tag of pendingTags) {
+    const tagVersion = tag.slice(1)
 
     const { data } = await github.rest.repos.getContent({
       ...repository,

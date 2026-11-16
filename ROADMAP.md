@@ -1,6 +1,6 @@
 # Roadmap
 
-Updated: 2026-11-16. Published baseline: **@mdv-ui/mdv 0.1.3**.
+Updated: 2026-11-17. Published baseline: **@mdv-ui/mdv 0.1.3**.
 
 MDV has completed its initial component and delivery milestones and is now maintained through versioned releases. This roadmap records current priorities, remaining work, and decisions that future development should preserve. New components and public capabilities are scoped before implementation; candidate work has no assigned release or deadline.
 
@@ -22,7 +22,7 @@ Completion refers to the agreed scope for each component. It does not imply ever
 ### Release process
 
 - [ ] Manually finalize the published `v0.1.3` GitHub Release after this workflow update reaches `main`.
-- Finalize Release is workflow-dispatch only. It verifies public npm availability and the tag's package identity before creating a missing Release; rerun it after npm approval when an earlier run reports a version under `Waiting for npm`.
+- Finalize Release is workflow-dispatch only. It verifies public npm availability and the tag's package identity before creating a missing Release; it fails before creating Releases when npm has not made a candidate version public, so publish and approve the package before rerunning it.
 - Regression coverage for pending npm approval, backfills, existing Releases, tag/package mismatches, manual finalization, and registry failures is provided in `scripts/finalize-release.spec.mjs`; execution remains pending user validation.
 - Validate the updated workflow and documentation after implementation; no checks are claimed for this change until run by the maintainer.
 
@@ -40,7 +40,7 @@ Until that migration is complete, keep `COMPONENTS.md` as the maintained API and
 - [ ] Use MDV in the consuming application and turn concrete integration problems into reproducible issues.
 - [ ] Prioritize fixes and additional components from those needs, agreeing on API scope and release impact before implementation.
 
-The documentation site is now an active integration surface. The selected final menu-item corner mismatch found there is included in the pending 0.1.3 patch.
+The documentation site is now an active integration surface. The selected final menu-item corner fix and theme-color transitions shipped in 0.1.3. A follow-up fix keeps the Standard Drawer's App Bar background extension synchronized throughout inherited color transitions, including quick theme reversals, and cancels pending frames on cleanup. The documentation layout uses `surface-container-low` for its content background, matching the playground composition; the Scaffold itself keeps that choice with the consumer.
 
 Application feedback takes priority over adding components merely to expand the catalog. Documentation-site work and a new component can be planned independently.
 
@@ -48,7 +48,8 @@ Application feedback takes priority over adding components merely to expand the 
 
 Existing evidence includes component checks and previews, selected SSR/hydration tests, and first-release package consumption with a production preview in Chrome on Windows. That browser version was not recorded.
 
-- [ ] Validate the pending 0.1.3 menu corner fix and theme-color transition in the playground and a consuming application; cover light, dark, system, local themes, dynamic colors, and reduced motion.
+- [ ] Validate the released 0.1.3 menu corner fix and theme-color transitions in a consuming application; cover light, dark, system, local themes, dynamic colors, and reduced motion.
+- [ ] Run the new Drawer/App Bar transition regression in `src/__tests__/MdvAppBarScaffold.spec.ts` and validate the follow-up fix in the playground and a consuming application. The regression covers intermediate colors, reversals, final colors, and frame cleanup; unit execution and package validation remain with the maintainer.
 - [ ] Define a supported browser/device matrix and record actual versions and results before expanding compatibility claims.
 - [ ] Check real touch and screen-reader interactions, especially pickers, Carousel, comboboxes, navigation, and nested overlays.
 - [ ] Extend targeted SSR/hydration coverage as consuming applications require it, including stable IDs, request isolation, focus, and edits made before hydration.

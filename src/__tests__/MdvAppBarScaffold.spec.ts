@@ -4,6 +4,7 @@ import { defineComponent, h, KeepAlive, nextTick, ref } from 'vue'
 import MdvAppBar from '../components/MdvAppBar.vue'
 import MdvAppBarScaffold from '../components/MdvAppBarScaffold.vue'
 import MdvNavigationDrawer from '../components/MdvNavigationDrawer.vue'
+import { createAppBarDrawerBackground } from '../components/app-bar-scaffold'
 import type { MdvAppBarProps } from '../components/app-bar.types'
 import { appBarScroll, mockAppBarPlatform } from './app-bar-test-platform'
 
@@ -29,6 +30,88 @@ const value = (root: Element, name: string) =>
   (root as HTMLElement).style.getPropertyValue(`--mdv-app-bar-scaffold-${name}`)
 
 describe('MdvAppBarScaffold', () => {
+  it('keeps the drawer corner in sync throughout inherited theme transitions and rapid reversals', async () => {
+    const host = document.createElement('section')
+    host.innerHTML =
+      '<nav class="mdv-navigation-drawer"></nav><div><header class="mdv-app-bar"><div class="mdv-app-bar__surface"></div></header></div>'
+    document.body.append(host)
+    const drawer = host.children[0] as HTMLElement
+    const scaffold = host.children[1] as HTMLElement
+    const appbar = scaffold.firstElementChild as HTMLElement
+    const surface = appbar.firstElementChild as HTMLElement
+    const callbacks = new Map<number, FrameRequestCallback>()
+    let id = 0
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      callbacks.set(++id, callback)
+      return id
+    })
+    vi.spyOn(window, 'cancelAnimationFrame').mockImplementation((frame) => {
+      callbacks.delete(frame)
+    })
+    let transitions: Animation[] = []
+    Object.defineProperty(host, 'getAnimations', { value: () => transitions })
+    const transition = {
+      transitionProperty: '--mdv-sys-color-surface',
+      playState: 'running',
+      pending: false,
+    } as CSSTransition
+    const advance = () => {
+      const batch = [...callbacks.values()]
+      callbacks.clear()
+      for (const callback of batch) callback(0)
+    }
+    const background = () => drawer.style.getPropertyValue('--mdv-drawer-app-bar-background')
+    const sync = createAppBarDrawerBackground(() => scaffold)
+    surface.style.backgroundColor = 'rgb(250, 240, 255)'
+    sync.sync(appbar, 64)
+    sync.start()
+    try {
+      expect(background()).toBe('rgb(250, 240, 255)')
+      expect(callbacks.size).toBe(0)
+      transitions = [transition]
+      host.setAttribute('data-mdv-theme', 'dark')
+      await flushPromises()
+      expect(callbacks.size).toBe(1)
+
+      // CSS interpolation changes the computed surface color without another theme mutation.
+      surface.style.backgroundColor = 'rgb(140, 130, 150)'
+      advance()
+      expect(background()).toBe('rgb(140, 130, 150)')
+      expect(callbacks.size).toBe(1)
+
+      host.setAttribute('data-mdv-theme', 'light')
+      await flushPromises()
+      surface.style.backgroundColor = 'rgb(200, 190, 210)'
+      advance()
+      expect(background()).toBe('rgb(200, 190, 210)')
+      expect(callbacks.size).toBe(1)
+
+      transitions = []
+      surface.style.backgroundColor = 'rgb(250, 240, 255)'
+      advance()
+      expect(background()).toBe('rgb(250, 240, 255)')
+      expect(callbacks.size).toBe(0)
+
+      transitions = [transition]
+      host.setAttribute('data-mdv-theme', 'dark')
+      await flushPromises()
+      expect(callbacks.size).toBe(1)
+      sync.stop()
+      expect(callbacks.size).toBe(0)
+      expect(background()).toBe('')
+      expect(drawer.style.getPropertyValue('--mdv-drawer-app-bar-height')).toBe('')
+      sync.start()
+      expect(callbacks.size).toBe(1)
+      drawer.remove()
+      advance()
+      expect(callbacks.size).toBe(0)
+      expect(background()).toBe('')
+    } finally {
+      sync.stop()
+      host.remove()
+    }
+  })
+
   it('extends the actual app bar background behind an adjacent drawer and follows themes, height, and cleanup', async () => {
     const shown = ref(true)
     const theme = ref('light')

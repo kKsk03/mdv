@@ -36,23 +36,33 @@ jobs:
             const { pathToFileURL } = await import('node:url')
             const scriptUrl = pathToFileURL(`${process.env.GITHUB_WORKSPACE}/scripts/finalize-release.mjs`)
             const { finalizeReleases } = await import(scriptUrl.href)
-            const result = await finalizeReleases({
-              github,
-              ...context.repo,
-              version: process.env.RELEASE_VERSION,
-              log: (message) => core.info(message),
-            })
-            await core.summary
-              .addHeading('GitHub Release finalization')
-              .addTable([
-                [{ data: 'Result', header: true }, { data: 'Versions', header: true }],
-                ['Created', result.created.join(', ') || 'None'],
-                ['Waiting for npm', result.waiting.join(', ') || 'None'],
-                ['Already present', result.existing.join(', ') || 'None'],
-                ['Skipped package/tag mismatch', result.skipped.join(', ') || 'None'],
-              ])
-              .addHeading('Next step')
-              .addRaw(
-                `This workflow only creates GitHub Releases; it does not publish to npm. First publish and approve the matching version of \`@mdv-ui/mdv\` on npm. Then [run Finalize Release again](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/workflows/finalize-release.yml) with the version number (for example, \`0.1.3\`, without the \`v\` prefix). A version listed under **Waiting for npm** is not public yet.`,
-              )
-              .write()
+            try {
+              const result = await finalizeReleases({
+                github,
+                ...context.repo,
+                version: process.env.RELEASE_VERSION,
+                log: (message) => core.info(message),
+              })
+              await core.summary
+                .addHeading('GitHub Release finalization')
+                .addTable([
+                  [{ data: 'Result', header: true }, { data: 'Versions', header: true }],
+                  ['Created', result.created.join(', ') || 'None'],
+                  ['Already present', result.existing.join(', ') || 'None'],
+                  ['Skipped package/tag mismatch', result.skipped.join(', ') || 'None'],
+                ])
+                .addHeading('Next step')
+                .addRaw(
+                  `This workflow only creates GitHub Releases; it does not publish to npm. If the package was not public when this run started, publish and approve the matching version of \`@mdv-ui/mdv\` on npm, then [run Finalize Release again](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/workflows/finalize-release.yml) with the version number (for example, \`0.1.3\`, without the \`v\` prefix).`,
+                )
+                .write()
+            } catch (error) {
+              const message = error instanceof Error ? error.message : String(error)
+              await core.summary
+                .addHeading('GitHub Release finalization failed')
+                .addRaw(
+                  `${message}\n\nPublish and approve the matching npm package, then rerun this workflow with the version number.`,
+                )
+                .write()
+              core.setFailed(message)
+            }

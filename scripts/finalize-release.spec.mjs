@@ -82,14 +82,13 @@ function setup({
 describe('GitHub Release finalization', () => {
   it('backfills published version tags and leaves existing Releases unchanged', async () => {
     const { run, created, manifestRefs } = setup({
-      tags: ['v0.1.3', 'v0.1.2', 'v0.1.1'],
+      tags: ['v0.1.2', 'v0.1.1'],
       releases: ['v0.1.1'],
       published: ['0.1.1', '0.1.2'],
     })
 
     expect(await run()).toEqual({
       created: ['v0.1.2'],
-      waiting: ['v0.1.3'],
       existing: ['v0.1.1'],
       skipped: [],
     })
@@ -108,10 +107,21 @@ describe('GitHub Release finalization', () => {
     ])
   })
 
-  it('waits without creating a Release when the package is staged or metadata is absent', async () => {
+  it('fails before creating any Release when one candidate is not public', async () => {
+    const { run, created, manifestRefs } = setup({
+      tags: ['v0.1.3', 'v0.1.2'],
+      published: ['0.1.2'],
+    })
+
+    await expect(run()).rejects.toThrow('@mdv-ui/mdv@0.1.3 is not publicly available on npm yet')
+    expect(created).toEqual([])
+    expect(manifestRefs).toEqual([])
+  })
+
+  it('fails without creating a Release when the package is staged or metadata is absent', async () => {
     for (const configuration of [{ published: [] }, { registryStatus: 404 }]) {
       const { run, created, manifestRefs } = setup(configuration)
-      expect(await run()).toEqual({ created: [], waiting: ['v0.1.2'], existing: [], skipped: [] })
+      await expect(run()).rejects.toThrow('not publicly available on npm yet')
       expect(created).toEqual([])
       expect(manifestRefs).toEqual([])
     }
@@ -125,7 +135,7 @@ describe('GitHub Release finalization', () => {
 
   it('skips npm requests when every version already has a Release', async () => {
     const { run, created, requests } = setup({ releases: ['v0.1.2'] })
-    expect(await run()).toEqual({ created: [], waiting: [], existing: ['v0.1.2'], skipped: [] })
+    expect(await run()).toEqual({ created: [], existing: ['v0.1.2'], skipped: [] })
     expect(created).toEqual([])
     expect(requests).toEqual([])
   })
@@ -159,7 +169,6 @@ describe('GitHub Release finalization', () => {
     })
     expect(await run()).toEqual({
       created: ['v0.1.2'],
-      waiting: [],
       existing: [],
       skipped: ['v0.1.0'],
     })

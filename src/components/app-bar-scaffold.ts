@@ -30,8 +30,17 @@ export function createAppBarDrawerBackground(element: () => HTMLElement | null) 
   let observer: MutationObserver | undefined
   let media: MediaQueryList | undefined
   let ancestors: HTMLElement[] = []
+  let frame: number | undefined
+  let frameView: Window | undefined
+
+  function cancelFrame() {
+    if (frame !== undefined) frameView?.cancelAnimationFrame(frame)
+    frame = undefined
+    frameView = undefined
+  }
 
   function clear() {
+    cancelFrame()
     drawer?.style.removeProperty('--mdv-drawer-app-bar-background')
     drawer?.style.removeProperty('--mdv-drawer-app-bar-height')
     drawer = null
@@ -60,6 +69,23 @@ export function createAppBarDrawerBackground(element: () => HTMLElement | null) 
     for (const [name, value] of Object.entries(values)) {
       if (drawer.style.getPropertyValue(name) !== value) drawer.style.setProperty(name, value)
     }
+    // 主题令牌在祖先上过渡，单次采样只会留下旧色或中间色；逐帧跟随实际颜色直至结束。
+    const transitioning = [surface, ...ancestors].some((node) =>
+      node.getAnimations?.().some((animation) => {
+        if (animation.playState !== 'running' && !animation.pending) return false
+        if (!('transitionProperty' in animation)) return false
+        const property = (animation as CSSTransition).transitionProperty
+        return property === 'background-color' || property.startsWith('--mdv-sys-color-')
+      }),
+    )
+    if (transitioning && frame === undefined && typeof view.requestAnimationFrame === 'function') {
+      frameView = view
+      frame = view.requestAnimationFrame(() => {
+        frame = undefined
+        frameView = undefined
+        paint()
+      })
+    } else if (!transitioning) cancelFrame()
   }
 
   function observe() {
@@ -73,7 +99,7 @@ export function createAppBarDrawerBackground(element: () => HTMLElement | null) 
     for (const node of ancestors) {
       observer.observe(node, {
         attributes: true,
-        attributeFilter: ['class', 'style', 'dir', 'data-mdv-theme'],
+        attributeFilter: ['class', 'style', 'dir', 'data-mdv-theme', 'data-mdv-color-scheme'],
         childList: node === element()?.parentElement,
       })
     }

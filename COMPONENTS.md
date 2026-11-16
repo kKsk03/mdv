@@ -3012,6 +3012,8 @@ Scaffold 中应用栏位于正文滚动节点之外；收合／隐藏时正文�
 
 与 Standard Drawer 并排组合时，将 `MdvNavigationDrawer` 放在 `MdvAppBarScaffold` 的紧邻前一个兄弟位置。Scaffold 会把当前应用栏背景延伸到 Drawer 的圆角后方，同步滚动变色、可见高度、透明度和主题；Drawer 自身保留 16px 圆角。共同外层可使用正文底色，无需用相同底色抹平圆角；RTL 会自然镜像。中间不插入其它布局节点，Modal Drawer 保持独立浮层。playground 的导航组合示例采用此结构。
 
+The Scaffold leaves the content background transparent. Set the shared layout wrapper to `bg-mdv-surface-container-low` to match the playground's Drawer/App Bar composition; the navigation and App Bar retain their own surface colors. Page transitions can be composed inside the default slot, such as Vue `Transition` around the routed component, without animating the App Bar or replacing the scroll container.
+
 独立使用 `MdvAppBar` 时，省略 scrollTarget 仍跟随 Window；局部滚动可将应用栏置于自己的 `overflow:auto` 容器中，并传入 `:scroll-target="() => content"`（`content` 为模板 ref）。这种结构的滚动条属于外层，会贯穿应用栏；只希望正文出现滚动条时使用 Scaffold。独立模式的 sticky 边界由祖先布局决定，根保留展开高度以稳定 scrollTop。
 
 显式选择器或 getter 没有找到元素时不回退到 Window 或 Scaffold。getter 内的响应式引用变化会切换目标，旧监听会清理；目标稍后由应用外部创建时可调用 refresh()。滚动收合始终以所跟随目标的 scrollTop 为依据。
