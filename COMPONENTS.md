@@ -11,6 +11,7 @@
 - [MdvIconButton 图标按钮](#mdviconbutton)
 - [MdvIcon 图标](#mdvicon)
 - [MdvTextField 文本框](#mdvtextfield)
+- [MdvSelect 与 MdvAutocomplete 选择控件](#mdvselect-与-mdvautocomplete)
 - [MdvCheckbox 复选框](#mdvcheckbox)
 - [MdvRadio 单选框](#mdvradio)
 - [MdvSwitch 开关](#mdvswitch)
@@ -708,6 +709,88 @@ field.value?.focus({ preventScroll: true })
 ```
 
 公共类型：`MdvTextFieldVariant`、`MdvTextFieldType`、`MdvTextFieldValue`、`MdvTextFieldModelModifiers`。SSR 使用 Vue 稳定 ID 关联标签与描述；已提供行为、SSR 和 hydration 测试，当前约定范围已完成本地检查与开发预览验收。自动填充和密码管理器的实际表现需要在目标浏览器中验证。
+
+## MdvSelect 与 MdvAutocomplete
+
+`MdvSelect` 用于从固定选项中选择一个值；`MdvAutocomplete` 使用可编辑输入框显示建议，既可以选中建议值，也允许把任意输入文本作为模型值。两者直接组合 `MdvTextField`，共用其 Filled／Outlined 字段实现与样式。选项弹层使用独立的 listbox 实现，按本库 Menu 的 Expressive／Baseline 两套外观设计；不依赖 `MdvMenu`、`MdvMenuItem` 或其样式。
+
+Expressive 面板圆角为 16px，内部留白 2px，选中项使用 tertiary-container、12px 圆角及前置 20px 勾选图标；首尾未选中行的外侧圆角跟随面板。Baseline 面板圆角为 4px，内部仅保留上下 8px 留白，选项行铺满宽度，选中背景使用 surface-container-highest，前置图标为 24px。两者行高至少 48px，长标签和辅助文字自然换行；hover、pressed、键盘活动项与选中背景分层，鼠标打开时不会因初始活动项而额外加深选中底色。
+
+下拉面板采用与 Menu 相同的缩放与淡入／淡出节奏，展开 200ms、收起 130ms；快速反向从当前帧继续，退出结束后移除面板。Autocomplete 本地过滤模式下，选中建议后收起过程保留当前筛选结果，下次打开再恢复完整列表。独立内部视口处理高度限制与滚动，键盘浏览只滚动该视口，按压选项时保留输入框焦点。支持 reduced-motion、RTL 和 forced-colors；KeepAlive 停用时清理可见弹层，重新激活时依据 open 状态恢复。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MdvAutocomplete, MdvSelect } from '@mdv-ui/mdv'
+import type { MdvSelectOption } from '@mdv-ui/mdv'
+
+const options: MdvSelectOption[] = [
+  { value: 'small', label: '小型' },
+  { value: 'medium', label: '中型' },
+  { value: 'large', label: '大型', disabled: true },
+]
+const size = ref<string | number | null>('medium')
+const query = ref<string | number | null>('')
+const remoteOptions = ref<MdvSelectOption[]>([])
+const loading = ref(false)
+const cities: MdvSelectOption[] = [
+  { value: 'shanghai', label: '上海' },
+  { value: 'shenzhen', label: '深圳' },
+  { value: 'tokyo', label: '东京' },
+]
+
+async function searchRemote(query: string) {
+  loading.value = true
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 200))
+    remoteOptions.value = cities.filter((option) => option.label.includes(query.trim()))
+  } finally {
+    loading.value = false
+  }
+}
+</script>
+
+<template>
+  <MdvSelect v-model="size" label="尺寸" :options="options" name="size" required />
+  <MdvAutocomplete
+    v-model="query"
+    label="搜索项目"
+    :options="remoteOptions"
+    filter-mode="external"
+    :loading="loading"
+    @search="searchRemote"
+  />
+</template>
+```
+
+`MdvSelect` 与 `MdvAutocomplete` 接收的选项为 `{ value: string | number, label: string, supportingText?: string, disabled?: boolean }`。模型值为 `string | number | null`；Select 只通过 option 提交值，Autocomplete 选中建议时提交其原始值，输入未匹配的文本时提交该字符串。Autocomplete 的 `search` 会在输入变化后同步发出当前查询；`filterMode="local"` 默认按 label 包含查询过滤，`filterMode="external"` 保留调用方提供的 options，适用于异步搜索。异步调用、取消过期请求和结果排序由业务负责，组件不会内置防抖或请求管理。
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `options` | `readonly MdvSelectOption[]` | `[]` | 固定选项；相同 value 应保持唯一 |
+| `variant` | `filled \| outlined` | `outlined` | 输入字段外观 |
+| `menuVariant` | `expressive \| baseline` | `expressive` | 选项面板、行形状、颜色及文字层级 |
+| `modelValue` | `string \| number \| null` | `null` | 当前选择或 Autocomplete 自由文本；未绑定时支持内部状态 |
+| `open` | `boolean` | 内部状态 | 可用 `v-model:open` 控制；受控模式下父级决定请求是否接受 |
+| `label`、`placeholder` | `string` | `''` | 标签和占位文本 |
+| `supportingText` | `string` | `''` | 字段下方辅助说明 |
+| `error`、`errorText` | `boolean`、`string` | `false`、`''` | 业务错误状态和错误说明 |
+| `disabled`、`required` | `boolean` | `false` | 禁用和必填状态；祖先 disabled fieldset 按原生规则生效 |
+| `name`、`form` | `string` | 未设置 | 以唯一隐藏值提交模型值，并关联外部表单；模型为 `null` 时不提交该字段 |
+| `fullWidth` | `boolean` | `false` | 让字段填满容器宽度 |
+| `filterMode` | `local \| external` | `local` | 仅 Autocomplete；选择本地过滤或由业务更新 options |
+| `loading` | `boolean` | `false` | 仅 Autocomplete；显示加载状态并设置 listbox 的 `aria-busy` |
+| `loadingText`、`noOptionsText` | `string` | `正在加载…`、`没有匹配项` | 仅 Autocomplete 的状态文案 |
+
+两款均发出 `update:modelValue`、`update:open` 与 `select(option)`；Autocomplete 另发出 `search(query)`。`option` 插槽接收 `{ option, selected, active }`，只用于呈现选项内容；不要在 option 内放按钮、链接或其他可聚焦控件。`class`／`style` 作用于组件外层，id、ARIA、原生输入属性及事件监听器透传到实际文本输入框；`name` 只作用于提交的隐藏模型值，避免同时提交显示标签。
+
+combobox 保持输入框焦点，以 `aria-activedescendant` 表示活动 option。两款都支持 ArrowDown／ArrowUp 浏览、Enter 提交、Escape 收起；Select 另支持 Space、Home／End 与按首字母查找，Autocomplete 保留 Home／End 编辑光标的原生行为。disabled option 会展示但不会成为活动项或被提交。Autocomplete 支持中文输入法组合输入，远端空结果与 loading 状态通过 live status 区域公布。
+
+必填通过与可见 combobox 关联的原生校验代理纳入浏览器表单校验；`FormData` 只含 `name` 对应的非 null 模型值，未选择时不创建该字段。提交时浏览器触发 invalid 后字段显示原生校验消息；表单 reset 请求恢复组件创建时的初始模型值，仍服从受控父级接纳。`form` 同时关联可见输入和模型字段。Expose 提供 `focus(options?)`、`blur()`、`open()`、`close()`、`checkValidity()`、`reportValidity()` 与 `setCustomValidity(message)`。
+
+面板以 WAI-ARIA combobox／listbox／option 语义渲染，现代浏览器支持时进入 Popover top layer，并通过 Floating UI 翻转和避让视口；局部主题仍沿 DOM 继承。选项数量适中时直接渲染全部条目，本次不提供虚拟滚动。依据 [WAI-ARIA Combobox Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/) 与 [Select-only Combobox 示例](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-select-only/)；MD3 表单字段几何沿用本库已验收的 TextField。
+
+公共类型：`MdvSelectOption`、`MdvSelectValue`、`MdvSelectVariant`、`MdvSelectMenuVariant`、`MdvSelectProps`、`MdvAutocompleteProps`、`MdvAutocompleteFilterMode`、`MdvSelectOptionSlotProps`。已提供单元与 hydration 测试及 playground；用户确认全部项目指令通过，当前约定范围已验收，包含两款下拉外观和选中后的退出动画修订。
 
 ## MdvCheckbox
 
@@ -1898,7 +1981,7 @@ class 和普通 style 作用于可见容器，id、dir、lang、ARIA、data 和�
 
 ## MdvMenu
 
-菜单已完成当前约定范围的项目检查与用户验收。提供普通菜单 `MdvMenu`、右键入口 `MdvContextMenu`、条目 `MdvMenuItem` 与分组 `MdvMenuGroup`；分隔线复用 `MdvDivider`。用于临时操作和少量选择，表单选项请使用后续独立的 Select／Autocomplete。
+菜单已完成当前约定范围的项目检查与用户验收。提供普通菜单 `MdvMenu`、右键入口 `MdvContextMenu`、条目 `MdvMenuItem` 与分组 `MdvMenuGroup`；分隔线复用 `MdvDivider`。用于临时操作和少量选择，表单选项请使用独立的 `MdvSelect`／`MdvAutocomplete`。
 
 ```vue
 <script setup lang="ts">

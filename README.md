@@ -148,6 +148,10 @@ pnpm add @mdv-ui/mdv@0.1.0
 
 [MdvIcon](./COMPONENTS.md#mdvicon) 是配套的本地 SVG 图标渲染器，不额外计为官方组件家族。
 
+### MDV 扩展表单控件
+
+固定选项单选与可输入建议另提供 [MdvSelect 和 MdvAutocomplete](./COMPONENTS.md#mdvselect-与-mdvautocomplete)；二者使用独立的 listbox 选项弹层，不属于官方 36 家族覆盖统计。
+
 ### 首版支持边界
 
 - 普通 MdvButton 提供操作按钮，尚无独立 toggle 选择模型；按压时保持当前圆角是本项目的交互约定。带选择语义的操作可使用 MdvIconButton 或 MdvButtonGroup。

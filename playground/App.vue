@@ -5,6 +5,7 @@ import ButtonPlayground from './ButtonPlayground.vue'
 import IconButtonPlayground from './IconButtonPlayground.vue'
 import IconPlayground from './IconPlayground.vue'
 import TextFieldPlayground from './TextFieldPlayground.vue'
+import SelectPlayground from './SelectPlayground.vue'
 import CheckboxPlayground from './CheckboxPlayground.vue'
 import RadioPlayground from './RadioPlayground.vue'
 import SwitchPlayground from './SwitchPlayground.vue'
@@ -65,6 +66,12 @@ const pages = [
     label: 'TextField 文本框',
     description: '对照填充与描边外观、输入状态、图标、校验和原生表单行为。',
     component: TextFieldPlayground,
+  },
+  {
+    id: 'select',
+    label: 'Select 与 Autocomplete',
+    description: '检查固定选项、两种列表样式、输入筛选、远端搜索和表单行为。',
+    component: SelectPlayground,
   },
   {
     id: 'checkbox',

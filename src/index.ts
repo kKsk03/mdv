@@ -2,6 +2,8 @@ export { default as MdvButton } from './components/MdvButton.vue'
 export { default as MdvIconButton } from './components/MdvIconButton.vue'
 export { default as MdvIcon } from './components/MdvIcon.vue'
 export { default as MdvTextField } from './components/MdvTextField.vue'
+export { default as MdvSelect } from './components/MdvSelect.vue'
+export { default as MdvAutocomplete } from './components/MdvAutocomplete.vue'
 export { default as MdvCheckbox } from './components/MdvCheckbox.vue'
 export { default as MdvRadio } from './components/MdvRadio.vue'
 export { default as MdvRadioGroup } from './components/MdvRadioGroup.vue'
@@ -291,6 +293,17 @@ export type {
   MdvTextFieldValue,
   MdvTextFieldVariant,
 } from './components/text-field.types'
+export type {
+  MdvAutocompleteFilterMode,
+  MdvAutocompleteProps,
+  MdvSelectBaseProps,
+  MdvSelectMenuVariant,
+  MdvSelectOption,
+  MdvSelectOptionSlotProps,
+  MdvSelectProps,
+  MdvSelectValue,
+  MdvSelectVariant,
+} from './components/select.types'
 export type { MdvIconData, MdvIconSize } from './components/icon.types'
 export type {
   MdvButtonColor,
