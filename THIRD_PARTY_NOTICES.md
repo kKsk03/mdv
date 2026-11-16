@@ -1,223 +1,223 @@
-# 第三方来源与许可
+# Third-party sources and licenses
 
-本文件随 MDV 源码和 npm 包提供，记录当前实际使用的第三方令牌、算法、字体、图标和渲染器。
+This file accompanies the MDV source and npm package and records the third-party tokens, algorithms, fonts, icons, and renderers currently used.
 
-## Material 3 Loading Indicator 规格与动效参考
+## Material 3 Loading Indicator specifications and motion references
 
-- 官方依据：[Specs](https://m3.material.io/components/loading-indicator/specs)、[Guidelines](https://m3.material.io/components/loading-indicator/guidelines)、[Accessibility](https://m3.material.io/components/loading-indicator/accessibility)。
-- 形状采样与弹簧／旋转参考：[m3ui-vue MLoadingIndicator.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MLoadingIndicator.vue)，Copyright (c) 2026 Fadel，MIT；实际研究使用本地源码副本。
-- 使用位置：`src/components/loading-indicator-geometry.ts` 的七形状解析轮廓、共同角度采样、Catmull-Rom 转三次 Bézier 的变形与弹簧／旋转思路。该文件保留来源和版权；MIT 许可全文见下文“m3ui-vue Tabs 弹簧算法”。
+- Official references: [Specs](https://m3.material.io/components/loading-indicator/specs), [Guidelines](https://m3.material.io/components/loading-indicator/guidelines), and [Accessibility](https://m3.material.io/components/loading-indicator/accessibility).
+- Shape sampling, spring, and rotation reference: [m3ui-vue MLoadingIndicator.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MLoadingIndicator.vue), Copyright (c) 2026 Fadel, MIT. A local source copy was used for the implementation study.
+- Used in: `src/components/loading-indicator-geometry.ts` for the seven analytic shape contours, shared angular sampling, Catmull-Rom to cubic Bezier morphing, and spring/rotation approach. The file retains source and copyright notices. The full MIT license appears below under "m3ui-vue Tabs spring algorithm".
 
-MDV 将轮廓归一化到共同圆形边界，对弹簧每段末值归一以保证循环连续，并约束控制点以避免旋转／过冲裁切。650ms 变形间隔、4666ms 整体旋转、0.6 阻尼与 200 刚度来自参考实现，不作为官网独立动效令牌或官方顶点数据的精确移植声明。组件的 48／38 尺寸、Default／Contained 颜色与 progressbar 语义按官网处理；SSR、暂停、静态 reduced-motion、可见性与 KeepAlive 生命周期、主题和属性透传由 MDV 实现，没有引入第三方运行时依赖。
+MDV normalizes contours to a shared circular boundary, normalizes each spring segment's endpoint for a continuous cycle, and constrains control points to prevent clipping during rotation or overshoot. The 650ms morph interval, 4666ms overall rotation, 0.6 damping, and 200 stiffness come from the reference implementation; they are not presented as official component motion tokens or an exact port of official vertex data. The component follows the official 48/38 dimensions, Default/Contained colors, and progressbar semantics. MDV implements SSR, pausing, static reduced motion, visibility and KeepAlive lifecycle handling, themes, and attribute forwarding without adding a third-party runtime dependency.
 
-## Material 3 Carousel 规格、关键线与滚动参考
+## Material 3 Carousel specifications, keylines, and scrolling references
 
-- 官方依据：[Specs](https://m3.material.io/components/carousel/specs)、[Guidelines](https://m3.material.io/components/carousel/guidelines)、[Accessibility](https://m3.material.io/components/carousel/accessibility)。
-- 关键线来源：[m3ui-vue _carouselStrategy.ts](https://github.com/SrWither/m3ui-vue/blob/main/src/composables/_carouselStrategy.ts)，TypeScript 移植版权 Copyright (c) 2026 Fadel，MIT；其文件注明部分来自 The Android Open Source Project，Apache License 2.0。
-- 上游算法：AndroidX Compose Material3 Carousel 的 Arrangement.kt、KeylineList.kt、Keylines.kt、Strategy.kt 和 KeylineSnapPosition.kt。
-- 手势／惯性与弹簧参考：[MCarousel.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MCarousel.vue)，Copyright (c) 2026 Fadel，MIT。
-- 使用位置：`src/components/carousel-keylines.ts` 的排列、关键线插值、首尾移位与吸附位置；`carousel-layout.ts` 为四种官方形态统一接入关键线；`MdvCarousel.vue` 与 `carousel-motion.ts` 的连续跟手、轴判断、速度采样、惯性、焦点层级和标签渐显思路。
+- Official references: [Specs](https://m3.material.io/components/carousel/specs), [Guidelines](https://m3.material.io/components/carousel/guidelines), and [Accessibility](https://m3.material.io/components/carousel/accessibility).
+- Keyline source: [m3ui-vue _carouselStrategy.ts](https://github.com/SrWither/m3ui-vue/blob/main/src/composables/_carouselStrategy.ts). The TypeScript port is Copyright (c) 2026 Fadel, MIT; its file also attributes portions to The Android Open Source Project under the Apache License 2.0.
+- Upstream algorithms: Arrangement.kt, KeylineList.kt, Keylines.kt, Strategy.kt, and KeylineSnapPosition.kt from AndroidX Compose Material3 Carousel.
+- Gesture, inertia, and spring reference: [MCarousel.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MCarousel.vue), Copyright (c) 2026 Fadel, MIT.
+- Used in: `src/components/carousel-keylines.ts` for arrangements, keyline interpolation, edge shifting, and snap positions; `carousel-layout.ts` for applying keylines to the four official configurations; and `MdvCarousel.vue` and `carousel-motion.ts` for continuous dragging, axis detection, velocity sampling, inertia, focus layers, and label fading.
 
-MDV 增加居中布局、稳定 key 与受控请求、独立焦点、可变宽高比 Uncontained、reduced-motion 的稳定尺寸呈现、SSR／hydration 和资源清理，未引入第三方运行时依赖。186px 首选宽度、205px 默认高度及 400／40 弹簧、4 的惯性系数是参考实现或本库的默认设置，不冒称官网 Carousel 独立令牌。MIT 完整许可见下文“m3ui-vue Tabs 弹簧算法”，Apache License 2.0 完整原文见文末；源文件保留相关版权和来源说明。
+MDV adds centered layouts, stable keys and controlled requests, independent focus, variable aspect ratios for Uncontained, stable dimensions under reduced motion, SSR/hydration, and resource cleanup without adding a third-party runtime dependency. The preferred width of 186px, default height of 205px, spring settings of 400/40, and inertia coefficient of 4 are defaults from the reference implementation or MDV, not official Carousel-specific tokens. The full MIT license appears below under "m3ui-vue Tabs spring algorithm", and the full Apache License 2.0 appears near the end of this file. Source files retain the relevant copyright and attribution notices.
 
-## Material 3 Time Picker 规格
+## Material 3 Time Picker specifications
 
-- 官方规范：[Specs](https://m3.material.io/components/time-pickers/specs)、[Guidelines](https://m3.material.io/components/time-pickers/guidelines)、[Accessibility](https://m3.material.io/components/time-pickers/accessibility)。
-- 使用位置：MdvTimePicker、time-picker-time 与 time-picker.css 的拨盘／输入几何、颜色、小时制及基本交互；time-picker-motion 复用下述 Material Web 普通 Dialog 时序，增加 MDV 的完整内容裁切。
+- Official specifications: [Specs](https://m3.material.io/components/time-pickers/specs), [Guidelines](https://m3.material.io/components/time-pickers/guidelines), and [Accessibility](https://m3.material.io/components/time-pickers/accessibility).
+- Used in: MdvTimePicker, time-picker-time, and time-picker.css for dial/input geometry, colors, hour formats, and basic interactions. time-picker-motion reuses the standard Material Web Dialog timing described below, with MDV's full-content clipping.
 
-模型、分钟约束、本地化解析、拨盘坐标、Vue 草稿／表单生命周期与 Web slider 键盘由 MDV 自行实现，未复制第三方 Time Picker 源码，未新增运行时依赖。auto 按指针能力、视口和内容空间回退输入是本库的适配决定。24 小时双圈依据 Specs 图示的 00–11 外圈与 12–23 内圈，未采用 Guidelines 正文中与示意图不一致的奇偶分圈表述。
+MDV independently implements the model, minute constraints, localized parsing, dial coordinates, Vue draft/form lifecycles, and Web slider keyboard behavior. No third-party Time Picker source was copied and no runtime dependency was added. The auto mode's input fallback based on pointer capabilities, viewport, and available content space is an MDV adaptation decision. The 24-hour double dial follows the Specs illustration, with 00–11 on the outer ring and 12–23 on the inner ring, rather than the inconsistent odd/even ring description in the Guidelines text.
 
-## Material 3 Date Picker 规格与 Web 键盘参考
+## Material 3 Date Picker specifications and Web keyboard reference
 
-- 来源：[Specs](https://m3.material.io/components/date-pickers/specs)、[Guidelines](https://m3.material.io/components/date-pickers/guidelines)、[Accessibility](https://m3.material.io/components/date-pickers/accessibility)，Copyright Google LLC。
-- Web 日期网格交叉参考：[WAI-ARIA APG Date Picker Dialog](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/)。
-- 使用位置：`src/styles/date-picker.css`、日期选择器组件及其内部日历的尺寸、颜色角色、状态和键盘操作。
+- Sources: [Specs](https://m3.material.io/components/date-pickers/specs), [Guidelines](https://m3.material.io/components/date-pickers/guidelines), and [Accessibility](https://m3.material.io/components/date-pickers/accessibility), Copyright Google LLC.
+- Web calendar-grid cross-reference: [WAI-ARIA APG Date Picker Dialog](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/).
+- Used in: `src/styles/date-picker.css`, the date picker components, and their internal calendars for dimensions, color roles, states, and keyboard operation.
 
-Docked 图示为 360×460dp，Modal 为 360×524dp、28dp 圆角与 6dp elevation；40dp 日期表面和 72×36dp 年份表面置于至少 48dp 的交互目标内。高度随周数、字号与窗口可滚动，图示高度不作为裁切上限。范围中段采用 secondary-container，端点采用 primary；hover 8%，focus／pressed 10%。操作文案与响应阈值属于 MDV 的 API 选择。
+The Docked illustration measures 360×460dp; Modal measures 360×524dp with 28dp corners and 6dp elevation. The 40dp date surfaces and 72×36dp year surfaces sit inside interaction targets of at least 48dp. Height and scrolling accommodate the number of weeks, text size, and viewport; illustrated heights are not clipping limits. Range interiors use secondary-container and endpoints use primary, with hover at 8% and focus/pressed at 10%. Action labels and responsive thresholds are MDV API choices.
 
-输入框与日历图标按 Accessibility 分别可达，聚焦输入不自动打开。官网键盘表中的 Home／End 与 Enter 描述存在缺漏，MDV 结合 APG 实现方向键、周首末、翻月／翻年和 roving Tab 停点。日期运算、文本解析、草稿、表单与 Vue 生命周期由 MDV 自行实现；未复制第三方 Date Picker 源码，没有新增日期运行时依赖。
+The input and calendar icon are separately reachable as described in Accessibility; focusing the input does not open the picker automatically. The official keyboard table has gaps in its Home/End and Enter descriptions, so MDV also follows APG for arrow keys, week boundaries, month/year navigation, and roving Tab stops. MDV independently implements date arithmetic, text parsing, drafts, forms, and Vue lifecycles. No third-party Date Picker source was copied and no date runtime dependency was added.
 
-## Material 3 Split Button 规格与动效参考
+## Material 3 Split Button specifications and motion references
 
-- 来源：https://m3.material.io/components/split-button/specs 、Guidelines／Accessibility 及 `TOKEN_TABLE.624e8f2da4007fc8`，官网内容版本 `2026-10-13_06-10-19`。
-- 版权：Copyright Google LLC。
-- 使用位置：`src/components/MdvSplitButton.vue`、`split-button-motion.ts`、`src/styles/split-button.css` 的五档尺寸、间距、内外角、光学偏移、状态与箭头动效。
+- Sources: https://m3.material.io/components/split-button/specs, Guidelines/Accessibility, and `TOKEN_TABLE.624e8f2da4007fc8`, official content version `2026-10-13_06-10-19`.
+- Copyright: Copyright Google LLC.
+- Used in: `src/components/MdvSplitButton.vue`, `split-button-motion.ts`, and `src/styles/split-button.css` for the five sizes, spacing, inner/outer corners, optical offsets, states, and arrow motion.
 
-五档高度 32／40／56／96／136px；尾表面宽 48／48／56／96／136px；主起始与结束留白分别为 12／16／24／48／64px 和 10／12／24／48／64px。默认内角 4／4／4／8／12px，交互内角 8／12／12／20／20px；展开尾部全圆，箭头偏移归零并向内旋转。Guidelines 明确要求箭头使用 Standard motion scheme，MDV 采用 Standard FastSpatial dampingRatio 0.9／stiffness 1400，沿用既有连续积分与保速反向思路；该方案不使用 Button Group 的 Expressive 参数。
+The five heights are 32/40/56/96/136px, with trailing surface widths of 48/48/56/96/136px. Main-action start and end padding are 12/16/24/48/64px and 10/12/24/48/64px respectively. Default inner corners are 4/4/4/8/12px, increasing to 8/12/12/20/20px during interaction. The expanded trailing surface becomes fully rounded, the arrow offset returns to zero, and the arrow rotates inward. The Guidelines explicitly require the Standard motion scheme for the arrow. MDV uses Standard FastSpatial dampingRatio 0.9/stiffness 1400 with its existing continuous integration and velocity-preserving reversal approach, rather than Button Group's Expressive parameters.
 
-主操作和尾入口的分工参考 [MSplitButton.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MSplitButton.vue)（Copyright (c) 2026 Fadel，MIT，完整许可见下文 m3ui-vue Tabs 弹簧算法一节）。MDV 按官网测量修正参考实现的 XS／S 尾宽、非对称留白、光学校正和交互内角，自行组织原生语义、ref 转交、独立反馈与生命周期；复用 MDV Menu／Floating UI，没有引入第三方自建菜单、路由或新依赖。
+The separation between the main action and trailing entry follows [MSplitButton.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MSplitButton.vue), Copyright (c) 2026 Fadel, MIT; the full license appears below under "m3ui-vue Tabs spring algorithm". MDV corrects the reference implementation's XS/S trailing widths, asymmetric padding, optical adjustments, and interaction corners against official measurements. It implements native semantics, ref forwarding, independent feedback, and lifecycles, reusing MDV Menu and Floating UI without adding a third-party custom menu, router, or new dependency.
 
-## Material 3 Button Group 规格与动效参考
+## Material 3 Button Group specifications and motion references
 
-- 来源：https://m3.material.io/components/button-groups/specs 、Overview／Guidelines／Accessibility 及 `TOKEN_TABLE.082d7fd6e058b011`，官网内容版本 `2026-10-13_06-10-19`。
-- 版权：Copyright Google LLC。
-- 使用位置：`src/styles/button-group.css`、`src/components/button-group-motion.ts` 与两款按钮组组件的尺寸、间距、形状、颜色及键盘规则。
+- Sources: https://m3.material.io/components/button-groups/specs, Overview/Guidelines/Accessibility, and `TOKEN_TABLE.082d7fd6e058b011`, official content version `2026-10-13_06-10-19`.
+- Copyright: Copyright Google LLC.
+- Used in: `src/styles/button-group.css`, `src/components/button-group-motion.ts`, and both button group components for dimensions, spacing, shapes, colors, and keyboard behavior.
 
-Standard 五档高度采用 32／40／56／96／136px、间距 18／12／8／8／8px，按压增加目标自然宽 15%，邻项以安全内容宽度限制让位；Connected 间距 2px。Connected XS 的测量图和正文均为 4px 内角，令牌却引用 small 的 8px，MDV 采用图文一致的 4px；Square 外角也按图文核对，不把 full token 套到所有方角。
+Standard uses five heights of 32/40/56/96/136px and gaps of 18/12/8/8/8px. Pressing increases the target's natural width by 15%, with adjacent items yielding space within safe content-width limits. Connected uses a 2px gap. Connected XS measurements and prose both specify 4px inner corners, while the token references the 8px small shape; MDV follows the consistent 4px measurement and prose. Square outer corners are also checked against the measurements and prose rather than applying the full token to every square shape.
 
-自然宽度、相邻空间分配与连续弹簧的思路参考 [MButtonGroup.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MButtonGroup.vue)、同仓库 `MToggleButton.vue` 和 `src/composables/motion.ts`（Copyright (c) 2026 Fadel，MIT，完整许可见下文 m3ui-vue Tabs 弹簧算法一节）。几何使用当前 MDV 动效体系的 Expressive FastSpatial dampingRatio 0.6／stiffness 800，快速反向保留速度；组的 Standard 变体与 Standard motion scheme 不混为一谈。未沿用参考库的过时尺寸、统一内角、JSON 深比较或 options-only 限制；原生节点、受控选择、表单、焦点和生命周期由 MDV 自行实现，没有引入参考库或新依赖。
+Natural widths, adjacent-space allocation, and continuous springs follow [MButtonGroup.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MButtonGroup.vue), `MToggleButton.vue`, and `src/composables/motion.ts` in the same repository, Copyright (c) 2026 Fadel, MIT; the full license appears below under "m3ui-vue Tabs spring algorithm". Geometry uses MDV's Expressive FastSpatial dampingRatio 0.6/stiffness 800 and preserves velocity during rapid reversals. The Standard group variant is distinct from the Standard motion scheme. MDV does not retain the reference library's outdated dimensions, uniform inner corners, JSON deep comparisons, or options-only restriction. Native nodes, controlled selection, forms, focus, and lifecycles are independently implemented without introducing the reference library or a new dependency.
 
-## Material 3 FAB／Extended FAB 规格与动效参考
+## Material 3 FAB / Extended FAB specifications and motion references
 
-- 来源：https://m3.material.io/components/floating-action-button/specs 、https://m3.material.io/components/extended-fab/specs 以及 Toolbar 配套 FAB 令牌。
-- 版权：Copyright Google LLC。
-- 使用位置：`src/styles/fab.css`、`src/components/fab.types.ts`、两款 FAB 组件及 Floating Toolbar 的配套布局。
+- Sources: https://m3.material.io/components/floating-action-button/specs, https://m3.material.io/components/extended-fab/specs, and the Toolbar's accompanying FAB tokens.
+- Copyright: Copyright Google LLC.
+- Used in: `src/styles/fab.css`, `src/components/fab.types.ts`, both FAB components, and Floating Toolbar's accompanying layout.
 
-尺寸、图标、间距、形状、颜色与状态层按官网当前内容版本 `2026-10-13_06-10-19` 的两份 TOKEN_TABLE 及测量图核对，旧版 40px Small／Surface 按项目选择保留。Large 图标为 36px，Standard 配套 FAB 为 secondary-container；未照搬参考库在这两处的不同数值。独立 FAB 的层级为默认 3／hover 4，Toolbar 配套为 1→2；CSS 阴影采用贴近官方示例的双层柔光映射。
+Dimensions, icons, spacing, shapes, colors, and state layers were checked against both TOKEN_TABLE datasets and measurements in official content version `2026-10-13_06-10-19`. The legacy 40px Small/Surface form is retained by project choice. Large icons are 36px, and the Standard accompanying FAB uses secondary-container, rather than the reference library's different values for these two cases. Standalone FAB elevation is 3 by default and 4 on hover; the Toolbar's accompanying FAB uses 1→2. CSS shadows use two soft layers mapped to the official examples.
 
-扩缩、标签淡化与 Toolbar 配套布局的思路参考 [MFab.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MFab.vue)、同仓库 `_MToolbarFab.vue`、`MToolbar.vue` 和 `src/composables/motion.ts`（Copyright (c) 2026 Fadel，MIT，完整许可见下文 m3ui-vue Tabs 弹簧算法一节）。`fab-motion.ts` 的几何采用 FastSpatial dampingRatio 0.6／stiffness 800，透明度采用 FastEffects dampingRatio 1／stiffness 3800；40px 滚动阈值为交互选择，不称为官网 FAB 令牌。MDV 自行组织原生按钮／链接、受控状态、单份插槽测量、焦点、SSR 和生命周期，没有引入参考库、菜单、路由或其它依赖。
+Expansion, label fading, and the Toolbar's accompanying layout follow [MFab.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MFab.vue), `_MToolbarFab.vue`, `MToolbar.vue`, and `src/composables/motion.ts` in the same repository, Copyright (c) 2026 Fadel, MIT; the full license appears below under "m3ui-vue Tabs spring algorithm". In `fab-motion.ts`, geometry uses FastSpatial dampingRatio 0.6/stiffness 800, while opacity uses FastEffects dampingRatio 1/stiffness 3800. The 40px scroll threshold is an interaction choice, not an official FAB token. MDV implements native buttons/links, controlled state, single-instance slot measurement, focus, SSR, and lifecycles without adding the reference library, menus, routing, or other dependencies.
 
-## Material 3 Toolbar 规格与令牌
+## Material 3 Toolbar specifications and tokens
 
-- 来源：https://m3.material.io/components/toolbars/specs 、overview、guidelines、accessibility 的当前 Docked／Floating。
-- 版权：Copyright Google LLC。
-- 使用位置：`src/styles/toolbar.css` 的尺寸、间距、形状、颜色和 elevation；`src/components/MdvToolbar.vue` 的布局与键盘语义。
+- Sources: the current Docked/Floating specifications at https://m3.material.io/components/toolbars/specs, overview, guidelines, and accessibility.
+- Copyright: Copyright Google LLC.
+- Used in: `src/styles/toolbar.css` for dimensions, spacing, shapes, colors, and elevation; `src/components/MdvToolbar.vue` for layout and keyboard semantics.
 
-官网 Floating Toolbar 的 elevation 令牌解析为 level 3／6dp；该空间层级不直接规定 CSS box-shadow。MDV 根据官方示例采用双层阴影，柔光层为 `0 4px 8px 0`，收去通用 CSS level 3 的 3px 外扩，颜色保持主题 shadow 角色。
+The official Floating Toolbar elevation token resolves to level 3/6dp; that spatial level does not directly prescribe a CSS box-shadow. MDV follows official examples with two shadow layers, using `0 4px 8px 0` for the soft layer and removing the generic CSS level 3 shadow's 3px spread while retaining the theme's shadow color role.
 
-收合分组及连续弹簧的思路参考 [MToolbar.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MToolbar.vue) 与同仓库 `src/composables/motion.ts`（Copyright (c) 2026 Fadel，MIT，完整许可见下文 m3ui-vue Tabs 弹簧算法一节）。`toolbar-motion.ts` 使用 Expressive FastSpatial 的 dampingRatio 0.6／stiffness 800，小步积分并保留反转速度；40px 同方向滚动阈值同样为参考交互选择，不声称是官网 Toolbar 独立令牌。MDV 自行组织 Vue 生命周期、受控状态、焦点与滚动监听，不引入参考库或额外依赖。
+Collapsing groups and continuous springs follow [MToolbar.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MToolbar.vue) and `src/composables/motion.ts` in the same repository, Copyright (c) 2026 Fadel, MIT; the full license appears below under "m3ui-vue Tabs spring algorithm". `toolbar-motion.ts` uses Expressive FastSpatial dampingRatio 0.6/stiffness 800, small integration steps, and velocity-preserving reversals. The 40px same-direction scroll threshold is also a reference interaction choice, not an official Toolbar-specific token. MDV implements Vue lifecycles, controlled state, focus, and scroll listeners without introducing the reference library or an additional dependency.
 
-## Material 3 Search 规格与令牌
+## Material 3 Search specifications and tokens
 
-- 规格来源：https://m3.material.io/components/search/specs 、overview、guidelines、accessibility，以及 https://m3.material.io/components/app-bars/specs 的 Search app bar。
-- 版权：Copyright Google LLC。
-- 使用位置：`src/styles/search.css` 的尺寸、形状、颜色角色、状态和排版；`src/components/search-motion.ts` 的 Contained 弹簧参数 damping 0.9／stiffness 1400。
+- Specification sources: https://m3.material.io/components/search/specs, overview, guidelines, and accessibility, plus the Search app bar at https://m3.material.io/components/app-bars/specs.
+- Copyright: Copyright Google LLC.
+- Used in: `src/styles/search.css` for dimensions, shapes, color roles, states, and typography; `src/components/search-motion.ts` for Contained spring parameters of damping 0.9/stiffness 1400.
 
-MDV 自行实现 Vue 输入、组合、模态生命周期、定位和动效采样，复用现有 dialog、App Bar、图标和 @floating-ui/dom；未复制 m3ui 的 Search 源码或引入额外 Search 运行时。已只读比较 m3ui 的组件分工，不将其旧版 Docked 形态和尺寸当作当前官网数值。官网 Overview 的默认无阴影与 elevation token 的表面层级分别处理，默认不绘制额外阴影。
+MDV independently implements Vue input, composition, modal lifecycles, positioning, and motion sampling, reusing its existing dialog, App Bar, icons, and @floating-ui/dom. It does not copy m3ui's Search source or add a Search runtime. The component responsibilities were compared with m3ui, but its legacy Docked form and dimensions are not treated as current official values. The Overview's default shadow-free appearance is handled separately from the elevation token's surface level; no extra shadow is drawn by default.
 
-## Material Web 设计令牌
+## Material Web design tokens
 
-- 来源：https://github.com/material-components/material-web/tree/main/tokens/versions/v0_192
-- 版权：Copyright 2023 Google LLC
-- 许可：Apache License 2.0
-- 使用位置：`src/styles/tokens.css`、`src/styles/typography.css`。
+- Source: https://github.com/material-components/material-web/tree/main/tokens/versions/v0_192
+- Copyright: Copyright 2023 Google LLC
+- License: Apache License 2.0
+- Used in: `src/styles/tokens.css` and `src/styles/typography.css`.
 
-MDV 将 v0.192 设计令牌中的默认颜色、排版、圆角和动效数值整理为自己的 CSS 变量与 Tailwind 映射，并增加主题作用域、动态配色、阴影和减少动态效果规则；未将 Material Web 组件纳入运行时依赖。
+MDV adapts the default colors, typography, corner radii, and motion values from the v0.192 design tokens into its own CSS variables and Tailwind mappings, adding theme scopes, dynamic color, shadows, and reduced-motion rules. Material Web components are not runtime dependencies.
 
-默认浅色 `on-primary-container` 按现行 Material 3 Loading Indicator 规格与 Material Color Utilities 的标准对比度角色更新为 tone 30（`#4f378b`），替代旧版 tone 10；动态配色仍由 Material Color Utilities 生成。
+The default light `on-primary-container` role is updated to tone 30 (`#4f378b`) from the older tone 10, following the current Material 3 Loading Indicator specification and Material Color Utilities' standard-contrast role. Dynamic schemes are still generated by Material Color Utilities.
 
-## Material 3 图标按钮规格与令牌
+## Material 3 Icon Button specifications and tokens
 
-- 规格来源：https://m3.material.io/components/icon-buttons/specs
-- 令牌交叉核对：https://github.com/androidx/androidx/tree/androidx-main/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens
-- 令牌版权：Copyright 2022 The Android Open Source Project
-- 令牌许可：Apache License 2.0
-- 使用位置：`src/styles/styles.css` 的图标按钮尺寸、宽度、圆角、颜色角色与状态透明度。
+- Specification source: https://m3.material.io/components/icon-buttons/specs
+- Token cross-reference: https://github.com/androidx/androidx/tree/androidx-main/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens
+- Token copyright: Copyright 2022 The Android Open Source Project
+- Token license: Apache License 2.0
+- Used in: `src/styles/styles.css` for Icon Button dimensions, widths, corner radii, color roles, and state opacity.
 
-MDV 按现行官方规格整理 CSS 数值并用 AndroidX 的尺寸／颜色令牌核对；未引入 Compose 实现或依赖。按压保持圆角不变是 MDV 的交互选择。
+MDV derives CSS values from the current official specification and cross-checks AndroidX dimension/color tokens without introducing a Compose implementation or dependency. Keeping corners unchanged while pressed is an MDV interaction choice.
 
-## Material 3 文本框规格与令牌
+## Material 3 Text Field specifications and tokens
 
-- 规格来源：https://m3.material.io/components/text-fields/specs
-- 令牌与行为交叉核对：https://github.com/material-components/material-web/tree/main/textfield 及其 `tokens/versions/v0_192`、`field` 目录。
-- 令牌版权：Copyright 2023 Google LLC
-- 令牌许可：Apache License 2.0
-- 使用位置：`src/styles/text-field.css` 的标准尺寸、排版、颜色角色、形状和状态数值。
+- Specification source: https://m3.material.io/components/text-fields/specs
+- Token and behavior cross-reference: https://github.com/material-components/material-web/tree/main/textfield and its `tokens/versions/v0_192` and `field` directories.
+- Token copyright: Copyright 2023 Google LLC
+- Token license: Apache License 2.0
+- Used in: `src/styles/text-field.css` for standard dimensions, typography, color roles, shapes, and state values.
 
-MDV 用 Vue 与原生 input／textarea 实现自己的标签布局、描边缺口、值绑定和表单行为；未引入 Material Web 运行时。聚焦指示线按现行官网的 3dp 令牌实现，不沿用旧版 2dp 数值。
+MDV uses Vue and native input/textarea elements for its own label layout, outline notch, value binding, and form behavior without introducing the Material Web runtime. The focus indicator follows the current official 3dp token rather than the older 2dp value.
 
-## Material 3 复选框规格、令牌与状态标记
+## Material 3 Checkbox specifications, tokens, and state marks
 
-- 规格来源：https://m3.material.io/components/checkbox/specs
-- 令牌与动画依据：https://github.com/material-components/material-web/tree/main/tokens/versions/v0_192 及 `checkbox/internal/_checkbox.scss`。
-- 版权：Copyright 2022, 2023 Google LLC
-- 许可：Apache License 2.0
-- 使用位置：`src/styles/checkbox.css` 的尺寸、颜色角色、状态透明度、动效及两段状态标记的几何。
+- Specification source: https://m3.material.io/components/checkbox/specs
+- Token and animation references: https://github.com/material-components/material-web/tree/main/tokens/versions/v0_192 and `checkbox/internal/_checkbox.scss`.
+- Copyright: Copyright 2022, 2023 Google LLC
+- License: Apache License 2.0
+- Used in: `src/styles/checkbox.css` for dimensions, color roles, state opacity, motion, and the two-segment state-mark geometry.
 
-MDV 用 Vue 与原生 checkbox 实现自己的模型、标签、辅助说明、校验和表单生命周期；勾线／横线由 CSS 状态标记表达，尺寸及动画几何依据官方实现整理。未引入 Material Web 运行时或外部图标请求。下文保留 Apache License 2.0 原文。
+MDV uses Vue and native checkboxes for its own model, labels, supporting descriptions, validation, and form lifecycles. CSS state marks render the check and horizontal line, with dimensions and animation geometry derived from the official implementation. No Material Web runtime or external icon requests are introduced. The original Apache License 2.0 text is preserved below.
 
-## Material 3 Slider 规格与令牌
+## Material 3 Slider specifications and tokens
 
-- 规格来源：https://m3.material.io/components/sliders/specs 、https://m3.material.io/components/sliders/guidelines 与 accessibility 页面。
-- 默认 XS 令牌交叉核对：https://github.com/androidx/androidx/blob/androidx-main/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/SliderTokens.kt
-- 令牌版权：Copyright 2022 The Android Open Source Project
-- 令牌许可：Apache License 2.0
-- 使用位置：`src/styles/slider.css` 的五档尺寸、颜色角色、缺口、手柄反馈与禁用状态数值。
+- Specification sources: https://m3.material.io/components/sliders/specs, https://m3.material.io/components/sliders/guidelines, and the accessibility page.
+- Default XS token cross-reference: https://github.com/androidx/androidx/blob/androidx-main/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/SliderTokens.kt
+- Token copyright: Copyright 2022 The Android Open Source Project
+- Token license: Apache License 2.0
+- Used in: `src/styles/slider.css` for the five sizes, color roles, gaps, handle feedback, and disabled-state values.
 
-MDV 根据现行官方表格与尺寸图整理 CSS 数值，采用自己的 Vue、原生 range 与指针事件实现；未引入 Compose 或其他 Slider 运行时。下文保留 Apache License 2.0 原文。
+MDV derives CSS values from the current official tables and measurements and uses its own Vue, native range, and pointer-event implementation. No Compose or other Slider runtime is introduced. The original Apache License 2.0 text is preserved below.
 
-## Material 3 Chip 规格与令牌
+## Material 3 Chip specifications and tokens
 
-- 规格来源：https://m3.material.io/components/chips/specs 、https://m3.material.io/components/chips/guidelines 与 accessibility 页面。
-- 数值依据：官网当前发布的四类 Chip 尺寸图与页面令牌表，交叉核对 Google Material Web 的 chips 目录。
-- 版权：Copyright Google LLC
-- Google Material Web 许可：Apache License 2.0
-- 使用位置：`src/styles/chip.css` 的尺寸、颜色角色、状态透明度、抬升与禁用数值。
+- Specification sources: https://m3.material.io/components/chips/specs, https://m3.material.io/components/chips/guidelines, and the accessibility page.
+- Value references: the current official measurements and token tables for the four Chip types, cross-checked against Google Material Web's chips directory.
+- Copyright: Copyright Google LLC
+- Google Material Web license: Apache License 2.0
+- Used in: `src/styles/chip.css` for dimensions, color roles, state opacity, elevation, and disabled-state values.
 
-MDV 自行实现 Vue 组件、组选择、键盘导航、独立删除操作及焦点恢复；未引入 Material Web 运行时。图形复用下述 Material Symbols 数据，下文保留 Apache License 2.0 原文。
+MDV independently implements the Vue components, group selection, keyboard navigation, independent removal actions, and focus restoration without introducing the Material Web runtime. Icons reuse the Material Symbols data described below. The original Apache License 2.0 text is preserved below.
 
-## Material 3 Segmented Button 规格与令牌
+## Material 3 Segmented Button specifications and tokens
 
-- 规格来源：https://m3.material.io/components/segmented-buttons/specs 、https://m3.material.io/components/segmented-buttons/guidelines 与 accessibility 页面。
-- 数值依据：官网传统 Segmented Button 尺寸图与 `md.comp.outlined-segmented-button` 令牌表。
-- 版权：Copyright Google LLC
-- 使用位置：`src/styles/segmented-button.css` 的尺寸、颜色角色、状态透明度、描边、密度与焦点指示器。
+- Specification sources: https://m3.material.io/components/segmented-buttons/specs, https://m3.material.io/components/segmented-buttons/guidelines, and the accessibility page.
+- Value references: the official classic Segmented Button measurements and `md.comp.outlined-segmented-button` token table.
+- Copyright: Copyright Google LLC
+- Used in: `src/styles/segmented-button.css` for dimensions, color roles, state opacity, outlines, density, and focus indicators.
 
-MDV 自行实现 Vue 组件、原生 radio／checkbox、组选择、键盘和表单生命周期；没有引入其他组件运行时。内置选中勾使用下述 Material Symbols 数据，遵循 Apache License 2.0。
+MDV independently implements the Vue components, native radio/checkbox inputs, group selection, keyboard behavior, and form lifecycles without introducing another component runtime. Built-in selection checks use the Material Symbols data described below under the Apache License 2.0.
 
-## Material 3 Card 规格与令牌
+## Material 3 Card specifications and tokens
 
-- 规格来源：https://m3.material.io/components/cards/specs 、https://m3.material.io/components/cards/guidelines 与 accessibility 页面。
-- 数值依据：官网 Elevated、Filled、Outlined Card 的尺寸图及颜色、状态层、elevation 和焦点指示器令牌表。
-- 版权：Copyright Google LLC
-- 使用位置：`src/styles/card.css` 的颜色角色、圆角、留白、状态透明度、描边与阴影。
+- Specification sources: https://m3.material.io/components/cards/specs, https://m3.material.io/components/cards/guidelines, and the accessibility page.
+- Value references: the official Elevated, Filled, and Outlined Card measurements and token tables for colors, state layers, elevation, and focus indicators.
+- Copyright: Copyright Google LLC
+- Used in: `src/styles/card.css` for color roles, corner radii, padding, state opacity, outlines, and shadows.
 
-MDV 自行实现 Vue 内容插槽、原生按钮／链接主操作、禁用与焦点管理，复用现有主题和涟漪能力；未引入其他 Card 运行时或新依赖。
+MDV independently implements Vue content slots, native button/link primary actions, disabled behavior, and focus management, reusing its existing theme and ripple capabilities without introducing another Card runtime or a new dependency.
 
-## Material 3 Divider 规格与令牌
+## Material 3 Divider specifications and tokens
 
-- 规格来源：https://m3.material.io/components/divider/specs 、https://m3.material.io/components/divider/guidelines 与 accessibility 页面。
-- 数值依据：官网 Divider 令牌表及 Full-width、Inset、Middle-inset 尺寸图，默认厚度 1dp、outline-variant 色，单端或双端 16dp 缩进。
-- 版权：Copyright Google LLC
-- 使用位置：`src/styles/divider.css` 的厚度、颜色角色与水平缩进。
+- Specification sources: https://m3.material.io/components/divider/specs, https://m3.material.io/components/divider/guidelines, and the accessibility page.
+- Value references: the official Divider token table and Full-width, Inset, and Middle-inset measurements, with default thickness of 1dp, outline-variant color, and 16dp insets at one or both ends.
+- Copyright: Copyright Google LLC
+- Used in: `src/styles/divider.css` for thickness, color roles, and horizontal insets.
 
-MDV 自行实现 Vue 组件、装饰／separator 语义与逻辑方向布局；竖向缩进是沿线条方向映射的 MDV 约定，未引入其他 Divider 运行时或新依赖。
+MDV independently implements the Vue component, decorative/separator semantics, and logical-direction layout. Mapping vertical insets along the line direction is an MDV convention. No other Divider runtime or new dependency is introduced.
 
-## Material 3 Snackbar 规格与令牌
+## Material 3 Snackbar specifications and tokens
 
-- 规格来源：https://m3.material.io/components/snackbar/specs 、https://m3.material.io/components/snackbar/guidelines 与 accessibility 页面。
-- 数值依据：官网 Snackbar 令牌表、Measurements 与 Configurations 图；双行高度按 Specs 的 68dp 处理。
-- 版权：Copyright Google LLC
-- 使用位置：`src/styles/snackbar.css` 的颜色角色、圆角、阴影、排版、尺寸和内边距。
+- Specification sources: https://m3.material.io/components/snackbar/specs, https://m3.material.io/components/snackbar/guidelines, and the accessibility page.
+- Value references: the official Snackbar token table, Measurements, and Configurations illustrations. Two-line height follows the Specs value of 68dp.
+- Copyright: Copyright Google LLC
+- Used in: `src/styles/snackbar.css` for color roles, corner radii, shadows, typography, dimensions, and padding.
 
-MDV 自行实现 Vue 组件、作用域内队列、计时、焦点和模态协调；未引入其他 Snackbar 运行时或新依赖。关闭图标使用下述 Material Symbols 数据。
+MDV independently implements the Vue components, scoped queue, timing, focus, and modal coordination without introducing another Snackbar runtime or a new dependency. The close icon uses the Material Symbols data described below.
 
-## Material 3 Bottom Sheet 规格与令牌
+## Material 3 Bottom Sheet specifications and tokens
 
-- 规格来源：https://m3.material.io/components/bottom-sheets/specs 、https://m3.material.io/components/bottom-sheets/guidelines 与 accessibility 页面。
-- 数值依据：Standard／Modal 的容器、手柄、焦点与响应式布局令牌，以及 Guidelines 的初次半屏规则。宽屏顶部留白采用表格的 56dp，记录其与测量图 72 标注的差异。
-- 版权：Copyright Google LLC
-- 使用位置：`src/styles/bottom-sheet.css` 的颜色角色、形状、阴影、手柄和布局，`src/components/use-bottom-sheet.ts` 的默认高度策略。
+- Specification sources: https://m3.material.io/components/bottom-sheets/specs, https://m3.material.io/components/bottom-sheets/guidelines, and the accessibility page.
+- Value references: Standard/Modal container, handle, focus, and responsive-layout tokens, plus the Guidelines' initial half-screen rule. Wide-screen top spacing follows the table's 56dp, noting the difference from the measurement illustration's 72 annotation.
+- Copyright: Copyright Google LLC
+- Used in: `src/styles/bottom-sheet.css` for color roles, shapes, shadows, handles, and layout; `src/components/use-bottom-sheet.ts` for the default height strategy.
 
-MDV 自行实现两款 Vue 组件、尺寸测量、手势、滚动交接及弹簧采样动效，复用既有模态栈；未引入 Sheet 运行时或新依赖。Standard 的 56px peek 默认、正文留白及动效参数属于 MDV 实现选择，不冒称官方强制值。
+MDV independently implements both Vue components, measurements, gestures, scroll handoff, and sampled spring motion, reusing its existing modal stack without introducing a Sheet runtime or new dependency. Standard's default 56px peek, content spacing, and motion parameters are MDV implementation choices rather than mandatory official values.
 
-## Material 3 Side Sheet 规格与令牌
+## Material 3 Side Sheet specifications and tokens
 
-- 规格来源：https://m3.material.io/components/side-sheets/specs 、https://m3.material.io/components/side-sheets/guidelines 与 accessibility 页面。
-- 数值依据：Standard／Modal 的容器颜色与 elevation 0／1、256dp 默认宽度与 400dp 最大宽度、分离式 16dp 留白／圆角、标题和焦点令牌，以及内部关闭入口要求。
-- 版权：Copyright Google LLC
-- 使用位置：`src/styles/side-sheet.css` 的视觉与布局，两款 Side Sheet 的语义和操作结构。
+- Specification sources: https://m3.material.io/components/side-sheets/specs, https://m3.material.io/components/side-sheets/guidelines, and the accessibility page.
+- Value references: Standard/Modal container colors and elevation 0/1, default width of 256dp and maximum width of 400dp, 16dp detached spacing/corners, title and focus tokens, and the internal close-action requirement.
+- Copyright: Copyright Google LLC
+- Used in: `src/styles/side-sheet.css` for appearance and layout, and both Side Sheet components for semantics and action structure.
 
-MDV 自行实现两款 Vue 组件、非模态布局占位、模态协调、边缘手势和横向弹簧采样动效。动效参考本地 m3ui 的 spatial／effects 分离思路，并依据 Material 参数实现，未引入其他 Sheet 运行时或依赖。外围分隔线按组件令牌 outline，记录其与颜色图 outline-variant 标注的差异。
+MDV independently implements both Vue components, non-modal layout reservation, modal coordination, edge gestures, and horizontal sampled spring motion. Motion follows the local m3ui reference's separation of spatial/effects behavior using Material parameters, without introducing another Sheet runtime or dependency. The outer divider follows the component's outline token, noting its difference from the color illustration's outline-variant annotation.
 
-## Material 3 Tabs 规格与交互
+## Material 3 Tabs specifications and interaction
 
-- 规格来源：https://m3.material.io/components/tabs/specs 、https://m3.material.io/components/tabs/guidelines 与 accessibility 页面。
-- Web 语义参考：https://www.w3.org/WAI/ARIA/apg/patterns/tabs/
-- 数值依据：Primary／Secondary 的尺寸图、颜色／排版／形状／状态令牌，以及滚动布局、图标和徽标测量。
-- Material 规格版权：Copyright Google LLC
-- 使用位置：`src/styles/tabs.css` 的 48／64px 布局、3／2px 指示线、内容留白和颜色；Tabs 三组件的关联语义与键盘模式。
+- Specification sources: https://m3.material.io/components/tabs/specs, https://m3.material.io/components/tabs/guidelines, and the accessibility page.
+- Web semantics reference: https://www.w3.org/WAI/ARIA/apg/patterns/tabs/
+- Value references: Primary/Secondary measurements, color/typography/shape/state tokens, and measurements for scrolling layouts, icons, and badges.
+- Material specification copyright: Copyright Google LLC
+- Used in: `src/styles/tabs.css` for 48/64px layouts, 3/2px indicators, content spacing, and colors; the three Tabs components for associated semantics and keyboard modes.
 
-MDV 自行实现 Vue 三组件、模型、面板生命周期、DOM 测量、滚动和触摸边界。默认逐项 Tab 是 MDV 的交互选择；`tabNavigation="active"` 提供 APG 单入口模式，不把两者混为一种规范。
+MDV independently implements the three Vue components, model, panel lifecycles, DOM measurements, scrolling, and touch boundaries. The default per-item Tab navigation is an MDV interaction choice; `tabNavigation="active"` provides APG's single-entry mode. These are distinct navigation conventions.
 
-## m3ui-vue Tabs 弹簧算法
+## m3ui-vue Tabs spring algorithm
 
-- 来源：https://github.com/SrWither/m3ui-vue/blob/main/src/components/MTabs.vue
-- 版权：Copyright (c) 2026 Fadel
-- 许可：MIT License
-- 使用位置：`src/components/tabs-indicator.ts`。
+- Source: https://github.com/SrWither/m3ui-vue/blob/main/src/components/MTabs.vue
+- Copyright: Copyright (c) 2026 Fadel
+- License: MIT License
+- Used in: `src/components/tabs-indicator.ts`.
 
-MDV 改写其独立位置／宽度弹簧和中断时保留速度的实现，沿用 dampingRatio=0.9、stiffness=700，增加小步积分、布局重测和生命周期清理；指示线几何依据上述官方规格独立测量。未引入 m3ui-vue 运行时依赖。
+MDV adapts the independent position/width springs and velocity-preserving interruption behavior, retaining dampingRatio=0.9 and stiffness=700 while adding small integration steps, layout remeasurement, and lifecycle cleanup. Indicator geometry is independently measured against the official specification above. No m3ui-vue runtime dependency is introduced.
 
 ```text
 MIT License
@@ -243,56 +243,56 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-## Material 3 Navigation Rail 规格与动效参考
+## Material 3 Navigation Rail specifications and motion references
 
-- 官方规格：https://m3.material.io/components/navigation-rail/specs
-- 布局／键盘：https://m3.material.io/components/navigation-rail/guidelines 、https://m3.material.io/components/navigation-rail/accessibility
-- Material 规格版权：Copyright Google LLC
-- 使用位置：`src/styles/navigation-rail.css`，Navigation Rail 三个公开组件及内部 `NavigationRailSurface.vue`。
+- Official specification: https://m3.material.io/components/navigation-rail/specs
+- Layout/keyboard references: https://m3.material.io/components/navigation-rail/guidelines, https://m3.material.io/components/navigation-rail/accessibility
+- Material specification copyright: Copyright Google LLC
+- Used in: `src/styles/navigation-rail.css`, the three public Navigation Rail components, and the internal `NavigationRailSurface.vue`.
 
-MDV 独立实现当前 Expressive 的 96px 收起轨、220–360px 展开范围、内容胶囊、徽标位置、状态颜色、Standard 布局与 Modal 生命周期。未沿用早期参考实现中的 80px 默认宽度、文字省略或固定高标签。
+MDV independently implements the current Expressive 96px collapsed rail, 220–360px expanded range, content capsules, badge positions, state colors, Standard layout, and Modal lifecycles. It does not retain the earlier reference implementation's 80px default width, text truncation, or fixed-height labels.
 
-动效参考 https://github.com/SrWither/m3ui-vue/blob/main/src/components/MNavigationRail.vue 的弹簧参数与内容衔接思路（Copyright (c) 2026 Fadel，MIT，完整许可见上节），在 `src/components/navigation-rail-motion.ts` 独立实现连续进度、小步积分、中断保留速度及生命周期清理。0.9／700、0.9／1400 是参考实现参数，非官网 Rail 单独列出的运动令牌。未引入参考库运行时或其他新依赖。
+Motion follows the spring parameters and content-transition approach in https://github.com/SrWither/m3ui-vue/blob/main/src/components/MNavigationRail.vue, Copyright (c) 2026 Fadel, MIT; the full license appears in the preceding section. MDV independently implements continuous progress, small integration steps, velocity-preserving interruptions, and lifecycle cleanup in `src/components/navigation-rail-motion.ts`. The 0.9/700 and 0.9/1400 parameters come from the reference implementation, not separately specified official Rail motion tokens. No reference-library runtime or other new dependency is introduced.
 
-Navigation Rail 与 Navigation Bar 的交互胶囊动画另参考同仓库的 [MNavigationBar.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MNavigationBar.vue)：200ms 的背景宽度／颜色过渡。MDV 在 `src/styles/navigation-rail.css` 与 `src/styles/navigation-bar.css` 中将动画独立于内容布局，保持图标、文字、徽标与点击区域稳定，并适用于展开轨及横排底栏。版权与 MIT 许可同上，不将该过渡参数声称为官网规定值。
+The interaction-capsule animation in Navigation Rail and Navigation Bar also follows [MNavigationBar.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MNavigationBar.vue) in the same repository: a 200ms transition of background width/color. In `src/styles/navigation-rail.css` and `src/styles/navigation-bar.css`, MDV separates that animation from content layout, keeping icons, text, badges, and hit areas stable for expanded rails and horizontal bottom bars. Copyright and MIT licensing are as stated above; this transition parameter is not presented as an official requirement.
 
-## Material 3 Navigation Drawer 规格与参考
+## Material 3 Navigation Drawer specifications and references
 
-- 官方规格／布局／无障碍：https://m3.material.io/components/navigation-drawer/specs 、https://m3.material.io/components/navigation-drawer/guidelines 、https://m3.material.io/components/navigation-drawer/accessibility
-- 导航 disclosure 语义参考：https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/examples/disclosure-navigation/
-- Material 规格版权：Copyright Google LLC。
-- 使用位置：Navigation Drawer 四个公开组件、内部 `NavigationDrawerSurface.vue` 与 `src/styles/navigation-drawer.css`。
+- Official specification/layout/accessibility: https://m3.material.io/components/navigation-drawer/specs, https://m3.material.io/components/navigation-drawer/guidelines, https://m3.material.io/components/navigation-drawer/accessibility
+- Navigation disclosure semantics reference: https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/examples/disclosure-navigation/
+- Material specification copyright: Copyright Google LLC.
+- Used in: the four public Navigation Drawer components, the internal `NavigationDrawerSurface.vue`, and `src/styles/navigation-drawer.css`.
 
-MDV 根据旧版 M3 的 Standard／Modal 规格独立实现整行胶囊、文字计数和分组导航。官方 Expressive 已推荐 Expanded Navigation Rail，本组仍按明确选择覆盖旧版 Drawer；不将旧版视觉声明为当前 Expressive Drawer。
+MDV independently implements full-row capsules, text counts, and grouped navigation from the classic M3 Standard/Modal specification. Official Expressive guidance now recommends Expanded Navigation Rail; these components deliberately cover the legacy Drawer rather than presenting its appearance as a current Expressive Drawer.
 
-布局占位与内容分离、分组及滑动思路参考 [MNavigationDrawer.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MNavigationDrawer.vue) 和 [_MDrawerItemList.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/_MDrawerItemList.vue)（Copyright (c) 2026 Fadel，MIT，完整许可见前节）。沿用 MDV 的 `side-sheet-motion.ts`，增加内部可选的布局变量与跟手遮罩；入场 0.9／700、退出 1／3800、半宽或 400px/s 滑动阈值来自参考实现，不冒称官网独立令牌。未引入参考库或新依赖。
+Separation of layout reservation and content, grouping, and swipe behavior follow [MNavigationDrawer.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MNavigationDrawer.vue) and [_MDrawerItemList.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/_MDrawerItemList.vue), Copyright (c) 2026 Fadel, MIT; the full license appears in an earlier section. MDV reuses `side-sheet-motion.ts`, adding optional internal layout variables and a gesture-following scrim. Entry parameters of 0.9/700, exit parameters of 1/3800, and the half-width or 400px/s swipe threshold come from the reference implementation rather than official component-specific tokens. No reference library or new dependency is introduced.
 
-## App Bar 规范与滚动参考
+## App Bar specifications and scrolling references
 
-尺寸、排版、形状与颜色依据 [Material Design 3 App Bar](https://m3.material.io/components/app-bars/specs) 当前 Small／Medium flexible／Large flexible。MDV 独立实现单份标题测量、整栏居中、稳定布局占位、滚动目标与生命周期管理。
+Dimensions, typography, shapes, and colors follow the current Small, Medium flexible, and Large flexible [Material Design 3 App Bar](https://m3.material.io/components/app-bars/specs) specifications. MDV independently implements single-instance title measurement, centering across the full bar, stable layout reservation, scroll targets, and lifecycle management.
 
-滚动差值、150ms 静止检测和吸附弹簧参考 [MTopAppBar.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MTopAppBar.vue) 及同仓库的 DefaultEffects（Copyright (c) 2026 Fadel，MIT，完整许可见前节）。`src/components/app-bar-scroll.ts` 使用临界阻尼／刚度 1600 和小步积分，并增加分段隐藏、键盘可见性及清理；这些数值来自参考实现，不声称为官方 App Bar 固定参数。未引入 m3ui-vue 运行时或新增依赖。
+Scroll deltas, 150ms idle detection, and the snapping spring follow [MTopAppBar.vue](https://github.com/SrWither/m3ui-vue/blob/main/src/components/MTopAppBar.vue) and DefaultEffects in the same repository, Copyright (c) 2026 Fadel, MIT; the full license appears in an earlier section. `src/components/app-bar-scroll.ts` uses critical damping, stiffness 1600, and small integration steps, adding staged hiding, keyboard visibility, and cleanup. These values come from the reference implementation rather than fixed official App Bar parameters. No m3ui-vue runtime or new dependency is introduced.
 
-连续背景配色另参考该文件对收合比例使用 FastOutLinearIn `cubic-bezier(0.4, 0, 1, 1)` 混合 surface／surface-container 的做法。MDV 独立求解该曲线，并为单行及固定模式提供距离映射；外观按用户要求统一为 default／elevated／bordered，默认无阴影，不把滚动配色与阴影开关绑定。m3ui 原实现的 Small／pinned 布尔配色、elevated／bordered 独立布尔属性不直接照搬。
+Continuous background color also follows that file's use of FastOutLinearIn `cubic-bezier(0.4, 0, 1, 1)` to blend surface/surface-container by the collapse ratio. MDV independently solves the curve and provides distance mapping for single-line and fixed modes. Appearance is unified as default/elevated/bordered by user choice, with no shadow by default and scroll-driven color independent of the shadow setting. The original m3ui implementation's boolean Small/pinned coloring and independent elevated/bordered boolean props are not copied directly.
 
-## Material Symbols 图标数据
+## Material Symbols icon data
 
-- 来源：https://github.com/google/material-design-icons
-- 数据分发：`@iconify-icons/material-symbols`，当前以 2.0.9 为资源基线；https://github.com/iconify/icon-sets
-- 版权：Copyright Google LLC
-- 许可：Apache License 2.0
-- 使用资源：Material Symbols 的本地 SVG 数据，包括 favorite、home、save、search 等预览图形及其填充／风格变体；文本框内置动作使用 close、visibility、visibility-off，Chip 使用 check、close，Segmented Button 使用 check，Menu 使用 check、chevron-right、arrow-back，Snackbar 使用 close，Bottom Sheet 使用 unfold-more，Side Sheet 使用 close、arrow-back，Toolbar 使用 more-horiz、chevron-left。
-- 使用位置：`src/components/MdvTextField.vue`、`src/components/MdvChip.vue`、`src/components/MdvSegmentedButtonItem.vue`、`src/components/MdvFullscreenDialog.vue`、`src/components/MdvMenuItem.vue`、`src/components/_MdvMenuPanel.vue`、`src/components/MdvSnackbar.vue`、`src/components/MdvBottomSheet.vue`、`src/components/MdvBottomSheetScaffold.vue`、`src/components/MdvSideSheet.vue`、`src/components/MdvSideSheetScaffold.vue`、`src/components/MdvToolbar.vue` 的内置动作、`playground/` 的组件预览、组件测试和 `COMPONENTS.md` 示例。
+- Source: https://github.com/google/material-design-icons
+- Data distribution: `@iconify-icons/material-symbols`, with 2.0.9 as the current resource baseline; https://github.com/iconify/icon-sets
+- Copyright: Copyright Google LLC
+- License: Apache License 2.0
+- Resources used: local Material Symbols SVG data, including preview icons such as favorite, home, save, and search and their fill/style variants. Built-in Text Field actions use close, visibility, and visibility-off; Chip uses check and close; Segmented Button uses check; Menu uses check, chevron-right, and arrow-back; Snackbar uses close; Bottom Sheet uses unfold-more; Side Sheet uses close and arrow-back; Toolbar uses more-horiz and chevron-left.
+- Used in: built-in actions in `src/components/MdvTextField.vue`, `src/components/MdvChip.vue`, `src/components/MdvSegmentedButtonItem.vue`, `src/components/MdvFullscreenDialog.vue`, `src/components/MdvMenuItem.vue`, `src/components/_MdvMenuPanel.vue`, `src/components/MdvSnackbar.vue`, `src/components/MdvBottomSheet.vue`, `src/components/MdvBottomSheetScaffold.vue`, `src/components/MdvSideSheet.vue`, `src/components/MdvSideSheetScaffold.vue`, and `src/components/MdvToolbar.vue`; component previews in `playground/`; component tests; and examples in `COMPONENTS.md`.
 
-Iconify 分发包提供可单独导入的图标数据，原始图形版权与许可归上游 Google。该包是本仓库的开发依赖；文本框、Chip、Segmented Button、Dialog、Menu、Snackbar、Bottom Sheet、Side Sheet 与 Toolbar 只导入各自固定图形并随组件构建，MDV 不导入或注册整套数据。使用方无需为内置动作安装图标集；自定义图标按自己的静态导入分发，并保留相应许可。
+The Iconify distribution provides individually importable icon data; the original artwork's copyright and license belong to upstream Google. This package is a development dependency of the repository. Text Field, Chip, Segmented Button, Dialog, Menu, Snackbar, Bottom Sheet, Side Sheet, and Toolbar import only their fixed icons for inclusion in component builds; MDV does not import or register the full collection. Consumers do not need to install the icon set for built-in actions. Custom icons are distributed through their own static imports with the appropriate license notices.
 
-## Iconify Vue 渲染器
+## Iconify Vue renderer
 
-- 软件包：`@iconify/vue`，当前以 5.0.5 为实现基线。
-- 来源：https://github.com/iconify/iconify
-- 版权：Copyright (c) 2020-PRESENT Vjacheslav Trushkin
-- 许可：MIT License
-- 使用位置：`src/components/MdvIcon.vue` 使用 `@iconify/vue/offline`，类型来自同一出口。构建将该入口保留为正常运行依赖，不将图标 API 加载器引入 MDV。
+- Package: `@iconify/vue`, with 5.0.5 as the current implementation baseline.
+- Source: https://github.com/iconify/iconify
+- Copyright: Copyright (c) 2020-PRESENT Vjacheslav Trushkin
+- License: MIT License
+- Used in: `src/components/MdvIcon.vue` uses `@iconify/vue/offline`, with types from the same entry point. The build keeps this entry as a normal runtime dependency without bringing the icon API loader into MDV.
 
 ```text
 MIT License
@@ -318,49 +318,49 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-## Material 3 Progress 规格、令牌与动效时序
+## Material 3 Progress specifications, tokens, and motion timing
 
-- 规格来源：https://m3.material.io/components/progress-indicators/specs
-- 令牌与时序核对：https://github.com/androidx/androidx/tree/androidx-main/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3 中的 `tokens/ProgressIndicatorTokens.kt`、`tokens/LinearProgressIndicatorTokens.kt`、`tokens/CircularProgressIndicatorTokens.kt`、`ProgressIndicator.kt`、`WavyProgressIndicator.kt` 及相关 internal 绘制文件。
-- 版权：Copyright 2022, 2024, 2025 The Android Open Source Project
-- 许可：Apache License 2.0
-- 使用位置：`src/components/progress-geometry.ts`、`src/components/progress-motion.ts` 与 `src/styles/progress.css` 的标准尺寸、颜色角色、间隙、波长、振幅、缓动和动效时序。
+- Specification source: https://m3.material.io/components/progress-indicators/specs
+- Token and timing cross-reference: `tokens/ProgressIndicatorTokens.kt`, `tokens/LinearProgressIndicatorTokens.kt`, `tokens/CircularProgressIndicatorTokens.kt`, `ProgressIndicator.kt`, `WavyProgressIndicator.kt`, and related internal drawing files at https://github.com/androidx/androidx/tree/androidx-main/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3.
+- Copyright: Copyright 2022, 2024, 2025 The Android Open Source Project
+- License: Apache License 2.0
+- Used in: `src/components/progress-geometry.ts`, `src/components/progress-motion.ts`, and `src/styles/progress.css` for standard dimensions, color roles, gaps, wavelengths, amplitudes, easing, and motion timing.
 
-MDV 使用自己的 Vue 与 SVG 几何、动画时钟和资源生命周期实现，未引入 Compose 运行时。线性波浪按官方二次曲线轮廓绘制，圆形波浪通过独立的径向曲线生成；下文保留 Apache License 2.0 原文。
+MDV uses its own Vue and SVG geometry, animation clock, and resource lifecycles without introducing the Compose runtime. Linear waves follow the official quadratic contour, while circular waves use an independent radial curve. The original Apache License 2.0 text is preserved below.
 
-## Material 3 Dialog 规格与动效
+## Material 3 Dialog specifications and motion
 
-- 规格来源：https://m3.material.io/components/dialogs/specs 、https://m3.material.io/components/dialogs/guidelines 与 accessibility 页面。
-- 令牌交叉核对：AndroidX Material 3 `tokens/DialogTokens.kt`。
-- 动效时序依据：https://github.com/material-components/material-web/blob/main/dialog/internal/animations.ts
-- 动效版权：Copyright 2023 Google LLC；AndroidX 令牌版权：Copyright 2022 The Android Open Source Project。
-- 许可：Apache License 2.0。
-- 使用位置：`src/styles/dialog.css`／`src/styles/fullscreen-dialog.css` 的几何、色彩与排版，以及 `src/components/dialog-motion.ts` 的基本款进入／退出、遮罩与内容分层时序；Date Picker 通过 `use-date-picker-layer.ts` 复用普通款与全屏款动效，Modal 内容裁切与背景展开同步。
+- Specification sources: https://m3.material.io/components/dialogs/specs, https://m3.material.io/components/dialogs/guidelines, and the accessibility page.
+- Token cross-reference: AndroidX Material 3 `tokens/DialogTokens.kt`.
+- Motion timing source: https://github.com/material-components/material-web/blob/main/dialog/internal/animations.ts
+- Motion copyright: Copyright 2023 Google LLC; AndroidX token copyright: Copyright 2022 The Android Open Source Project.
+- License: Apache License 2.0.
+- Used in: `src/styles/dialog.css` and `src/styles/fullscreen-dialog.css` for geometry, colors, and typography; `src/components/dialog-motion.ts` for standard enter/exit motion and layered scrim/content timing. Date Picker reuses the standard and fullscreen motion through `use-date-picker-layer.ts`, synchronizing Modal content clipping with background expansion.
 
-MDV 使用 Vue、原生 dialog 与自己的关闭拦截、焦点、滚动锁和生命周期实现；基本款参考官方 Web 时序，全屏纵向过渡为 MDV 的实现选择。未引入 Material Web 或 Compose 运行时；下文保留 Apache License 2.0 原文。
+MDV uses Vue, native dialog elements, and its own close interception, focus, scroll locks, and lifecycles. The standard form follows official Web timing; the fullscreen vertical transition is an MDV implementation choice. No Material Web or Compose runtime is introduced. The original Apache License 2.0 text is preserved below.
 
-## Material 3 Menu 规格
+## Material 3 Menu specifications
 
-- 规格来源：https://m3.material.io/components/menus/specs 、https://m3.material.io/components/menus/guidelines 与 accessibility 页面。
-- 数值依据：官网 Expressive／Baseline 测量图、Common／Standard 令牌与键盘无障碍说明。
-- 版权：Copyright Google LLC。
-- 使用位置：`src/styles/menu.css` 的尺寸、颜色角色、圆角、排版、阴影、选择与焦点状态。
+- Specification sources: https://m3.material.io/components/menus/specs, https://m3.material.io/components/menus/guidelines, and the accessibility page.
+- Value references: official Expressive/Baseline measurements, Common/Standard tokens, and keyboard accessibility guidance.
+- Copyright: Copyright Google LLC.
+- Used in: `src/styles/menu.css` for dimensions, color roles, corner radii, typography, shadows, selection, and focus states.
 
-MDV 用 Vue、原生 Popover 与独立菜单树实现交互，使用下面的 Floating UI 定位。点击高度采用至少 48px，以协调官网 Common 44dp 令牌与 48dp 测量图／可访问目标的差异。分组间隙的 Web 移植、滚动时退回分隔线、push 子菜单和动效时序属于 MDV 的实现选择；未引入其他 Material 组件运行时。
+MDV implements interaction with Vue, native Popover, and an independent menu tree, using Floating UI for positioning as described below. Hit targets are at least 48px high to reconcile the official Common 44dp token with the 48dp measurements and accessible targets. The Web adaptation of group gaps, fallback to dividers while scrolling, push submenus, and motion timing are MDV implementation choices. No other Material component runtime is introduced.
 
-## Material 3 Tooltip 规格与交互
+## Material 3 Tooltip specifications and interaction
 
-- Tooltip 规格来源：https://m3.material.io/components/tooltips/specs 、guidelines 与 accessibility 页面；网页交互语义参考 https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/ 。
-- 使用位置：`src/styles/tooltip.css` 的普通／富内容形状、颜色角色、排版与留白；`src/components/use-tooltip.ts` 的临时／持久行为。官网建议临时提示离开后保留 1.5 秒；MDV 的桌面关闭采用普通款立即、Rich 触发器 120ms／面板立即的较短默认值，触屏抬手后仍保留 1.5 秒。600ms 出现延迟、淡入／淡出时长及默认宽度上限均为 MDV 实现选择，不作为官方固定令牌。
+- Tooltip specification sources: https://m3.material.io/components/tooltips/specs, guidelines, and the accessibility page. Web interaction semantics reference: https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/.
+- Used in: `src/styles/tooltip.css` for plain/rich shapes, color roles, typography, and spacing; `src/components/use-tooltip.ts` for transient/persistent behavior. Official guidance recommends retaining transient tooltips for 1.5 seconds after leaving. MDV uses shorter desktop dismissal defaults: immediate for plain tooltips, 120ms for Rich triggers, and immediate for Rich panels, while retaining the tooltip for 1.5 seconds after touch release. The 600ms show delay, fade durations, and default maximum widths are MDV implementation choices rather than fixed official tokens.
 
 ## Floating UI
 
-- 软件包：`@floating-ui/dom`。
-- 来源：https://github.com/floating-ui/floating-ui
-- 许可：MIT，Copyright (c) 2021-present Floating UI contributors。
-- 使用位置：`src/components/menu-position.ts`、`src/components/tooltip-position.ts`；计算菜单、虚拟右键锚点及 Tooltip 的位置、边缘翻转、位移、可用空间与位置更新。
+- Package: `@floating-ui/dom`.
+- Source: https://github.com/floating-ui/floating-ui
+- License: MIT, Copyright (c) 2021-present Floating UI contributors.
+- Used in: `src/components/menu-position.ts` and `src/components/tooltip-position.ts` for menu, virtual context-menu anchor, and Tooltip positions, edge flipping, shifting, available space, and position updates.
 
-作为运行时依赖分发，不修改其源码。其原始许可随依赖提供：
+Distributed as a runtime dependency without source modifications. Its original license accompanies the dependency:
 
 ```text
 MIT License
@@ -388,27 +388,27 @@ SOFTWARE.
 
 ## Material Color Utilities
 
-- 软件包：`@material/material-color-utilities`，当前以 0.4.0 为实现基线。
-- 来源：https://github.com/material-foundation/material-color-utilities
-- 软件包许可声明：Copyright 2021 Google LLC；各源码文件保留其对应版权声明。
-- 许可：Apache License 2.0
-- 使用位置：`src/dynamic-color.ts` 和 `src/components/button-color.ts`；完整主题算法随 `mdv/dynamic-color` 入口构建，Button 与 IconButton 共用 HCT／TonalPalette 生成局部种子色。
+- Package: `@material/material-color-utilities`, with 0.4.0 as the current implementation baseline.
+- Source: https://github.com/material-foundation/material-color-utilities
+- Package license notice: Copyright 2021 Google LLC. Individual source files retain their corresponding copyright notices.
+- License: Apache License 2.0
+- Used in: `src/dynamic-color.ts` and `src/components/button-color.ts`. The complete theme algorithm is built through the `@mdv-ui/mdv/dynamic-color` entry point; Button and IconButton share HCT/TonalPalette for local seed colors.
 
-`src/styles/tokens.css` 中 success／warning／info 的默认配色由该算法生成，分别使用 #2e7d32、#b26a00 和 #0277bd 种子色，采用 Tonal Spot／2021 primary 色系。它们属于 MDV 的扩展语义角色。
+The default success/warning/info colors in `src/styles/tokens.css` are generated by this algorithm from seeds #2e7d32, #b26a00, and #0277bd respectively, using Tonal Spot/2021 primary roles. These are MDV's extended semantic roles.
 
 ## Roboto
 
-- 软件包：`@fontsource/roboto`，当前以 5.3.0 为资源基线。
-- 字体来源：https://github.com/googlefonts/roboto-classic
-- 分发来源：https://fontsource.org/fonts/roboto
-- 许可：SIL Open Font License 1.1
-- 使用位置：`src/styles/fonts.css`；通过依赖引入 400／500 正体。
+- Package: `@fontsource/roboto`, with 5.3.0 as the current resource baseline.
+- Font source: https://github.com/googlefonts/roboto-classic
+- Distribution source: https://fontsource.org/fonts/roboto
+- License: SIL Open Font License 1.1
+- Used in: `src/styles/fonts.css`, importing upright weights 400/500 through the dependency.
 
-Roboto 使用下列原始版权和许可声明。MDV 不修改字体文件；消费应用分发字体资源时需保留对应许可。
+Roboto uses the original copyright and license notices below. MDV does not modify the font files; consuming applications must retain the corresponding license when distributing font resources.
 
 ## Apache License 2.0
 
-下列许可适用于上文注明 Apache License 2.0 的内容。
+The following license applies to the material identified above as Apache License 2.0.
 
 ```text
 
@@ -604,7 +604,7 @@ Roboto 使用下列原始版权和许可声明。MDV 不修改字体文件；消
    limitations under the License.
 ```
 
-## Roboto 原始版权与 SIL Open Font License 1.1
+## Roboto original copyright and SIL Open Font License 1.1
 
 ```text
 Copyright 2011 The Roboto Project Authors (https://github.com/googlefonts/roboto-classic) Roboto-Italic[wdth,wght].ttf: Copyright 2011 The Roboto Project Authors (https://github.com/googlefonts/roboto-classic)

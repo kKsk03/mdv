@@ -1,4 +1,4 @@
-# 更新记录
+# Changelog
 
 ## 0.1.2
 
@@ -10,29 +10,29 @@
 
 ### Patch Changes
 
-- 50eb5a0: 修复 Chip、IconButton 和 Button 测试的事件触发时序，避免挂载与点击处于同一毫秒时 Vue 跳过事件回调而导致 CI 偶发失败；补充同一毫秒下的删除、事件透传与取消行为覆盖。
+- 50eb5a0: Fix event timing in Chip, IconButton, and Button tests to prevent intermittent CI failures when Vue skips callbacks for events dispatched in the same millisecond as mounting. Add coverage for removal, event forwarding, and cancellation under that timing condition.
 
 ## 0.1.0
 
-定版日期：2026-11-15。
+Release date: 2026-11-15.
 
-### 功能
+### Features
 
-- Material Design Vue（MDV）：Vue 3、TypeScript 和 Tailwind CSS v4 的 Material Design 3 组件库，当前 npm 包名为 `@mdv-ui/mdv`，采用 MIT 许可；首版此前曾以 `@kksk03/mdv` 发布。
-- 36 个官方组件家族的当前支持范围，包含按钮、表单、列表与卡片、导航、浮层、日期／时间选择、Carousel 和 Loading Indicator。具体变体和限制见 [组件覆盖](./README.md#组件覆盖)。
-- 浅色／深色／跟随系统、局部主题、语义颜色、排版、形状、阴影和减少动态效果适配。
-- 本地 Roboto 字体与 SVG 图标渲染，独立动态配色入口 `@mdv-ui/mdv/dynamic-color`。
-- 组合验收页：导航、原生表单提交／重置、嵌套菜单／日期面板／对话框和局部消息。
-- ESM、类型声明、主题与普通 CSS 子路径；由使用方通过 Tailwind 生成工具类。
+- Material Design Vue (MDV): a Material Design 3 component library for Vue 3, TypeScript, and Tailwind CSS v4, published as `@mdv-ui/mdv` under the MIT license. The initial release was previously published as `@kksk03/mdv`.
+- The agreed scope across 36 official component families, including buttons, forms, lists and cards, navigation, overlays, date and time pickers, Carousel, and Loading Indicator. See [COMPONENTS.md](./COMPONENTS.md) for supported variants and limitations.
+- Light, dark, and system modes; local themes; semantic colors; typography; shapes; shadows; and reduced-motion support.
+- Local Roboto fonts, SVG icon rendering, and a separate `@mdv-ui/mdv/dynamic-color` entry point.
+- Composition examples for navigation, native form submission and reset, nested menus, date panels, dialogs, and local notifications.
+- ESM, type declarations, and separate theme and component CSS entry points. Consumers generate utility classes with Tailwind.
 
-### 支持边界
+### Scope and limitations
 
-- 普通 Button 提供操作按钮，独立 toggle 尚未提供；Icon Button 和 Button Group 提供各自的选择语义。
-- Segmented Button 与 Navigation Drawer 保留传统 M3 形态；Expressive 项目可选择 Connected Button Group 和 Expanded Navigation Rail。
-- 日期范围采用 Modal／Fullscreen；时间选择采用 Modal。
-- 本批项目检查、组合验收与安装包的项目外消费已获确认，包含类型／生产构建、Node 导入、代表性 SSR、动态配色及 Windows Chrome 生产预览（浏览器版本未记录）；不据此声明全部组件 hydration 或跨浏览器验收通过。
-- Button 按需导入体积对照通过：生产应用 JS 从 650413 字节降至 92034 字节，gzip 从 189891 字节降至 36671 字节，抽查的 Date Picker／Time Picker／Carousel／Loading Indicator 标识已移除。该结果包含 Vue、演示代码与依赖；两种入口的完整 CSS 均为 332891 字节／gzip 53941 字节，不提供按组件 CSS 裁剪。
+- The ordinary Button supports actions; a standalone toggle variant is not provided. Icon Button and Button Group have their own selection semantics.
+- Segmented Button and Navigation Drawer retain their classic M3 forms. Expressive applications can use Connected Button Group and Expanded Navigation Rail.
+- Date ranges use Modal or Fullscreen layouts; time selection uses Modal.
+- Project checks, composition acceptance, and consumption of the packed library in a separate application were confirmed, including types, production builds, Node imports, representative SSR, dynamic color, and a production preview in Chrome on Windows. The browser version was not recorded; this does not establish hydration coverage for every component or acceptance across browsers.
+- The Button import comparison passed: production application JavaScript decreased from 650413 to 92034 bytes, and gzip size from 189891 to 36671 bytes. The sampled Date Picker, Time Picker, Carousel, and Loading Indicator markers were removed. These figures include Vue, demo code, and dependencies. Both entry points used the full CSS at 332891 bytes, or 53941 bytes gzipped; CSS is not split by component.
 
-### 后续版本
+### Future releases
 
-修复和兼容优化进入 0.1.x；新增能力按后续次版本规划。公共 API 的破坏性调整同时记录迁移方式。包名已从 `@kksk03/mdv` 迁移为 `@mdv-ui/mdv`，旧包保留用于迁移提示。
+Fixes and compatibility improvements are planned for 0.1.x, with new capabilities planned for later minor releases. Breaking public API changes will include migration instructions. The package has moved from `@kksk03/mdv` to `@mdv-ui/mdv`; the previous package remains for migration guidance.

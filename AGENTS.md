@@ -1,70 +1,79 @@
-# MDV 开发协作规则
+# MDV development and collaboration rules
 
-本文件是 MDV 组件库的仓库级开发约束。项目路线、组件矩阵、具体技术决策和执行记录见根目录的 `ROADMAP.local.md`。该路线文件已被 `.gitignore` 排除，不提交到 GitHub，也不进入 npm 包。
+These rules apply throughout the MDV component library repository. See `ROADMAP.md` for current progress, upcoming work, and retained technical decisions; `MAINTENANCE.md` for development, validation, and release procedures; and `COMPONENTS.md` for public APIs and usage guidance.
 
-## 项目边界
+## Language and encoding
 
-- 使用 Vue 3、TypeScript 和 Tailwind CSS v4 构建 Material Design 3 组件库。
-- 保持单包、单层结构：根目录一个 `package.json`，不创建 monorepo、`packages/ui`、`apps/playground` 或嵌套子项目。
-- `src/` 是组件库源码；`playground/` 只用于开发调试、对比和组合验证。
-- 正式 docs 后期在独立仓库建设；当前仓库不创建 docs 项目。
-- 使用方自行安装和配置 Tailwind CSS v4，由使用方生成工具类；组件库不预编译一套固定 Tailwind 工具 CSS。
-- 公开组件统一使用 `Mdv` 前缀，例如 `MdvButton`、`MdvDialog`。
-- Material Design 3 官方组件按逐个讨论、逐个实现的方式推进；额外组件须有明确使用场景并记录在本地路线中。
+- Continue replying to the user in Chinese.
+- Use UTF-8 encoding and LF line endings for all text files.
+- Write all new and maintained Markdown (`.md`) files in English, including this file, READMEs, maintenance guides, roadmaps, changelogs, changeset summaries, and third-party notices. Keep future documentation updates in English as well.
+- `COMPONENTS.md` may retain its current language. Leave sealed historical material untouched and keep it out of maintained documentation and routine updates.
+- Preserve upstream copyright notices and license texts verbatim when translating explanatory prose.
 
-主题、字体、动态取色、依赖和发布等具体方案以 `ROADMAP.local.md` 为准，不在本文件重复展开。
+## Project boundaries
 
-## 协作流程
+- Build a Material Design 3 component library with Vue 3, TypeScript, and Tailwind CSS v4.
+- Keep a single package and a flat project structure, with one root `package.json`. Do not introduce a monorepo, `packages/ui`, `apps/playground`, or nested projects.
+- Keep library source in `src/`. Use `playground/` only for development, comparison, debugging, and composition checks.
+- Build the formal documentation site in a separate repository; do not create a documentation project here.
+- Consumers install and configure Tailwind CSS v4 and generate utility classes themselves. The library does not ship a fixed set of precompiled Tailwind utilities.
+- Prefix public component names with `Mdv`, such as `MdvButton` and `MdvDialog`.
+- Discuss and implement official Material Design 3 components individually. Additional components need a concrete use case recorded in `ROADMAP.md`.
 
-用户要求先讨论方案，确认后再实现。因此：
+Long-term theme, font, dynamic-color, and dependency decisions belong in `ROADMAP.md`; operational procedures belong in `MAINTENANCE.md`. Source code and actual configuration files define the current APIs and configuration.
 
-1. 开始一个新组件或公共能力前，先讨论官方范围、API 草案、状态、无障碍、主题和验证方案。
-2. 未获用户明确的“开始做”或等价授权前，不修改源码、配置、依赖、测试或公开文档。
-3. 获得授权后，只实现已讨论并确认的范围。若出现会改变公共 API 的新问题，先讨论该问题。
-4. 每完成一个组件，更新 `ROADMAP.local.md` 的组件矩阵、阶段状态和执行记录；没有实际验证结果不得标为已完成。
-5. 用户手动执行安装、启动、测试、构建、打包、Git 提交、推送和发布。协作侧提供明确命令和预期结果，并根据用户反馈处理问题。
+## Collaboration workflow
 
-## 目录边界
+The user requires discussion and confirmation before implementation:
 
-- `src/components/`：公开组件及必要的组件内部辅助文件。
-- `src/styles/`：主题令牌、字体入口和普通组件样式。
-- `src/index.ts`：公共组件、类型和公共能力的统一出口。
-- `playground/`：本地调试页面，不属于组件库公共 API。
-- 只有出现真实复用需求时才新增 `composables/`、`directives/`、`internal/`、`locales/` 或脚本目录。
-- 库源码不得反向导入 `playground/`、本地路线文件或测试专用代码。
+1. Before starting a new component or public capability, discuss the official scope, proposed API, states, accessibility, themes, and validation plan.
+2. Do not modify source, configuration, dependencies, tests, or public documentation until the user explicitly authorizes implementation with "start" or an equivalent instruction.
+3. Implement only the agreed scope. Discuss new questions that would change the public API before implementing them.
+4. After completing a component, update its current status, relevant open work, and validation limits in `ROADMAP.md`, and keep its API and usage guidance in `COMPONENTS.md` accurate. Do not mark work complete without actual validation results.
+5. The user runs installation, development servers, tests, builds, packaging, Git commits, pushes, and publishing. Provide clear commands and expected results, then address issues from the user's feedback.
 
-## 组件完成标准
+## Directory boundaries
 
-按 Material Design 3 官方资料核对尺寸、颜色角色、形状、动效和适用状态，并考虑：
+- `src/components/`: public components and necessary component-specific helpers.
+- `src/styles/`: theme tokens, fonts, and ordinary component styles.
+- `src/index.ts`: the common entry point for public components, types, and capabilities.
+- `playground/`: local development examples, outside the library's public API.
+- Add `composables/`, `directives/`, `internal/`, `locales/`, or script directories only when a real reuse requirement exists.
+- Library source must not import playground code, planning documents, or test-only code.
 
-- 默认、hover、pressed、focus-visible、selected、disabled、loading、error 等适用状态。
-- 键盘操作、焦点管理、语义 HTML、ARIA、表单关联和原生属性透传。
-- 浅色、深色、自定义令牌、动态取色、长中文／英文、窄容器和 reduced-motion。
-- Props、事件、插槽、Expose、默认值和类型声明。
-- playground 中的变体、边界和组合示例。
-- 有意义的 Vitest／Vue Test Utils 行为测试；布局、触控和视觉问题用真实浏览器验证。
-- 包导出、Tailwind 扫描、构建产物和项目外的真实消费验证。
+## Component acceptance criteria
 
-不为追求数量提前复制全部组件。若官方规范与既有实现不一致，以官方规范为准，并在本地路线文档记录判断。
+Check dimensions, color roles, shapes, motion, and applicable states against official Material Design 3 material. Cover the following where relevant:
 
-## 工具与执行约束
+- Default, hover, pressed, focus-visible, selected, disabled, loading, and error states.
+- Keyboard operation, focus management, semantic HTML, ARIA, form association, and native attribute forwarding.
+- Light and dark modes, custom tokens, dynamic color, long Chinese and English content, narrow containers, and reduced motion.
+- Props, events, slots, exposed methods, defaults, and type declarations.
+- Playground examples for variants, edge cases, and compositions.
+- Meaningful Vitest and Vue Test Utils behavior tests, with real-browser checks for layout, touch, and visual behavior.
+- Package exports, Tailwind scanning, build output, and actual package consumption outside this repository.
 
-- 所有文本使用 UTF-8，遵守现有 LF 换行约定。
-- Node 基线为 24.22.1，pnpm 基线为 12.14.0；命令从仓库根目录执行。
-- 禁止在项目或子目录创建 `.pnpm-store`、`pnpm-store` 等 pnpm Store，也禁止使用会将 Store 指向项目目录的参数；使用用户级或全局 Store。
-- 不重新初始化现有 Vue 工程，不为日常开发引入额外工程层级。
-- 修改前先阅读相关源码和配置，尊重工作区现有改动；不回退未获授权的修改。
-- 搜索优先使用 `rg`；手动编辑使用补丁方式；避免无关格式化和元数据变更。
-- 按风险选择类型检查、单元测试、只读 lint／格式检查、playground 检查、库构建和项目外消费验证。没有实际运行结果不得声称验证通过。
+Do not copy components in advance merely to increase their count. If the official specification differs from an existing implementation, follow the specification and record the decision in `ROADMAP.md`.
 
-## 路线维护
+## Tools and execution
 
-每次开发先阅读 `ROADMAP.local.md` 的“当前总进度”和“下一次任务”，再看对应阶段、官方组件矩阵和完成标准。每次工作结束至少更新：
+- Use Node **24.22.1** and pnpm **12.14.0** as the development baseline. Run commands from the repository root.
+- Keep the pnpm store in a user-level or global location. Never create `.pnpm-store`, `pnpm-store`, or another pnpm store inside this repository or its subdirectories, and never use options that redirect the store there.
+- Do not reinitialize the existing Vue project or add project layers for routine development.
+- Read relevant source and configuration before editing. Preserve existing workspace changes unless the user authorizes changing them.
+- Prefer `rg` for searches and patches for manual edits. Avoid unrelated formatting or metadata changes.
+- Choose type checks, unit tests, read-only lint/format checks, playground checks, library builds, and external package consumption according to the change's risk. Never claim a check passed without an actual result.
+- If the system blocks a production-build test, you may stop retrying it. Record the limitation rather than treating the blocked check as passed.
 
-- 当前阶段和下一次任务；
-- 本次实际改动与验证结果；
-- 未验证内容、阻断和已知限制；
-- 公共 API、依赖、官方资料或实现决策带来的变化。
+## Roadmap maintenance
 
-路线文件是本地工作记录，不得加入 Git、npm `files` 或公开文档。若其内容与本文件冲突，以用户最新确认的决定为准，并在下一次文档维护时同步修正。
+Before development, read **Current status**, **Next work**, and the relevant retained decisions in `ROADMAP.md`, then follow the procedures in `MAINTENANCE.md`. After work, update the following as applicable:
 
+- The current stage and next task.
+- Actual changes and validation results.
+- Unverified behavior, blockers, and known limitations.
+- Changes to public APIs, dependencies, official references, or implementation decisions.
+
+`ROADMAP.md` is public and can be committed with the repository, but stays outside the npm `files` list. Keep concise milestones and actual open work rather than appending a running activity log. Put detailed implementation history in commits and pull requests, and released changes in `CHANGELOG.md`.
+
+The user's latest confirmed decisions take precedence over documentation. Resolve any resulting inconsistency during the next relevant documentation update.

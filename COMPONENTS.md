@@ -1,6 +1,6 @@
 # MDV 组件使用说明
 
-本文记录已实现组件的 API、示例与使用注意事项。使用前请先完成 [样式接入](./README.md#使用方样式入口)。
+本文记录已实现组件的 API、示例与使用注意事项。使用前请先完成 [样式接入](./README.md#2-configure-css)。
 
 - [MdvDatePicker 与 MdvDateRangePicker 日期选择器](#mdvdatepicker-与-mdvdaterangepicker)
 - [MdvTimePicker 时间选择器](#mdvtimepicker)
