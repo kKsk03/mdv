@@ -89,8 +89,53 @@ function applyButtonSeed() {
       <h2 id="button-preview-title" class="text-mdv-headline-small">MdvButton</h2>
       <p class="mt-2 text-mdv-body-medium text-mdv-on-surface-variant">
         五种官方颜色样式与 link 扩展。尺寸和静态形状按 M3 Expressive，默认 filled / s / round。
-        使用鼠标、Tab、Enter 和空格检查交互；link 仅在键盘聚焦时显示下划线。
+        使用鼠标、Tab、Enter 和空格检查交互；link 默认带下划线，可直接与正文组合。
       </p>
+    </div>
+
+    <div class="rounded-mdv-large border border-mdv-outline-variant p-5">
+      <h3 class="text-mdv-title-medium">行内链接与文字组合</h3>
+      <p class="mt-2 text-mdv-body-small text-mdv-on-surface-variant">
+        link 继承周围文字的字体与行高，取消按钮的高度和留白。检查默认下划线、基线对齐、
+        悬停与键盘焦点，以及窄容器中的换行。
+      </p>
+      <div class="mt-5 grid gap-4 lg:grid-cols-2">
+        <article
+          v-for="theme in themes"
+          :key="theme.value"
+          :data-mdv-theme="theme.value"
+          class="rounded-mdv-medium border border-mdv-outline-variant bg-mdv-surface p-5 text-mdv-on-surface"
+        >
+          <h4 class="text-mdv-title-small">{{ theme.label }}</h4>
+          <p class="mt-4 text-mdv-body-large">
+            我已阅读<MdvButton variant="link" href="#button-user-agreement">用户协议</MdvButton>。
+          </p>
+          <p class="mt-3 text-mdv-body-medium" lang="en">
+            I have read the
+            <MdvButton variant="link" href="#button-user-agreement">Terms of Service</MdvButton>.
+          </p>
+          <p class="mt-3 text-mdv-body-small">
+            禁用状态：<MdvButton variant="link" href="#button-user-agreement" disabled
+              >用户协议</MdvButton
+            >。
+          </p>
+          <p class="mt-4 max-w-48 text-mdv-body-medium">
+            继续使用前，请阅读<MdvButton variant="link" href="#button-user-agreement"
+              >Material Design Vue 用户协议与隐私条款</MdvButton
+            >，并确认你已了解相关内容。
+          </p>
+        </article>
+      </div>
+      <div
+        id="button-user-agreement"
+        tabindex="-1"
+        class="mt-5 rounded-mdv-small bg-mdv-secondary-container p-4 text-mdv-on-secondary-container"
+      >
+        <h4 class="text-mdv-title-small">用户协议（演示）</h4>
+        <p class="mt-2 text-mdv-body-medium">
+          这里是行内链接的页内导航目标，用于检查链接跳转和键盘焦点。
+        </p>
+      </div>
     </div>
 
     <div class="rounded-mdv-large border border-mdv-outline-variant p-5">

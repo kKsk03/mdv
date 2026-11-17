@@ -43,6 +43,10 @@ Until that migration is complete, keep `COMPONENTS.md` as the maintained API and
 
 The documentation site is now an active integration surface. The selected final menu-item corner fix and theme-color transitions shipped in 0.1.3. The 0.1.4 follow-up keeps the Standard Drawer's App Bar background extension synchronized throughout inherited color transitions, including quick theme reversals, and cancels pending frames on cleanup. The documentation layout uses `surface-container-low` for its content background, matching the playground composition; the Scaffold itself keeps that choice with the consumer.
 
+The unreleased Button link correction adds a default underline and inline text sizing, removes button padding and minimum dimensions, and keeps disabled links transparent. Inline links use their text bounds on touch devices so expanded button targets do not cover adjacent prose or links. Forced-color mode uses the system link color without adding a button border. The Button playground now includes Chinese and English agreement compositions in local light/dark themes, disabled links, and narrow text. Native link semantics and activation remain governed by `href`.
+
+Read-only validation passed for the link correction: Prettier on the changed CSS and playground files, ESLint on the playground file, and `git diff --check`. Runtime tests, browser checks, and builds remain pending under the maintainer-run workflow.
+
 Application feedback takes priority over adding components merely to expand the catalog. Documentation-site work and a new component can be planned independently.
 
 ### Validation follow-up
@@ -51,6 +55,7 @@ Existing evidence includes component checks and previews, selected SSR/hydration
 
 - [ ] Validate the released 0.1.3 menu corner fix and theme-color transitions in a consuming application; cover light, dark, system, local themes, dynamic colors, and reduced motion.
 - [ ] Run the new Drawer/App Bar transition regression in `src/__tests__/MdvAppBarScaffold.spec.ts` and validate the follow-up fix in the playground and a consuming application. The regression covers intermediate colors, reversals, final colors, and frame cleanup; unit execution and package validation remain with the maintainer.
+- [ ] Validate the unreleased inline Button link styling in the playground and a consuming application: default underline, text alignment and wrapping, hover/pressed/focus-visible, disabled/loading, light/dark themes, and touch targets. Button behavior/SSR tests, browser review, and package builds remain pending maintainer execution.
 - [ ] Define a supported browser/device matrix and record actual versions and results before expanding compatibility claims.
 - [ ] Check real touch and screen-reader interactions, especially pickers, Carousel, comboboxes, navigation, and nested overlays.
 - [ ] Extend targeted SSR/hydration coverage as consuming applications require it, including stable IDs, request isolation, focus, and edits made before hydration.

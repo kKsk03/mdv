@@ -137,9 +137,19 @@
   border-radius: var(--mdv-button-square-radius);
 }
 
-.mdv-button--text,
-.mdv-button--link {
+.mdv-button--text {
   --mdv-button-min-width: calc(var(--mdv-button-space) * 2 + 16px);
+}
+
+.mdv-button--link {
+  min-width: 0;
+  min-height: 0;
+  border-radius: var(--mdv-sys-shape-corner-extra-small);
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  vertical-align: baseline;
 }
 
 .mdv-button--full-width {
@@ -222,7 +232,7 @@
   box-shadow: var(--mdv-sys-elevation-level-1);
 }
 
-.mdv-button--link:not(.mdv-button--disabled):focus-visible .mdv-button__label {
+.mdv-button--link .mdv-button__label {
   text-decoration: underline;
   text-underline-offset: 0.15em;
 }
@@ -240,8 +250,7 @@
 .mdv-button--filled.mdv-button--disabled,
 .mdv-button--tonal.mdv-button--disabled,
 .mdv-button--elevated.mdv-button--disabled,
-.mdv-button--text.mdv-button--disabled,
-.mdv-button--link.mdv-button--disabled {
+.mdv-button--text.mdv-button--disabled {
   background-color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 10%, transparent);
 }
 
@@ -337,7 +346,7 @@
 }
 
 @media (pointer: coarse) {
-  .mdv-button:not(.mdv-button--disabled)::after {
+  .mdv-button:not(.mdv-button--disabled, .mdv-button--link)::after {
     position: absolute;
     z-index: 2;
     top: 50%;
@@ -620,11 +629,15 @@
 }
 
 @media (forced-colors: active) {
-  .mdv-button {
+  .mdv-button:not(.mdv-button--link) {
     --mdv-button-border: 1px;
 
     border-color: ButtonText;
     color: ButtonText;
+  }
+
+  .mdv-button--link:not(.mdv-button--disabled) {
+    color: LinkText;
   }
 
   .mdv-button--disabled {

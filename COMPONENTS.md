@@ -335,7 +335,15 @@ const loading = ref(false)
 | `hoverShadow` | `boolean`；开启适用变体的悬停阴影                                                                     | `false`  |
 | `fullWidth`   | `boolean`                                                                                             | `false`  |
 
-`variant` 只控制外观。任何外观都能提供 `href`，此时渲染 `<a>`，透传 `target`、`rel`、`download` 等原生链接属性；不指定 `target` 时在当前标签页打开。`href=""` 按原生链接处理；不需要链接语义时直接省略 `href`。未提供 `href` 时渲染 `<button>`，包括 `variant="link"` 的情况，不自动添加默认 URL。`link` 是 MDV 扩展，外观接近 `text`，仅在 `:focus-visible` 时为标签显示下划线。
+`variant` 只控制外观。任何外观都能提供 `href`，此时渲染 `<a>`，透传 `target`、`rel`、`download` 等原生链接属性；不指定 `target` 时在当前标签页打开。`href=""` 按原生链接处理；不需要链接语义时直接省略 `href`。未提供 `href` 时渲染 `<button>`，包括 `variant="link"` 的情况，不自动添加默认 URL。
+
+`link` 是 MDV 的行内链接扩展，默认显示文字下划线，继承周围文字的字体、行高与字距，并与正文基线对齐。不占用普通按钮的高度、留白或最小宽度，禁用时也保持透明背景，适合“我已阅读用户协议”等文字组合。`size` 仍可调整图标尺寸与间距，`shape` 不改变行内链接的紧凑外观；键盘聚焦时保留焦点轮廓。
+
+```vue
+<p>
+  我已阅读<MdvButton variant="link" href="/terms">用户协议</MdvButton>。
+</p>
+```
 
 `color` 选择色系，可与全部 `variant` 组合。省略时保留官方默认角色：tonal 使用 secondary-container，outlined 使用中性文字和描边；显式指定 `color="primary"` 后，tonal 改用 primary-container，outlined 使用 primary 文字和描边。
 
@@ -374,7 +382,7 @@ primary／secondary／tertiary／error 引用当前主题角色。success／warn
 </MdvButton>
 ```
 
-尺寸采用当前 [M3 Expressive Button 规格](https://m3.material.io/components/buttons/specs)。常规单行标签、默认根字号下的规格如下；长标签和较大字体允许自然撑高：
+常规按钮尺寸采用当前 [M3 Expressive Button 规格](https://m3.material.io/components/buttons/specs)。单行标签、默认根字号下的规格如下；长标签和较大字体允许自然撑高。行内 `link` 使用周围文字的尺寸与行高，不使用表中的按钮高度和留白：
 
 | size |  高度 | 水平留白（含描边） | 图标大小 | 图标间距 | outlined 描边 |
 | ---- | ----: | -----------------: | -------: | -------: | ------------: |
@@ -384,9 +392,9 @@ primary／secondary／tertiary／error 引用当前主题角色。success／warn
 | `l`  |  96px |               48px |     32px |     12px |           2px |
 | `xl` | 136px |               64px |     40px |     16px |           3px |
 
-MDV 为短内容设置最小宽度，普通外观按两侧留白加 32px、text／link 按两侧留白加 16px 计算；这是 MDV 的布局约定。内容超过下限后自然撑开，最小宽度也不会超过父容器的可用宽度。
+MDV 为短内容设置最小宽度，普通外观按两侧留白加 32px、text 按两侧留白加 16px 计算；这是 MDV 的布局约定。内容超过下限后自然撑开，最小宽度也不会超过父容器的可用宽度。行内 link 不设置最小宽度。
 
-| size | filled／tonal／outlined／elevated 最小宽度 | text／link 最小宽度 |
+| size | filled／tonal／outlined／elevated 最小宽度 | text 最小宽度 |
 | ---- | -----------------------------------------: | ------------------: |
 | `xs` |                                       56px |                40px |
 | `s`  |                                       64px |                48px |
@@ -396,7 +404,7 @@ MDV 为短内容设置最小宽度，普通外观按两侧留白加 32px、text�
 
 `round` 使用胶囊圆角；`square` 在 xs／s 为 12px、m 为 16px、l／xl 为 28px。点击、长按与释放时保持所选圆角，按压反馈使用状态层、涟漪与适用的阴影变化。状态层与涟漪独立叠加，点击结束后鼠标仍在按钮上时，保留悬停底色；鼠标离开后清除对应的悬停状态。
 
-支持 hover、局部涟漪、键盘焦点与减少动态效果；触控设备上最小命中区域为 48px，不改变可见容器尺寸。`fullWidth` 填满可用宽度，特殊尺寸可通过 `style` 调整。`class`、`style`、`id`、`form`、`name`、`value`、ARIA 和原生事件透传到根节点。按钮保留浏览器原生的 Enter／空格与表单行为，链接使用原生 Enter 激活；不要在内容或图标插槽中嵌套其他交互控件。
+支持 hover、局部涟漪、键盘焦点与减少动态效果；普通按钮在触控设备上的最小命中区域为 48px，不改变可见容器尺寸。行内 link 使用文字自身的命中区域，不向外扩张，以免覆盖相邻文字或其他链接。`fullWidth` 填满可用宽度，特殊尺寸可通过 `style` 调整。`class`、`style`、`id`、`form`、`name`、`value`、ARIA 和原生事件透传到根节点。按钮保留浏览器原生的 Enter／空格与表单行为，链接使用原生 Enter 激活；不要在内容或图标插槽中嵌套其他交互控件。
 
 公共类型可从 `mdv` 导入：`MdvButtonVariant`、`MdvButtonColor`、`MdvButtonSize`、`MdvButtonShape`、`MdvButtonType`。`MdvButtonColor` 的十六进制分支使用模板字面量类型，位数与字符合法性由运行时校验。当前普通 Button 不包含 toggle 选择行为或 Icon Button。
 
