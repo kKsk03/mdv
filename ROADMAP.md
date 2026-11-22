@@ -1,6 +1,6 @@
 # Roadmap
 
-Updated: 2026-11-17. Published baseline: **@mdv-ui/mdv 0.1.4**.
+Updated: 2026-11-22. Published baseline: **@mdv-ui/mdv 0.1.6**.
 
 MDV has completed its initial component and delivery milestones and is now maintained through versioned releases. This roadmap records current priorities, remaining work, and decisions that future development should preserve. New components and public capabilities are scoped before implementation; candidate work has no assigned release or deadline.
 
@@ -12,7 +12,7 @@ MDV has completed its initial component and delivery milestones and is now maint
 | Design system                       | Accepted scope complete: light/dark/system and local themes, semantic tokens, typography, shapes, motion, local fonts, icons, and seed-based dynamic color.        |
 | Initial official component coverage | Accepted scope across 36 official component families delivered in 0.1.0. Supported variants and limitations remain documented in [COMPONENTS.md](./COMPONENTS.md). |
 | Initial integration and delivery    | Form, navigation, and nested-overlay compositions; a real packed-library consumer; and a Button import size comparison were accepted.                              |
-| Versioned publishing                | 0.1.0-0.1.4 published; Changesets and npm staged approval remain in use. Finalization runs once after Release and is rerun manually after npm approval when needed. |
+| Versioned publishing                | 0.1.6 is public on npm and has a GitHub Release. Changesets and staged npm approval remain in use.                                                                 |
 | Select and Autocomplete             | Accepted scope complete and released in 0.1.2, including Expressive/Baseline dropdowns, free-text autocomplete, and remote-search events/loading state.            |
 
 Completion refers to the agreed scope for each component. It does not imply every optional Material variant, browser, device, or assistive technology has been validated. No next component has been selected.
@@ -21,11 +21,10 @@ Completion refers to the agreed scope for each component. It does not imply ever
 
 ### Release process
 
-- [ ] Finalize the published `v0.1.4` GitHub Release after this workflow update reaches `main`; `v0.1.3` already has a Release.
-- Finalize Release runs once after a successful Release workflow on this repository's `main` branch and also supports manual runs. It verifies public npm availability and the tag's package identity before creating a missing Release; it fails before creating Releases when npm has not made a candidate version public, so publish and approve the package before manually rerunning it. There are no scheduled checks or automatic retries.
+- [ ] Verify that the next public version's GitHub Release shows its tagged changelog entry and version comparison. Existing Releases are not overwritten.
+- Finalize Release still runs once after a successful Release workflow on `main` and supports manual runs without automatic retries. It checks npm availability and tag/package identity, then uses `CHANGELOG.md` from the matching tag as the Release body instead of GitHub's generated pull request list.
 - CI uses repository branch pushes and manual runs, avoiding approval-gated pull-request runs for Changesets automation. Every merge to `main` and the Release workflow retain full checks; fork PR validation remains a maintainer responsibility.
-- Regression coverage for pending npm approval, backfills, existing Releases, tag/package mismatches, manual finalization, and registry failures is provided in `scripts/finalize-release.spec.mjs`; execution remains pending user validation.
-- Local validation passed: workflow YAML parsing, inline JavaScript syntax, targeted workflow formatting, and `git diff --check`. Automatic and manual finalization still need GitHub validation after this update is pushed.
+- `scripts/finalize-release.spec.mjs` covers tagged notes, comparison links, missing notes, pending npm approval, existing Releases, and manual finalization. Local YAML/JavaScript syntax checks and a dry run with the v0.1.6 changelog passed; the maintainer-run suite and live workflow verification remain pending.
 
 ### Formal documentation
 

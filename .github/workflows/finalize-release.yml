@@ -72,9 +72,7 @@ jobs:
               const message = error instanceof Error ? error.message : String(error)
               await core.summary
                 .addHeading('GitHub Release finalization failed')
-                .addRaw(
-                  `${message}\n\nPublish and approve the matching npm package, then rerun this workflow with the version number.`,
-                )
+                  .addRaw(`${message}\n\nResolve the reported issue before rerunning Finalize Release.`)
                 .write()
               core.setFailed(message)
             }

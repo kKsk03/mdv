@@ -218,7 +218,7 @@ Code and changesets reach main
   → Maintainer reviews and approves the package on npm with 2FA
   → Version becomes publicly available
   → Maintainer reruns Finalize Release if needed
-  → GitHub Release with generated notes
+  → GitHub Release with the tagged changelog entry
 ```
 
 ### 1. Submit the change
@@ -231,7 +231,7 @@ When pending changesets exist on `main`, Release creates or updates a PR titled 
 
 ### 2. Review and merge the release PR
 
-Check the proposed package version, CHANGELOG entries, consumed changesets, and workflow results. For example, a single patch release from `0.1.1` should propose `0.1.2`.
+Check the proposed package version, CHANGELOG entries, consumed changesets, and workflow results. Each user-visible change should appear only once in the new version's changelog section. For example, a single patch release from `0.1.1` should propose `0.1.2`.
 
 After merging, Release runs the checks again, builds JavaScript and declarations, and invokes `scripts/stage-publish.mjs`. Successful staging causes Changesets to push the corresponding `vX.Y.Z` tag. When Release completes successfully, Finalize Release starts automatically once. If npm approval is still pending, this attempt fails with instructions to approve the package and rerun finalization.
 
@@ -256,7 +256,11 @@ Confirm the version can be queried and the intended default release is listed un
 
 The [Finalize Release workflow](./.github/workflows/finalize-release.yml) runs once after a successful Release workflow on `main` in this repository. Failed Release runs do not run the finalization job. It also supports manual runs, does not publish npm packages, and has no scheduled checks or automatic retries. A successful Release run that only updated a release PR may finish finalization without changes when no matching Releases are missing.
 
-Each run checks stable `vX.Y.Z` tags against existing GitHub Releases and the public npm registry. Before creating a missing Release with generated notes, it verifies that the tag's `package.json` matches the package name and published version. If any candidate version is not publicly available on npm, the job fails before creating Releases; publish and approve the package, then rerun the workflow. Existing Releases are unchanged. Historical tags for a different package name or version are reported and skipped, so they do not block matching versions. Older published tags without Releases can be finalized by leaving the version input empty. A backfilled version is marked latest only if it is the npm `latest` version.
+Each run checks stable `vX.Y.Z` tags against existing GitHub Releases and the public npm registry. It verifies the tag's `package.json` and uses the matching `## X.Y.Z` section of `CHANGELOG.md` from that tag as the Release body. The body links to the comparison with the preceding stable tag whose version is public on npm, when one exists. GitHub's automatic pull request notes are disabled so the release PR title does not replace the actual changes.
+
+Finalization fails before creating Releases if any candidate version is not publicly available on npm or a matching tag lacks readable, nonempty release notes. Historical tags for a different package name or version are reported and skipped after the registry check; an explicitly requested tag must match. Older published tags without Releases can be finalized by leaving the version input empty. A backfilled version is marked latest only if it is the npm `latest` version.
+
+Existing Releases are unchanged. To correct old pull request-only notes, edit the existing Release body using the version's changelog section. Do not recreate the tag or republish the npm package.
 
 If the automatic attempt failed while npm approval was pending, approve the package and verify public availability, then use **Re-run failed jobs** on that Finalize Release run. Alternatively, open [Actions → Finalize Release](https://github.com/kKsk03/mdv/actions/workflows/finalize-release.yml), choose **Run workflow** on `main`, and enter `X.Y.Z` without a leading `v`. Leave the version empty to check all stable version tags. A manually requested version must have a tag and be publicly available on npm. Rerun Finalize Release rather than the npm staging workflow when only the GitHub Release is missing.
 

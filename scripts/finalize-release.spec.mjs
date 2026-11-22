@@ -11,11 +11,12 @@ function setup({
   published = ['0.1.2'],
   latest = '0.1.2',
   manifests = {},
+  changelogs = {},
   registryStatus = 200,
 } = {}) {
   const created = []
   const requests = []
-  const manifestRefs = []
+  const contentRequests = []
   const listTags = () => {}
   const listReleases = () => {}
   const github = {
@@ -28,15 +29,25 @@ function setup({
       repos: {
         listTags,
         listReleases,
-        getContent: async ({ ref }) => {
-          manifestRefs.push(ref)
+        getContent: async ({ path, ref }) => {
+          contentRequests.push({ path, ref })
+          if (!ref.startsWith('refs/tags/')) throw new Error(`Unexpected contents ref: ${ref}`)
+          const tag = ref.slice('refs/tags/'.length)
+          const version = tag.slice(1)
+          let content
+          if (path === 'package.json') {
+            content = JSON.stringify(manifests[tag] ?? { name: packageName, version })
+          } else if (path === 'CHANGELOG.md') {
+            if (changelogs[tag] === null) throw new Error('Not Found')
+            content = changelogs[tag] ?? `# Changelog\n\n## ${version}\n\n- Fix for ${tag}.\n`
+          } else {
+            throw new Error(`Unexpected contents path: ${path}`)
+          }
           return {
             data: {
               type: 'file',
               encoding: 'base64',
-              content: Buffer.from(
-                JSON.stringify(manifests[ref] ?? { name: packageName, version: ref.slice(1) }),
-              ).toString('base64'),
+              content: Buffer.from(content).toString('base64'),
             },
           }
         },
@@ -76,12 +87,12 @@ function setup({
         }
       },
     })
-  return { run, created, requests, manifestRefs }
+  return { run, created, requests, contentRequests }
 }
 
 describe('GitHub Release finalization', () => {
   it('backfills published version tags and leaves existing Releases unchanged', async () => {
-    const { run, created, manifestRefs } = setup({
+    const { run, created, contentRequests } = setup({
       tags: ['v0.1.2', 'v0.1.1'],
       releases: ['v0.1.1'],
       published: ['0.1.1', '0.1.2'],
@@ -92,14 +103,24 @@ describe('GitHub Release finalization', () => {
       existing: ['v0.1.1'],
       skipped: [],
     })
-    expect(manifestRefs).toEqual(['v0.1.2'])
+    expect(contentRequests).toEqual([
+      { path: 'package.json', ref: 'refs/tags/v0.1.2' },
+      { path: 'CHANGELOG.md', ref: 'refs/tags/v0.1.2' },
+    ])
     expect(created).toEqual([
       {
         owner: 'kKsk03',
         repo: 'mdv',
         tag_name: 'v0.1.2',
         name: 'v0.1.2',
-        generate_release_notes: true,
+        body: [
+          "## What's Changed",
+          '',
+          '- Fix for v0.1.2.',
+          '',
+          '**Full Changelog**: [`v0.1.1...v0.1.2`](https://github.com/kKsk03/mdv/compare/v0.1.1...v0.1.2)',
+        ].join('\n'),
+        generate_release_notes: false,
         draft: false,
         prerelease: false,
         make_latest: 'true',
@@ -107,23 +128,86 @@ describe('GitHub Release finalization', () => {
     ])
   })
 
+  it('reads only the exact version section and preserves Markdown examples', async () => {
+    const notes = [
+      '### Minor Changes',
+      '',
+      '- Add a configurable example.',
+      '',
+      '  ## Example title',
+      '',
+      '~~~md',
+      '## Heading shown in the example',
+      '~~~',
+      '',
+      '### Patch Changes',
+      '',
+      '- Fix keyboard navigation.',
+    ].join('\n')
+    const changelog = [
+      '# Changelog',
+      '',
+      '## 0.1.20',
+      '',
+      '- A different release.',
+      '',
+      '```md',
+      '## 0.1.2',
+      '- Not a release section.',
+      '```',
+      '',
+      '## 0.1.2',
+      '',
+      notes.replaceAll('\n', '\r\n'),
+      '',
+      '## 0.1.1',
+      '',
+      '- An older release.',
+    ].join('\r\n')
+    const { run, created } = setup({ changelogs: { 'v0.1.2': changelog } })
+
+    await run()
+    expect(created[0].body).toBe(`## What's Changed\n\n${notes}`)
+  })
+
+  it.each([
+    [null, 'Could not read CHANGELOG.md at v0.1.3'],
+    ['## 0.1.2\n\n- Older release.', 'Missing or empty release notes in CHANGELOG.md at v0.1.3'],
+    [
+      '## 0.1.3\n\n## 0.1.2\n\n- Older release.',
+      'Missing or empty release notes in CHANGELOG.md at v0.1.3',
+    ],
+  ])(
+    'fails before creating any Release when tagged notes are unavailable (%j)',
+    async (changelog, error) => {
+      const { run, created } = setup({
+        tags: ['v0.1.2', 'v0.1.3'],
+        published: ['0.1.2', '0.1.3'],
+        changelogs: { 'v0.1.3': changelog },
+      })
+
+      await expect(run()).rejects.toThrow(error)
+      expect(created).toEqual([])
+    },
+  )
+
   it('fails before creating any Release when one candidate is not public', async () => {
-    const { run, created, manifestRefs } = setup({
+    const { run, created, contentRequests } = setup({
       tags: ['v0.1.3', 'v0.1.2'],
       published: ['0.1.2'],
     })
 
     await expect(run()).rejects.toThrow('@mdv-ui/mdv@0.1.3 is not publicly available on npm yet')
     expect(created).toEqual([])
-    expect(manifestRefs).toEqual([])
+    expect(contentRequests).toEqual([])
   })
 
   it('fails without creating a Release when the package is staged or metadata is absent', async () => {
     for (const configuration of [{ published: [] }, { registryStatus: 404 }]) {
-      const { run, created, manifestRefs } = setup(configuration)
+      const { run, created, contentRequests } = setup(configuration)
       await expect(run()).rejects.toThrow('not publicly available on npm yet')
       expect(created).toEqual([])
-      expect(manifestRefs).toEqual([])
+      expect(contentRequests).toEqual([])
     }
   })
 
@@ -134,10 +218,11 @@ describe('GitHub Release finalization', () => {
   })
 
   it('skips npm requests when every version already has a Release', async () => {
-    const { run, created, requests } = setup({ releases: ['v0.1.2'] })
+    const { run, created, requests, contentRequests } = setup({ releases: ['v0.1.2'] })
     expect(await run()).toEqual({ created: [], existing: ['v0.1.2'], skipped: [] })
     expect(created).toEqual([])
     expect(requests).toEqual([])
+    expect(contentRequests).toEqual([])
   })
 
   it('sorts stable tags numerically and ignores unrelated or prerelease tags', async () => {
@@ -177,11 +262,13 @@ describe('GitHub Release finalization', () => {
 
   it('limits a manual run to the requested published version', async () => {
     const { run, created } = setup({
-      tags: ['v0.1.1', 'v0.1.2'],
-      published: ['0.1.1', '0.1.2'],
+      tags: ['v0.1.3', 'v0.1.1', 'v0.1.2'],
+      published: ['0.1.1', '0.1.3'],
+      latest: '0.1.3',
     })
-    await run('0.1.2')
-    expect(created.map((release) => release.tag_name)).toEqual(['v0.1.2'])
+    await run('0.1.3')
+    expect(created.map((release) => release.tag_name)).toEqual(['v0.1.3'])
+    expect(created[0].body).toContain('/compare/v0.1.1...v0.1.3')
   })
 
   it('rejects invalid, untagged, or unpublished manually requested versions', async () => {
