@@ -1,6 +1,6 @@
 # Roadmap
 
-Updated: 2026-11-22. Published baseline: **@mdv-ui/mdv 0.1.6**.
+Updated: 2026-11-23. Published baseline: **@mdv-ui/mdv 0.1.7**.
 
 MDV has completed its initial component and delivery milestones and is now maintained through versioned releases. This roadmap records current priorities, remaining work, and decisions that future development should preserve. New components and public capabilities are scoped before implementation; candidate work has no assigned release or deadline.
 
@@ -12,7 +12,7 @@ MDV has completed its initial component and delivery milestones and is now maint
 | Design system                       | Accepted scope complete: light/dark/system and local themes, semantic tokens, typography, shapes, motion, local fonts, icons, and seed-based dynamic color.        |
 | Initial official component coverage | Accepted scope across 36 official component families delivered in 0.1.0. Supported variants and limitations remain documented in [COMPONENTS.md](./COMPONENTS.md). |
 | Initial integration and delivery    | Form, navigation, and nested-overlay compositions; a real packed-library consumer; and a Button import size comparison were accepted.                              |
-| Versioned publishing                | 0.1.6 is public on npm and has a GitHub Release. Changesets and staged npm approval remain in use.                                                                 |
+| Versioned publishing                | 0.1.7 is public on npm and has a GitHub Release. Changesets and staged npm approval remain in use.                                                                 |
 | Select and Autocomplete             | Accepted scope complete and released in 0.1.2, including Expressive/Baseline dropdowns, free-text autocomplete, and remote-search events/loading state.            |
 
 Completion refers to the agreed scope for each component. It does not imply every optional Material variant, browser, device, or assistive technology has been validated. No next component has been selected.
@@ -37,6 +37,7 @@ Until that migration is complete, keep `COMPONENTS.md` as the maintained API and
 
 ### Application feedback
 
+- [ ] After the Drawer foreground fix is published, update the documentation site and visually verify active Drawer and outline links during palette switches in light and dark modes. Establish visited links first; check default/dynamic palettes, standard/modal drawers, reduced motion, and captured painted frames in Chromium.
 - [ ] Use MDV in the consuming application and turn concrete integration problems into reproducible issues.
 - [ ] Prioritize fixes and additional components from those needs, agreeing on API scope and release impact before implementation.
 
@@ -47,6 +48,8 @@ The unreleased Button link correction adds a default underline and inline text s
 Read-only validation passed for the link correction: Prettier on the changed CSS and playground files, ESLint on the playground file, and `git diff --check`. Runtime tests, browser checks, and builds remain pending under the maintainer-run workflow.
 
 Button palette transitions in 0.1.6 route paint colors through registered, non-animated component properties to address [Chromium issue 569257985](https://issues.chromium.org/issues/569257985) on visited links. Theme token transitions and `href` behavior are unchanged. In-memory Tailwind and Lightning CSS checks passed; visual validation remains open.
+
+Navigation Drawer row foregrounds now use a registered paint alias, including active links. The alias follows the existing theme-token transitions without passing the animation flag directly to visited-link text. A focused source regression covers the alias contract; browser verification during palette changes remains pending.
 
 The shared Drawer and Rail item viewports now reserve a stable gutter for classic scrollbars. In headless Chrome 157 on Windows, an isolated CSS layout probe found a 10px width change before the fix and none after it in standard and modal surfaces, LTR and RTL, including both Rail widths. Native vertical scrolling remained available when content overflowed. Tailwind and Lightning CSS preserved both declarations in an in-memory check.
 
@@ -63,7 +66,7 @@ Existing evidence includes component checks and previews, selected SSR/hydration
 - [ ] Validate Menu inset state surfaces, edge and selected corners in the playground and a consuming application. Check theme-color transitions in light, dark, system, and local themes, including dynamic colors and reduced motion. Project tests and production builds remain maintainer-run.
 - [ ] Run the new Drawer/App Bar transition regression in `src/__tests__/MdvAppBarScaffold.spec.ts` and validate the follow-up fix in the playground and a consuming application. The regression covers intermediate colors, reversals, final colors, and frame cleanup; unit execution and package validation remain with the maintainer.
 - [ ] Validate the unreleased inline Button link styling in the playground and a consuming application: default underline, text alignment and wrapping, hover/pressed/focus-visible, disabled/loading, light/dark themes, and touch targets. Button behavior/SSR tests, browser review, and package builds remain pending maintainer execution.
-- [ ] Check visited filled and outlined Button links on the documentation landing page in an affected Chromium build. Inspect the painted text and outlines during preset switches, a return to the default palette, and light/dark changes. Use visual frames rather than computed styles for visited colors, and repeat with reduced motion.
+- [ ] Check visited filled and outlined Button links, Navigation Drawer active links, and docs outline links in an affected Chromium build. Inspect painted foregrounds during preset switches, a return to the default palette, and light/dark changes. Use visual frames rather than computed styles for visited colors, and repeat with reduced motion.
 - [ ] Verify stable navigation list widths in the running playground: toggle the nested Drawer group and vary the Rail preview height without changing its expanded state. Check keyboard scrolling, overlay scrollbars, and both modal components, then verify the published fix in the documentation site.
 - [ ] Define a supported browser/device matrix and record actual versions and results before expanding compatibility claims.
 - [ ] Check real touch and screen-reader interactions, especially pickers, Carousel, comboboxes, navigation, and nested overlays.

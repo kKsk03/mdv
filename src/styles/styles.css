@@ -34,9 +34,15 @@
 @import './time-picker.css';
 @import './carousel.css';
 
-/* Keep these typed aliases out of transition-property. They resolve each frame's
+/* Keep these typed paint aliases out of transition-property. They resolve each frame's
    colors without the animation flag rejected by visited links in Chromium #569257985. */
 @property --mdv-button-paint-foreground {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+
+@property --mdv-drawer-paint-foreground {
   syntax: '<color>';
   inherits: false;
   initial-value: transparent;

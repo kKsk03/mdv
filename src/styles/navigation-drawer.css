@@ -116,6 +116,7 @@
 }
 .mdv-navigation-drawer__row {
   --mdv-drawer-state-color: var(--mdv-sys-color-on-surface);
+  --mdv-drawer-paint-foreground: var(--mdv-sys-color-on-surface-variant);
 
   position: relative;
   display: flex;
@@ -134,7 +135,7 @@
   padding-inline: 16px;
   overflow: hidden;
   background: transparent;
-  color: var(--mdv-sys-color-on-surface-variant);
+  color: var(--mdv-drawer-paint-foreground);
   font: inherit;
   text-align: start;
   text-decoration: none;
@@ -144,9 +145,9 @@
 }
 .mdv-navigation-drawer__row--active {
   --mdv-drawer-state-color: var(--mdv-sys-color-on-secondary-container);
+  --mdv-drawer-paint-foreground: var(--mdv-sys-color-on-secondary-container);
 
   background: var(--mdv-sys-color-secondary-container);
-  color: var(--mdv-sys-color-on-secondary-container);
 }
 .mdv-navigation-drawer__row--active > .mdv-navigation-drawer__label {
   font-weight: 700;
@@ -202,7 +203,12 @@
   white-space: nowrap;
 }
 .mdv-navigation-drawer__row--disabled {
-  color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 38%, transparent);
+  --mdv-drawer-paint-foreground: color-mix(
+    in srgb,
+    var(--mdv-sys-color-on-surface) 38%,
+    transparent
+  );
+
   cursor: default;
 }
 .mdv-navigation-drawer__row--disabled .mdv-navigation-drawer__badge {
