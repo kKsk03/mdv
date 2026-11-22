@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.6
+
+### Patch Changes
+
+- b0ecebe: Keep Button link text, backgrounds, borders, and focus rings in sync with the theme during palette and light/dark transitions in affected Chromium versions. Native link behavior and theme animation remain unchanged.
+- b0ecebe: Keep Button link text, backgrounds, borders, and focus rings in sync with the theme during palette and light/dark transitions in affected Chromium versions. Native link behavior and theme animation remain unchanged.
+
 ## 0.1.5
 
 ### Patch Changes
