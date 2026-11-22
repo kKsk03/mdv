@@ -128,7 +128,8 @@ function openSubmenu() {
 const { ripple, showRipple, releaseRipple, finishRipple } = useButtonRipple({
   disabled: isDisabled,
   isLink: () => isLink.value,
-  surface: () => control.value,
+  surface: () =>
+    control.value?.querySelector<HTMLElement>('.mdv-menu-item__surface') ?? control.value,
 })
 
 function blockDisabled(event: Event) {

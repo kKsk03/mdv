@@ -2052,9 +2052,9 @@ function confirmSelection(event: MdvMenuSelectEvent) {
 | `placement`             | `'top' \| 'bottom' \| 'left' \| 'right'`，各可追加 `-start`／`-end` | `'bottom-start'`             |
 | `offset`                | `number`，非负像素                                                  | `4`                          |
 
-Baseline 固定使用 standard 配色和布局。默认 Expressive 使用 16px 容器圆角、4px 普通条目、12px 选中条目和 20px 图标；Baseline 为 4px 容器圆角和 24px 图标。两套均保留菜单阴影，点击高度至少 48px；辅助文字和长标签可让条目自然增高。Expressive 官网高度令牌 44dp 与测量图／无障碍要求的 48dp 不一致，MDV 选择至少 48px。
+Baseline 固定使用 standard 配色和布局。默认 Expressive 使用 16px 容器圆角，状态背景与至少 48px 高的整行点击目标分离，并在行内四周内缩 2px；菜单视口另有 2px 内边距，因此状态层距面板边缘约 4px。selected 状态层使用 12px 圆角。官方 Expressive 尺寸图标注 48dp 项目尺寸，而 Common token 表列出 44dp 高度；两者关系没有明确说明，MDV 保留至少 48px 点击目标，不从这项差异推导更多纵向间距。Baseline 为 4px 容器圆角、48px 最小条目高度和 24px 图标，其状态层铺满条目。两套均保留菜单阴影；辅助文字和长标签可让条目自然增高。
 
-`grouped` 是对官方间隙外观的 Web 实现：把直接内容放进 `MdvMenuGroup`，短菜单使用 2px 组间隙、8px 分组圆角；高度不足需要滚动时改用连续容器和分隔线。菜单本地使用细滚动条，不修改全局滚动条。可通过 style 的 `width`、`max-width` 及 `--mdv-menu-max-height` 调整尺寸，仍受视口可用空间限制。
+`grouped` 是对官方分隔表面外观的 Web 实现：把直接内容放进 `MdvMenuGroup`，短菜单使用 2px 组间隙、8px 分组圆角及 2px 组内留白；状态层在整行点击目标内仍保持 2px 内缩。高度不足需要滚动时改用连续容器和分隔线。菜单本地使用细滚动条，不修改全局滚动条。可通过 style 的 `width`、`max-width` 及 `--mdv-menu-max-height` 调整尺寸，仍受视口可用空间限制。
 
 `#trigger="{ triggerProps, open, close }"` 中，`open` 是当前展开布尔值，`close()` 请求关闭。把完整 `triggerProps` 通过 `v-bind` 绑定到一个原生元素或单个原生根元素的 Vue 组件，包括 ref、ID、ARIA 和监听器；适用于 MdvButton／MdvIconButton。非原生可聚焦的右键区域需自行设置 `tabindex="0"`。
 

@@ -101,6 +101,26 @@ function example(
 }
 
 describe('MdvMenu', () => {
+  it('positions the ripple within the inset state surface', async () => {
+    const { open, items } = example()
+    await open()
+    const control = items()[0]!
+    const stateSurface = control.get<HTMLElement>('.mdv-menu-item__surface')
+    const surfaceBounds = vi
+      .spyOn(stateSurface.element, 'getBoundingClientRect')
+      .mockReturnValue(new DOMRect(102, 102, 196, 44))
+    try {
+      pointer(control.element, 'pointerdown', { clientX: 114, clientY: 108 })
+      await settle()
+      const wave = control.get<HTMLElement>('.mdv-menu-item__ripple-wave')
+      expect(wave.element.style.left).toBe('12px')
+      expect(wave.element.style.top).toBe('6px')
+      expect(surfaceBounds).toHaveBeenCalled()
+    } finally {
+      surfaceBounds.mockRestore()
+    }
+  })
+
   it('manages an omitted model internally, names its panel, positions it and preserves document scrolling', async () => {
     const { trigger, panel, component, open, items } = example()
     expect(trigger.attributes('aria-expanded')).toBe('false')

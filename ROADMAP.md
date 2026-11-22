@@ -50,13 +50,17 @@ Button palette transitions in 0.1.6 route paint colors through registered, non-a
 
 The shared Drawer and Rail item viewports now reserve a stable gutter for classic scrollbars. In headless Chrome 157 on Windows, an isolated CSS layout probe found a 10px width change before the fix and none after it in standard and modal surfaces, LTR and RTL, including both Rail widths. Native vertical scrolling remained available when content overflowed. Tailwind and Lightning CSS preserved both declarations in an in-memory check.
 
+Unselected Menu edge rows now follow the radius and insets of their painted surface: the whole panel in standard and scrolling layouts, or the individual group in the separated layout. Expressive selected corners and Baseline row shapes are unchanged. An isolated Vue fixture in Chrome 157 on Windows reproduced and verified the font-size hover and line-spacing submenu fixes, including the keyboard focus outline. It also checked separated RTL groups, scroll fallback, headings, push navigation, and dynamic edges with Tailwind and Lightning CSS output.
+
+Expressive Menu hover, pressed, and selected backgrounds now render on a surface inset 2px within the existing 48px item target; the menu's existing 2px viewport padding keeps those states 4px inside the shell. The item hit target and keyboard outline remain full-size, and Baseline surfaces stay full-row. An in-memory Vue/Tailwind/Lightning CSS fixture and Chrome 157 on Windows verified selected and hovered rows, submenu keyboard focus, 48px targets, the 44px state surface, grouped padding, and Baseline geometry. Ripple coordinates now use the inset surface and have a focused unit regression. Full project tests/build and consuming-app theme review remain maintainer follow-up.
+
 Application feedback takes priority over adding components merely to expand the catalog. Documentation-site work and a new component can be planned independently.
 
 ### Validation follow-up
 
 Existing evidence includes component checks and previews, selected SSR/hydration tests, and first-release package consumption with a production preview in Chrome on Windows. That browser version was not recorded.
 
-- [ ] Validate the released 0.1.3 menu corner fix and theme-color transitions in a consuming application; cover light, dark, system, local themes, dynamic colors, and reduced motion.
+- [ ] Validate Menu inset state surfaces, edge and selected corners in the playground and a consuming application. Check theme-color transitions in light, dark, system, and local themes, including dynamic colors and reduced motion. Project tests and production builds remain maintainer-run.
 - [ ] Run the new Drawer/App Bar transition regression in `src/__tests__/MdvAppBarScaffold.spec.ts` and validate the follow-up fix in the playground and a consuming application. The regression covers intermediate colors, reversals, final colors, and frame cleanup; unit execution and package validation remain with the maintainer.
 - [ ] Validate the unreleased inline Button link styling in the playground and a consuming application: default underline, text alignment and wrapping, hover/pressed/focus-visible, disabled/loading, light/dark themes, and touch targets. Button behavior/SSR tests, browser review, and package builds remain pending maintainer execution.
 - [ ] Check visited filled and outlined Button links on the documentation landing page in an affected Chromium build. Inspect the painted text and outlines during preset switches, a return to the default palette, and light/dark changes. Use visual frames rather than computed styles for visited colors, and repeat with reduced motion.

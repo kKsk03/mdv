@@ -348,6 +348,8 @@ MDV uses Vue, native dialog elements, and its own close interception, focus, scr
 
 MDV implements interaction with Vue, native Popover, and an independent menu tree, using Floating UI for positioning as described below. Hit targets are at least 48px high to reconcile the official Common 44dp token with the 48dp measurements and accessible targets. The Web adaptation of group gaps, fallback to dividers while scrolling, push submenus, and motion timing are MDV implementation choices. No other Material component runtime is introduced.
 
+The Expressive state illustrations place hover, pressed, and selected surfaces inside the menu shell. MDV separates each surface from its full-size row target with a 2px inset, in addition to the viewport's existing 2px padding. The official illustration labels a 48dp item while the Common token lists 44dp; the relationship is unspecified, so MDV keeps its existing 48px target and does not infer extra vertical spacing from that discrepancy.
+
 ## Material 3 Tooltip specifications and interaction
 
 - Tooltip specification sources: https://m3.material.io/components/tooltips/specs, guidelines, and the accessibility page. Web interaction semantics reference: https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/.

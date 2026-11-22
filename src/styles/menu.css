@@ -6,6 +6,9 @@
     --mdv-menu-selected-background: var(--mdv-sys-color-tertiary-container);
     --mdv-menu-selected-foreground: var(--mdv-sys-color-on-tertiary-container);
     --mdv-menu-radius: 16px;
+    --mdv-menu-surface-inset: 2px;
+    --mdv-menu-item-surface-inset-block: 2px;
+    --mdv-menu-item-surface-inset-inline: 2px;
     --mdv-menu-icon-size: 20px;
 
     position: fixed;
@@ -57,6 +60,8 @@
 
   .mdv-menu--baseline {
     --mdv-menu-radius: 4px;
+    --mdv-menu-item-surface-inset-block: 0px;
+    --mdv-menu-item-surface-inset-inline: 0px;
     --mdv-menu-background: var(--mdv-sys-color-surface-container);
     --mdv-menu-selected-background: var(--mdv-sys-color-surface-container-highest);
     --mdv-menu-selected-foreground: var(--mdv-sys-color-on-surface);
@@ -69,6 +74,8 @@
   }
 
   .mdv-menu__viewport {
+    --mdv-menu-surface-radius: var(--mdv-menu-radius);
+
     box-sizing: border-box;
     max-height: min(
       var(--mdv-menu-available-height, calc(100dvh - 16px)),
@@ -77,7 +84,7 @@
     overflow: hidden auto;
     overscroll-behavior: contain;
     border-radius: inherit;
-    padding: 2px;
+    padding: var(--mdv-menu-surface-inset);
     scrollbar-color: var(--mdv-sys-color-outline) transparent;
     scrollbar-width: thin;
   }
@@ -135,14 +142,13 @@
   }
 
   .mdv-menu--grouped > .mdv-menu__viewport > .mdv-menu-group {
-    flex-shrink: 0;
-  }
+    --mdv-menu-surface-radius: 8px;
 
-  .mdv-menu--grouped > .mdv-menu__viewport > .mdv-menu-group {
+    flex-shrink: 0;
     margin: 0;
     border: 0;
-    border-radius: 8px;
-    padding: 2px;
+    border-radius: var(--mdv-menu-surface-radius);
+    padding: var(--mdv-menu-surface-inset);
     background: var(--mdv-menu-background);
     box-shadow: var(--mdv-sys-elevation-level-3);
   }
@@ -158,6 +164,15 @@
 
   .mdv-menu-item__control,
   .mdv-menu__back {
+    --mdv-menu-item-edge-radius: max(
+      0px,
+      calc(var(--mdv-menu-surface-radius) - var(--mdv-menu-surface-inset))
+    );
+    --mdv-menu-item-edge-inline-radius: max(
+      0px,
+      calc(var(--mdv-menu-item-edge-radius) - var(--mdv-menu-item-surface-inset-inline))
+    );
+
     position: relative;
     display: flex;
     box-sizing: border-box;
@@ -183,41 +198,42 @@
       background-color var(--mdv-sys-motion-duration-short-2) var(--mdv-sys-motion-easing-standard);
   }
 
-  .mdv-menu-item:first-child > .mdv-menu-item__control {
-    border-start-start-radius: max(0px, calc(var(--mdv-menu-radius) - 2px));
-    border-start-end-radius: max(0px, calc(var(--mdv-menu-radius) - 2px));
+  /* Round only the rows that touch a painted surface edge. A group shares the
+     viewport's surface unless it is drawn separately in the grouped layout. */
+  :where(
+      .mdv-menu:not(.mdv-menu--grouped) > .mdv-menu__viewport,
+      .mdv-menu:not(.mdv-menu--grouped) > .mdv-menu__viewport > .mdv-menu-group:first-child,
+      .mdv-menu--grouped > .mdv-menu__viewport > .mdv-menu-group
+    )
+    > :where(.mdv-menu-item:first-child)
+    > .mdv-menu-item__control,
+  :where(.mdv-menu:not(.mdv-menu--grouped, .mdv-menu--baseline) > .mdv-menu__viewport)
+    > .mdv-menu__back:where(:first-child) {
+    border-start-start-radius: var(--mdv-menu-item-edge-inline-radius)
+      var(--mdv-menu-item-edge-radius);
+    border-start-end-radius: var(--mdv-menu-item-edge-inline-radius)
+      var(--mdv-menu-item-edge-radius);
   }
 
-  .mdv-menu-item:last-child > .mdv-menu-item__control {
-    border-end-start-radius: max(0px, calc(var(--mdv-menu-radius) - 2px));
-    border-end-end-radius: max(0px, calc(var(--mdv-menu-radius) - 2px));
+  :where(
+      .mdv-menu:not(.mdv-menu--grouped) > .mdv-menu__viewport,
+      .mdv-menu:not(.mdv-menu--grouped) > .mdv-menu__viewport > .mdv-menu-group:last-child,
+      .mdv-menu--grouped > .mdv-menu__viewport > .mdv-menu-group
+    )
+    > :where(.mdv-menu-item:last-child)
+    > .mdv-menu-item__control {
+    border-end-start-radius: var(--mdv-menu-item-edge-inline-radius)
+      var(--mdv-menu-item-edge-radius);
+    border-end-end-radius: var(--mdv-menu-item-edge-inline-radius) var(--mdv-menu-item-edge-radius);
   }
 
-  .mdv-menu-group > .mdv-menu-item:first-child > .mdv-menu-item__control {
-    border-start-start-radius: 6px;
-    border-start-end-radius: 6px;
-  }
-
-  .mdv-menu-group > .mdv-menu-item:last-child > .mdv-menu-item__control {
-    border-end-start-radius: 6px;
-    border-end-end-radius: 6px;
-  }
-
-  .mdv-menu-item__control--choice {
-    width: calc(100% - 4px);
-    margin-inline: 2px;
-    padding-inline: 14px;
-  }
-
-  .mdv-menu .mdv-menu-item__control--selected {
+  .mdv-menu-item__control--selected {
     border-radius: 12px;
-    background-color: var(--mdv-menu-selected-background);
     color: var(--mdv-menu-selected-foreground);
   }
 
-  .mdv-menu .mdv-menu-item:first-child > .mdv-menu-item__control--selected,
-  .mdv-menu .mdv-menu-item:last-child > .mdv-menu-item__control--selected {
-    border-radius: 12px;
+  .mdv-menu-item__control--selected > .mdv-menu-item__surface {
+    background-color: var(--mdv-menu-selected-background);
   }
 
   .mdv-menu-item__control[aria-disabled='true'] {
@@ -226,15 +242,22 @@
   }
 
   .mdv-menu-item__control--selected[aria-disabled='true'] {
-    background-color: color-mix(in srgb, var(--mdv-menu-selected-background) 38%, transparent);
     color: color-mix(in srgb, var(--mdv-menu-selected-foreground) 38%, transparent);
   }
 
+  .mdv-menu-item__control--selected[aria-disabled='true'] > .mdv-menu-item__surface {
+    background-color: color-mix(in srgb, var(--mdv-menu-selected-background) 38%, transparent);
+  }
+
   .mdv-menu-item__surface {
+    /* Keep visual feedback inset without reducing the full-size hit target. */
     position: absolute;
-    inset: 0;
+    inset: var(--mdv-menu-item-surface-inset-block) var(--mdv-menu-item-surface-inset-inline);
     overflow: hidden;
     border-radius: inherit;
+    background-color: transparent;
+    transition: background-color var(--mdv-sys-motion-duration-short-2)
+      var(--mdv-sys-motion-easing-standard);
     pointer-events: none;
   }
 
@@ -402,8 +425,9 @@
     animation: mdv-button-ripple-fade 200ms linear forwards;
   }
 
-  .mdv-menu--baseline .mdv-menu-item__control {
+  .mdv-menu--baseline :is(.mdv-menu-item__control, .mdv-menu__back) {
     width: 100%;
+    min-height: 48px;
     margin: 0;
     border-radius: 0;
     padding-inline: 12px;
@@ -413,6 +437,7 @@
     .mdv-menu,
     .mdv-menu-item__control,
     .mdv-menu-item__check,
+    .mdv-menu-item__surface,
     .mdv-menu-item__surface::before {
       transition: none;
     }
@@ -431,7 +456,7 @@
       box-shadow: none;
     }
 
-    .mdv-menu-item__control--selected {
+    .mdv-menu-item__control--selected > .mdv-menu-item__surface {
       outline: 1px solid Highlight;
       outline-offset: -1px;
     }
