@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.7
+
+### Patch Changes
+
+- 2390ef3: Align Expressive menu state surfaces and edge corners with Material guidance. Preserve full-size hit targets, keep Baseline styling unchanged, and align ripple feedback with the inset surface.
+
 ## 0.1.6
 
 ### Patch Changes
