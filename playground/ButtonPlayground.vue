@@ -45,6 +45,12 @@ const variants: { value: MdvButtonVariant; label: string }[] = [
   { value: 'link', label: '链接外观' },
 ]
 
+// Chromium treats an empty href as visited without requiring a history entry.
+const paletteComparison = [
+  { label: '原生按钮', href: undefined },
+  { label: '原生链接', href: '' },
+]
+
 const sizes: { value: MdvButtonSize; height: number; icon: number; space: number }[] = [
   { value: 'xs', height: 32, icon: 20, space: 12 },
   { value: 's', height: 40, icon: 20, space: 16 },
@@ -92,6 +98,27 @@ function applyButtonSeed() {
         使用鼠标、Tab、Enter 和空格检查交互；link 默认带下划线，可直接与正文组合。
       </p>
     </div>
+
+    <section
+      aria-labelledby="button-palette-comparison"
+      class="space-y-4 rounded-mdv-large bg-mdv-primary-container p-5 text-mdv-on-primary-container"
+    >
+      <h3 id="button-palette-comparison" class="text-mdv-title-medium">换色对照</h3>
+      <div v-for="sample in paletteComparison" :key="sample.label" class="space-y-2">
+        <h4 class="text-mdv-title-small">{{ sample.label }}</h4>
+        <div class="flex flex-wrap items-center gap-3">
+          <MdvButton
+            v-for="variant in variants"
+            :key="variant.value"
+            :variant="variant.value"
+            :href="sample.href"
+          >
+            <template #leading><MdvIcon :icon="chevronRight" /></template>
+            {{ variant.label }}
+          </MdvButton>
+        </div>
+      </div>
+    </section>
 
     <div class="rounded-mdv-large border border-mdv-outline-variant p-5">
       <h3 class="text-mdv-title-medium">行内链接与文字组合</h3>

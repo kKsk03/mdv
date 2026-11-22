@@ -47,6 +47,8 @@ The unreleased Button link correction adds a default underline and inline text s
 
 Read-only validation passed for the link correction: Prettier on the changed CSS and playground files, ESLint on the playground file, and `git diff --check`. Runtime tests, browser checks, and builds remain pending under the maintainer-run workflow.
 
+Button palette transitions now route foreground, background, border, and focus colors through registered, non-animated component properties to address [Chromium issue 569257985](https://issues.chromium.org/issues/569257985) on visited anchors. Theme token transitions and `href` behavior are unchanged. The Button playground compares native buttons with links that Chromium treats as visited even without a history entry. Formatting, targeted ESLint, and in-memory Tailwind/Lightning CSS checks passed; runtime and package validation remain open.
+
 Application feedback takes priority over adding components merely to expand the catalog. Documentation-site work and a new component can be planned independently.
 
 ### Validation follow-up
@@ -56,6 +58,7 @@ Existing evidence includes component checks and previews, selected SSR/hydration
 - [ ] Validate the released 0.1.3 menu corner fix and theme-color transitions in a consuming application; cover light, dark, system, local themes, dynamic colors, and reduced motion.
 - [ ] Run the new Drawer/App Bar transition regression in `src/__tests__/MdvAppBarScaffold.spec.ts` and validate the follow-up fix in the playground and a consuming application. The regression covers intermediate colors, reversals, final colors, and frame cleanup; unit execution and package validation remain with the maintainer.
 - [ ] Validate the unreleased inline Button link styling in the playground and a consuming application: default underline, text alignment and wrapping, hover/pressed/focus-visible, disabled/loading, light/dark themes, and touch targets. Button behavior/SSR tests, browser review, and package builds remain pending maintainer execution.
+- [ ] Check Button palette transitions in an affected Chromium build. In the Button playground, switch between seeds (such as `#3f51b5` and `#6750a4`), restore the default palette, and switch light/dark modes. Compare the painted text, icons, fills, and outlines in both rows before, during, and after the transition. Use visual frames rather than computed styles for visited colors. Repeat with reduced motion and verify the published CSS in a consuming application.
 - [ ] Define a supported browser/device matrix and record actual versions and results before expanding compatibility claims.
 - [ ] Check real touch and screen-reader interactions, especially pickers, Carousel, comboboxes, navigation, and nested overlays.
 - [ ] Extend targeted SSR/hydration coverage as consuming applications require it, including stable IDs, request isolation, focus, and edits made before hydration.

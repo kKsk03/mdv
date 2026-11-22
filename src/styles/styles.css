@@ -34,6 +34,32 @@
 @import './time-picker.css';
 @import './carousel.css';
 
+/* Keep these typed aliases out of transition-property. They resolve each frame's
+   colors without the animation flag rejected by visited links in Chromium #569257985. */
+@property --mdv-button-paint-foreground {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+
+@property --mdv-button-paint-background {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+
+@property --mdv-button-paint-border {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+
+@property --mdv-button-paint-focus {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+
 .mdv-icon {
   display: inline-block;
   width: 24px;
@@ -58,6 +84,8 @@
   --mdv-button-on-container-color: var(--mdv-sys-color-on-secondary-container);
   --mdv-button-outline-color: var(--mdv-sys-color-outline-variant);
   --mdv-button-outlined-label-color: var(--mdv-sys-color-on-surface-variant);
+  --mdv-button-paint-foreground: var(--mdv-button-color);
+  --mdv-button-paint-background: transparent;
 
   position: relative;
   box-sizing: border-box;
@@ -71,7 +99,8 @@
   );
   padding-inline: calc(var(--mdv-button-space) - var(--mdv-button-border));
   background: transparent;
-  color: var(--mdv-button-color);
+  background-color: var(--mdv-button-paint-background);
+  color: var(--mdv-button-paint-foreground);
   font-family: var(--mdv-sys-typescale-font-family);
   font-size: var(--mdv-sys-typescale-label-large-size);
   font-style: normal;
@@ -162,24 +191,26 @@
 }
 
 .mdv-button--filled {
-  background-color: var(--mdv-button-color);
-  color: var(--mdv-button-on-color);
+  --mdv-button-paint-background: var(--mdv-button-color);
+  --mdv-button-paint-foreground: var(--mdv-button-on-color);
 }
 
 .mdv-button--tonal {
-  background-color: var(--mdv-button-container-color);
-  color: var(--mdv-button-on-container-color);
+  --mdv-button-paint-background: var(--mdv-button-container-color);
+  --mdv-button-paint-foreground: var(--mdv-button-on-container-color);
 }
 
 .mdv-button--outlined {
   --mdv-button-border: var(--mdv-button-stroke);
+  --mdv-button-paint-border: var(--mdv-button-outline-color);
+  --mdv-button-paint-foreground: var(--mdv-button-outlined-label-color);
 
-  border-color: var(--mdv-button-outline-color);
-  color: var(--mdv-button-outlined-label-color);
+  border-color: var(--mdv-button-paint-border);
 }
 
 .mdv-button--elevated {
-  background-color: var(--mdv-sys-color-surface-container-low);
+  --mdv-button-paint-background: var(--mdv-sys-color-surface-container-low);
+
   box-shadow: var(--mdv-sys-elevation-level-1);
 }
 
@@ -211,7 +242,9 @@
 }
 
 .mdv-button:not(.mdv-button--disabled):focus-visible {
-  outline: 3px solid var(--mdv-button-color);
+  --mdv-button-paint-focus: var(--mdv-button-color);
+
+  outline: 3px solid var(--mdv-button-paint-focus);
   outline-offset: 2px;
 }
 
@@ -238,20 +271,29 @@
 }
 
 .mdv-button--disabled {
-  color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 38%, transparent);
+  --mdv-button-paint-foreground: color-mix(
+    in srgb,
+    var(--mdv-sys-color-on-surface) 38%,
+    transparent
+  );
+
   box-shadow: none;
   cursor: not-allowed;
 }
 
 :where(.mdv-button--outlined).mdv-button--disabled {
-  border-color: var(--mdv-sys-color-outline-variant);
+  --mdv-button-paint-border: var(--mdv-sys-color-outline-variant);
 }
 
 .mdv-button--filled.mdv-button--disabled,
 .mdv-button--tonal.mdv-button--disabled,
 .mdv-button--elevated.mdv-button--disabled,
 .mdv-button--text.mdv-button--disabled {
-  background-color: color-mix(in srgb, var(--mdv-sys-color-on-surface) 10%, transparent);
+  --mdv-button-paint-background: color-mix(
+    in srgb,
+    var(--mdv-sys-color-on-surface) 10%,
+    transparent
+  );
 }
 
 .mdv-button__content {
