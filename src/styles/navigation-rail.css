@@ -70,6 +70,7 @@
     flex-direction: column;
     overflow: hidden auto;
     overscroll-behavior: contain;
+    scrollbar-gutter: stable;
     scrollbar-width: thin;
     scrollbar-color: var(--mdv-sys-color-outline-variant) transparent;
     scroll-padding-block: 6px;

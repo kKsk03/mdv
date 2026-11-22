@@ -2827,6 +2827,8 @@ const destinations = [
 
 布局与标签由同一连续进度同步变化，文字不缩放；标准／模态参考 m3ui 的 0.9／700、0.9／1400 弹簧参数，中断保留速度，遮罩独立变化。支持 reduced-motion、forced-colors、RTL、局部主题、字体变化与独立项目滚动。不自动增加手势、密度变体或隐藏标签。
 
+The item viewport reserves space for classic scrollbars even when the list fits. Overlay scrollbars do not reserve space.
+
 测试规格覆盖原生语义、键盘、取消导航、受控拒绝、焦点／嵌套、缓存、SSR／hydration 和动效中断；布局、hover、长标签、两倍字号、窄区域和真实设备效果仍须在开发预览中验收。真实包消费另行验证。
 
 公共类型：`MdvNavigationRailAlignment`、`MdvNavigationRailProps`、`MdvModalNavigationRailProps`、`MdvNavigationRailCloseReason`、`MdvNavigationRailCloseDetail`、`MdvNavigationRailSlotProps`、`MdvNavigationRailItemProps`、`MdvNavigationRailItemSlotProps`。
@@ -2945,6 +2947,8 @@ default／label／icon 插槽读取 `{ expanded }`。default 可嵌套 Item 或 
 默认宽 360px，朝内容侧两角 16px；Standard 为 surface／无阴影，Modal 为 surface-container-low／elevation 1，遮罩沿用 MDV 的 32% scrim。项目最小高 56px，两侧各 12px，胶囊内水平 16px；图标 24px、图文间距 12px。标签与计数 label-large（14／20、500、tracking 0.1px），active 标签 700；字号增大时行高随内容增长。
 
 active 背景 secondary-container，文字／图标 on-secondary-container；未选中及尾计数 on-surface-variant。整行胶囊 hover 8%、focus／pressed 10%，焦点 secondary／3px／offset -3px。分隔线按内容边界两侧 28px 对齐，仅用于分组。内容区独立滚动并使用局部 thin 滚动条；支持浅深、局部令牌、动态主题、RTL、reduced-motion 和 forced-colors，不额外提供 color API。
+
+The list reserves a gutter for classic scrollbars so expanding and collapsing a group cannot change the available row width. Overlay scrollbars do not reserve space.
 
 测试规格覆盖语义、取消激活、分组控制、方向键、模态关闭来源、拦截／拒绝／过期、嵌套焦点、滑动、卸载／KeepAlive、运动中断及 SSR／hydration。用户已确认全部项目指令通过并完成当前范围的预览验收，包含最新子项胶囊与折叠箭头修订；触屏／读屏专项和真实包消费另行记录。
 
