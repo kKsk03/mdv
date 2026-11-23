@@ -219,7 +219,6 @@ function controlAttrs(index: number) {
     'aria-valuemax',
   ])
     delete result[key]
-  const suffix = index === 0 ? '下限' : '上限'
   const explicitName = index === 0 ? props.startAriaLabel : props.endAriaLabel
   result.id = controlId(index)
   result['aria-orientation'] = props.orientation
@@ -232,14 +231,9 @@ function controlAttrs(index: number) {
   )
   if (range.value) {
     result['aria-label'] =
-      explicitName ||
-      (typeof attrs['aria-label'] === 'string' ? `${attrs['aria-label']} ${suffix}` : undefined)
+      explicitName || (typeof attrs['aria-label'] === 'string' ? attrs['aria-label'] : undefined)
     result['aria-labelledby'] = !result['aria-label']
-      ? joinIds(
-          attrs['aria-labelledby'],
-          hasLabel.value ? labelId : undefined,
-          `${generatedId}-${index}-name`,
-        )
+      ? joinIds(attrs['aria-labelledby'], hasLabel.value ? labelId : undefined)
       : undefined
   } else {
     result['aria-labelledby'] =
@@ -673,27 +667,6 @@ watch(
 if (import.meta.env.DEV) {
   watch(
     () => [
-      props.label,
-      attrs['aria-label'],
-      attrs['aria-labelledby'],
-      props.startAriaLabel,
-      props.endAriaLabel,
-    ],
-    () => {
-      if (
-        !hasLabel.value &&
-        !attrs['aria-label'] &&
-        !attrs['aria-labelledby'] &&
-        !(range.value && props.startAriaLabel && props.endAriaLabel)
-      )
-        console.warn(
-          '[MDV] MdvSlider: provide label, aria-label or aria-labelledby; range handles can use startAriaLabel/endAriaLabel.',
-        )
-    },
-    { immediate: true },
-  )
-  watch(
-    () => [
       props.min,
       props.max,
       props.step,
@@ -845,9 +818,6 @@ defineExpose({
             }"
             :style="{ '--point': `${ratios[index]! * 100}%` }"
           >
-            <span v-if="range" :id="`${generatedId}-${index}-name`" class="mdv-slider__sr-only">{{
-              index === 0 ? '下限' : '上限'
-            }}</span>
             <input
               v-native-state="index"
               v-bind="controlAttrs(index)"

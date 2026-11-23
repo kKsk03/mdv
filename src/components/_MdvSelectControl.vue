@@ -62,8 +62,6 @@ const props = withDefaults(
     open: undefined,
     filterMode: 'local',
     loading: false,
-    loadingText: '正在加载…',
-    noOptionsText: '没有匹配项',
   },
 )
 
@@ -686,7 +684,7 @@ defineExpose({
     >
       <div ref="viewport" class="mdv-select-control__viewport">
         <div
-          v-if="props.loading"
+          v-if="props.loading && props.loadingText"
           class="mdv-select-control__status"
           role="status"
           aria-live="polite"
@@ -694,7 +692,7 @@ defineExpose({
           {{ props.loadingText }}
         </div>
         <div
-          v-if="filteredOptions.length === 0 && !props.loading"
+          v-if="filteredOptions.length === 0 && !props.loading && props.noOptionsText"
           class="mdv-select-control__status"
           role="status"
           aria-live="polite"
@@ -704,7 +702,9 @@ defineExpose({
         <div
           :id="listboxId"
           role="listbox"
-          :class="{ 'mdv-select-control__listbox--after-status': props.loading }"
+          :class="{
+            'mdv-select-control__listbox--after-status': props.loading && props.loadingText,
+          }"
           :aria-busy="props.loading ? 'true' : undefined"
           :aria-label="props.label || (attrs['aria-label'] as string | undefined) || undefined"
         >

@@ -141,6 +141,8 @@ function record(event: Event) {
           supporting-text="快速点击只切换档位；拖动或按住稍久显示数值。手柄与轨道保留移动过渡。"
         />
         <MdvSlider
+          start-aria-label="范围刻度的下限"
+          end-aria-label="范围刻度的上限"
           v-model="steppedRange"
           variant="range"
           :step="10"
@@ -159,6 +161,8 @@ function record(event: Event) {
           :supporting-text="`值：${decimal}`"
         />
         <MdvSlider
+          start-aria-label="两个手柄重合的下限"
+          end-aria-label="两个手柄重合的上限"
           v-model="smallRange"
           variant="range"
           label="两个手柄重合"
@@ -258,6 +262,8 @@ function record(event: Event) {
           value-indicator
         />
         <MdvSlider
+          start-aria-label="竖向范围的下限"
+          end-aria-label="竖向范围的上限"
           v-model="verticalRange"
           variant="range"
           orientation="vertical"
@@ -315,7 +321,14 @@ function record(event: Event) {
             :model-value="40"
             label="禁用"
             disabled
-          /><MdvSlider :model-value="[20, 80]" variant="range" label="禁用范围" disabled />
+          /><MdvSlider
+            start-aria-label="禁用范围的下限"
+            end-aria-label="禁用范围的上限"
+            :model-value="[20, 80]"
+            variant="range"
+            label="禁用范围"
+            disabled
+          />
         </div>
       </div>
     </section>
@@ -330,6 +343,8 @@ function record(event: Event) {
         <fieldset :disabled="disabled" class="space-y-4">
           <legend>原生表单关联</legend>
           <MdvSlider v-model="formValue" name="volume" label="提交音量" value-indicator /><MdvSlider
+            start-aria-label="同名提交两个值的下限"
+            end-aria-label="同名提交两个值的上限"
             ref="methodSlider"
             v-model="formRange"
             variant="range"

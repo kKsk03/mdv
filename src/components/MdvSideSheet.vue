@@ -26,8 +26,6 @@ const props = withDefaults(defineProps<MdvSideSheetProps>(), {
   placement: 'end',
   detached: false,
   showBack: false,
-  backLabel: '返回',
-  closeLabel: '关闭面板',
   dividers: false,
   closeOnEsc: true,
   closeOnScrim: true,
@@ -176,7 +174,6 @@ onDeactivated(invalidateClose)
 onBeforeUnmount(invalidateClose)
 function rootAttrs() {
   const result = modal.rootAttrs()
-  if (!result['aria-label'] && !result['aria-labelledby']) result['aria-label'] = '侧边面板'
   return result
 }
 const slotProps = computed<MdvSideSheetSlotProps>(() => ({

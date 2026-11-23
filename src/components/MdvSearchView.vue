@@ -40,12 +40,9 @@ const expanded = defineModel<boolean>('open', { default: false })
 const props = withDefaults(defineProps<Omit<MdvSearchViewProps, 'modelValue' | 'open'>>(), {
   variant: 'contained',
   layout: 'auto',
-  placeholder: '搜索',
   disabled: false,
   readonly: false,
   clearable: true,
-  clearLabel: '清空搜索',
-  backLabel: '返回',
   loading: false,
   closeOnEsc: true,
   closeOnScrim: true,
@@ -470,7 +467,7 @@ defineExpose({
           ref="content"
           class="mdv-search-dialog__results"
           role="region"
-          aria-label="搜索建议与结果"
+          :aria-label="resultsLabel"
           :aria-busy="loading ? 'true' : undefined"
           tabindex="0"
           @keydown="resultKeydown"

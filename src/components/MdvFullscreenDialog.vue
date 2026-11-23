@@ -20,7 +20,6 @@ const props = withDefaults(defineProps<MdvFullscreenDialogProps>(), {
   title: '',
   description: '',
   closable: true,
-  closeLabel: '关闭对话框',
   closeOnEsc: true,
   destroyOnClose: false,
 })

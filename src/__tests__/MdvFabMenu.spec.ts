@@ -52,7 +52,7 @@ describe('MdvFabMenu', () => {
     document.body.append(outside)
     outside.focus()
     const wrapper = mount(MdvFabMenu, {
-      props: { label: '新建内容' },
+      props: { label: '新建内容', closeLabel: '关闭菜单' },
       slots: {
         default: () => [h(MdvFabMenuItem, { label: '文档' }), h(MdvFabMenuItem, { label: '图片' })],
       },

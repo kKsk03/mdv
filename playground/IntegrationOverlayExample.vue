@@ -11,6 +11,7 @@ import {
   useSnackbar,
 } from '@/index'
 import type { MdvDateValue } from '@/index'
+import { datePickerCopy } from './picker-copy'
 
 const snackbar = useSnackbar()
 const menuOpen = ref(false)
@@ -23,7 +24,7 @@ const message = ref('打开菜单或日期面板，再按 Escape，父对话框�
 <template>
   <div class="space-y-5">
     <MdvTextField v-model="title" label="编辑计划名称" full-width autofocus />
-    <MdvDatePicker v-model="date" layout="modal" label="模态日期面板" />
+    <MdvDatePicker :labels="datePickerCopy" v-model="date" layout="modal" label="模态日期面板" />
     <div class="flex flex-wrap items-center gap-3">
       <MdvMenu v-model="menuOpen">
         <template #trigger="{ triggerProps }">
@@ -48,7 +49,13 @@ const message = ref('打开菜单或日期面板，再按 Escape，父对话框�
       </MdvRichTooltip>
       <MdvButton
         variant="outlined"
-        @click="snackbar.show({ message: '这条消息属于当前对话框。', closable: true })"
+        @click="
+          snackbar.show({
+            message: '这条消息属于当前对话框。',
+            closable: true,
+            closeLabel: '关闭通知',
+          })
+        "
       >
         显示局部消息
       </MdvButton>

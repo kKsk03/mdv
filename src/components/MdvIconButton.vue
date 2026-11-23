@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUpdated, useAttrs, useTemplateRef, watch } from 'vue'
+import { computed, useAttrs, useTemplateRef, watch } from 'vue'
 import type { VNode } from 'vue'
 import { resolveIconButtonColor } from './button-color'
 import { useButtonRipple } from './button-ripple'
@@ -83,19 +83,6 @@ if (import.meta.env.DEV) {
     },
     { immediate: true },
   )
-
-  let warnedMissingName = false
-  const checkAccessibleName = () => {
-    const hasName = ['aria-label', 'aria-labelledby'].some(
-      (key) => typeof attrs[key] === 'string' && attrs[key].trim().length > 0,
-    )
-    if (!hasName && !warnedMissingName) {
-      console.warn('[MDV] MdvIconButton: provide aria-label or aria-labelledby for its action.')
-    }
-    warnedMissingName = !hasName
-  }
-  onMounted(checkAccessibleName)
-  onUpdated(checkAccessibleName)
 }
 
 function rootAttrs() {

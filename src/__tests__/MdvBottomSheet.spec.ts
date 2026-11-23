@@ -39,7 +39,12 @@ function example(
   slots: Slots = {},
   attrs: Record<string, unknown> = {},
 ) {
-  const config = ref(props)
+  const config = ref<MdvBottomSheetProps>({
+    expandLabel: '展开面板',
+    collapseLabel: '收起面板',
+    closeLabel: '关闭面板',
+    ...props,
+  })
   const visible = ref(props.modelValue ?? true)
   const host = mount(
     defineComponent({
@@ -99,6 +104,13 @@ describe('MdvBottomSheet', () => {
     expect(dialog.open).toBe(false)
     expect(document.activeElement).toBe(trigger)
     expect(document.documentElement.style.overflow).toBe('')
+  })
+
+  it('does not inject accessible labels when callers omit them', async () => {
+    const wrapper = mount(MdvBottomSheet, { props: { modelValue: true }, attachTo: document.body })
+    mounted.push(wrapper)
+    await settle()
+    expect(wrapper.get(handle).attributes('aria-label')).toBeUndefined()
   })
 
   it('merges short-content anchors and reacts to content shrinking without retaining the old height', async () => {
@@ -442,7 +454,13 @@ describe('MdvBottomSheet', () => {
 describe('MdvBottomSheetScaffold', () => {
   it('keeps the handle or replacement control accessible when a requested preview is too small', async () => {
     const host = mount(MdvBottomSheetScaffold, {
-      props: { title: '小预览', peekHeight: 8 },
+      props: {
+        title: '小预览',
+        peekHeight: 8,
+        expandLabel: '展开面板',
+        collapseLabel: '收起面板',
+        closeLabel: '关闭面板',
+      },
       attachTo: document.body,
     })
     mounted.push(host)

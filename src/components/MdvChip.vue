@@ -109,13 +109,7 @@ const hasLeading = computed(() => !hasAvatar.value && !!slots.leading)
 const showCheck = computed(() => props.variant === 'filter' && selected.value)
 const colors = computed(() => resolveChipColor(props.color))
 const controlId = computed(() => (typeof attrs.id === 'string' && attrs.id ? attrs.id : chipId))
-const removeName = computed(() => {
-  const label =
-    props.label ||
-    renderedLabel.value ||
-    (typeof attrs['aria-label'] === 'string' ? attrs['aria-label'] : '')
-  return props.removeLabel || (label ? `删除${label}` : '删除此项')
-})
+const removeName = computed(() => props.removeLabel || undefined)
 let pendingSelected: boolean | undefined
 let selectionRevision = 0
 const activationListener =

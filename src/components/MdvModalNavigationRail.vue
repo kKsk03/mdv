@@ -123,7 +123,6 @@ function controls(): MdvNavigationRailSlotProps['menuAttrs'] {
 }
 function rootAttrs() {
   const result = modal.rootAttrs()
-  if (!result['aria-label'] && !result['aria-labelledby']) result['aria-label'] = '主导航'
   return { ...result, id: dialogId() }
 }
 function surfaceProps() {
@@ -137,7 +136,7 @@ function surfaceProps() {
 }
 function navigationAttrs() {
   return {
-    'aria-label': attrs['aria-label'] ?? (attrs['aria-labelledby'] ? undefined : '主导航'),
+    'aria-label': attrs['aria-label'],
     'aria-labelledby': attrs['aria-labelledby'],
   }
 }

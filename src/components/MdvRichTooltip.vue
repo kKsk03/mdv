@@ -33,11 +33,7 @@ function labelledBy() {
 }
 
 function accessibleLabel() {
-  return typeof attrs['aria-label'] === 'string'
-    ? attrs['aria-label']
-    : !labelledBy()
-      ? '帮助信息'
-      : undefined
+  return typeof attrs['aria-label'] === 'string' ? attrs['aria-label'] : undefined
 }
 
 function describedBy() {

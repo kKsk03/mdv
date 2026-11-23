@@ -37,6 +37,7 @@ Until that migration is complete, keep `COMPONENTS.md` as the maintained API and
 
 ### Application feedback
 
+- [ ] Rerun the full unit suite and review the caller-owned copy in the playground and a consuming application. The previous maintainer run passed 1,016 of 1,022 tests. The six failing fixtures now use caller-provided copy or check its absence. The changed code passed Vue and TypeScript checks for the app and tests, Prettier, ESLint, Oxlint, and `git diff --check`. Unit execution after the updates, browser review, production build, and package consumption are pending. Agree on the release version for the removed defaults before adding a changeset.
 - [ ] After the Drawer foreground fix is published, update the documentation site and visually verify active Drawer and outline links during palette switches in light and dark modes. Establish visited links first; check default/dynamic palettes, standard/modal drawers, reduced motion, and captured painted frames in Chromium.
 - [ ] Use MDV in the consuming application and turn concrete integration problems into reproducible issues.
 - [ ] Prioritize fixes and additional components from those needs, agreeing on API scope and release impact before implementation.
@@ -115,6 +116,7 @@ Maps, charts, rich-text/code editors, diagrams, Gantt views, and PDF viewers rem
 
 ### Component contracts
 
+- End-user copy belongs to the consuming application. Built-in controls accept optional text and accessible names. Omitting copy leaves the corresponding text or name empty. Consumers can bind localized strings directly. Date and time `locale` controls regional formatting only. Browsers provide native validation messages, and applications supply custom validation copy. Custom constraints remain effective when copy is absent.
 - Prefer native semantics and correct native attribute/form forwarding. Controlled models reflect accepted parent values; keep requests, commits, cancellation, and open-state changes distinct.
 - Include keyboard, accessible names, appropriate ARIA, Chinese IME behavior, and focus handling in the agreed contract. Keep imports and initial rendering safe for SSR, and avoid mutable state shared between requests.
 - Validate applicable light/dark/local themes, constrained layouts, long content, reduced motion, and lifecycle cleanup. Use meaningful behavior tests and real-browser checks for layout, gestures, scrolling, and motion.

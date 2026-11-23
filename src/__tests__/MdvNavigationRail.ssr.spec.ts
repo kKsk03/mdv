@@ -57,7 +57,7 @@ describe('Navigation Rail SSR', () => {
       }),
     )
     expect(retained).toContain('aria-modal="true"')
-    expect(retained).toContain('aria-label="主导航"')
+    expect(retained).not.toContain('aria-label="主导航"')
     expect(retained).toContain('data-state="closed"')
     expect(retained).not.toMatch(/<dialog[^>]*\sopen(?:\s|=|>)/)
     expect(retained.match(/data-mdv-rail-item/g)).toHaveLength(2)

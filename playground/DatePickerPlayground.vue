@@ -14,6 +14,7 @@ import type {
   MdvDateRangeValue,
   MdvDateValue,
 } from '@/index'
+import { datePickerCopy } from './picker-copy'
 
 const date = ref<MdvDateValue>('2026-11-14')
 const range = ref<MdvDateRangeValue>({
@@ -144,6 +145,7 @@ function submit(event: SubmitEvent) {
         :style="{ maxWidth: narrow ? '300px' : undefined, zoom: large ? 2 : 1 }"
       >
         <MdvDatePicker
+          :labels="datePickerCopy"
           v-model="date"
           :layout="layout"
           :initial-view="initialView"
@@ -164,6 +166,7 @@ function submit(event: SubmitEvent) {
           已提交：<code>{{ date }}</code>
         </p>
         <MdvDateRangePicker
+          :labels="datePickerCopy"
           v-model="range"
           :layout="layout === 'docked' ? 'auto' : layout"
           :initial-view="initialView"
@@ -196,10 +199,26 @@ function submit(event: SubmitEvent) {
     <section class="space-y-4 rounded-mdv-large border border-mdv-outline-variant p-4">
       <h2 class="text-mdv-title-large">官方形态</h2>
       <div class="flex flex-wrap gap-6">
-        <MdvDatePicker v-model="dockedDate" layout="docked" label="Docked 单日" />
-        <MdvDatePicker v-model="modalDate" layout="modal" label="Modal 单日" />
-        <MdvDatePicker v-model="fullscreenDate" layout="fullscreen" label="全屏单日" />
         <MdvDatePicker
+          :labels="datePickerCopy"
+          v-model="dockedDate"
+          layout="docked"
+          label="Docked 单日"
+        />
+        <MdvDatePicker
+          :labels="datePickerCopy"
+          v-model="modalDate"
+          layout="modal"
+          label="Modal 单日"
+        />
+        <MdvDatePicker
+          :labels="datePickerCopy"
+          v-model="fullscreenDate"
+          layout="fullscreen"
+          label="全屏单日"
+        />
+        <MdvDatePicker
+          :labels="datePickerCopy"
           v-model="inputDate"
           layout="modal"
           initial-view="input"
@@ -217,6 +236,7 @@ function submit(event: SubmitEvent) {
         /><MdvCheckbox v-model="rejectClose" label="拒绝关闭" />
       </div>
       <MdvDatePicker
+        :labels="datePickerCopy"
         :model-value="controlledDate"
         :open="controlledOpen"
         label="受控日期"
@@ -233,6 +253,7 @@ function submit(event: SubmitEvent) {
       <h2 class="text-mdv-title-large">原生表单与外部 form 关联</h2>
       <form :id="formId" class="space-y-4" @submit="submit">
         <MdvDatePicker
+          :labels="datePickerCopy"
           v-model="formDate"
           name="appointment"
           required
@@ -245,6 +266,7 @@ function submit(event: SubmitEvent) {
         </div>
       </form>
       <MdvDateRangePicker
+        :labels="datePickerCopy"
         v-model="formRange"
         :form="formId"
         start-name="arrival"
@@ -261,6 +283,7 @@ function submit(event: SubmitEvent) {
         v-model="customDate"
         label="为跨地区团队安排一次较长的会议日期"
         :labels="{
+          ...datePickerCopy,
           title: '为跨地区团队选择一个会议日期',
           confirm: '确认会议日期',
         }"
@@ -277,15 +300,16 @@ function submit(event: SubmitEvent) {
       <MdvDialog v-model="dialogOpen" title="日程设置">
         <div class="space-y-4">
           <MdvDatePicker
+            :labels="datePickerCopy"
             v-model="dialogDate"
             layout="docked"
             label="非模态日期浮层"
-          /><MdvDatePicker v-model="dialogDate" layout="modal" label="嵌套模态日期选择" /><button
-            type="button"
-            class="min-h-12 px-4"
-          >
-            后续操作
-          </button>
+          /><MdvDatePicker
+            :labels="datePickerCopy"
+            v-model="dialogDate"
+            layout="modal"
+            label="嵌套模态日期选择"
+          /><button type="button" class="min-h-12 px-4">后续操作</button>
         </div>
         <template #actions
           ><MdvButton variant="text" @click="dialogOpen = false">关闭日程设置</MdvButton></template

@@ -25,6 +25,7 @@ export interface MdvSelectBaseProps {
   name?: string
   form?: string
   fullWidth?: boolean
+  noOptionsText?: string
   open?: boolean
 }
 
@@ -34,7 +35,6 @@ export interface MdvAutocompleteProps extends MdvSelectBaseProps {
   filterMode?: MdvAutocompleteFilterMode
   loading?: boolean
   loadingText?: string
-  noOptionsText?: string
 }
 
 export interface MdvSelectOptionSlotProps {

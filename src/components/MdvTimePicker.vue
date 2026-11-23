@@ -17,9 +17,11 @@ import type { StyleValue } from 'vue'
 import clockIcon from '@iconify-icons/material-symbols/schedule'
 import keyboardIcon from '@iconify-icons/material-symbols/keyboard'
 import closeIcon from '@iconify-icons/material-symbols/close'
+import checkIcon from '@iconify-icons/material-symbols/check'
 import MdvIcon from './MdvIcon.vue'
 import MdvButton from './MdvButton.vue'
 import MdvTextField from './MdvTextField.vue'
+import { silentValidationMessage } from './form-validity'
 import { useDialog } from './use-dialog'
 import type { DialogEmits } from './use-dialog'
 import type { MdvDialogCloseDetail } from './dialog.types'
@@ -32,7 +34,6 @@ import {
   timeInputFormat,
   timeIssue,
   timeMinutes,
-  timePickerLabels,
 } from './time-picker-time'
 import type {
   MdvTimePickerCloseDetail,
@@ -45,7 +46,7 @@ import type {
 } from './time-picker.types'
 
 defineOptions({ name: 'MdvTimePicker', inheritAttrs: false })
-defineSlots<MdvTimePickerSlots>()
+const slots = defineSlots<MdvTimePickerSlots>()
 const props = withDefaults(defineProps<Omit<MdvTimePickerProps, 'modelValue' | 'open'>>(), {
   initialView: 'auto',
   orientation: 'auto',
@@ -76,7 +77,7 @@ const minuteInput = useTemplateRef<HTMLInputElement>('minuteInput')
 const ready = ref(false)
 const fieldsetDisabled = ref(false)
 const locked = computed(() => props.disabled || props.readonly || fieldsetDisabled.value)
-const labels = computed(() => ({ ...timePickerLabels, ...props.labels }))
+const labels = computed(() => props.labels ?? {})
 const format = computed(() => timeInputFormat(props.locale, props.hourCycle))
 const availability = computed(() => timeAvailability(props))
 const initialValue = value.value
@@ -125,11 +126,12 @@ const entryIssue = computed(() =>
     ? 'invalidTime'
     : timeIssue(entryValue.value, props.required, props),
 )
-const entryMessage = computed(
+const entryInvalid = computed(() => !!(customValidity.value || props.error || entryIssue.value))
+const entryMessage = computed<string>(
   () =>
     customValidity.value ||
-    (props.error ? props.errorText || labels.value.invalidTime : '') ||
-    (entryIssue.value ? labels.value[entryIssue.value] : ''),
+    (props.error ? props.errorText || '' : '') ||
+    (entryIssue.value ? labels.value[entryIssue.value] || '' : ''),
 )
 function panelTime(inputFormat = format.value) {
   const h = inputFormat.normalize(hoursText.value)
@@ -144,16 +146,21 @@ function panelTime(inputFormat = format.value) {
   return { value: minuteTime(hour * 60 + minute), invalid: false }
 }
 const draft = computed(() => panelTime())
-const panelMessage = computed(() => {
-  if (availability.value.issue) return labels.value[availability.value.issue]
-  if (!availability.value.minutes.length) return labels.value.noAvailableTime
-  const issue = draft.value.invalid
-    ? 'invalidTime'
-    : timeIssue(draft.value.value, props.required, props)
+const unavailableIssue = computed(
+  () => availability.value.issue ?? (availability.value.minutes.length ? null : 'noAvailableTime'),
+)
+const panelIssue = computed(() =>
+  draft.value.invalid ? 'invalidTime' : timeIssue(draft.value.value, props.required, props),
+)
+const panelInvalid = computed(
+  () => !!(unavailableIssue.value || customValidity.value || props.error || panelIssue.value),
+)
+const panelMessage = computed<string>(() => {
+  if (unavailableIssue.value) return labels.value[unavailableIssue.value] || ''
   return (
     customValidity.value ||
-    (props.error ? props.errorText || labels.value.invalidTime : '') ||
-    (issue ? labels.value[issue] : '')
+    (props.error ? props.errorText || '' : '') ||
+    (panelIssue.value ? labels.value[panelIssue.value] || '' : '')
   )
 })
 const actualOrientation = computed<'vertical' | 'horizontal' | null>(() => {
@@ -263,7 +270,7 @@ const layer = useDialog(
   {
     name: 'MdvTimePicker',
     role: 'dialog',
-    hasTitle: () => true,
+    hasTitle: () => !!(labels.value.title || slots.title),
     hasContentSlot: () => true,
     animate: animateTimePicker,
     prepare,
@@ -273,7 +280,18 @@ const layer = useDialog(
 )
 const shown = computed(() => layer.phase.value !== 'closed')
 function refreshValidity() {
-  input()?.setCustomValidity(entryMessage.value)
+  const control = input()
+  if (!control) return
+  const nativeRequiredMissing = control.required && !control.value
+  control.setCustomValidity(
+    entryMessage.value ||
+      (entryInvalid.value && !nativeRequiredMissing ? silentValidationMessage : ''),
+  )
+}
+function onEntryInvalid(event: Event) {
+  reported.value = true
+  const control = event.target as HTMLInputElement | null
+  if (control?.validationMessage === silentValidationMessage) event.preventDefault()
 }
 function syncEntry() {
   entryText.value = format.value.format(value.value)
@@ -296,7 +314,7 @@ function focus(options?: FocusOptions) {
 async function commitEntry() {
   if (!ready.value || locked.value || opened.value || composing.size || busy) return
   reported.value = true
-  if (entryMessage.value) {
+  if (entryInvalid.value) {
     refreshValidity()
     return
   }
@@ -313,7 +331,7 @@ async function commitEntry() {
   }
 }
 async function confirm() {
-  if (locked.value || !opened.value || panelMessage.value || composing.size || busy) return
+  if (locked.value || !opened.value || panelInvalid.value || composing.size || busy) return
   busy = true
   try {
     const next = draft.value.value
@@ -621,7 +639,9 @@ watch(draft, (next) => {
   const minute = timeMinutes(next.value)
   if (minute !== null) lastTime.value = minute
 })
-watch([entryMessage, entryText], refreshValidity, { flush: 'post' })
+watch([entryMessage, entryInvalid, entryText, () => props.required], refreshValidity, {
+  flush: 'post',
+})
 watch(
   entryIssue,
   (issue) => {
@@ -732,17 +752,22 @@ defineExpose<MdvTimePickerExpose>({
     <MdvTextField
       v-bind="inputAttrs()"
       v-model="entryText"
-      :label="label || labels.time"
+      :label="label ?? labels.time"
       :disabled="disabled"
       :readonly="readonly"
       :required="required"
-      :placeholder="(attrs.placeholder as string) || format.hint"
-      :supporting-text="supportingText || `${labels.formatHint}：${format.hint}`"
-      :error="!!(error || (reported && entryMessage))"
+      :placeholder="placeholder"
+      :supporting-text="
+        reported && entryInvalid
+          ? undefined
+          : (supportingText ??
+            (labels.formatHint ? `${labels.formatHint}: ${format.hint}` : undefined))
+      "
+      :error="!!(error || (reported && entryInvalid))"
       :error-text="reported ? entryMessage : errorText"
       @blur="entryBlur"
       @keydown="enter($event)"
-      @invalid="reported = true"
+      @invalid="onEntryInvalid"
     >
       <template #trailing>
         <button
@@ -780,7 +805,7 @@ defineExpose<MdvTimePickerExpose>({
       :data-state="layer.phase.value"
       role="dialog"
       aria-modal="true"
-      :aria-labelledby="id + '-title'"
+      :aria-labelledby="labels.title || slots.title ? id + '-title' : undefined"
       :aria-describedby="panelMessage ? id + '-status' : undefined"
       tabindex="-1"
       closedby="none"
@@ -790,7 +815,7 @@ defineExpose<MdvTimePickerExpose>({
       <div v-if="layer.rendered.value" ref="container" class="mdv-time-picker__container">
         <div ref="surface" class="mdv-time-picker__background" aria-hidden="true" />
         <div class="mdv-time-picker__sheet">
-          <header ref="header" class="mdv-time-picker__header">
+          <header v-if="labels.title || slots.title" ref="header" class="mdv-time-picker__header">
             <h2 :id="id + '-title'">
               <slot name="title">{{ labels.title }}</slot>
             </h2>
@@ -811,7 +836,7 @@ defineExpose<MdvTimePickerExpose>({
                     data-time-part="hour"
                     :value="hoursText"
                     :aria-label="labels.hour"
-                    :aria-invalid="!!panelMessage"
+                    :aria-invalid="panelInvalid"
                     :aria-describedby="panelMessage ? id + '-status' : undefined"
                     :disabled="locked"
                     @input="editPart($event, 'hour')"
@@ -834,7 +859,7 @@ defineExpose<MdvTimePickerExpose>({
                     data-time-part="minute"
                     :value="minutesText"
                     :aria-label="labels.minute"
-                    :aria-invalid="!!panelMessage"
+                    :aria-invalid="panelInvalid"
                     :aria-describedby="panelMessage ? id + '-status' : undefined"
                     :disabled="locked"
                     @input="editPart($event, 'minute')"
@@ -888,7 +913,7 @@ defineExpose<MdvTimePickerExpose>({
               "
               :aria-valuetext="format.format(minuteTime(lastTime))"
               :aria-disabled="locked || !availability.minutes.length"
-              :aria-describedby="id + '-keyboard'"
+              :aria-describedby="labels.keyboardHint ? id + '-keyboard' : undefined"
               @pointerdown="pointerdown"
               @pointermove="pointermove"
               @pointerup="pointerup"
@@ -925,7 +950,9 @@ defineExpose<MdvTimePickerExpose>({
               >
             </div>
           </div>
-          <p :id="id + '-keyboard'" class="mdv-time-picker__sr">{{ labels.keyboardHint }}</p>
+          <p v-if="labels.keyboardHint" :id="id + '-keyboard'" class="mdv-time-picker__sr">
+            {{ labels.keyboardHint }}
+          </p>
           <p :id="id + '-status'" class="mdv-time-picker__status" role="status" aria-live="polite">
             {{ panelMessage }}
           </p>
@@ -941,16 +968,19 @@ defineExpose<MdvTimePickerExpose>({
               <MdvIcon :icon="view === 'dial' ? keyboardIcon : clockIcon" />
             </button>
             <div class="mdv-time-picker__buttons">
-              <MdvButton variant="text" data-time-action="cancel" @click="layer.close('cancel')">{{
-                labels.cancel
-              }}</MdvButton
-              ><MdvButton
+              <MdvButton variant="text" data-time-action="cancel" @click="layer.close('cancel')">
+                <template v-if="labels.cancel">{{ labels.cancel }}</template>
+                <MdvIcon v-else :icon="closeIcon" />
+              </MdvButton>
+              <MdvButton
                 variant="text"
                 data-time-action="confirm"
-                :disabled="locked || !!panelMessage"
+                :disabled="locked || panelInvalid"
                 @click="confirm"
-                >{{ labels.confirm }}</MdvButton
               >
+                <template v-if="labels.confirm">{{ labels.confirm }}</template>
+                <MdvIcon v-else :icon="checkIcon" />
+              </MdvButton>
             </div>
           </div>
         </div>

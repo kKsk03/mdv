@@ -168,6 +168,9 @@ function submitForm(event: Event) {
         :data-mdv-theme="dark ? 'dark' : undefined"
       >
         <MdvSearchView
+          clear-label="清空搜索"
+          back-label="返回"
+          results-label="搜索建议与结果"
           v-model="query"
           v-model:open="viewOpen"
           :variant="variant"
@@ -240,6 +243,9 @@ function submitForm(event: Event) {
         >
           <h3 class="px-6 text-mdv-title-medium">{{ example.name }}</h3>
           <MdvSearchView
+            clear-label="清空搜索"
+            back-label="返回"
+            results-label="搜索建议与结果"
             v-model="example.query"
             :variant="example.variant"
             :layout="example.layout"
@@ -274,6 +280,10 @@ function submitForm(event: Event) {
         <MdvAppBarScaffold class="min-w-0 flex-1" :content-attrs="{ 'aria-label': '邮箱正文' }">
           <template #appbar>
             <MdvSearchAppBar
+              clear-label="清空搜索"
+              back-label="返回"
+              results-label="搜索建议与结果"
+              placeholder="搜索邮件"
               v-model="appQuery"
               :variant="variant"
               :layout="layout"
@@ -325,6 +335,7 @@ function submitForm(event: Event) {
       <h2 class="text-mdv-title-large">独立输入栏与表单</h2>
       <form class="grid max-w-xl gap-4" @submit.prevent="submitForm">
         <MdvSearchBar
+          clear-label="清空搜索"
           v-model="standalone"
           name="query"
           form="search-native-form"
@@ -345,6 +356,10 @@ function submitForm(event: Event) {
         <MdvCheckbox v-model="parentAccepts" label="父级接受开关请求" />
         <MdvCheckbox v-model="refuseClose" label="拦截关闭" />
         <MdvSearchView
+          clear-label="清空搜索"
+          back-label="返回"
+          results-label="搜索建议与结果"
+          placeholder="搜索邮件"
           :open="controlledOpen"
           :before-close="() => !refuseClose"
           :variant="variant"
@@ -365,7 +380,14 @@ function submitForm(event: Event) {
         <MdvButton variant="outlined" @click="dialogOpen = true">在对话框中搜索</MdvButton>
       </div>
       <MdvDialog v-model="dialogOpen" title="添加邮件">
-        <MdvSearchView :variant="variant" :layout="layout" placeholder="搜索要添加的邮件">
+        <MdvSearchView
+          clear-label="清空搜索"
+          back-label="返回"
+          results-label="搜索建议与结果"
+          :variant="variant"
+          :layout="layout"
+          placeholder="搜索要添加的邮件"
+        >
           <template #default="{ close }"
             ><MdvList
               ><MdvListItem

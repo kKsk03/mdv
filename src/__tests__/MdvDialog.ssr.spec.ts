@@ -18,7 +18,7 @@ describe('MdvDialog SSR', () => {
           }),
           h(
             MdvFullscreenDialog,
-            { title: '新建行程', modelValue: true },
+            { title: '新建行程', modelValue: true, closeLabel: '关闭对话框' },
             {
               default: () =>
                 h('form', [

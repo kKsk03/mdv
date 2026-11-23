@@ -30,7 +30,6 @@ const props = withDefaults(defineProps<MdvSnackbarProps>(), {
   modelValue: false,
   message: '',
   closable: undefined,
-  closeLabel: '关闭通知',
   actionLayout: 'auto',
   placement: 'bottom',
   offset: 16,

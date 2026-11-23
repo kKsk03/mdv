@@ -70,7 +70,7 @@ onBeforeUnmount(() => {
       <p class="mt-3 text-mdv-body-medium">当前保存的名称：{{ savedName }}</p>
     </section>
 
-    <MdvFullscreenDialog v-model="visible" title="新建行程">
+    <MdvFullscreenDialog close-label="关闭对话框" v-model="visible" title="新建行程">
       <div class="mx-auto grid max-w-3xl gap-6">
         <MdvTextField label="行程名称" placeholder="输入名称" full-width autofocus />
         <MdvTextField label="目的地" full-width />
@@ -87,7 +87,12 @@ onBeforeUnmount(() => {
       </template>
     </MdvFullscreenDialog>
 
-    <MdvFullscreenDialog v-model="edit" title="编辑行程" :before-close="guardEdit">
+    <MdvFullscreenDialog
+      close-label="关闭对话框"
+      v-model="edit"
+      title="编辑行程"
+      :before-close="guardEdit"
+    >
       <form id="dialog-edit-form" class="mx-auto grid max-w-3xl gap-6" @submit.prevent="saveEdit">
         <MdvTextField v-model="draftName" label="行程名称" required full-width autofocus />
         <MdvTextField v-model="notes" label="行程备注" multiline :rows="5" full-width />

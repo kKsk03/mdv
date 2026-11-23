@@ -32,9 +32,6 @@ const props = withDefaults(defineProps<MdvBottomSheetScaffoldProps>(), {
   description: '',
   showHandle: true,
   draggable: true,
-  expandLabel: '展开面板',
-  collapseLabel: '收起面板',
-  closeLabel: '关闭面板',
 })
 const emit = defineEmits<{
   'update:modelValue': [value: MdvBottomSheetState]
@@ -169,7 +166,6 @@ defineExpose({
         :hidden="hidden"
         :inert="currentState === 'hidden' ? true : undefined"
         :aria-hidden="currentState === 'hidden' ? true : undefined"
-        :aria-label="!title && !slots.header ? '底部面板' : undefined"
         :aria-labelledby="title || slots.header ? id + '-title' : undefined"
         :aria-describedby="!slots.sheet && description ? id + '-description' : undefined"
         :class="{

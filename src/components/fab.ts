@@ -1,13 +1,4 @@
-import {
-  computed,
-  inject,
-  onBeforeUnmount,
-  onDeactivated,
-  onMounted,
-  onUpdated,
-  useAttrs,
-  useTemplateRef,
-} from 'vue'
+import { computed, inject, onBeforeUnmount, onDeactivated, useAttrs, useTemplateRef } from 'vue'
 import { useButtonRipple } from './button-ripple'
 import { toolbarFabKey } from './fab-context'
 import type { MdvFabProps } from './fab.types'
@@ -42,18 +33,5 @@ export function useFab(props: Omit<MdvFabProps, 'size'>, iconOnly: boolean) {
     element.value?.blur()
   }
 
-  if (import.meta.env.DEV && iconOnly) {
-    let warned = false
-    function checkName() {
-      const named = ['aria-label', 'aria-labelledby'].some(
-        (key) => typeof attrs[key] === 'string' && attrs[key].trim().length > 0,
-      )
-      if (!named && !warned)
-        console.warn('[MDV] MdvFab: provide aria-label or aria-labelledby for its action.')
-      warned = !named
-    }
-    onMounted(checkName)
-    onUpdated(checkName)
-  }
   return { attrs, element, surface, color, paired, isLink, offsetStyle, focus, blur, ...ripple }
 }

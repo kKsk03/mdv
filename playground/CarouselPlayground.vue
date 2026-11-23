@@ -10,6 +10,16 @@ import type {
   MdvCarouselVariant,
 } from '@/index'
 
+const carouselCopy = {
+  carousel: '轮播',
+  slide: '轮播项',
+  previous: '上一项',
+  next: '下一项',
+  skip: '跳过轮播',
+  empty: '暂无照片',
+  item: (index: number, count: number) => `第 ${index + 1} 项，共 ${count} 项`,
+}
+
 function landscape(background: string, mountain: string, sun: string) {
   return `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600"><rect width="800" height="600" fill="${background}"/><circle cx="600" cy="150" r="64" fill="${sun}"/><path d="M-80 500 220 130 560 580H-80Z" fill="${mountain}"/><path d="M200 600 590 230 900 600Z" fill="${mountain}" opacity=".7"/><path d="M0 490Q200 420 400 510T800 480V600H0Z" fill="${sun}" opacity=".4"/></svg>`)}`
 }
@@ -172,6 +182,7 @@ function reset() {
         :style="{ width: `${width}px` }"
       >
         <MdvCarousel
+          :labels="carouselCopy"
           v-model="current"
           :items="items"
           :variant="variant"
@@ -190,7 +201,11 @@ function reset() {
           "
           aria-label="旅行相册"
           @change="log"
-        />
+        >
+          <template #empty="{ text }"
+            ><p v-if="text">{{ text }}</p></template
+          >
+        </MdvCarousel>
       </div>
       <p>
         当前 key：<code>{{ current ?? '空' }}</code
@@ -209,11 +224,17 @@ function reset() {
       <div class="grid min-w-0 gap-6 lg:grid-cols-2">
         <div class="min-w-0">
           <h3 class="px-4 text-mdv-title-medium">Multi-browse</h3>
-          <MdvCarousel :items="gallery" :item-size="220" aria-label="多项旅行照片" />
+          <MdvCarousel
+            :labels="carouselCopy"
+            :items="gallery"
+            :item-size="220"
+            aria-label="多项旅行照片"
+          />
         </div>
         <div class="min-w-0">
           <h3 class="px-4 text-mdv-title-medium">Uncontained</h3>
           <MdvCarousel
+            :labels="carouselCopy"
             :items="gallery"
             variant="uncontained"
             :item-size="180"
@@ -222,11 +243,17 @@ function reset() {
         </div>
         <div class="min-w-0">
           <h3 class="px-4 text-mdv-title-medium">Hero</h3>
-          <MdvCarousel :items="gallery" variant="hero" aria-label="推荐目的地" />
+          <MdvCarousel
+            :labels="carouselCopy"
+            :items="gallery"
+            variant="hero"
+            aria-label="推荐目的地"
+          />
         </div>
         <div class="min-w-0">
           <h3 class="px-4 text-mdv-title-medium">居中 Hero</h3>
           <MdvCarousel
+            :labels="carouselCopy"
             :items="gallery"
             variant="hero"
             alignment="center"
@@ -237,6 +264,7 @@ function reset() {
       <div>
         <h3 class="px-4 text-mdv-title-medium">多宽高比 Uncontained</h3>
         <MdvCarousel
+          :labels="carouselCopy"
           :items="mixed"
           variant="uncontained"
           :height="256"
@@ -245,6 +273,7 @@ function reset() {
       </div>
       <div class="mx-auto max-w-full" style="width: 340px; height: 560px">
         <MdvCarousel
+          :labels="carouselCopy"
           :items="gallery"
           variant="full-screen"
           aria-label="沉浸式旅行照片"
@@ -256,6 +285,7 @@ function reset() {
     <section class="space-y-4 rounded-mdv-large border border-mdv-outline-variant p-4">
       <h2 class="text-mdv-title-large">内容插槽与查看全部</h2>
       <MdvCarousel
+        :labels="carouselCopy"
         :items="gallery"
         variant="uncontained"
         :item-size="280"
@@ -302,6 +332,7 @@ function reset() {
       <h2 class="text-mdv-title-large">受控拒绝与边界</h2>
       <MdvCheckbox v-model="rejected" label="拒绝定位请求" />
       <MdvCarousel
+        :labels="carouselCopy"
         :items="gallery"
         :model-value="locked"
         aria-label="受控相册"
@@ -309,7 +340,12 @@ function reset() {
       />
       <p>已接受的 key：{{ locked }}</p>
       <div class="grid min-w-0 gap-4 md:grid-cols-2">
-        <MdvCarousel :items="[gallery[0]!]" aria-label="单张照片" /><MdvCarousel
+        <MdvCarousel
+          :labels="carouselCopy"
+          :items="[gallery[0]!]"
+          aria-label="单张照片"
+        /><MdvCarousel
+          :labels="carouselCopy"
           :items="[{ ...gallery[1]!, disabled: true }, gallery[2]!]"
           variant="hero"
           aria-label="包含禁用操作的照片"

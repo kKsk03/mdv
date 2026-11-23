@@ -15,7 +15,10 @@ describe('MdvTextField SSR', () => {
             type: 'password',
             modelValue: 'secret',
             passwordToggle: true,
+            showPasswordLabel: '显示密码',
+            hidePasswordLabel: '隐藏密码',
             clearable: true,
+            clearLabel: '清除输入',
           }),
           h(MdvTextField, {
             label: '备注',

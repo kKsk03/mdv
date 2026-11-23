@@ -252,17 +252,6 @@ if (import.meta.env.DEV) {
     },
     { immediate: true },
   )
-  watch(
-    () => [props.label, attrs['aria-label'], attrs['aria-labelledby']],
-    ([label, ariaLabel, labelledBy]) => {
-      if (!label && !ariaLabel && !labelledBy) {
-        console.warn(
-          '[MDV] MdvSwitch: provide a visible label, aria-label, or aria-labelledby for the switch.',
-        )
-      }
-    },
-    { immediate: true },
-  )
 }
 
 onMounted(() => {

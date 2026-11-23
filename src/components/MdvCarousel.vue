@@ -31,7 +31,6 @@ import type {
   MdvCarouselExpose,
   MdvCarouselItem,
   MdvCarouselKey,
-  MdvCarouselLabels,
   MdvCarouselNavigateOptions,
   MdvCarouselProps,
   MdvCarouselSlots,
@@ -58,16 +57,7 @@ const variant = computed(() => props.variant ?? 'multi-browse')
 const alignment = computed(() => props.alignment ?? (variant.value === 'hero' ? 'center' : 'start'))
 const vertical = computed(() => variant.value === 'full-screen')
 const uncontained = computed(() => variant.value === 'uncontained')
-const labels = computed<MdvCarouselLabels>(() => ({
-  carousel: '轮播',
-  slide: '轮播项',
-  previous: '上一项',
-  next: '下一项',
-  skip: '跳过轮播',
-  empty: '暂无内容',
-  item: (index, count) => `第 ${index + 1} 项，共 ${count} 项`,
-  ...props.labels,
-}))
+const labels = computed(() => props.labels ?? {})
 const entries = computed(() => {
   const keys = new Set<MdvCarouselKey>()
   return props.items.map((item) => {
@@ -936,14 +926,18 @@ defineExpose<MdvCarouselExpose>({
     }"
     :style="heightStyle"
     role="region"
-    :aria-label="labels.carousel"
-    :aria-roledescription="labels.carousel"
+    :aria-label="labels.carousel || undefined"
+    :aria-roledescription="labels.carousel || undefined"
     :data-variant="variant"
     :data-current-key="selectedKey ?? undefined"
   >
-    <a v-if="entries.length" class="mdv-carousel__skip" :href="`#${endId}`" @click="skip">{{
-      labels.skip
-    }}</a>
+    <a
+      v-if="entries.length && labels.skip"
+      class="mdv-carousel__skip"
+      :href="`#${endId}`"
+      @click="skip"
+      >{{ labels.skip }}</a
+    >
     <header v-if="slots.header" class="mdv-carousel__header">
       <slot name="header" v-bind="controls" />
     </header>
@@ -964,8 +958,8 @@ defineExpose<MdvCarouselExpose>({
           :ref="(element) => setItemElement(entry.key, element)"
           class="mdv-carousel__item"
           role="group"
-          :aria-roledescription="labels.slide"
-          :aria-label="labels.item(index, entries.length)"
+          :aria-roledescription="labels.slide || undefined"
+          :aria-label="labels.item?.(index, entries.length) || undefined"
           :aria-disabled="metadata(entry.item).disabled || undefined"
           tabindex="-1"
           :data-carousel-index="index"
@@ -976,17 +970,18 @@ defineExpose<MdvCarouselExpose>({
           <slot name="item" :item="entry.item" :index="index" :active="entry.key === selectedKey"
             ><CarouselMedia
               :item="metadata(entry.item)"
-              :fallback-label="labels.item(index, entries.length)"
+              :fallback-label="labels.item?.(index, entries.length)"
           /></slot>
         </div>
       </div>
       <div v-if="!entries.length" class="mdv-carousel__empty">
-        <slot name="empty">{{ labels.empty }}</slot>
+        <slot name="empty" :text="labels.empty">{{ labels.empty }}</slot>
       </div>
     </div>
     <div v-if="showControls && entries.length" class="mdv-carousel__controls">
       <slot name="controls" v-bind="controls">
         <MdvButton
+          v-if="labels.previous"
           variant="text"
           :disabled="!controls.canPrevious"
           :aria-controls="trackId"
@@ -997,6 +992,7 @@ defineExpose<MdvCarouselExpose>({
           >{{ selectedIndex < 0 ? '—' : selectedIndex + 1 }} / {{ entries.length }}</span
         >
         <MdvButton
+          v-if="labels.next"
           variant="text"
           :disabled="!controls.canNext"
           :aria-controls="trackId"

@@ -226,6 +226,8 @@ function scrollTarget() {
       </div>
       <div class="fab-toolbar-stage" :dir="rtl ? 'rtl' : 'ltr'">
         <MdvToolbar
+          expand-label="展开工具栏"
+          collapse-label="收起工具栏"
           v-model:expanded="toolbarExpanded"
           variant="floating"
           :orientation="toolbarVertical ? 'vertical' : 'horizontal'"

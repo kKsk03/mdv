@@ -12,7 +12,7 @@ export interface MdvSplitButtonProps {
   /** 外部菜单／弹层已接受的展开状态；组件不自行切换。 */
   expanded?: boolean
   /** 描述主操作的更多选择，例如“更多保存选项”。 */
-  menuButtonLabel: string
+  menuButtonLabel?: string
   disabled?: boolean
   actionDisabled?: boolean
   menuDisabled?: boolean

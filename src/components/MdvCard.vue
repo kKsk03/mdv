@@ -119,30 +119,19 @@ onBeforeUnmount(() => {
 })
 
 if (import.meta.env.DEV) {
-  let warnedName = false
   let warnedActions = false
   function checkComposition() {
     const element = primary.value
-    const missingName =
-      !!element &&
-      !element.getAttribute('aria-label')?.trim() &&
-      !element.getAttribute('aria-labelledby')?.trim()
     const nestedActions =
       !!element &&
       !!content.value?.querySelector(
         'a[href], button, input:not([type="hidden"]), select, textarea, summary, [contenteditable]:not([contenteditable="false"]), [tabindex]:not([tabindex="-1"]), audio[controls], video[controls]',
       )
-    if (missingName && !warnedName) {
-      console.warn(
-        '[MDV] MdvCard: an actionable card needs a title, aria-label or aria-labelledby. A custom header needs an explicit accessible name.',
-      )
-    }
     if (nestedActions && !warnedActions) {
       console.warn(
         '[MDV] MdvCard: use a static card for buttons, links or other interactive content inside the card.',
       )
     }
-    warnedName = missingName
     warnedActions = nestedActions
   }
   onMounted(checkComposition)

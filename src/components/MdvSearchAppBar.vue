@@ -16,10 +16,7 @@ const props = withDefaults(defineProps<Omit<MdvSearchAppBarProps, 'modelValue' |
   scrolled: undefined,
   variant: 'contained',
   layout: 'auto',
-  placeholder: '搜索',
   clearable: true,
-  clearLabel: '清空搜索',
-  backLabel: '返回',
   closeOnEsc: true,
   closeOnScrim: true,
 })

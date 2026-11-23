@@ -19,6 +19,7 @@ import visibility from '@iconify-icons/material-symbols/visibility'
 import visibilityOff from '@iconify-icons/material-symbols/visibility-off'
 import MdvIcon from './MdvIcon.vue'
 import MdvIconButton from './MdvIconButton.vue'
+import { silentValidationMessage } from './form-validity'
 import type {
   MdvTextFieldModelModifiers,
   MdvTextFieldType,
@@ -52,7 +53,10 @@ const props = withDefaults(
     readonly?: boolean
     required?: boolean
     clearable?: boolean
+    clearLabel?: string
     passwordToggle?: boolean
+    showPasswordLabel?: string
+    hidePasswordLabel?: string
     /** 省略时，有合法 maxlength 才显示计数；true 也可单独显示当前字数。 */
     showCount?: boolean
     fullWidth?: boolean
@@ -247,7 +251,9 @@ function refreshValidation() {
     element?.willValidate &&
     !element.validity.valid
   )
-  nativeErrorText.value = nativeInvalid.value ? (element?.validationMessage ?? '') : ''
+  const validationMessage = element?.validationMessage ?? ''
+  nativeErrorText.value =
+    nativeInvalid.value && validationMessage !== silentValidationMessage ? validationMessage : ''
 }
 
 function handleInput(event: Event) {
@@ -533,7 +539,7 @@ defineExpose({
               <MdvIconButton
                 v-if="showClear"
                 variant="standard"
-                aria-label="清除输入"
+                :aria-label="props.clearLabel"
                 @mousedown.prevent
                 @click="clearValue"
               >
@@ -544,7 +550,7 @@ defineExpose({
               v-if="canTogglePassword"
               variant="standard"
               :disabled="props.disabled"
-              :aria-label="passwordVisible ? '隐藏密码' : '显示密码'"
+              :aria-label="passwordVisible ? props.hidePasswordLabel : props.showPasswordLabel"
               :aria-pressed="passwordVisible"
               @mousedown.prevent
               @click="togglePassword"

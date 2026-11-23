@@ -68,6 +68,7 @@ onBeforeUnmount(() => {
         />
         <MdvSelect label="发生错误" :options="regions" error error-text="请选择可用区域。" />
         <MdvSelect label="禁用" :options="regions" model-value="asia" disabled />
+        <MdvSelect label="目前开放区域" :options="[]" no-options-text="目前没有开放区域" />
       </div>
       <p class="text-mdv-body-small text-mdv-on-surface-variant">
         已选区域：{{ JSON.stringify(region) }}
@@ -100,6 +101,7 @@ onBeforeUnmount(() => {
       <h2 id="autocomplete-title" class="text-mdv-title-large">Autocomplete</h2>
       <div class="flex flex-wrap items-start gap-6">
         <MdvAutocomplete
+          no-options-text="没有找到城市"
           v-model="city"
           label="城市"
           :options="[

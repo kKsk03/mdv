@@ -24,7 +24,7 @@ export interface MdvDatePickerCloseDetail {
   reason: MdvDatePickerCloseReason
 }
 
-/** locale 只控制日期格式；操作与辅助文字可通过此对象覆盖。 */
+/** locale 仅控制日期格式；组件文案只从调用方提供的 labels 读取。 */
 export interface MdvDatePickerLabels {
   title: string
   rangeTitle: string
@@ -81,6 +81,7 @@ export interface MdvDatePickerCommonProps {
   readonly?: boolean
   required?: boolean
   clearable?: boolean
+  placeholder?: string
   supportingText?: string
   error?: boolean
   errorText?: string
@@ -106,7 +107,7 @@ export interface MdvDatePickerTriggerProps {
   'aria-haspopup': 'dialog'
   'aria-expanded': boolean
   'aria-controls': string
-  'aria-label': string
+  'aria-label'?: string
   onClick: (event: MouseEvent) => void
 }
 export interface MdvDatePickerTriggerSlotProps {

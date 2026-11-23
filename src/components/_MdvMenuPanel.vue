@@ -75,7 +75,7 @@ function orderedItems() {
   if (push.value && backControl.value)
     entries.unshift({
       element: () => backControl.value,
-      text: () => props.title || '返回',
+      text: () => props.title || '',
       disabled: () => false,
       open: () => {},
       hasChildren: () => false,
@@ -553,7 +553,7 @@ function labelledBy() {
         @click="close(true)"
       >
         <MdvIcon :icon="arrowBack" aria-hidden="true" />
-        <span>{{ props.title || '返回' }}</span>
+        <span>{{ props.title }}</span>
       </button>
       <slot />
     </div>

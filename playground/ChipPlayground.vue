@@ -86,12 +86,14 @@ function resetItems() {
       </MdvChipSet>
       <MdvChipSet label="内容 Input">
         <MdvChip
+          remove-label="删除设计文件"
           variant="input"
           label="设计文件"
           @click="message = '已打开设计文件；没有切换选中。'"
           @remove="message = '收到删除请求，当前示例保留该项。'"
         />
         <MdvChip
+          remove-label="删除林同学"
           variant="input"
           label="林同学"
           @click="message = '已打开联系人。'"
@@ -104,7 +106,7 @@ function resetItems() {
             ></template
           >
         </MdvChip>
-        <MdvChip variant="input" label="禁用内容" disabled />
+        <MdvChip remove-label="删除禁用内容" variant="input" label="禁用内容" disabled />
       </MdvChipSet>
       <p role="status" class="text-mdv-body-small text-mdv-on-surface-variant">{{ message }}</p>
     </section>
@@ -168,6 +170,7 @@ function resetItems() {
       </div>
       <MdvChipSet ref="exampleSet" label="任务标签">
         <MdvChip
+          :remove-label="'删除' + item"
           v-for="item in inputItems"
           :key="item"
           variant="input"
@@ -181,6 +184,7 @@ function resetItems() {
       </MdvChipSet>
       <MdvChipSet label="整颗纸片只执行删除">
         <MdvChip
+          :remove-label="'删除' + item"
           v-for="item in removeOnlyItems"
           :key="item"
           variant="input"
@@ -191,6 +195,7 @@ function resetItems() {
       </MdvChipSet>
       <MdvChipSet label="可移除的筛选条件">
         <MdvChip
+          :remove-label="'删除' + item"
           v-for="item in removableFilters"
           :key="item"
           variant="filter"
@@ -201,6 +206,7 @@ function resetItems() {
       </MdvChipSet>
       <MdvChipSet label="Input 显式启用选择">
         <MdvChip
+          remove-label="删除选中内容"
           v-model:selected="selectableInput"
           variant="input"
           label="选中内容"
@@ -208,6 +214,7 @@ function resetItems() {
           @remove="message = '收到删除选中内容请求。'"
         />
         <MdvChip
+          remove-label="删除自定义删除图标"
           variant="input"
           label="自定义删除图标"
           @remove="message = '收到自定义图标的删除请求。'"
@@ -257,7 +264,7 @@ function resetItems() {
           <MdvChipSet :label="`${mode} 配色`">
             <MdvChip label="普通操作" />
             <MdvChip variant="filter" label="已选择" :selected="true" />
-            <MdvChip variant="input" label="头像内容">
+            <MdvChip remove-label="删除头像内容" variant="input" label="头像内容">
               <template #avatar
                 ><span
                   class="grid size-full place-items-center bg-mdv-tertiary-container text-mdv-on-tertiary-container"
@@ -296,7 +303,7 @@ function resetItems() {
       <MdvChipSet label="同一局部色系">
         <MdvChip label="操作" :color="customColor" />
         <MdvChip variant="filter" label="已选择" :color="customColor" :selected="true" />
-        <MdvChip variant="input" label="内容" :color="customColor" />
+        <MdvChip remove-label="删除内容" variant="input" label="内容" :color="customColor" />
       </MdvChipSet>
     </section>
 
@@ -309,8 +316,12 @@ function resetItems() {
         <MdvChipSet label="自动换行与省略">
           <MdvChip label="短标签" />
           <MdvChip variant="filter" label="这是一个用于检查窄容器截断效果的中文长标签" />
-          <MdvChip variant="input" label="LongUnbrokenIdentifierForChipOverflowVerification" />
-          <MdvChip variant="input" label="短" />
+          <MdvChip
+            remove-label="删除LongUnbrokenIdentifierForChipOverflowVerification"
+            variant="input"
+            label="LongUnbrokenIdentifierForChipOverflowVerification"
+          />
+          <MdvChip remove-label="删除短" variant="input" label="短" />
         </MdvChipSet>
       </div>
       <div class="max-w-80 rounded-mdv-large border border-mdv-outline-variant p-4">
@@ -323,7 +334,7 @@ function resetItems() {
           <template #leading><MdvIcon :icon="calendarMonth" /></template>
         </MdvChip>
         <MdvChip variant="filter" label="الصور" />
-        <MdvChip variant="input" label="جهة الاتصال" />
+        <MdvChip remove-label="إزالة جهة الاتصال" variant="input" label="جهة الاتصال" />
       </MdvChipSet>
     </section>
 
@@ -347,12 +358,13 @@ function resetItems() {
       <MdvChipSet label="组级禁用" :disabled="disabled">
         <MdvChip label="普通操作" />
         <MdvChip variant="filter" label="筛选条件" />
-        <MdvChip variant="input" label="输入内容" />
+        <MdvChip remove-label="删除输入内容" variant="input" label="输入内容" />
       </MdvChipSet>
       <form @submit.prevent="actionCount += 100">
         <MdvChipSet label="表单内点击不会提交">
           <MdvChip label="计数加一" @click="actionCount++" />
           <MdvChip
+            remove-label="删除内容动作"
             variant="input"
             label="内容动作"
             @click="actionCount++"

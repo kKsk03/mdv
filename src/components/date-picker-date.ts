@@ -1,48 +1,4 @@
-import type { MdvDatePickerLabels, MdvDateRangeValue, MdvDateValue } from './date-picker.types'
-
-export const datePickerLabels: MdvDatePickerLabels = {
-  title: '选择日期',
-  rangeTitle: '选择日期范围',
-  chooseDate: '请选择日期',
-  chooseRange: '请选择开始和结束日期',
-  open: '打开日期选择器',
-  calendar: '切换到日历选择',
-  input: '输入日期',
-  cancel: '取消',
-  confirm: '确定',
-  save: '保存',
-  clear: '清除日期',
-  previousMonth: '上个月',
-  nextMonth: '下个月',
-  previousYear: '上一年',
-  nextYear: '下一年',
-  month: '选择月份',
-  year: '选择年份',
-  previousYears: '更早年份',
-  nextYears: '更晚年份',
-  earlierMonths: '更早月份',
-  laterMonths: '更晚月份',
-  today: '今天',
-  selected: '已选择',
-  rangeStart: '开始日期',
-  rangeEnd: '结束日期',
-  inRange: '在所选范围内',
-  unavailable: '不可选择',
-  startLabel: '开始日期',
-  endLabel: '结束日期',
-  dateLabel: '日期',
-  formatHint: '日期格式',
-  keyboardHint:
-    '方向键按日或周移动，Home / End 到本周首末，PageUp / PageDown 按月移动，配合 Shift 按年移动。空格选择，单日模式 Enter 选择并确认。Shift+M / Shift+Y 聚焦月份或年份。',
-  invalidDate: '请输入有效的公历日期和四位年份',
-  required: '请选择日期',
-  incompleteRange: '请填写完整的开始和结束日期',
-  reversedRange: '结束日期不能早于开始日期',
-  outOfBounds: '日期超出允许范围',
-  disabledDate: '此日期不可选择',
-  blockedRange: '所选范围包含不可选择的日期',
-  invalidBounds: '日期上下限无效',
-}
+import type { MdvDateRangeValue, MdvDateValue } from './date-picker.types'
 
 export interface DateParts {
   year: number

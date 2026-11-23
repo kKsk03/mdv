@@ -30,6 +30,7 @@ describe('MdvSearchBar', () => {
   it('supports an unbound query and keeps native input attributes and events on the input', async () => {
     const inputEvent = vi.fn<(event: Event) => void>()
     const wrapper = mount(MdvSearchBar, {
+      props: { placeholder: '搜索' },
       attrs: {
         name: 'q',
         maxlength: 30,

@@ -59,6 +59,19 @@ afterEach(() => {
 })
 
 describe('Time Picker 输入、草稿与受控请求', () => {
+  it('does not inject UI copy or dialog names when labels are omitted', async () => {
+    const wrapper = track(
+      mount(MdvTimePicker, { attachTo: document.body, props: { modelValue: '09:30' } }),
+    )
+    await open(wrapper)
+    expect(wrapper.get('dialog').attributes('aria-labelledby')).toBeUndefined()
+    const cancel = wrapper.get('[data-time-action="cancel"]')
+    expect(cancel.text()).toBe('')
+    expect(cancel.attributes('aria-label')).toBeUndefined()
+    expect(cancel.get('svg').attributes('aria-hidden')).toBe('true')
+    expect(wrapper.get('[data-time-action="confirm"] svg').attributes('aria-hidden')).toBe('true')
+    expect(entry(wrapper).attributes('aria-label')).toBeUndefined()
+  })
   it('外部输入不强制打开，面板取消丢弃草稿，确定才提交', async () => {
     const wrapper = track(
       mount(MdvTimePicker, {
@@ -196,6 +209,7 @@ describe('拨盘、空间回退与动态约束', () => {
           modelValue: '11:00',
           minuteStep: 15,
           disabledTime: (time) => time >= '12:00' && time < '13:00',
+          labels: { minute: '分钟' },
         },
       }),
     )
@@ -212,7 +226,12 @@ describe('拨盘、空间回退与动态约束', () => {
     const wrapper = track(
       mount(MdvTimePicker, {
         attachTo: document.body,
-        props: { modelValue: '09:30', initialView: 'dial', hourCycle: 'h23' },
+        props: {
+          modelValue: '09:30',
+          initialView: 'dial',
+          hourCycle: 'h23',
+          labels: { minute: '分钟' },
+        },
       }),
     )
     await open(wrapper)
@@ -242,7 +261,10 @@ describe('拨盘、空间回退与动态约束', () => {
     const wrapper = track(
       mount(MdvTimePicker, {
         attachTo: document.body,
-        props: { modelValue: '09:00', initialView: 'input' },
+        props: {
+          modelValue: '09:00',
+          initialView: 'input',
+        },
       }),
     )
     await open(wrapper)
@@ -251,7 +273,12 @@ describe('拨盘、空间回退与动态约束', () => {
       true,
     )
     expect(field(wrapper, 'hour').element.value).toBe('09')
-    await wrapper.setProps({ disabledTime: () => true })
+    expect(wrapper.get('[role="status"]').text()).toBe('')
+    expect(entry(wrapper).element.checkValidity()).toBe(false)
+    await wrapper.setProps({
+      disabledTime: () => true,
+      labels: { noAvailableTime: '没有可用时间' },
+    })
     expect(wrapper.get('[role="status"]').text()).toBe('没有可用时间')
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
     await wrapper.get('[data-time-action="cancel"]').trigger('click')
@@ -302,7 +329,13 @@ describe('表单、焦点与模态组合', () => {
     const wrapper = track(
       mount(MdvTimePicker, {
         attachTo: document.body,
-        props: { modelValue: '09:00', required: true, clearable: true, name: 'time' },
+        props: {
+          modelValue: '09:00',
+          required: true,
+          clearable: true,
+          name: 'time',
+          labels: { clear: '清除时间' },
+        },
         attrs: { form: 'external' },
       }),
     )

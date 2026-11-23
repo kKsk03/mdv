@@ -19,6 +19,15 @@ afterEach(() => {
 })
 
 describe('MdvSelect', () => {
+  it('uses caller-owned copy for an empty select', async () => {
+    const wrapper = mount(MdvSelect, { props: { options: [] } })
+    await wrapper.get('input').trigger('click')
+    expect(wrapper.get('[role="listbox"]').find('[role="option"]').exists()).toBe(false)
+    expect(wrapper.find('[role="status"]').exists()).toBe(false)
+    await wrapper.setProps({ noOptionsText: 'No destinations available' })
+    expect(wrapper.get('[role="status"]').text()).toBe('No destinations available')
+  })
+
   it('positions ripples within the inset expressive option surface', async () => {
     const platform = mockMenuPlatform()
     const wrapper = mount(MdvSelect, {
@@ -183,12 +192,18 @@ describe('MdvAutocomplete', () => {
   it('keeps option edge styling away from the popup edge while a loading status precedes results', async () => {
     const wrapper = mount(MdvAutocomplete, {
       attachTo: document.body,
-      props: { options, filterMode: 'external', loading: true },
+      props: {
+        options,
+        filterMode: 'external',
+        loading: true,
+        loadingText: '正在加载…',
+      },
     })
     const input = wrapper.get('input')
 
     await input.trigger('click')
     await flushPromises()
+    expect(wrapper.get('[role="status"]').text()).toBe('正在加载…')
     expect(wrapper.get('[role="listbox"]').classes()).toContain(
       'mdv-select-control__listbox--after-status',
     )
@@ -255,7 +270,9 @@ describe('MdvAutocomplete', () => {
   )
 
   it('filters locally, emits free text and searches on input, then selects option values', async () => {
-    const wrapper = mount(MdvAutocomplete, { props: { label: '城市', options } })
+    const wrapper = mount(MdvAutocomplete, {
+      props: { label: '城市', options, noOptionsText: '没有匹配项' },
+    })
     const input = wrapper.get<HTMLInputElement>('input')
     expect(input.attributes('aria-autocomplete')).toBe('list')
     expect(input.attributes('readonly')).toBeUndefined()
@@ -272,12 +289,27 @@ describe('MdvAutocomplete', () => {
     expect(wrapper.get('[role="status"]').text()).toBe('没有匹配项')
   })
 
+  it('omits built-in status nodes when status text is not provided', async () => {
+    const wrapper = mount(MdvAutocomplete, {
+      props: { options, filterMode: 'external', loading: true },
+    })
+    await wrapper.get('input').trigger('click')
+    const listbox = wrapper.get('[role="listbox"]')
+    expect(listbox.attributes('aria-busy')).toBe('true')
+    expect(listbox.classes()).not.toContain('mdv-select-control__listbox--after-status')
+    expect(wrapper.find('[role="status"]').exists()).toBe(false)
+    await wrapper.setProps({ loading: false })
+    await wrapper.get('input').setValue('not present')
+    expect(wrapper.find('[role="status"]').exists()).toBe(false)
+  })
+
   it('leaves remote filtering to the caller and exposes loading status', async () => {
     const wrapper = mount(MdvAutocomplete, {
       props: {
         options,
         filterMode: 'external',
         loading: true,
+        loadingText: '正在加载…',
       },
     })
     await wrapper.get('input').setValue('not present')

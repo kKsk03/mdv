@@ -15,7 +15,6 @@ const props = withDefaults(defineProps<MdvFabMenuProps>(), {
   size: 'regular',
   elevated: true,
   position: 'static',
-  closeLabel: '关闭菜单',
 })
 defineSlots<{ icon?(): VNode[]; default?(): VNode[] }>()
 const emit = defineEmits<{

@@ -57,7 +57,7 @@ function example(
   onAction?: (event: MouseEvent) => void,
 ) {
   const visible = ref(props.modelValue ?? true)
-  const config = ref(props)
+  const config = ref<MdvSnackbarProps>({ closeLabel: '关闭通知', ...props })
   const host = mount(
     defineComponent({
       setup: () => () =>

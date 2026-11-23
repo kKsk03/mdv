@@ -21,7 +21,7 @@ export interface MdvFabMenuProps {
   /** 省略时普通窗口16px、大窗口24px；另计安全区。 */
   offset?: number
   /** 描述将打开的操作，例如“新建内容”。 */
-  label: string
+  label?: string
   closeLabel?: string
   triggerAttrs?: MdvFabMenuTriggerAttrs
 }

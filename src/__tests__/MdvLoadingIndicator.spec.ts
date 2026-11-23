@@ -31,10 +31,10 @@ afterEach(() => {
 })
 
 describe('MdvLoadingIndicator', () => {
-  it('默认提供加载名称与不确定进度语义，SVG 不可聚焦且首帧非空', () => {
+  it('不注入默认名称，并保留不确定进度语义；SVG 不可聚焦且首帧非空', () => {
     const wrapper = render()
     expect(wrapper.attributes('role')).toBe('progressbar')
-    expect(wrapper.attributes('aria-label')).toBe('加载中')
+    expect(wrapper.attributes('aria-label')).toBeUndefined()
     expect(wrapper.attributes('aria-valuenow')).toBeUndefined()
     expect(wrapper.attributes('tabindex')).toBeUndefined()
     expect(wrapper.text()).toBe('')
@@ -101,7 +101,7 @@ describe('MdvLoadingIndicator', () => {
     expect(labelled.attributes('aria-labelledby')).toBe('article-title')
     expect(labelled.attributes('aria-label')).toBeUndefined()
     const fallback = render({ label: '   ' })
-    expect(fallback.attributes('aria-label')).toBe('加载中')
+    expect(fallback.attributes('aria-label')).toBeUndefined()
   })
 
   it('装饰模式移除角色和重复名称，动态恢复时保留同一图形', async () => {
@@ -160,7 +160,7 @@ describe('Loading Indicator motion lifecycle', () => {
   it('初始暂停不排帧；系统减少动画使用静态首帧并监听动态切换', async () => {
     const clock = loadingAnimationClock()
     const media = loadingMotionPreference()
-    const wrapper = render({ paused: true })
+    const wrapper = render({ paused: true, label: '加载中' })
     const path = wrapper.get('path')
     const initial = path.attributes('d')
     expect(clock.pending()).toBe(0)

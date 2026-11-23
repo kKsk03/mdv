@@ -2,6 +2,8 @@
 
 本文记录已实现组件的 API、示例与使用注意事项。使用前请先完成 [样式接入](./README.md#2-configure-css)。
 
+最终用户文案由应用提供。错误提示、操作名称和状态说明等文案接口可按需传入，省略时对应文案为空。应用可直接绑定自己的翻译结果，例如 `:error-text="t('form.email.invalid')"`。日期和时间组件的 `locale` 控制地区格式。原生表单校验提示由浏览器提供。
+
 - [MdvDatePicker 与 MdvDateRangePicker 日期选择器](#mdvdatepicker-与-mdvdaterangepicker)
 - [MdvTimePicker 时间选择器](#mdvtimepicker)
 - [MdvCarousel 轮播](#mdvcarousel)
@@ -68,13 +70,13 @@ const loading = ref(true)
 | --- | --- | --- | --- |
 | contained | boolean | false | 圆形 primary-container 背景，前景改用 on-primary-container |
 | size | number | 48 | 整体 CSS px，有限值限制在 24–240；NaN／Infinity 回退 48 |
-| label | string | 加载中 | 仅供辅助技术读取的名称；空白内容回退“加载中” |
+| label | string | 未设置 | 仅供辅助技术读取的名称；未设置时不生成名称 |
 | paused | boolean | false | 暂停在当前形状和相位，恢复后继续 |
 | decorative | boolean | false | 隐藏角色和名称，供已有加载说明的组件组合使用 |
 
 两种配置的内部图形区域均按整体尺寸的 38/48 缩放；默认无背景时使用 primary。七种形状连续变换并旋转，使用解析轮廓近似，未移植 Android 官方多边形数据；出处与许可见 [第三方记录](./THIRD_PARTY_NOTICES.md#material-3-loading-indicator-规格与动效参考)。组件没有插槽、专有事件或 Expose 方法，公开属性类型为 `MdvLoadingIndicatorProps`。
 
-默认 `role="progressbar"`，不确定进度不设置 aria-valuenow／valuemin／valuemax／valuetext；透传的数值属性也会移除。`aria-label`／`aria-labelledby` 可替代 label，原生属性、事件监听、class 和 style 进入根 span。组件不创建 Tab 停靠点，不自动移动焦点；label 不产生可见文字，业务可以在旁边展示说明，并在实际加载区域设置 aria-busy。需要宣布完成时由业务的状态文本负责，动画本身不反复触发播报。
+默认 `role="progressbar"`，不确定进度不设置 aria-valuenow／valuemin／valuemax／valuetext；透传的数值属性也会移除。label、`aria-label` 和 `aria-labelledby` 均由调用方提供；未提供时不生成名称。原生属性、事件监听、class 和 style 进入根 span。组件不创建 Tab 停靠点，不自动移动焦点；label 不产生可见文字，业务可以在旁边展示说明，并在实际加载区域设置 aria-busy。需要宣布完成时由业务的状态文本负责，动画本身不反复触发播报。
 
 Contained 用于叠放在其他内容上、需要背景对比的场合。颜色可以通过 `--mdv-loading-indicator-active-color` 与 `--mdv-loading-indicator-container-color` 局部覆盖；需保持图形与承载背景至少 3:1 的对比。嵌入按钮时，可使用装饰模式并选择与按钮匹配的前景：
 
@@ -116,7 +118,13 @@ const photos = [
 </script>
 
 <template>
-  <MdvCarousel v-model="current" :items="photos" item-key="id" aria-label="旅行照片" />
+  <MdvCarousel
+    v-model="current"
+    :items="photos"
+    item-key="id"
+    aria-label="旅行照片"
+    :labels="{ previous: '上一张', next: '下一张', skip: '跳过相册', empty: '暂无照片' }"
+  />
 </template>
 ```
 
@@ -133,7 +141,7 @@ const photos = [
 | `flingBehavior` | `'auto'` | `auto`／`single-advance`／`multi-browse`／`no-snap`；自由滚动仅 Uncontained 使用，Full-screen 始终吸附 |
 | `userScrollEnabled` | `true` | 控制拖动／滚轮；不禁用键盘、外置控制或程序定位 |
 | `showControls` | 横向 true，全屏 false | 轮播下方的控制区域；可通过 controls 插槽替换 |
-| `labels` | 中文 | 局部覆盖 carousel／slide／previous／next／skip／empty，以及 `item(index, count)` 项序号文案 |
+| `labels` | 未设置 | `Partial<MdvCarouselLabels>`；每个键都由调用方提供，缺失项不生成文案或名称 |
 
 `v-model` 表示浏览锚点，不是表单选择或 DOM 焦点。拖动过程中不逐帧提交；完成停靠或自由滚动后才请求更新。父级拒绝请求时恢复原位置，且不发出已接受的 change。多个大项共享一个停靠位置时仍能使用不同 key 定位。重排保留条目节点与 key；删除当前项会请求就近目标，空列表请求 null。受控值无效或父级拒绝删除后的目标时，不伪造替代 active。
 
@@ -143,7 +151,7 @@ Full-screen 采用竖向整页定位、零外围留白和 16px 页间隔，供�
 
 默认条目支持 `MdvCarouselItem` 的 key、src、alt、label、href、target、rel、disabled 和 aspectRatio。无 href 时为 type=button，有 href 时为原生链接；disabled 禁用默认操作和导航，但仍允许浏览该项。`aspectRatio` 仅用于 Uncontained，以共同媒体高度计算首选宽度，并约束到 9:16–16:9；容器不足时宽度限制为可用空间、媒体按 object-fit 裁切，省略时等宽。默认标签应简短，复杂文字或控件宜用 Uncontained 与自定义内容。
 
-插槽 `item({ item, index, active })` 完整替代默认媒体，保留自己的原生操作；组件不会在它外面套按钮，也不会把内部按钮／输入的事件当整项激活。自定义内容自行处理 disabled、名称及业务操作。`header`／`controls` 获得 `{ key, index, count, canPrevious, canNext, previous, next }`，显示于遮罩内容区域之外；empty 覆盖空状态。视觉尺寸可读取 `--mdv-carousel-mask-start`、`--mdv-carousel-mask-size` 和 `--mdv-carousel-label-opacity`，无需让 Vue 每帧重渲染内容。
+插槽 `item({ item, index, active })` 完整替代默认媒体，保留自己的原生操作；组件不会在它外面套按钮，也不会把内部按钮／输入的事件当整项激活。自定义内容自行处理 disabled、名称及业务操作。`header`／`controls` 获得 `{ key, index, count, canPrevious, canNext, previous, next }`，显示于遮罩内容区域之外。空列表保留空状态容器，`empty({ text })` 可替换其内容。`text` 来自可选的 `labels.empty`，省略时为 `undefined`。视觉尺寸可读取 `--mdv-carousel-mask-start`、`--mdv-carousel-mask-size` 和 `--mdv-carousel-label-opacity`，无需让 Vue 每帧重渲染内容。
 
 SSR／hydration 复用条目和内容节点，尺寸测量与系统动效偏好变化不重新渲染内容插槽。输入字段的模型和 hydration 初始化由字段自身管理：原生 input 的受控 value 遵循 Vue 的写入行为；需要接纳挂载前编辑或自动填充值时，可组合已有 MdvTextField。Carousel 不接管或恢复业务输入值。
 
@@ -151,9 +159,9 @@ SSR／hydration 复用条目和内容节点，尺寸测量与系统动效偏好�
 
 Expose：`scrollTo(key, options?)`、`next(options?)`、`prev(options?)` 返回 `Promise<boolean>` 表示请求是否被接受，不表示动效已完成；options 为 `{ animate?: boolean, focus?: boolean }`。focus=true 直接显露目标并聚焦内容，避免焦点处于裁切区域。`focus(options?)` 聚焦当前项；`element` 为外层原生元素。若要等待实际视觉结束，请由应用自己的交互流程处理，不轮询内部动画状态。
 
-容器通过 aria-label／aria-labelledby 命名，Tab 进入实际项目与内部控件。方向键、Home／End 浏览，RTL 镜像左右键；Tab 在项目内部按原生顺序移动，离开当前项时显露下一项，最后一项可正常离开。输入、Slider 等保留自己的编辑按键；自行处理拖动的插槽内容可设置 `data-mdv-carousel-no-drag`，组件不接管其拖动、滚轮和方向键。Offscreen 项退出 Tab 与读屏，聚焦目标先进入可见范围，挂载不抢焦点。提供跳过轮播的链接。
+容器通过 aria-label／aria-labelledby 命名，Tab 进入实际项目与内部控件。方向键、Home／End 浏览，RTL 镜像左右键；Tab 在项目内部按原生顺序移动，离开当前项时显露下一项，最后一项可正常离开。输入、Slider 等保留自己的编辑按键；自行处理拖动的插槽内容可设置 `data-mdv-carousel-no-drag`，组件不接管其拖动、滚轮和方向键。Offscreen 项退出 Tab 与读屏，聚焦目标先进入可见范围，挂载时保留已有焦点。传入 `labels.skip` 时，轮播提供跳过链接。
 
-纵向页面上的横向轮播须有无需横向手势的替代操作。默认在下方提供上一项／下一项，可用 controls 插槽替换为“查看全部”链接或展开列表，业务负责其实际目标；不要仅隐藏控制，也不要把箭头覆盖在图片上。Full-screen 的竖向浏览不受此要求限制。
+纵向页面上的横向轮播须有无需横向手势的替代操作。调用方提供 `labels.previous`／`labels.next` 时，默认在下方显示对应控制；也可用 controls 插槽替换为“查看全部”链接或展开列表，业务负责其实际目标。未提供名称时组件不生成空白控制。Full-screen 的竖向浏览不受此要求限制。
 
 系统 reduced-motion 开启时去掉视差和动态展开，所有同类项目保持稳定尺寸，经过容器边缘，Hero 保留邻项部分预览；Full-screen 仍按整页定位。偏好变化、resize、重排、拖动取消和 KeepAlive 停用会清理适用动画／监听并保持有效锚点。主题使用现有 surface、文字、状态层与焦点令牌，可在组件上设置 `--mdv-carousel-radius`、`--mdv-carousel-background`、`--mdv-carousel-foreground`；支持浅深、局部覆盖、动态色、RTL 与 forced-colors。
 
@@ -170,11 +178,26 @@ import { MdvTimePicker } from '@mdv-ui/mdv'
 import type { MdvTimeValue } from '@mdv-ui/mdv'
 
 const time = ref<MdvTimeValue>('13:05')
+const timeLabels = {
+  title: '选择预约时间',
+  open: '打开时间选择器',
+  hour: '小时',
+  minute: '分钟',
+  period: '时段',
+  dial: '切换到拨盘',
+  input: '切换到数字输入',
+  clear: '清除时间',
+  cancel: '取消',
+  confirm: '确定',
+  invalidTime: '请输入有效时间',
+  outOfBounds: '预约时间须在 09:00 至 18:00 之间',
+}
 </script>
 
 <template>
   <MdvTimePicker
     v-model="time"
+    :labels="timeLabels"
     label="预约时间"
     name="appointment"
     min="09:00"
@@ -193,23 +216,24 @@ const time = ref<MdvTimeValue>('13:05')
 | `initialView` | `'auto'` | auto／dial／input；auto 在打开时按主指针能力选择，fine 优先输入，其余优先拨盘 |
 | `orientation` | `'auto'` | auto／vertical／horizontal，用于拨盘 |
 | `hourCycle` | `'auto'` | auto／h12／h23；auto 随 locale |
-| `locale` | `'zh-CN'` | 控制数字、时分格式和 AM／PM 显示 |
+| `locale` | `'zh-CN'` | 控制数字、时分格式和 AM／PM 等地区格式；不负责翻译界面文案 |
 | `min`／`max` | 未设置 | 当天上下界，包含端点，格式为 `HH:mm`；倒序为无效配置 |
 | `minuteStep` | `1` | 60 的正整数约数，按每小时 00 分锚定 |
 | `disabledTime` | 未设置 | `(time: string) => boolean`，true 表示该分钟禁用 |
 | `disabled`／`readonly`／`required` | `false` | 禁用、只读与原生表单校验，尊重禁用 fieldset |
 | `clearable` | `false` | 清除提交 null，必填仍会报错 |
-| `label` | `'时间'` | 外部输入框标签 |
-| `supportingText` | 格式提示 | 外部辅助文字 |
+| `label` | 未设置 | 外部输入框标签；也可使用 `labels.time` 提供 |
+| `placeholder` | 未设置 | 外部输入框的占位文字 |
+| `supportingText` | 未设置 | 外部辅助说明。设置 `labels.formatHint` 可显示当地格式示例 |
 | `error`／`errorText` | `false`／未设置 | 业务错误状态与错误文字 |
 | `name` | 未设置 | 表单字段名，序列化为 `HH:mm` |
-| `labels` | 中文文案 | `Partial<MdvTimePickerLabels>`，覆盖标题、操作、错误及键盘说明 |
+| `labels` | 未设置 | `Partial<MdvTimePickerLabels>`；缺失键不显示文字或生成可访问名称 |
 
-聚焦或编辑外部输入框不会自动打开。点击时钟入口打开后，两种视图都先修改草稿，确定才提交；取消、Escape、遮罩和外部关闭放弃草稿。父级拒绝模型更新时不触发 confirm 或关闭；拒绝关闭时保留模态。外部输入在关闭态下通过 Enter／失焦提交有效文本，不逐键格式化或自动舍入；无效文本保留并显示错误。
+聚焦或编辑外部输入框不会自动打开。点击时钟入口打开后，两种视图都先修改草稿，确定才提交；取消、Escape、遮罩和外部关闭放弃草稿。父级拒绝模型更新时不触发 confirm 或关闭；拒绝关闭时保留模态。外部输入在关闭态下通过 Enter／失焦提交有效文本，不逐键格式化或自动舍入；无效文本会保留。自定义校验文案来自 `labels` 中的对应错误项、`errorText` 或 `setCustomValidity(message)`。缺少相应文案时，校验依然生效。
 
-模型不包含日期、时区或秒；12 小时显示不改变模型，`24:00` 无效。12 小时文本需要本地时段或 AM／PM，例如 `1:05 PM`，不猜测缺失时段。支持当前 locale 生成的格式、ASCII 时分冒号和全角数字。操作文案由 labels 覆盖。
+模型不包含日期、时区或秒；12 小时显示不改变模型，`24:00` 无效。12 小时文本需要本地时段或 AM／PM，例如 `1:05 PM`，不猜测缺失时段。支持当前 locale 生成的格式、ASCII 时分冒号和全角数字。时、分、时段与视图切换的名称可通过 `labels` 提供。省略 `labels.cancel` 或 `labels.confirm` 时，对应操作显示图标。
 
-min/max 表示当天连续区间。每天只允许 22:00–02:00 时，可省略 min/max 并设置 `:disabled-time="time => time > '02:00' && time < '22:00'"`。谓词应为同步、无副作用函数，可选项按一天最多 1440 个分钟缓存，响应式依赖变化会重新计算。步长、边界和禁用规则同时应用于拨盘、文本和提交。整个小时或半天无可用分钟时，该小时／时段不可选；全部不可选时提供原因并禁用确定。动态限制不替换外部模型。空模型打开以当前时间附近的可用分钟初始化草稿，不立即写回。
+min/max 表示当天连续区间。每天只允许 22:00–02:00 时，可省略 min/max 并设置 `:disabled-time="time => time > '02:00' && time < '22:00'"`。谓词应为同步、无副作用函数，可选项按一天最多 1440 个分钟缓存，响应式依赖变化会重新计算。步长、边界和禁用规则同时应用于拨盘、文本和提交。整个小时或半天无可用分钟时，该小时／时段不可选；全部不可选时，确定操作禁用，`labels.noAvailableTime` 可提供说明。动态限制不替换外部模型。空模型打开以当前时间附近的可用分钟初始化草稿，不立即写回。
 
 拨盘为 256px，常规拨盘时分框 96×80px，24 小时纵向时分框 114×80px，输入时分框 96×72px。容器按形态确定尺寸，不随大窗口放大。auto 根据空间选择纵横布局，放不下时使用输入；显式拨盘或方向也遵守空间回退。窗口调整、软键盘或模式切换保留时分输入节点与草稿，拨盘不产生滚动条；极小窗口中的数字输入允许必要的内容滚动。Modal 复用普通 Dialog 动效，内容裁切与背景同步，支持快速反向和 reduced-motion。
 
@@ -234,12 +258,37 @@ import type { MdvDateValue, MdvDateRangeValue } from '@mdv-ui/mdv'
 const date = ref<MdvDateValue>(null)
 const stay = ref<MdvDateRangeValue>(null)
 const unavailable = (value: string) => value === '2026-11-16'
+const dateLabels = {
+  title: '选择预约日期',
+  rangeTitle: '选择入住日期',
+  open: '打开日历',
+  calendar: '切换到日历',
+  input: '输入日期',
+  clear: '清除日期',
+  cancel: '取消',
+  confirm: '确定',
+  save: '保存',
+  previousMonth: '上个月',
+  nextMonth: '下个月',
+  earlierMonths: '更早的月份',
+  laterMonths: '更晚的月份',
+  invalidDate: '请输入有效日期',
+  reversedRange: '离店日期须在入住当日或之后',
+  blockedRange: '所选范围包含不可入住的日期',
+}
 </script>
 
 <template>
-  <MdvDatePicker v-model="date" label="预约日期" name="appointment" required />
+  <MdvDatePicker
+    v-model="date"
+    :labels="dateLabels"
+    label="预约日期"
+    name="appointment"
+    required
+  />
   <MdvDateRangePicker
     v-model="stay"
+    :labels="dateLabels"
     start-label="入住"
     end-label="离店"
     start-name="arrival"
@@ -260,26 +309,27 @@ const unavailable = (value: string) => value === '2026-11-16'
 | `open`                                 | `false`       | 独立的 `v-model:open`；未绑定时内部管理                              |
 | `layout`                               | `'auto'`      | 单日：auto／docked／modal／fullscreen；范围：auto／modal／fullscreen |
 | `initialView`                          | `'calendar'`  | Modal 打开时的 calendar／input；Docked 始终展示日历                  |
-| `locale`                               | `'zh-CN'`     | 日期显示、月份／星期名称及输入顺序；公历、拉丁数字                   |
+| `locale`                               | `'zh-CN'`     | 日期显示、月份／星期名称及输入顺序；只影响格式，不翻译界面文案 |
 | `firstDayOfWeek`                       | 随 locale     | 0 为周日，6 为周六，可显式覆盖                                       |
 | `min`／`max`                           | 省略          | 含端点的 ISO 日期限制；无效或倒序限制阻止提交                        |
 | `disabledDate`                         | 省略          | `(date: string) => boolean`；范围内任意一天禁用即整个区间无效        |
 | `disabled`／`readonly`／`required`     | `false`       | 禁用、只读和原生必填；只读仍可提交已接受的模型                       |
 | `clearable`                            | `false`       | 在字段尾部提供清除操作，提交 null                                    |
-| `supportingText`／`error`／`errorText` | 空／false／空 | 辅助说明与外部错误；省略说明时提供日期格式提示                       |
-| `labels`                               | 中文文案      | `Partial<MdvDatePickerLabels>`，覆盖操作、错误和无障碍文字           |
+| `placeholder`                          | 未设置        | 外部字段与面板文本字段的占位文字，范围组件的两个端点共用此值     |
+| `supportingText`／`error`／`errorText` | 空／false／空 | 调用方提供的辅助说明、外部错误状态与文案。设置 `labels.formatHint` 可显示当地格式示例 |
+| `labels`                               | 未设置        | `Partial<MdvDatePickerLabels>`；缺失键不显示文字或生成可访问名称    |
 
-单日额外提供 `label`、`name`；范围提供 `startLabel`／`endLabel`、`startName`／`endName`。未提供 label 时使用对应 labels 中的默认字段名称。默认 auto 在小于 600 CSS px 的窗口使用全屏 Modal，宽屏单日为 Docked、范围为 Modal；显式布局不受此阈值限制。尺寸、布局和视图切换保留未提交草稿，不隐式确认。
+单日额外提供 `label`、`name`；范围提供 `startLabel`／`endLabel`、`startName`／`endName`。未提供 `label` 时仅使用调用方提供的 `labels.dateLabel`／`labels.startLabel`／`labels.endLabel`；两者均缺失时不显示字段标签。默认 auto 在小于 600 CSS px 的窗口使用全屏 Modal，宽屏单日为 Docked、范围为 Modal；显式布局不受此阈值限制。尺寸、布局和视图切换保留未提交草稿，不隐式确认。
 
 Docked 提供独立的月份／年份导航与纵向下拉列表，入口在日历与列表之间切换时保持宽度和位置；补齐浅色月外日期，选择月外日期会转到对应月份。Modal 单日使用本地化星期、月份和日期作为大标题，合并的月年入口打开三列年份选择；选择列表与底部取消／确定之间显示分割线。年份列表和范围月份的滚动条贴着面板边缘，内容保留左右留白。范围日历使用顶部关闭／保存、简短范围标题及固定星期行，月份纵向滚动。全屏保留顶部关闭／保存，日历内容按可用宽度适配。面板内的滚动区域统一使用跟随局部主题的细滚动条与透明轨道。
 
-日历视图不显示底部错误文字，保留辅助技术状态播报；无效或不完整的范围仍禁止保存。文本输入模式继续显示错误说明，便于修正原文。
+无效或不完整的日期范围会阻止保存。`labels` 中对应的校验说明在日历视图中提供给辅助技术，在输入视图中显示。取消、确定、保存按钮缺少对应文案时显示图标。
 
 Modal 单日、范围和输入模式复用 MdvDialog 的分层动效：背景展开与内容、操作区、遮罩分别过渡，内容按背景展开进度裁切，文字不缩放；进入为 500ms，退出为 150ms。Docked 整个面板（含背景与阴影）从输入框下方轻移、展开并淡入，进入为 220ms，退出为 120ms；全屏复用 MdvFullscreenDialog 的底部滑入／滑出与遮罩渐变，进入为 300ms，退出为 200ms。快速反向从当前动画状态衔接，退出完成后才释放模态与恢复焦点；减少动态效果时直接完成。
 
 日历图标是独立入口，聚焦或编辑输入框不会自动展开。Docked 和 Modal 的日历操作先修改草稿，通过确定／保存提交；取消、Escape、遮罩、外部点击或外部关闭放弃草稿。受控日期更新被父级拒绝时不会发出 confirm 或自动关闭；受控关闭请求被拒绝时保留面板。动态 disabled／readonly／fieldset 禁用会释放已打开浮层。
 
-面板关闭时，外部文本字段在 Enter／失焦时独立校验并提交。输入过程保留原文，不逐字插入分隔符；接受明确的 ISO 年月日和地区顺序的斜杠、短横线、点或空格，月日可为一位数字。无分隔文本只接受地区顺序明确的八位数字，不猜测两位年份；无效文本保留并显示错误。组合输入期间 Enter 不提交。Modal 内可在日历／输入间切换；输入视图大标题与编辑按钮名称共用 `labels.input`，默认为“输入日期”。范围输入并排展示，空间不足时换行；错误原文会保留，直到用户修正或重新进行日历选择。
+面板关闭时，外部文本字段在 Enter／失焦时独立校验并提交。输入过程保留原文，不逐字插入分隔符；接受明确的 ISO 年月日和地区顺序的斜杠、短横线、点或空格，月日可为一位数字。无分隔文本只接受地区顺序明确的八位数字，不猜测两位年份；无效文本会保留。自定义校验文案来自 `labels` 中的对应错误项、`errorText` 或 `setCustomValidity(message)`。组合输入期间 Enter 不提交。Modal 内可在日历／输入间切换；输入视图大标题与编辑按钮名称共用 `labels.input`，未提供时不显示标题文字。范围输入并排展示，空间不足时换行；错误原文会保留，直到用户修正或重新进行日历选择。
 
 `class`／`style` 作用于外层，`dir`／`lang` 同时传给字段。其他原生属性和事件路由至单日输入／范围开始输入，范围结束输入保留自己的 label；`form` 同时关联两个文本字段和模型隐藏字段。使用 `name` 或 `startName`／`endName` 后，FormData 只包含 ISO 模型值，不会重复提交显示文本。面板草稿输入不参与外部表单。原生 required、表单 reset、被取消的 reset、fieldset 禁用和外部 form 关联遵循原生约定；reset 请求恢复组件建立时的值，仍服从父级接受状态。
 
@@ -475,7 +525,7 @@ const loading = ref(false)
 
 普通按钮建议实心图标；切换按钮建议未选空心、选中实心，以颜色之外的方式表达状态。组件不自动把任意 SVG 改成对应实心图形。SVG 推荐 `currentColor` 与 `focusable="false"`；直接放入的 SVG／图片按尺寸填满图标容器。图标容器始终隐藏于辅助技术并禁止内部聚焦，不要在插槽中放置可交互控件。
 
-**必须提供 `aria-label` 或 `aria-labelledby` 描述动作。** 仅图标或 SVG 的 title 不作为组件名称来源。切换按钮自动设置 `aria-pressed`，名称保持稳定，例如始终为“收藏”；不要随选中状态改成“取消收藏”。loading 不移除名称。缺失名称时开发环境会提示；引用的标签元素是否存在仍由使用方保证。可透传原生 `title`，但它不是 MD3 Tooltip；本组件不内置 Tooltip，可通过独立的 `MdvTooltip`／`MdvRichTooltip` 组合。
+组件不生成动作名称；需要命名该图标操作时，调用方可提供 `aria-label` 或 `aria-labelledby`。 仅图标或 SVG 的 title 不作为组件名称来源。切换按钮自动设置 `aria-pressed`，名称保持稳定，例如始终为“收藏”；不要随选中状态改成“取消收藏”。loading 不移除名称。缺失时名称保持未设置；引用的标签元素是否存在仍由使用方保证。可透传原生 `title`，但它不是 MD3 Tooltip；本组件不内置 Tooltip，可通过独立的 `MdvTooltip`／`MdvRichTooltip` 组合。
 
 | size | 可见高度 | 图标 | narrow 宽 | default 宽 | wide 宽 | square 圆角 | outlined 描边 |
 | ---- | -------: | ---: | --------: | ---------: | ------: | ----------: | ------------: |
@@ -602,6 +652,7 @@ const quantity = ref<string | number>('')
     autocomplete="name"
     required
     clearable
+    clear-label="清除姓名"
     :maxlength="20"
     supporting-text="用于公开显示"
   />
@@ -611,6 +662,8 @@ const quantity = ref<string | number>('')
     type="password"
     autocomplete="new-password"
     password-toggle
+    show-password-label="显示密码"
+    hide-password-label="隐藏密码"
   />
   <MdvTextField v-model="notes" variant="filled" label="备注" multiline :rows="4" full-width />
   <MdvTextField v-model.number="quantity" label="数量" type="number" min="0" step="1" />
@@ -623,7 +676,7 @@ const quantity = ref<string | number>('')
 | `modelModifiers`                   | Vue 自动传入的 `trim`／`number`／`lazy` 标记                              | `{}`       |
 | `variant`                          | `outlined`、`filled`                                                      | `outlined` |
 | `type`                             | `text`、`password`、`email`、`tel`、`url`、`search`、`number`；单行时生效 | `text`     |
-| `label`                            | 浮动标签                                                                  | `''`       |
+| `label`                            | 调用方提供的浮动标签                                                      | `''`       |
 | `placeholder`                      | 原生占位提示，避免与未浮动标签重叠                                        | `''`       |
 | `supportingText`                   | 辅助说明                                                                  | `''`       |
 | `error`                            | 业务错误状态                                                              | `false`    |
@@ -633,7 +686,9 @@ const quantity = ref<string | number>('')
 | `rows`                             | 多行输入的初始行数                                                        | `3`        |
 | `disabled`／`readonly`／`required` | 对应原生输入属性                                                          | `false`    |
 | `clearable`                        | 有内容且可编辑时提供清除操作                                              | `false`    |
+| `clearLabel`                       | 清除按钮的可访问名称                                                      | 未设置；缺失时不生成名称 |
 | `passwordToggle`                   | `type="password"` 单行输入提供显隐操作                                    | `false`    |
+| `showPasswordLabel`／`hidePasswordLabel` | 密码显隐按钮状态名称                                               | 未设置；缺失时不生成名称 |
 | `showCount`                        | 显示当前字数；省略时有合法 `maxlength` 才显示字数／上限                   | 不提供     |
 | `fullWidth`                        | 占满父容器可用宽度                                                        | `false`    |
 
@@ -649,7 +704,7 @@ const quantity = ref<string | number>('')
 
 `update:modelValue` 的参数为处理后的 `string | number`；常用 `@input`、`@change`、`@focus`、`@blur`、组合输入和 `@invalid` 监听获得实际 input／textarea 的原生事件，`event.target` 是该控件。程序赋值不伪造 input／change；内置清除会派发一次原生 input，不派发 change。不要使用 `value`／`defaultValue` 与 `v-model` 竞争控制内容。
 
-`id`、`name`、`form`、`autocomplete`、`inputmode`、`maxlength`、`min`、`max`、`step`、`pattern`、ARIA、`data-*` 和原生监听透传到实际控件，按浏览器支持的输入类型生效；`class`／`style` 属于最外层。`dir`／`lang` 同时用于外层布局与控件。提供 `label` 时自动关联；省略可见标签时必须自行提供 `aria-label`／`aria-labelledby`，placeholder 不能代替名称。
+`id`、`name`、`form`、`autocomplete`、`inputmode`、`maxlength`、`min`、`max`、`step`、`pattern`、ARIA、`data-*` 和原生监听透传到实际控件，按浏览器支持的输入类型生效；`class`／`style` 属于最外层。`dir`／`lang` 同时用于外层布局与控件。提供 `label` 时自动关联；省略可见标签时可通过 `aria-label`／`aria-labelledby` 命名；placeholder 不会隐式成为名称，未提供时字段保持无名称。
 
 辅助文字、计数与调用方 `aria-describedby` 自动合并，保留外部描述。错误时设置 `aria-invalid` 并关联错误文字；辅助说明变化使用礼貌播报，计数不会每输入一个字就强制播报。前后缀是装饰内容，重要单位请同时在标签或辅助说明中说明。长标签在可用空间内省略，辅助说明允许换行。
 
@@ -669,7 +724,7 @@ const query = ref('')
 </script>
 
 <template>
-  <MdvTextField v-model="query" label="搜索" type="search" clearable>
+  <MdvTextField v-model="query" label="搜索" type="search" clearable clear-label="清除搜索">
     <template #leading><MdvIcon :icon="search" /></template>
   </MdvTextField>
 </template>
@@ -677,7 +732,7 @@ const query = ref('')
 
 自定义图标的数据包需按 [MdvIcon 接入说明](#mdvicon) 安装；文本框内置的三个图标已随组件构建，无需额外安装图标集或请求网络。
 
-清除操作只在有内容、未禁用、非只读且不在组合输入时显示；为尾部动作预留位置，清空后焦点回到输入框。密码切换保留值、焦点与选区，按钮名称在“显示密码”／“隐藏密码”间切换并提供 `aria-pressed`；只读密码仍可显隐，禁用时不可操作。内置动作名称当前为中文。自定义插槽动作的禁用、名称和行为由使用方负责。
+清除操作只在有内容、未禁用、非只读且不在组合输入时显示；为尾部动作预留位置，清空后焦点回到输入框。密码切换保留值、焦点与选区；按钮名称分别来自 `showPasswordLabel`／`hidePasswordLabel`，并提供 `aria-pressed`。清除按钮使用 `clearLabel`。名称未提供时不生成默认文案或 ARIA 名称。自定义插槽动作的禁用、名称和行为由使用方负责。
 
 ### 表单与校验
 
@@ -766,6 +821,8 @@ async function searchRemote(query: string) {
     :options="remoteOptions"
     filter-mode="external"
     :loading="loading"
+    loading-text="正在查找城市"
+    no-options-text="未找到城市"
     @search="searchRemote"
   />
 </template>
@@ -787,8 +844,9 @@ async function searchRemote(query: string) {
 | `name`、`form` | `string` | 未设置 | 以唯一隐藏值提交模型值，并关联外部表单；模型为 `null` 时不提交该字段 |
 | `fullWidth` | `boolean` | `false` | 让字段填满容器宽度 |
 | `filterMode` | `local \| external` | `local` | 仅 Autocomplete；选择本地过滤或由业务更新 options |
-| `loading` | `boolean` | `false` | 仅 Autocomplete；显示加载状态并设置 listbox 的 `aria-busy` |
-| `loadingText`、`noOptionsText` | `string` | `正在加载…`、`没有匹配项` | 仅 Autocomplete 的状态文案 |
+| `loading` | `boolean` | `false` | 仅 Autocomplete。设置 listbox 的 `aria-busy` |
+| `loadingText` | `string` | 未设置 | 仅 Autocomplete。加载时显示调用方提供的状态文案 |
+| `noOptionsText` | `string` | 未设置 | 适用于 Select 和 Autocomplete。列表为空且处于非加载状态时显示调用方提供的文案 |
 
 两款均发出 `update:modelValue`、`update:open` 与 `select(option)`；Autocomplete 另发出 `search(query)`。`option` 插槽接收 `{ option, selected, active }`，只用于呈现选项内容；不要在 option 内放按钮、链接或其他可聚焦控件。`class`／`style` 作用于组件外层，id、ARIA、原生输入属性及事件监听器透传到实际文本输入框；`name` 只作用于提交的隐藏模型值，避免同时提交显示标签。
 
@@ -836,7 +894,7 @@ const channels = ref<MdvCheckboxValue[]>(['email'])
 
 方框 18px、圆角 2px、状态层 40px；组件实际保留 48 × 48px 的控件点击区域。标签默认在后，长中文、英文和连续标识符可以换行，控件对齐标签首行；`dir="rtl"` 同时作用于布局和输入。相邻标签使用 on-surface，不随选中颜色变化；禁用时使用禁用文字色。
 
-默认插槽替换 `label`，适合加入强调文字或链接。点击标签与控件区域均可切换；标签中的原生链接、按钮等独立交互元素保持自身行为。辅助说明位于标签下方，不属于切换区域。没有可见标签时，必须用 `aria-label`／`aria-labelledby` 为实际输入提供名称。
+默认插槽替换 `label`，适合加入强调文字或链接。点击标签与控件区域均可切换；标签中的原生链接、按钮等独立交互元素保持自身行为。辅助说明位于标签下方，不属于切换区域。没有可见标签时，调用方可用 `aria-label`／`aria-labelledby` 命名实际输入；未提供时组件不生成名称。
 
 ### 模型、半选与事件
 
@@ -958,7 +1016,7 @@ const plan = ref<string | number | null>(null)
 <MdvRadio v-model="plan" name="plan" value="pro" label="专业版" />
 ```
 
-`id`、`name`、`form`、ARIA、`data-*` 和原生事件透传到实际 `input[type="radio"]`；`class`／`style` 属于组件外层。没有可见标签时，必须使用 `aria-label` 或 `aria-labelledby`。
+`id`、`name`、`form`、ARIA、`data-*` 和原生事件透传到实际 `input[type="radio"]`；`class`／`style` 属于组件外层。没有可见标签时，可通过 `aria-label` 或 `aria-labelledby` 命名；未提供时名称保持未设置。
 
 ### MdvRadioGroup 属性
 
@@ -1027,7 +1085,7 @@ const enabled = ref(false)
 | `labelPosition`         | `start` 或 `end`                        | `end`         |
 | `value`                 | 原生表单提交值                          | `'on'`        |
 
-`id`、`name`、`form`、`value`、`required`、ARIA、`data-*` 和原生事件会透传到实际的 `input[type="checkbox"]`；`class`、`style`、`dir` 和 `lang` 属于组件外层。没有可见标签时，必须提供 `aria-label` 或 `aria-labelledby`。`labelPosition="start"` 只改变视觉排列，不改变原生表单和阅读顺序。
+`id`、`name`、`form`、`value`、`required`、ARIA、`data-*` 和原生事件会透传到实际的 `input[type="checkbox"]`；`class`、`style`、`dir` 和 `lang` 属于组件外层。没有可见标签时，可通过 `aria-label` 或 `aria-labelledby` 命名；未提供时名称保持未设置。`labelPosition="start"` 只改变视觉排列，不改变原生表单和阅读顺序。
 
 ### 图标与状态
 
@@ -1109,7 +1167,7 @@ const percent = (value: number) => `${value}%`
 | `supportingText`                 | 与原生控件关联的辅助说明                                           | `''`                                                             |
 | `disabled`                       | 禁用交互和表单提交                                                 | `false`                                                          |
 | `color`                          | 主题／语义色或 `#RGB`／`#RRGGBB` 种子色                            | `primary`                                                        |
-| `startAriaLabel`／`endAriaLabel` | range 两个手柄的独立无障碍名称                                     | 从标签与“下限／上限”组合                                         |
+| `startAriaLabel`／`endAriaLabel` | range 两个手柄的可选独立无障碍名称 | 仅使用调用方传入的名称；组件不拼接默认“下限／上限”文案 |
 
 五档轨道厚度为 16／24／40／56／96px，手柄长度为 44／44／52／68／108px；手柄常态厚度 4px，键盘聚焦与按压时为 2px。指针松开后恢复常态厚度并隐藏提示，保留原生焦点，随后可直接使用方向键继续调整并恢复键盘焦点反馈。横向填充所在容器；竖向初始整体高度 240px，可通过 style 调整。竖向由下向上增加，横向跟随继承的 dir；range 建议优先使用横向。
 
@@ -1137,7 +1195,7 @@ stops 开启时，手柄及轨道在拖动、点击和键盘切换档位时保�
 </MdvSlider>
 ```
 
-图标通过现有 MdvIcon 与本地图形数据组合，示例需自行导入所用图标。数值提示不拦截操作；范围模式一次只显示活动手柄的提示。formatValue 应返回能独立读懂的单位文字，例如“40%”或“¥80”；没有可见 label 时须提供 aria-label／aria-labelledby，或为 range 提供两个独立名称。
+图标通过现有 MdvIcon 与本地图形数据组合，示例需自行导入所用图标。数值提示不拦截操作；范围模式一次只显示活动手柄的提示。formatValue 应返回能独立读懂的单位文字，例如“40%”或“¥80”；没有可见 label 时可提供 aria-label／aria-labelledby，range 也可用两个独立名称；未提供时组件不拼接默认端点文字。
 
 精确输入可组合 MdvTextField，共享同一变量；将输入框放在滑块之后，让键盘可以紧接着访问。leading／trailing 可组合 MdvIconButton 修改同一变量。
 
@@ -1199,13 +1257,13 @@ const tags = ref(['设计讨论', '发布准备'])
 | Prop／模型                     | 类型／说明                                                       | 默认值                             |
 | ------------------------------ | ---------------------------------------------------------------- | ---------------------------------- |
 | `variant`                      | `assist`／`filter`／`input`／`suggestion`，表示用途              | `assist`                           |
-| `label`                        | 标签及默认删除名称的来源；默认插槽优先显示                       | `''`                               |
+| `label`                        | 标签；默认插槽优先显示                                       | `''`                               |
 | `elevated`                     | Assist、Filter、Suggestion 的抬升外观；Input 忽略此项            | `false`                            |
 | `selected`／`v-model:selected` | Filter／Input 的选中状态                                         | 未提供时内部从 `false` 开始        |
 | `selectable`                   | 点击主体请求切换选中；Assist／Suggestion 不参与选择              | Filter 为 `true`，Input 为 `false` |
 | `removable`                    | 显示并启用尾部删除；仅 Filter／Input 可用                        | Input 为 `true`，Filter 为 `false` |
 | `removeOnly`                   | Input 整颗纸片只执行删除，合为一个焦点目标；须同时允许删除       | `false`                            |
-| `removeLabel`                  | 删除动作的独立可访问名称                                         | `删除${label}`                     |
+| `removeLabel`                  | 删除动作的独立可访问名称                                         | 未设置；缺失时不生成名称 |
 | `disabled`                     | 禁用主体和删除操作                                               | `false`                            |
 | `color`                        | 七种现有语义色或 `#RGB`／`#RRGGBB` 种子色                        | 保留官方默认角色                   |
 | `value`                        | `string`／`number`；在 ChipSet 的单多选模式中标识可选择的 Filter | 不提供                             |
@@ -1225,7 +1283,7 @@ Assist 执行上下文操作，Suggestion 提供建议；Filter 用来筛选，�
 - `trailing` 在可删除的 Chip 中替换关闭图形，删除按钮和事件仍由组件管理；在不可删除的 Filter／Input 中作为主体末端的装饰图标，例如菜单箭头。Assist／Suggestion 不提供尾部操作。
 - 图标和头像隐藏于辅助技术；插槽内使用 MdvIcon 或图片，不嵌套交互控件。
 
-优先使用简短标签。窄容器中标签单行省略，完整文字仍留在 DOM 中。复杂默认插槽应同时提供准确的 label 或 removeLabel，保证服务端已有明确删除名称；仅有插槽文字时，挂载后从实际文字补全名称，服务端回退“删除此项”。
+优先使用简短标签。窄容器中标签单行省略，完整文字仍留在 DOM 中。可移除的 Chip 仅使用调用方提供的 `removeLabel` 命名删除按钮；未提供时不生成默认名称。复杂插槽建议显式提供准确的 `label` 与 `removeLabel`。
 
 默认可见高度 32px、圆角 8px、图标 18px，使用现有 Label Large 排版。Assist／Filter／Suggestion 的文字侧为 16px、图标侧为 8px；Input 无前置内容时起始留白 12px，头像侧 4px，内容之间 8px。圆角不随选中或按压改变。
 
@@ -1461,7 +1519,7 @@ Outlined／Filled 常态、聚焦和按压使用 elevation 0，hover 为 1，dra
 
 clickable 使用原生 button，固定 `type="button"`，避免在表单中意外提交；href 使用原生 a，不默认新开页面，target、rel、download、hreflang、referrerpolicy 等按原生规则透传。组件不引入路由依赖。
 
-主操作在 DOM 中与内容为兄弟节点并覆盖整卡，避免把块级正文和媒体嵌套进 button。内置 title 通过稳定 ID 自动提供主操作的 aria-labelledby；显式 aria-label／aria-labelledby 优先。自定义 header、仅媒体或没有 title 的主操作卡片必须自行提供可访问名称；开发环境会提示缺失名称。默认 title 是段落，不擅自决定页面标题层级，语义标题可在 header 插槽中使用 h2／h3。
+主操作在 DOM 中与内容为兄弟节点并覆盖整卡，避免把块级正文和媒体嵌套进 button。内置 title 通过稳定 ID 自动提供主操作的 aria-labelledby；显式 aria-label／aria-labelledby 优先。自定义 header、仅媒体或没有 title 的主操作卡片不会获得组件生成的名称；调用方可显式提供 ARIA 名称。默认 title 是段落，不擅自决定页面标题层级，语义标题可在 header 插槽中使用 h2／h3。
 
 交互卡片的属性分流如下：
 
@@ -1924,7 +1982,7 @@ function save() {
 
 <template>
   <MdvButton @click="visible = true">新建行程</MdvButton>
-  <MdvFullscreenDialog v-model="visible" title="新建行程">
+  <MdvFullscreenDialog v-model="visible" title="新建行程" close-label="关闭行程编辑">
     <form id="trip-form" @submit.prevent="save">
       <MdvTextField v-model="name" label="行程名称" required autofocus full-width />
     </form>
@@ -1942,7 +2000,7 @@ function save() {
 | Prop         | 类型      | 默认值         |
 | ------------ | --------- | -------------- |
 | `closable`   | `boolean` | `true`         |
-| `closeLabel` | `string`  | `'关闭对话框'` |
+| `closeLabel` | `string` | 未设置。可为顶栏关闭按钮提供名称 |
 
 | 插槽                  | 用途                         |
 | --------------------- | ---------------------------- |
@@ -2101,7 +2159,7 @@ reason 为 `escape`、`outside`、`focus-out`、`tab`、`select`、`trigger`、`
 
 默认、leading、supporting、trailing 插槽均得到 `{ selected, disabled, expanded }`。默认插槽替代 label，supporting 替代辅助文字；leading 替代图标，选中时显示内置勾；trailing 替代尾部文字／图标，可放 Badge。前后图形和尾部内容为装饰，重要计数或快捷键说明应通过 label／ARIA 表达。不要在条目插槽内嵌另一组独立按钮或表单控件。辅助文字自动关联 aria-describedby，保留用户额外描述 ID。
 
-`#children` 内组合下一层 MdvMenuItem／MdvMenuGroup，支持多级。默认 flyout 可通过鼠标悬停、点击或左右键进入；跨向子菜单保留指针走廊容错。push 在同一位置逐级进入，提供可聚焦的返回项，是 MDV 扩展。子菜单继承整棵菜单的外观和主题，选择模型由该层自身的分组管理。条目 expose `focus()` 与 `blur()`。
+`#children` 内组合下一层 MdvMenuItem／MdvMenuGroup，支持多级。默认 flyout 可通过鼠标悬停、点击或左右键进入；跨向子菜单保留指针走廊容错。push 在同一位置逐级进入，提供可聚焦的返回项，是 MDV 扩展。返回项的文字来自父条目标签或插槽中的文本。子菜单继承整棵菜单的外观和主题，选择模型由该层自身的分组管理。条目 expose `focus()` 与 `blur()`。
 
 ### MdvMenuGroup
 
@@ -2196,7 +2254,7 @@ function refreshContent() {
 - Rich persistent：点击触发器切换，也可由模型或公开方法打开。hover／聚焦不自动打开；离开指针区域仍保留，到外部点击／焦点、Escape 或明确关闭为止。
 - 触屏普通／临时 Rich：长按 500ms 显示；抬手后默认保留 1500ms，显式设置 closeDelay 后使用该值。移动超过 10px 或 pointercancel 会取消长按，正常短按和滚动保持原行为。识别后的同次 click／contextmenu 被阻止，避免长按误执行按钮业务；持久 Rich 使用正常点击。
 - Esc 优先关闭提示，不同时关闭底下 Menu／Dialog，也不会在触发器仍聚焦时自行重开。IME 组合输入期间不处理 Esc。焦点在 Rich 操作内时，Esc 或程序关闭会合理返回触发器；外部交互造成关闭时保留业务的新焦点。
-- 普通款 role=tooltip，焦点留在原控件；Rich 使用 role=dialog、aria-modal=false，打开时不抢焦点，不锁 Tab。可从触发器依 DOM 顺序进入链接、操作按钮，再继续到后续页面。Rich 没有标题时可通过 aria-label 命名，默认名称为“帮助信息”。
+- 普通款 role=tooltip，焦点留在原控件；Rich 使用 role=dialog、aria-modal=false，打开时不抢焦点，不锁 Tab。可从触发器依 DOM 顺序进入链接、操作按钮，再继续到后续页面。Rich 没有标题时由调用方通过 aria-label 命名；不自动生成名称。
 
 Tooltip 是附加说明。图标按钮仍需自己的 aria-label／aria-labelledby，已有明确标签的控件无需再重复同文提示；关键错误、必须完成的步骤应直接呈现。原生 disabled 控件可能不派发焦点与指针事件，应提供另一个可聚焦的说明入口，或把提示绑定到具有名称和 tabindex 的外层锚点；提示的 disabled 不会改变业务控件的禁用状态。
 
@@ -2283,7 +2341,7 @@ function save() {
 | `action`        | `{ label: string; onClick?: () => void \| Promise<void> }` | 无；内置业务操作                                                                                               |
 | `duration`      | `number`                                                   | 无操作为 `4000`，有操作为 `0`；单位 ms，`0` 为常驻                                                             |
 | `closable`      | `boolean`                                                  | 省略时常驻消息显示关闭按钮，自动关闭消息不显示；显式值可覆盖                                                   |
-| `closeLabel`    | `string`                                                   | `'关闭通知'`；关闭按钮的可访问名称                                                                             |
+| `closeLabel` | `string` | 未设置；未提供时不生成关闭按钮名称 |
 | `actionLayout`  | `'auto' \| 'inline' \| 'stacked'`                          | `'auto'`；操作自动换行、保持同行或另起一行                                                                     |
 | `placement`     | `'bottom' \| 'bottom-start'`                               | `'bottom'`；底部居中或逻辑起始侧                                                                               |
 | `offset`        | `number`                                                   | `16`；距底部安全区的额外距离，单位 px                                                                          |
@@ -2367,7 +2425,7 @@ const layoutState = ref<MdvBottomSheetState>('partial')
 | `modelValue` / `v-model`                       | `boolean`                   | `false`，由使用方控制显示                                                                      |
 | `expanded` / `v-model:expanded`                | `boolean`                   | `false`；未传此属性时内部管理展开状态，传入后由父级接受更新                                    |
 | `partial`                                      | `boolean \| number`         | `true`：半展开高度上限为当前可见视口的 50%；数字为 0–1 比例，超出范围会截取；`false`：直接展开 |
-| `title`                                        | `string`                    | 空，生成可访问名称；也可用 `header` 插槽或原生 `aria-label` 命名                               |
+| `title`                                        | `string`                    | 未设置；未提供 title/header/ARIA 时不生成名称                               |
 | `description`                                  | `string`                    | 空，无默认插槽时显示并关联短描述                                                               |
 | `maxHeight`                                    | `string`                    | 无，CSS 长度；默认按响应式顶部留白限制最高高度                                                 |
 | `showHandle`                                   | `boolean`                   | `true`，显示顶部手柄；隐藏后仅在有两个可用高度时提供展开／收起按钮                             |
@@ -2377,7 +2435,7 @@ const layoutState = ref<MdvBottomSheetState>('partial')
 | `closeOnSwipe`                                 | `boolean`                   | `true`，允许下滑到隐藏位置；不禁止手柄点击或其他关闭操作                                       |
 | `beforeClose`                                  | `MdvBottomSheetBeforeClose` | 无，返回 `false` 或异步得到 `false` 时拒绝操作关闭；抛错也保留面板                             |
 | `destroyOnClose`                               | `boolean`                   | `false`，关闭后保留正文及表单状态                                                              |
-| `expandLabel` / `collapseLabel` / `closeLabel` | `string`                    | `展开面板` / `收起面板` / `关闭面板`，可覆盖操作的可访问名称                                   |
+| `expandLabel` / `collapseLabel` / `closeLabel` | `string`                    | 未设置；缺失时不生成对应名称                                           |
 
 短内容按自然高度显示，不为半展开补空白；只有最高高度大于半展开高度时才保留两个锚点。正数的半展开高度至少容纳手柄或替代操作区，避免过小配置裁掉操作；非正数不建立较低锚点。每次打开使用当前 `expanded` 配置；不绑定展开属性时，上次手势不会隐式决定下次初始高度。`change` 报告实际可用的状态，短内容的 `partial` 请求可能合并为 `expanded`。
 
@@ -2394,9 +2452,9 @@ const layoutState = ref<MdvBottomSheetState>('partial')
 | `modelValue` / `v-model`                       | `MdvBottomSheetState` | `partial`；可为 `hidden`、`partial`、`expanded`；未传入时内部管理                  |
 | `peekHeight`                                   | `number`              | `56`，partial 的可见像素高度；这是 MDV 默认值，不是官方强制尺寸                    |
 | `hideable`                                     | `boolean`             | `false`，是否允许通过用户拖动／手柄隐藏；程序设为 hidden 与 `close()` 始终可以隐藏 |
-| `title` / `description` / `maxHeight`          | 与模态款相同          | 标题用于命名 region，description 在没有 `sheet` 插槽时显示                         |
+| `title` / `description` / `maxHeight`          | 与模态款相同          | 有标题时使用标题命名 region；无标题时不自动生成名称，description 在没有 `sheet` 插槽时显示                         |
 | `showHandle` / `draggable`                     | `boolean`             | 均为 `true`                                                                        |
-| `expandLabel` / `collapseLabel` / `closeLabel` | `string`              | 与模态款相同                                                                       |
+| `expandLabel` / `collapseLabel` / `closeLabel` | `string`              | 与模态款相同；缺失项不生成名称                                       |
 
 Scaffold 作用于有明确高度的页面区域；默认 `height:100%`，父级需要有确定高度。默认槽是主页面，`sheet` 槽是底部面板。主区域为预览高度预留空间，面板展开时覆盖更大区域，背景继续可交互；不锁文档滚动、不建立焦点陷阱、不全局截获 Escape、不主动抢焦点。
 
@@ -2487,7 +2545,7 @@ const details = ref(true)
 | `placement` | `'start' \| 'end'` | `end`；逻辑方向，RTL 镜像 |
 | `detached` | `boolean` | `false`；分离式四周留白及四角圆角均为 16px |
 | `showBack` | `boolean` | `false`；显示返回按钮，发出 `back`，由应用决定返回行为 |
-| `backLabel` / `closeLabel` | `string` | `返回`／`关闭面板`；可覆盖操作名称 |
+| `backLabel` / `closeLabel` | `string` | 未设置；缺失时不生成按钮名称 |
 | `dividers` | `boolean` | `false`；标题／操作区的水平分隔线 |
 | `beforeClose` | `MdvSideSheetBeforeClose` | 无；返回 `false`、异步得到 `false` 或抛错均保留面板 |
 | `destroyOnClose` | `boolean` | `false`；关闭动画结束后销毁面板内容，默认保留草稿与滚动位置 |
@@ -2817,7 +2875,7 @@ const destinations = [
 
 暴露 `close(): Promise<boolean>`，结果表示父级是否接受收起请求；动画可能尚未完成。`focus()` 聚焦 autofocus 元素或第一个可用交互项。模态通过原生 dialog 进入 top layer，使用已有模态栈、仅锁文档的滚动锁与焦点恢复；最上层 Tab 约束、Escape、嵌套 Menu／Dialog、卸载和 KeepAlive 清理与其他浮层一致。不附加 X，应用应提供可访问的菜单收起按钮。
 
-模态的 class／style 作用于保留布局占位的外壳，CSS 变量同时进入 dialog 继承链；dir 和 data-mdv-theme 同时覆盖收起轨与展开层；id、ARIA 和其他原生事件作用于原生 dialog。默认命名为“主导航”，可提供更具体的 aria-label／aria-labelledby。SSR 始终先渲染关闭的原生 dialog，客户端挂载后再响应初始 expanded，保留稳定节点与关联 ID。
+模态的 class／style 作用于保留布局占位的外壳，CSS 变量同时进入 dialog 的继承链。dir 和 data-mdv-theme 同时覆盖收起轨与展开层。id、ARIA 和其他原生事件作用于原生 dialog。可通过 `aria-label` 或 `aria-labelledby` 为导航区域命名。SSR 首次渲染关闭的原生 dialog，客户端挂载后再处理初始 expanded，保留稳定节点与关联 ID。
 
 ### 视觉与验证范围
 
@@ -2912,7 +2970,7 @@ Modal 使用原生 dialog 的 top layer、现有模态栈、仅锁文档的滚�
 
 滑动跟随面板与遮罩，保留纵向滚动及嵌套控件操作；不足阈值、取消或父级拒绝时回弹。位移超过半宽，或朝关闭方向的释放速度超过 400px/s 时请求关闭；这是参考 m3ui 的交互参数，并非官网单独公布的阈值。一次实际滑动后的跟随 click 被取消，键盘激活不受影响。
 
-Standard 的 class、style、id、ARIA 与原生事件透传到 nav，CSS 变量同时用于外层布局。Modal 的 id、dir、ARIA 与原生事件透传到 dialog，class／style 用于可见面板，CSS 变量同时进入遮罩继承链。缺少名称时使用 title／header 或默认“主导航”。SSR 中 Modal 始终关闭，客户端挂载后才响应初始打开模型；内容保留与稳定 ID 支持 hydration。
+Standard 的 class、style、id、ARIA 与原生事件透传到 nav，CSS 变量同时用于外层布局。Modal 的 id、dir、ARIA 与原生事件透传到 dialog，class／style 用于可见面板，CSS 变量同时进入遮罩继承链。有 title／header 时使用它命名；缺失时不自动生成名称。SSR 中 Modal 始终关闭，客户端挂载后才响应初始打开模型；内容保留与稳定 ID 支持 hydration。
 
 ### MdvNavigationDrawerItem
 
@@ -3044,7 +3102,7 @@ leading／actions 插槽组合现有 IconButton、Menu 等操作；不自动生�
 
 `actions` 容器会参与布局测量，为标题保留空间；不限制其内容必须为图标按钮。playground 的“右侧自定义操作”演示该用法。
 
-class、style、id、ARIA 和原生事件透传到 header；没有额外组件事件或模型。暴露 `element`（header）和 `refresh()`（重新解析目标及测量布局）。首次挂载不抢焦点，Tab／Shift+Tab 按原生顺序访问操作，按钮保持 Enter／Space；键盘焦点进入应用栏会显示完整操作区并保持可见，鼠标操作不因此锁住自动隐藏。图标按钮须提供 aria-label／aria-labelledby，标题插槽应优先使用文字或带可访问名称的品牌图像。
+class、style、id、ARIA 和原生事件透传到 header；没有额外组件事件或模型。暴露 `element`（header）和 `refresh()`（重新解析目标及测量布局）。首次挂载不抢焦点，Tab／Shift+Tab 按原生顺序访问操作，按钮保持 Enter／Space；键盘焦点进入应用栏会显示完整操作区并保持可见，鼠标操作不因此锁住自动隐藏。图标按钮可提供 aria-label／aria-labelledby 命名；未提供时组件不生成名称，标题插槽应优先使用文字或带可访问名称的品牌图像。
 
 | 尺寸 | 无／有副标题的默认高度 | 标题 | 副标题 |
 | --- | --- | --- | --- |
@@ -3089,6 +3147,9 @@ function search(value: string) {
     v-model="query"
     v-model:open="open"
     placeholder="搜索邮件"
+    clear-label="清除搜索"
+    back-label="关闭搜索"
+    results-label="邮件搜索结果"
     :status-text="`${results.length} 条结果`"
     @search="search"
   >
@@ -3112,17 +3173,18 @@ function search(value: string) {
 | 属性 | 默认值 | 说明 |
 | --- | --- | --- |
 | `v-model` | `''` | 查询字符串；未绑定时由组件管理 |
-| `placeholder` | `'搜索'` | 提示文字 |
-| `label` | 使用 placeholder | 输入与搜索对话框的可访问名称；原生输入 ARIA 可另外透传 |
+| `placeholder` | 未设置 | 提示文字 |
+| `label` | 未设置 | 搜索输入框和 View／AppBar 展开弹窗的名称。省略时使用调用方提供的 `placeholder`。输入框也支持原生 ARIA 属性 |
 | `disabled`／`readonly` | `false` | 禁用不请求展开；只读可查看已有结果，不能编辑或清空 |
-| `clearable`／`clearLabel` | `true`／`'清空搜索'` | 查询非空时显示独立清空动作 |
+| `clearable`／`clearLabel` | `true`／未设置 | 查询非空时显示清空操作；未传名称时不生成名称 |
 | `loading` | `false` | 输入及结果区域标记忙碌，不自动禁用输入；进度视觉用结果插槽组合 |
 | `v-model:open` | `false` | View／AppBar 展开状态；未绑定时由组件管理 |
 | `variant` | `'contained'` | View／AppBar 支持 contained／divided |
 | `layout` | `'auto'` | auto／docked／fullscreen；auto 小于 600px 全屏，否则 Docked |
-| `backLabel` | `'返回'` | 全屏、Divided 或图标入口展开时的返回按钮名称 |
+| `resultsLabel` | 未设置 | 结果区域的可选可访问名称；未传时不生成名称 |
+| `backLabel` | 未设置 | 可选的返回按钮名称；未传时不生成名称 |
 | `inputAttrs` | — | View／AppBar 输入的原生 name、form、maxlength、autocomplete、ARIA 与事件 |
-| `statusText` | `''` | View／AppBar 单独的礼貌状态播报文本 |
+| `statusText` | 未设置 | 可选的结果状态播报；未设置时不渲染状态文本 |
 | `closeOnEsc`／`closeOnScrim` | `true` | 关闭请求策略 |
 | `beforeClose` | — | 接收只读 `{ reason }`，返回 false 或 Promise false 拒绝关闭 |
 | `destroyOnClose` | `false` | 退出完成后是否销毁展开内容；默认保留节点与结果滚动 |
@@ -3140,7 +3202,7 @@ Docked 和全屏均使用模态遮罩与原生 dialog，背景暂不可交互。
 - `open`／`opened`：接受展开／展开动效完成；`close(detail)`／`closed(detail)`：接受关闭／退出完成。`detail.reason` 为 back／escape／scrim／programmatic／model；父级拒绝 v-model:open 请求时不释放模态或触发关闭生命周期。
 - Bar 的 `leading`／`trailing`：前后图标或独立动作，动作不嵌套进整栏按钮。
 - View 的 `leading`：默认入口前导；`trailing`：入口和展开栏尾部，提供完整搜索状态。`default`：结果，提供 `{ query, expanded, close, search }`。复用插槽会分别实例化入口和展开内容，避免在其中写死重复 ID。
-- View 的 `trigger`：提供上述状态和 `triggerProps`，绑定到一个原生按钮或根为按钮的组件；包含 ref、ARIA 关联和原生点击处理，可组合 MdvIconButton。自定义触发器需提供可访问名称。
+- View 的 `trigger`：提供上述状态和 `triggerProps`，绑定到一个原生按钮或根为按钮的组件；包含 ref、ARIA 关联和原生点击处理，可组合 MdvIconButton。自定义触发器可自行命名；未提供时组件不注入名称。
 - Bar 暴露 `element`／`inputElement`／`focus(options?)`／`blur()`；View 另有 `open()`／`close()`，返回 Promise boolean 表示父级是否接受请求；AppBar 同样提供，并另有 `refresh()`。入口切换时通过当前 inputElement 访问实际输入，不缓存旧节点。
 
 返回、Escape 和遮罩保留查询，关闭后恢复原触发器焦点且不自动重开。Tab／Shift+Tab 自然遍历最上层；输入的 Down／Up 进入建议首／尾，MdvListItem 的主操作可用 Up／Down／Home／End 导航，首项 Up 返回输入，跳过禁用项。自定义结果可将 `data-mdv-search-result` 放到原生可聚焦操作上；嵌套输入、筛选按钮和 List 自身已有的键盘模型保持原生行为。结果维持 list／button／link 等实际语义，不默认套 menu／listbox 或 combobox。
@@ -3150,7 +3212,14 @@ Docked 和全屏均使用模态遮罩与原生 dialog，背景暂不可交互。
 ```vue
 <MdvAppBarScaffold style="height: 32rem">
   <template #appbar>
-    <MdvSearchAppBar v-model="query" scroll-behavior="pinned">
+    <MdvSearchAppBar
+      v-model="query"
+      scroll-behavior="pinned"
+      placeholder="搜索文档"
+      clear-label="清除搜索"
+      back-label="关闭搜索"
+      results-label="文档搜索结果"
+    >
       <template #leading><!-- 导航按钮 --></template>
       <template #actions><!-- 栏外账号或更多操作 --></template>
       <template #search-trailing><!-- 搜索栏内部操作 --></template>
@@ -3210,7 +3279,7 @@ const expanded = ref(true)
 | `scrollBehavior` | `'none'` | none／hide／collapse；Docked 支持 none／hide |
 | `scrollTarget` | Window | Window、HTMLElement、CSS selector 或返回目标的 getter；显式目标不存在时不回退 |
 | `scrollThreshold` | `40` | 同方向累计滚动多少像素后隐藏／收合，反向重新累计；回到顶端恢复 |
-| `expandLabel`／`collapseLabel` | `'展开工具栏'`／`'收起工具栏'` | 默认展开入口的可访问名称 |
+| `expandLabel`／`collapseLabel` | 未设置 | 可选的展开／收起入口名称；未传时不生成名称 |
 
 Docked 默认直角、填满父级宽度，最小高 64px，两端 16px，项目间距默认 32px；可用空间不足时将间距缩小至 4px，操作本身不缩放。`align='between'` 可在可用宽度中均匀安排默认插槽的操作。Floating 横向最小高／竖向最小宽 64px，内边距 8px、操作间距 4px、全圆角，按内容自然占位。文字和控件需要更多高度时自然增高。可覆盖 `--mdv-toolbar-gap`、`--mdv-toolbar-margin`、`--mdv-toolbar-container`、`--mdv-toolbar-content`、`--mdv-toolbar-selected-container` 和 `--mdv-toolbar-selected-content`；调用方 class／style、ARIA 与事件保留在根节点。
 
@@ -3228,11 +3297,11 @@ Floating 阴影按官方示例收紧柔光层的扩散范围，避免容器周�
 - `leading`／`trailing`：主要操作两侧的分组，Floating 收合时裁剪并设为 inert，保留 DOM、输入内容和组件状态。
 - `fab`：仅 Floating 生效，放一个 MdvFab；收合时保留主操作，Standard 默认 secondary-container，Vibrant 默认 tertiary-container。
 - `toggle`：自定义展开／收起入口；默认在存在两侧分组或配套 FAB 的 Floating 中显示图标按钮。必须将 `toggleProps` 绑定到可交互控件。
-- 所有插槽提供 `{ expanded, expand, collapse, toggle, toggleProps }`。`toggleProps` 包含 aria-expanded、aria-controls、aria-label 与 onClick。
+- 所有插槽提供 `{ expanded, expand, collapse, toggle, toggleProps }`。`toggleProps` 包含 `aria-expanded`、`aria-controls`、`onClick`，以及由 `expandLabel`／`collapseLabel` 提供的可选 `aria-label`。
 - 事件 `update:expanded(value)` 请求展开／收合；父级拒绝更新时不改变可见性或焦点。未绑定时由组件自行管理。
 - 实例暴露 `element`、`expand()`、`collapse()`、`toggle()`、`refresh()`。前三个状态方法返回 Promise boolean 表示请求是否被接受；refresh 重读分组尺寸与显式滚动目标。
 
-根为 `role='toolbar'`，默认名称“工具栏”，建议提供具体的 aria-label 或 aria-labelledby。挂载不抢焦点；Tab／Shift+Tab 自然遍历所有可访问操作，根本身不额外占 Tab 位。横向左右键（包括 RTL）、竖向上下键、Home／End 在实际可用操作间移动；不更改选中状态，Space／Enter 按原生控件激活。输入框、Slider、嵌套菜单、列表框及其它复杂控件保留自己的按键。
+根为 `role='toolbar'`；不自动生成名称，调用方可通过 aria-label 或 aria-labelledby 命名。挂载不抢焦点；Tab／Shift+Tab 自然遍历所有可访问操作，根本身不额外占 Tab 位。横向左右键（包括 RTL）、竖向上下键、Home／End 在实际可用操作间移动；不更改选中状态，Space／Enter 按原生控件激活。输入框、Slider、嵌套菜单、列表框及其它复杂控件保留自己的按键。
 
 滚动默认关闭。选择 hide 时仅隐藏视觉位置，保留布局与节点，Tab 或焦点进入会恢复整栏；当前有焦点、指针操作或菜单展开时不自动隐藏／收合。选择 collapse 时保留主要操作与展开入口，不再同时移出屏幕。外部接受的收合若影响当前焦点，会先将焦点移至主要操作或展开入口，再使分组不可访问。收合弹簧保留反转速度、只改变分组尺寸，不整体缩放文字；reduced-motion 直接到目标。
 
@@ -3334,7 +3403,7 @@ FAB 默认 regular 是本库的 API 选择；官网当前使用建议优先推�
 
 独立 FAB 的默认／focus／pressed 为 elevation 3，hover 为 4；柔和阴影颜色取主题 shadow。hover 状态层 8%，focus／pressed 10%；键盘 focus-visible 为 3px 外框、2px 间隔，波纹裁剪在表面内。图标通过 default（FAB）或 leading（Extended）插槽放入，推荐使用 MdvIcon 或 SVG，作为装饰隐藏于读屏。
 
-图标 FAB 必须有 aria-label／aria-labelledby。Extended 使用默认插槽的短标签作为名称，收合后文字仅视觉隐藏、名称仍保留；不要在图标或标签中嵌套交互控件。原生 Tab／Shift+Tab、Enter／Space、表单关联、click 与 preventDefault 正常保留；链接不人工增加 Space 激活。class／style、ARIA、name／value／form、target／rel／download 及事件透传到实际原生元素。
+图标 FAB 不生成默认名称；调用方可通过 aria-label／aria-labelledby 命名。Extended 使用默认插槽的短标签作为名称，收合后文字仅视觉隐藏、名称仍保留；不要在图标或标签中嵌套交互控件。原生 Tab／Shift+Tab、Enter／Space、表单关联、click 与 preventDefault 正常保留；链接不人工增加 Space 激活。class／style、ARIA、name／value／form、target／rel／download 及事件透传到实际原生元素。
 
 官方不推荐禁用 FAB；操作暂不可用时优先隐藏它。本组件没有 disabled／loading 视觉变体，原生 disabled 仍可透传给 button。不要通过 aria-disabled 期望浏览器自动阻止链接导航，需要应用处理事件。
 
@@ -3443,7 +3512,7 @@ const muted = ref(false)
 | `variant` | `'filled'` | filled／tonal／outlined／elevated |
 | `color` | 官方默认角色 | 沿用 Button 的七套颜色及 `#RGB`／`#RRGGBB` 局部种子 |
 | `size`／`shape` | 继承组 | Standard 可覆盖；Connected 统一使用组配置 |
-| `iconOnly` | `false` | 纯图标，须有 aria-label／aria-labelledby |
+| `iconOnly` | `false` | 纯图标；调用方可传入 aria-label／aria-labelledby 命名 |
 | `width` | `'default'` | 纯图标 narrow／default／wide |
 | `selected` | 未提供 | 仅 none 模式的受控独立切换，发 update:selected(boolean) |
 | `disabled` | `false` | 禁止原生激活、选择及链接导航 |
@@ -3518,11 +3587,11 @@ function saveCopy() {
 | `size` | `'s'` | `'xs'`、`'s'`、`'m'`、`'l'`、`'xl'` |
 | `color` | 省略 | 沿用 Button 预设色与 hex 种子色；省略时使用对应外观的官方颜色角色 |
 | `expanded` | `false` | 外部弹层已经接受的展开状态；不会自行切换或产生 `update:expanded` |
-| `menuButtonLabel` | 必填 | 尾入口的可访问名称，例如“更多保存选项” |
+| `menuButtonLabel` | 未设置 | 尾入口的可选名称；未传入时不生成名称 |
 | `disabled` | `false` | 禁用两侧 |
 | `actionDisabled`／`menuDisabled` | `false` | 分别禁用主操作／尾入口 |
 | `loading`／`loadingText` | `false`／省略 | 只影响主操作，加载不自动禁用；省略文案时保留原标签 |
-| `iconOnly` | `false` | 主操作为纯图标；须通过 `actionAttrs` 提供 `aria-label` 或 `aria-labelledby` |
+| `iconOnly` | `false` | 主操作为纯图标；可通过 `actionAttrs` 提供 `aria-label` 或 `aria-labelledby`，未提供时不生成名称 |
 | `type` | `'button'` | 主操作原生按钮类型，支持 `'submit'`／`'reset'`；尾入口始终为 button |
 | `href` | 省略 | 主操作改为原生链接，也可通过 `actionAttrs.href` 提供 |
 | `hoverShadow` | `false` | Filled／Tonal／Elevated 的可选悬停阴影；Elevated 常态保留 level 1 |
@@ -3570,7 +3639,7 @@ function createDocument() {
 </script>
 
 <template>
-  <MdvFabMenu label="新建内容" position="fixed">
+  <MdvFabMenu label="新建内容" close-label="关闭新建菜单" position="fixed">
     <MdvFabMenuItem label="新建文档" :icon="noteAdd" @select="createDocument" />
     <MdvFabMenuItem label="上传图片" :icon="addPhoto" />
   </MdvFabMenu>
@@ -3591,8 +3660,8 @@ function createDocument() {
 | `elevated` | `true` | 入口、关闭按钮与胶囊 hover 阴影开关；Baseline 菜单表面仍沿用 Menu |
 | `position` | `'static'` | `'static'`／`'absolute'`／`'fixed'`；后两者位于宿主／窗口逻辑 bottom-end |
 | `offset` | 自适应 | 普通窗口 16px、1200px 起 24px，另计安全区；显式非负数覆盖 |
-| `label` | 必填 | 入口和操作区的可访问名称，例如“新建内容” |
-| `closeLabel` | `'关闭菜单'` | Expressive 展开后的入口名称 |
+| `label` | 未设置 | 入口和操作区名称；未提供时不生成名称 |
+| `closeLabel` | 未设置 | Expressive 展开后的入口名称；未提供时不生成名称 |
 | `triggerAttrs` | 省略 | 真实入口 button 的原生属性、事件和函数／Vue ref |
 
 外层接收普通 `class`／`style`／`id`／`dir` 等属性；入口属性放在 `triggerAttrs`。入口固定 `type="button"`，组件管理其 id、名称、展开状态与控制关联。`disabled`／`aria-disabled="true"` 阻止入口激活，原生 fieldset 禁用同样有效；外部 click／keydown 的 `preventDefault()` 可取消对应内部处理。Vue ref 指向真实按钮，替换／卸载时旧 ref 收到 null，不使用字符串 ref。入口关闭前的图标可用 `icon` 插槽替换，默认加号；关闭图标固定。
@@ -3612,7 +3681,7 @@ Expressive 项为原生 button／a，按钮默认 type=button，可通过原生 
 
 Expressive 操作项默认高 56px、图标 24px、左右留白 24px、图文间距 8px、项间距 4px、末项至关闭按钮 8px。关闭按钮固定 56px、图标 20px，展开时对齐原入口的顶部末端角；80／96px 入口保留原占位。项使用对应色系 container／on-container，关闭按钮使用实色／on-color；项默认无阴影，关闭按钮默认 level 3，hover 为 level 4，可用 elevated 关闭。hover 状态层 8%，focus／pressed 10%。胶囊自然宽，长文字允许换行增高，短窗口内列表独立滚动，关闭按钮保持可达。
 
-Expressive 保持同一入口节点，打开焦点留在关闭按钮；Tab 到最顶部项，再从上到下，Shift+Tab 逆序，不使用方向键选择或循环困焦。Escape 关闭并回入口；Tab 离开、外部点击／聚焦关闭时保留用户目标。动态移除或禁用当前操作会把焦点移回可用入口。操作区使用有名称的 group，不冒充 menu。Baseline 默认在入口上方末端、间隔 4px，空间不足时沿用 Menu 的翻转／位移；打开进入首项，方向键、Home／End、字符导航、Tab 和 Escape 均沿用 Menu。两款均为非模态，不加遮罩或整页滚动锁。
+Expressive 保持同一入口节点，打开焦点留在关闭按钮；Tab 到最顶部项，再从上到下，Shift+Tab 逆序，不使用方向键选择或循环困焦。Escape 关闭并回入口；Tab 离开、外部点击／聚焦关闭时保留用户目标。动态移除或禁用当前操作会把焦点移回可用入口。操作区使用 `group` 角色，可通过 `label` 命名。Baseline 默认在入口上方末端、间隔 4px，空间不足时沿用 Menu 的翻转／位移；打开进入首项，方向键、Home／End、字符导航、Tab 和 Escape 均沿用 Menu。两款均为非模态，不加遮罩或整页滚动锁。
 
 逐项揭示与入口形变支持连续反向，不缩放文字；reduced-motion 直接到目标。阴影、颜色和字体来自主题令牌，支持局部浅深、动态色、RTL、文字放大和强制颜色。顶部末端锚点需要入口位于可用视口内；实际宿主仍应给内容区和固定 FAB 留出空间，避免覆盖页面操作。
 

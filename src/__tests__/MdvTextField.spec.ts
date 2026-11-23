@@ -305,11 +305,28 @@ describe('MdvTextField', () => {
     expect(wrapper.get('.mdv-text-field__counter').text()).toBe('3')
   })
 
+  it('omits clear and password action names when callers do not supply them', () => {
+    const wrapper = mount(MdvTextField, {
+      props: { modelValue: 'secret', type: 'password', clearable: true, passwordToggle: true },
+    })
+    expect(wrapper.findAll('button')).toHaveLength(2)
+    expect(wrapper.findAll('button').map((button) => button.attributes('aria-label'))).toEqual([
+      undefined,
+      undefined,
+    ])
+    wrapper.unmount()
+  })
+
   it('clears once, sends a native input event, and retains input focus even in lazy mode', async () => {
     const onInput = vi.fn<(event: Event) => void>()
     const wrapper = mount(MdvTextField, {
       attachTo: document.body,
-      props: { modelValue: '搜索', clearable: true, modelModifiers: { lazy: true } },
+      props: {
+        modelValue: '搜索',
+        clearable: true,
+        clearLabel: '清除输入',
+        modelModifiers: { lazy: true },
+      },
       attrs: { onInput },
     })
     await wrapper.get('button[aria-label="清除输入"]').trigger('click')

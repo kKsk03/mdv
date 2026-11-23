@@ -4,7 +4,7 @@ import { useButtonRipple } from './button-ripple'
 import type { MdvCarouselItem } from './carousel.types'
 
 defineOptions({ name: 'MdvCarouselMedia', inheritAttrs: false })
-const props = defineProps<{ item: Partial<MdvCarouselItem>; fallbackLabel: string }>()
+const props = defineProps<{ item: Partial<MdvCarouselItem>; fallbackLabel?: string }>()
 const surface = useTemplateRef<HTMLElement>('surface')
 const { ripple, showRipple, releaseRipple, finishRipple } = useButtonRipple({
   disabled: () => !!props.item.disabled || !!surface.value?.matches(':disabled'),
@@ -32,7 +32,7 @@ function click(event: MouseEvent) {
     :disabled="item.href === undefined ? item.disabled : undefined"
     :aria-disabled="item.disabled || undefined"
     :tabindex="item.disabled ? -1 : undefined"
-    :aria-label="item.label || item.alt || fallbackLabel"
+    :aria-label="item.label || item.alt || fallbackLabel || undefined"
     @click="click"
     @pointerdown="showRipple"
     @pointerup="releaseRipple"

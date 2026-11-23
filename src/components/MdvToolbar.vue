@@ -38,8 +38,6 @@ const props = withDefaults(defineProps<MdvToolbarProps>(), {
   expanded: undefined,
   scrollBehavior: 'none',
   scrollThreshold: 40,
-  expandLabel: '展开工具栏',
-  collapseLabel: '收起工具栏',
 })
 const emit = defineEmits<{ 'update:expanded': [value: boolean] }>()
 const slots = defineSlots<{
@@ -130,7 +128,7 @@ function slotState(): MdvToolbarSlotProps {
   }
 }
 function rootAttrs() {
-  return { 'aria-label': attrs['aria-labelledby'] ? undefined : '工具栏', tabindex: -1, ...attrs }
+  return { tabindex: -1, ...attrs }
 }
 function onKeydown(event: KeyboardEvent) {
   if (element.value) navigateToolbar(event, element.value, vertical.value)

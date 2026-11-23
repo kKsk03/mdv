@@ -173,7 +173,7 @@ describe('MdvSideSheet', () => {
       closeLabel: '收起详情',
     })
     await settle()
-    expect(sheet.attributes('aria-label')).toBe('侧边面板')
+    expect(sheet.attributes('aria-label')).toBeUndefined()
     await sheet.get('button[aria-label="返回详情"]').trigger('click')
     expect(sheet.emitted('back')).toHaveLength(1)
     expect(visible.value).toBe(true)
@@ -181,7 +181,10 @@ describe('MdvSideSheet', () => {
     await settle()
     expect(visible.value).toBe(false)
     expect(sheet.emitted('closed')).toEqual([[{ reason: 'close-button', returnValue: '' }]])
-    const custom = example({}, { header: () => [h('strong', '自定义标题')] })
+    const custom = example(
+      { closeLabel: '关闭面板' },
+      { header: () => [h('strong', '自定义标题')] },
+    )
     await settle()
     expect(custom.sheet.get('.mdv-side-sheet__heading').text()).toBe('自定义标题')
     expect(custom.sheet.find('button[aria-label="关闭面板"]').exists()).toBe(true)

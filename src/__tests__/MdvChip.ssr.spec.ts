@@ -17,7 +17,7 @@ describe('MdvChip SSR', () => {
             default: () => [
               h(MdvChip, { variant: 'filter', label: '文章', value: 'article' }),
               h(MdvChip, { variant: 'filter', label: '图片', value: 'image', color: '#006c4c' }),
-              h(MdvChip, { variant: 'input', label: '林同学' }),
+              h(MdvChip, { variant: 'input', label: '林同学', removeLabel: '删除林同学' }),
               h(MdvChip, {
                 variant: 'suggestion',
                 label: '查看指南',

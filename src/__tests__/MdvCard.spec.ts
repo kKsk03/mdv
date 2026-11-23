@@ -468,11 +468,11 @@ describe('MdvCard', () => {
     expect(document.activeElement).toBe(external)
   })
 
-  it('warns about unnamed primary actions and interactive content inside actionable cards', () => {
+  it('does not generate a fallback name and still diagnoses nested actions', () => {
     const warning = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    mount(MdvCard, { props: { clickable: true } })
-    expect(warning).toHaveBeenCalledExactlyOnceWith(expect.stringContaining('accessible name'))
-    warning.mockClear()
+    const unnamed = mount(MdvCard, { props: { clickable: true } })
+    expect(unnamed.get('.mdv-card__primary').attributes('aria-label')).toBeUndefined()
+    expect(warning).not.toHaveBeenCalled()
     mount(MdvCard, {
       props: { title: '交互冲突', clickable: true },
       slots: { actions: () => h('button', { type: 'button' }, '内部操作') },

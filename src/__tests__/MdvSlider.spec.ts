@@ -236,9 +236,9 @@ describe('MdvSlider', () => {
     const inputs = wrapper.findAll('input')
     expect(inputs[0]!.attributes('aria-labelledby')).toContain(label.attributes('id'))
     expect(inputs[1]!.attributes('aria-labelledby')).toContain(label.attributes('id'))
-    expect(wrapper.get(`#${inputs[0]!.attributes('aria-labelledby')!.split(' ')[1]}`).text()).toBe(
-      '下限',
-    )
+    expect(inputs[0]!.attributes('aria-labelledby')).toBe(label.attributes('id'))
+    expect(inputs[1]!.attributes('aria-labelledby')).toBe(label.attributes('id'))
+    expect(wrapper.find('.mdv-slider__sr-only').exists()).toBe(false)
     wrapper.unmount()
   })
 

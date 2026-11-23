@@ -52,6 +52,7 @@ const colors: { label: string; color?: MdvSnackbarColor }[] = [
 
 function showConfiguration(options: MdvSnackbarOptions) {
   snackbar.show({
+    closeLabel: '关闭通知',
     ...options,
     action: options.action && {
       ...options.action,
@@ -80,6 +81,7 @@ function showColor(label: string, color?: MdvSnackbarColor) {
     color,
     action: { label: '知道了' },
     closable: true,
+    closeLabel: '关闭通知',
   })
 }
 
@@ -116,6 +118,7 @@ function openDialog() {
                 '长内容与连续字符：VeryLongMessageWithoutSpaces用于检查窄屏及较大字体下的自然换行和完整显示。',
               action: { label: '查看详细信息' },
               closable: true,
+              closeLabel: '关闭通知',
             })
           "
           >长内容</MdvButton
@@ -161,6 +164,7 @@ function openDialog() {
       </div>
       <div :data-mdv-theme="localDark ? 'dark' : undefined">
         <MdvSnackbar
+          close-label="关闭通知"
           v-model="direct"
           :dir="rtl ? 'rtl' : 'ltr'"
           :placement="rtl ? 'bottom-start' : 'bottom'"

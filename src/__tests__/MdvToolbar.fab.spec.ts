@@ -24,7 +24,7 @@ describe('Toolbar paired FAB', () => {
   it('keeps primary activation separate from disclosure and hides the action body accessibly', async () => {
     const click = vi.fn<() => void>()
     const wrapper = mount(MdvToolbar, {
-      props: { variant: 'floating' },
+      props: { variant: 'floating', expandLabel: '展开工具栏' },
       slots: slots(click),
       attachTo: document.body,
     })

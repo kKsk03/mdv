@@ -41,6 +41,21 @@ afterEach(() => {
 })
 
 describe('Date Picker 的提交与输入', () => {
+  it('does not inject picker labels or a dialog name when labels are omitted', async () => {
+    const wrapper = track(
+      mount(MdvDatePicker, {
+        attachTo: document.body,
+        props: { modelValue: '2026-11-14', layout: 'modal' },
+      }),
+    )
+    await open(wrapper)
+    expect(wrapper.get('[role="dialog"]').attributes('aria-labelledby')).toBeUndefined()
+    expect(wrapper.find('[data-date-focus="cancel"]').attributes('aria-label')).toBeUndefined()
+    expect(wrapper.find('[data-date-focus="view"]').attributes('aria-label')).toBeUndefined()
+    expect(wrapper.get('[data-date-focus="cancel"] svg').attributes('aria-hidden')).toBe('true')
+    expect(wrapper.get('[data-date-focus="confirm"] svg').attributes('aria-hidden')).toBe('true')
+    expect(wrapper.find('.mdv-date-picker__title').exists()).toBe(false)
+  })
   it('输入聚焦不展开，Docked 选择只改草稿，取消丢弃，确定才提交', async () => {
     const wrapper = track(
       mount(MdvDatePicker, {
@@ -165,12 +180,24 @@ describe('Date Picker 的提交与输入', () => {
         props: { modelValue: '2026-11-14' },
       }),
     )
+    const input = entry(wrapper)
+    const invalid = vi.fn<(event: Event) => boolean>((event) => event.defaultPrevented)
+    input.element.addEventListener('invalid', invalid)
     await wrapper.setProps({ min: '2026-11-15' })
-    expect(entry(wrapper).element.checkValidity()).toBe(false)
-    expect(wrapper.text()).toContain('日期超出允许范围')
+    expect(input.element.checkValidity()).toBe(false)
+    expect(invalid).toHaveLastReturnedWith(true)
+    expect(input.attributes('aria-invalid')).toBe('true')
+    expect(wrapper.find('.mdv-text-field__supporting-text').exists()).toBe(false)
+    await wrapper.setProps({ labels: { outOfBounds: '日期超出允许范围' } })
+    expect(input.element.checkValidity()).toBe(false)
+    expect(invalid).toHaveLastReturnedWith(false)
+    expect(wrapper.get('.mdv-text-field__supporting-text').text()).toBe('日期超出允许范围')
+    await wrapper.setProps({ labels: undefined })
+    expect(input.element.checkValidity()).toBe(false)
+    expect(wrapper.find('.mdv-text-field__supporting-text').exists()).toBe(false)
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
     await wrapper.setProps({ min: '2026-11-14' })
-    expect(entry(wrapper).element.checkValidity()).toBe(true)
+    expect(input.element.checkValidity()).toBe(true)
   })
 })
 
@@ -212,7 +239,12 @@ describe('Date Picker 的键盘、焦点与浮层', () => {
     const wrapper = track(
       mount(MdvDatePicker, {
         attachTo: document.body,
-        props: { modelValue: '2025-08-17', layout: 'modal', locale: 'en-US' },
+        props: {
+          modelValue: '2025-08-17',
+          layout: 'modal',
+          locale: 'en-US',
+          labels: { input: '输入日期' },
+        },
       }),
     )
     await open(wrapper)
@@ -500,6 +532,10 @@ describe('Date Range Picker 与原生表单', () => {
         props: {
           modelValue: { start: '2026-11-18', end: '2026-11-20' },
           disabledDate: (date: string) => date === '2026-11-16',
+          labels: {
+            incompleteRange: '请填写完整的开始和结束日期',
+            blockedRange: '所选范围包含不可选择的日期',
+          },
         },
       }),
     )
@@ -532,6 +568,10 @@ describe('Date Range Picker 与原生表单', () => {
         props: {
           modelValue: { start: '2026-11-18', end: '2026-11-20' },
           disabledDate: (date: string) => date === '2026-11-16',
+          labels: {
+            blockedRange: '所选范围包含不可选择的日期',
+            invalidDate: '请输入有效的公历日期和四位年份',
+          },
         },
       }),
     )
@@ -553,7 +593,10 @@ describe('Date Range Picker 与原生表单', () => {
     const wrapper = track(
       mount(MdvDateRangePicker, {
         attachTo: document.body,
-        props: { modelValue: { start: '2026-11-18', end: '2026-11-20' } },
+        props: {
+          modelValue: { start: '2026-11-18', end: '2026-11-20' },
+          labels: { reversedRange: '结束日期不能早于开始日期' },
+        },
       }),
     )
     await entry(wrapper).setValue('2026/11/20')

@@ -16,13 +16,16 @@ describe('Carousel SSR', () => {
             ],
             modelValue: 'second',
             'aria-label': '相册',
+            labels: {
+              item: (index: number, count: number) => `第 ${index + 1} 项，共 ${count} 项`,
+            },
           }),
       }),
     )
     expect(html).toContain('data-current-key="second"')
     expect(html).toContain('aria-label="相册"')
     expect(html).toContain('href="/second"')
-    expect(html).toContain('第 2 项，共 2 项')
+    expect(html).toContain('aria-label="第 2 项，共 2 项"')
     expect(html).not.toContain('translate3d')
     expect(html).not.toContain('mdv-carousel--ready')
     expect(html).not.toMatch(/<section[^>]*tabindex/)

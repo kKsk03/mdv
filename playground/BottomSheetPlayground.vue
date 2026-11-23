@@ -15,6 +15,12 @@ import {
 } from '@/index'
 import type { MdvBottomSheetChangeDetail, MdvBottomSheetState, MdvSliderModelValue } from '@/index'
 
+const handleNames = {
+  expandLabel: '展开面板',
+  collapseLabel: '收起面板',
+  closeLabel: '关闭面板',
+}
+
 const short = ref(false)
 const long = ref(false)
 const direct = ref(false)
@@ -87,6 +93,7 @@ async function beforeClose() {
         class="mt-4 h-[520px] overflow-hidden rounded-mdv-large border border-mdv-outline-variant"
       >
         <MdvBottomSheetScaffold
+          v-bind="handleNames"
           v-model="standard"
           title="附近的地点"
           :peek-height="compact ? 56 : 196"
@@ -128,6 +135,7 @@ async function beforeClose() {
         <div data-mdv-theme="dark">
           <MdvButton @click="themed = true">局部深色</MdvButton>
           <MdvBottomSheet
+            v-bind="handleNames"
             v-model="themed"
             title="局部深色面板"
             description="颜色继承所在容器，不搬移到 body。"
@@ -143,7 +151,13 @@ async function beforeClose() {
         class="mt-5 h-80 max-w-80 overflow-hidden rounded-mdv-large border border-mdv-outline-variant"
         dir="rtl"
       >
-        <MdvBottomSheetScaffold title="وجهات قريبة" :peek-height="140">
+        <MdvBottomSheetScaffold
+          expand-label="توسيع اللوحة"
+          collapse-label="طي اللوحة"
+          close-label="إغلاق اللوحة"
+          title="وجهات قريبة"
+          :peek-height="140"
+        >
           <p class="p-5">يمكن التفاعل مع الصفحة أثناء عرض اللوحة.</p>
           <template #sheet
             ><p v-for="index in 8" :key="index" class="mb-4">
@@ -162,6 +176,7 @@ async function beforeClose() {
     </section>
 
     <MdvBottomSheet
+      v-bind="handleNames"
       v-model="short"
       title="分享内容"
       description="选择分享方式，或关闭面板返回页面。"
@@ -176,6 +191,7 @@ async function beforeClose() {
     </MdvBottomSheet>
 
     <MdvBottomSheet
+      v-bind="handleNames"
       v-model="long"
       v-model:expanded="expanded"
       title="浏览内容"
@@ -198,12 +214,19 @@ async function beforeClose() {
       >
     </MdvBottomSheet>
 
-    <MdvBottomSheet v-model="direct" :partial="false" title="直接展开" :draggable="draggable">
+    <MdvBottomSheet
+      v-bind="handleNames"
+      v-model="direct"
+      :partial="false"
+      title="直接展开"
+      :draggable="draggable"
+    >
       <p v-for="index in 20" :key="index" class="mb-5">
         展开内容 {{ index }}。仍保留官方顶部留白和顶部圆角。
       </p>
     </MdvBottomSheet>
     <MdvBottomSheet
+      v-bind="handleNames"
       v-model="full"
       :partial="false"
       max-height="100%"
@@ -219,7 +242,12 @@ async function beforeClose() {
       </p>
     </MdvBottomSheet>
 
-    <MdvBottomSheet v-model="guarded" title="关闭前检查" :before-close="beforeClose">
+    <MdvBottomSheet
+      v-bind="handleNames"
+      v-model="guarded"
+      title="关闭前检查"
+      :before-close="beforeClose"
+    >
       <MdvCheckbox v-model="blockClose" label="阻止关闭" />
       <p class="mt-4" role="status">
         {{ checking ? '正在模拟异步检查…' : '拖动、Esc、遮罩和操作关闭都会经过检查。' }}
@@ -231,7 +259,7 @@ async function beforeClose() {
       >
     </MdvBottomSheet>
 
-    <MdvBottomSheet v-model="form" title="编辑设置" :draggable="draggable">
+    <MdvBottomSheet v-bind="handleNames" v-model="form" title="编辑设置" :draggable="draggable">
       <form class="space-y-5" @submit.prevent="message = true">
         <MdvTextField v-model="name" label="名称" required full-width />
         <MdvSlider v-model="volume" label="音量" />
@@ -260,6 +288,7 @@ async function beforeClose() {
       </MdvDialog>
     </MdvBottomSheet>
     <MdvBottomSheet
+      v-bind="handleNames"
       v-model="rtl"
       dir="rtl"
       title="عنوان طويل لاختبار اتجاه النص وتخطيط اللوحة"

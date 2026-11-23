@@ -187,7 +187,6 @@ function rootAttrs() {
   const result = modal.rootAttrs()
   result.role = 'dialog'
   result.id ??= id
-  if (!result['aria-label'] && !result['aria-labelledby']) result['aria-label'] = '主导航'
   return result
 }
 const slotProps = computed<MdvNavigationDrawerSlotProps>(() => ({ close: () => requestClose() }))

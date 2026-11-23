@@ -86,7 +86,7 @@ export interface MdvCarouselSlots<T extends object = MdvCarouselItem> {
   item?: (props: MdvCarouselItemSlotProps<T>) => VNode[]
   header?: (props: MdvCarouselControlsSlotProps) => VNode[]
   controls?: (props: MdvCarouselControlsSlotProps) => VNode[]
-  empty?: () => VNode[]
+  empty?: (props: { text?: string }) => VNode[]
 }
 
 export interface MdvCarouselExpose {

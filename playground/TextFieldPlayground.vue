@@ -110,7 +110,13 @@ function checkField() {
     >
       <h2 id="text-field-content-title" class="text-mdv-title-large">图标、前后缀与尾部操作</h2>
       <div class="flex flex-wrap items-start gap-6">
-        <MdvTextField v-model="searchValue" label="搜索" type="search" clearable>
+        <MdvTextField
+          clear-label="清除输入"
+          v-model="searchValue"
+          label="搜索"
+          type="search"
+          clearable
+        >
           <template #leading><MdvIcon :icon="search" /></template>
         </MdvTextField>
         <MdvTextField
@@ -150,12 +156,16 @@ function checkField() {
       <h2 id="text-field-actions-title" class="text-mdv-title-large">清除、密码与多行</h2>
       <div class="flex flex-wrap items-start gap-6">
         <MdvTextField
+          clear-label="清除输入"
           v-model="clearValue"
           label="可清除"
           clearable
           supporting-text="清空后焦点回到输入框"
         />
         <MdvTextField
+          clear-label="清除输入"
+          show-password-label="显示密码"
+          hide-password-label="隐藏密码"
           v-model="password"
           label="密码"
           type="password"
@@ -166,6 +176,7 @@ function checkField() {
           style="width: 340px"
         />
         <MdvTextField
+          clear-label="清除输入"
           v-model="notes"
           label="多行备注"
           multiline
@@ -177,6 +188,7 @@ function checkField() {
           <template #leading><MdvIcon :icon="person" /></template>
         </MdvTextField>
         <MdvTextField
+          clear-label="清除输入"
           variant="filled"
           label="填充多行"
           multiline
@@ -238,6 +250,7 @@ function checkField() {
         </div>
         <div class="min-w-0 space-y-2">
           <MdvTextField
+            clear-label="清除输入"
             v-model.number="numericValue"
             label=".number"
             type="number"
@@ -374,6 +387,7 @@ function checkField() {
     >
       <h2 id="text-field-method-title" class="text-mdv-title-large">程序赋值与公开方法</h2>
       <MdvTextField
+        clear-label="清除输入"
         ref="methodField"
         v-model="programValue"
         label="方法验证"

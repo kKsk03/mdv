@@ -1,28 +1,4 @@
-import type { MdvTimePickerHourCycle, MdvTimePickerLabels } from './time-picker.types'
-
-export const timePickerLabels: MdvTimePickerLabels = {
-  title: '选择时间',
-  time: '时间',
-  hour: '小时',
-  minute: '分钟',
-  period: '时段',
-  open: '打开时间选择器',
-  dial: '切换到拨盘',
-  input: '切换到数字输入',
-  cancel: '取消',
-  confirm: '确定',
-  clear: '清除时间',
-  formatHint: '输入格式',
-  keyboardHint: '方向键选择时间，Home／End 到首末可选项，空格或 Enter 选择。',
-  invalidTime: '请输入有效时间',
-  required: '请选择时间',
-  outOfBounds: '时间超出允许范围',
-  disabledTime: '该时间不可用',
-  invalidBounds: '最早／最晚时间无效或顺序错误',
-  invalidStep: '分钟步长必须是 60 的正整数约数',
-  stepMismatch: '分钟不符合设置的步长',
-  noAvailableTime: '没有可用时间',
-}
+import type { MdvTimePickerHourCycle } from './time-picker.types'
 export type TimeIssue =
   | 'invalidTime'
   | 'required'

@@ -186,7 +186,13 @@ describe('MdvChip', () => {
     const click = vi.fn<(event: MouseEvent) => void>()
     const remove = vi.fn<(event: MouseEvent | KeyboardEvent) => void>()
     const wrapper = mount(MdvChip, {
-      props: { variant: 'input', label: '林同学', selectable: true, onRemove: remove },
+      props: {
+        variant: 'input',
+        label: '林同学',
+        removeLabel: '删除林同学',
+        selectable: true,
+        onRemove: remove,
+      },
       attrs: { onClick: click },
     })
     expect(wrapper.findAll('button')).toHaveLength(2)

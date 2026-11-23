@@ -35,6 +35,25 @@ function suggestionList() {
 }
 
 describe('MdvSearchView', () => {
+  it('does not inject placeholder, result, or action labels when omitted', async () => {
+    const wrapper = mount(MdvSearchView, {
+      props: { modelValue: 'query', layout: 'fullscreen' },
+      attachTo: document.body,
+    })
+    hosts.add(wrapper)
+    expect(wrapper.get('.mdv-search-view__entry input').attributes('placeholder')).toBeUndefined()
+    expect(wrapper.get('.mdv-search-view__entry input').attributes('aria-label')).toBeUndefined()
+    expect(wrapper.get('.mdv-search-view__entry button').attributes('aria-label')).toBeUndefined()
+    await wrapper.vm.open()
+    await flushPromises()
+    expect(wrapper.get('.mdv-search-dialog__results').attributes('aria-label')).toBeUndefined()
+    const status = wrapper.get('.mdv-search-dialog__status')
+    expect(status.text()).toBe('')
+    await wrapper.setProps({ statusText: 'Three results', resultsLabel: 'Mail results' })
+    expect(wrapper.get('[role="status"]').element).toBe(status.element)
+    expect(status.text()).toBe('Three results')
+    expect(wrapper.get('.mdv-search-dialog__results').attributes('aria-label')).toBe('Mail results')
+  })
   it('preserves the focus source when opening the separate query input', async () => {
     const wrapper = mount(MdvSearchView, {
       props: { layout: 'fullscreen' },
@@ -64,7 +83,7 @@ describe('MdvSearchView', () => {
 
   it('clears a closed entry without opening the search view', async () => {
     const wrapper = mount(MdvSearchView, {
-      props: { modelValue: '旅行', layout: 'fullscreen' },
+      props: { modelValue: '旅行', layout: 'fullscreen', clearLabel: '清空搜索' },
       attachTo: document.body,
     })
     hosts.add(wrapper)
@@ -305,7 +324,7 @@ describe('MdvSearchView', () => {
         }),
     )
     const wrapper = mount(MdvSearchView, {
-      props: { layout: 'fullscreen', beforeClose, destroyOnClose: true },
+      props: { layout: 'fullscreen', beforeClose, destroyOnClose: true, backLabel: '返回' },
       slots: {
         trigger: ({ triggerProps }: MdvSearchTriggerSlotProps) =>
           h('button', { ...triggerProps, id: 'search-trigger' }, '搜索'),

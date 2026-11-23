@@ -34,10 +34,8 @@ function rootAttrs() {
   const result = { ...attrs }
   delete result.role
   delete result['aria-modal']
-  if (!result['aria-label'] && !result['aria-labelledby']) {
-    if (props.title || slots.header) result['aria-labelledby'] = props.titleId
-    else result['aria-label'] = '主导航'
-  }
+  if (!result['aria-label'] && !result['aria-labelledby'] && (props.title || slots.header))
+    result['aria-labelledby'] = props.titleId
   return result
 }
 function ownedItems() {

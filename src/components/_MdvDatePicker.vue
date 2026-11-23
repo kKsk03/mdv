@@ -18,15 +18,16 @@ import type { StyleValue } from 'vue'
 import calendarIcon from '@iconify-icons/material-symbols/calendar-month'
 import editIcon from '@iconify-icons/material-symbols/edit'
 import closeIcon from '@iconify-icons/material-symbols/close'
+import checkIcon from '@iconify-icons/material-symbols/check'
 import MdvIcon from './MdvIcon.vue'
 import MdvButton from './MdvButton.vue'
 import MdvTextField from './MdvTextField.vue'
 import DateCalendar from './_MdvDateCalendar.vue'
+import { silentValidationMessage } from './form-validity'
 import {
   calendarDate,
   dateFormatter,
   dateParts,
-  datePickerLabels,
   inputDateFormat,
   parseInputDate,
   selectionIssue,
@@ -48,7 +49,7 @@ import type {
 } from './date-picker.types'
 
 defineOptions({ inheritAttrs: false })
-defineSlots<MdvDatePickerSlots>()
+const slots = defineSlots<MdvDatePickerSlots>()
 interface InternalProps extends MdvDatePickerCommonProps {
   modelValue?: MdvDateValue | MdvDateRangeValue
   range?: boolean
@@ -88,7 +89,7 @@ const entry = useTemplateRef<HTMLElement>('entry')
 const layerRoot = useTemplateRef<HTMLElement>('layerRoot')
 const surface = useTemplateRef<HTMLElement>('surface')
 const calendar = useTemplateRef<InstanceType<typeof DateCalendar>>('calendar')
-const labels = computed(() => ({ ...datePickerLabels, ...props.labels }))
+const labels = computed(() => props.labels ?? {})
 const format = computed(() => inputDateFormat(props.locale))
 const initialValue =
   typeof props.modelValue === 'object' && props.modelValue
@@ -143,17 +144,22 @@ const candidate = computed(() =>
         issue: selectionIssue(draftStart.value, draftEnd.value, props.range, props.required, props),
       },
 )
+const entryInvalid = computed(
+  () => !!(customValidity.value || props.error || entrySelection.value.issue),
+)
 const entryMessage = computed(
   () =>
     customValidity.value ||
-    (props.error ? props.errorText || labels.value.invalidDate : '') ||
-    (entrySelection.value.issue ? labels.value[entrySelection.value.issue] : ''),
+    (props.error ? props.errorText || '' : '') ||
+    (entrySelection.value.issue ? labels.value[entrySelection.value.issue] || '' : ''),
 )
 const panelMessage = computed(() =>
-  candidate.value.issue ? labels.value[candidate.value.issue] : '',
+  candidate.value.issue ? labels.value[candidate.value.issue] || '' : '',
 )
-const hint = computed(() => `${labels.value.formatHint}：${format.value.hint}`)
-const title = computed(() => (props.range ? labels.value.rangeTitle : labels.value.title))
+const hint = computed(() =>
+  labels.value.formatHint ? `${labels.value.formatHint}: ${format.value.hint}` : '',
+)
+const title = computed(() => (props.range ? labels.value.rangeTitle : labels.value.title) || '')
 const headline = computed(() => {
   if (view.value === 'input') return labels.value.input
   const start = candidate.value.start
@@ -167,7 +173,7 @@ const headline = computed(() => {
   })
   const first = formatter.format(calendarDate(start))
   return props.range
-    ? `${first} – ${end ? formatter.format(calendarDate(end)) : labels.value.endLabel}`
+    ? `${first}${end ? ` – ${formatter.format(calendarDate(end))}` : labels.value.endLabel ? ` – ${labels.value.endLabel}` : ''}`
     : first
 })
 const showTopbar = computed(
@@ -316,7 +322,18 @@ function focus(options?: FocusOptions) {
   nativeInputs()[0]?.focus(options)
 }
 function refreshValidity() {
-  for (const input of nativeInputs()) input.setCustomValidity(entryMessage.value)
+  const inputs = nativeInputs()
+  const nativeRequiredMissing = inputs.some((input) => input.required && !input.value)
+  for (const input of inputs)
+    input.setCustomValidity(
+      entryMessage.value ||
+        (entryInvalid.value && !nativeRequiredMissing ? silentValidationMessage : ''),
+    )
+}
+function onEntryInvalid(event: Event) {
+  entryReported.value = true
+  const input = event.target as HTMLInputElement | null
+  if (input?.validationMessage === silentValidationMessage) event.preventDefault()
 }
 function checkValidity() {
   refreshValidity()
@@ -367,7 +384,7 @@ function inputAttrs(index: number) {
     for (const key of Object.keys(result))
       if (
         key.startsWith('on') ||
-        ['aria-label', 'aria-labelledby', 'autofocus', 'tabindex', 'placeholder'].includes(key)
+        ['aria-label', 'aria-labelledby', 'autofocus', 'tabindex'].includes(key)
       )
         delete result[key]
   }
@@ -448,7 +465,9 @@ watch([() => props.min, () => props.max, () => props.disabledDate, () => props.r
   if (props.modelValue) entryReported.value = true
   if (layer.shown.value) panelReported.value = true
 })
-watch([entryMessage, entryStart, entryEnd], refreshValidity, { flush: 'post' })
+watch([entryMessage, entryInvalid, entryStart, entryEnd, () => props.required], refreshValidity, {
+  flush: 'post',
+})
 watch(
   () => {
     const [start, end] = selectionParts(props.modelValue)
@@ -527,17 +546,17 @@ defineExpose<MdvDatePickerExpose>({
       <MdvTextField
         v-bind="inputAttrs(0)"
         v-model="entryStart"
-        :label="range ? startLabel || labels.startLabel : label || labels.dateLabel"
+        :label="range ? (startLabel ?? labels.startLabel) : (label ?? labels.dateLabel)"
         :disabled="disabled"
         :readonly="readonly"
         :required="required"
-        :placeholder="(attrs.placeholder as string) || format.hint"
-        :supporting-text="entryReported && entryMessage ? '' : supportingText || hint"
-        :error="!!(error || (entryReported && entryMessage))"
+        :placeholder="placeholder"
+        :supporting-text="entryReported && entryInvalid ? '' : (supportingText ?? hint)"
+        :error="!!(error || (entryReported && entryInvalid))"
         :error-text="entryReported ? entryMessage : errorText"
         @blur="onBlur"
         @keydown="onKeydown($event)"
-        @invalid="entryReported = true"
+        @invalid="onEntryInvalid"
       >
         <template v-if="!range" #trailing>
           <button
@@ -559,17 +578,17 @@ defineExpose<MdvDatePickerExpose>({
         v-if="range"
         v-bind="inputAttrs(1)"
         v-model="entryEnd"
-        :label="endLabel || labels.endLabel"
+        :label="endLabel ?? labels.endLabel"
         :disabled="disabled"
         :readonly="readonly"
         :required="required"
-        :placeholder="format.hint"
-        :supporting-text="entryReported && entryMessage ? '' : supportingText || hint"
-        :error="!!(error || (entryReported && entryMessage))"
+        :placeholder="placeholder"
+        :supporting-text="entryReported && entryInvalid ? '' : (supportingText ?? hint)"
+        :error="!!(error || (entryReported && entryInvalid))"
         :error-text="entryReported ? entryMessage : errorText"
         @blur="onBlur"
         @keydown="onKeydown($event)"
-        @invalid="entryReported = true"
+        @invalid="onEntryInvalid"
       >
         <template #trailing>
           <button
@@ -622,8 +641,10 @@ defineExpose<MdvDatePickerExpose>({
       :popover="layer.layout.value === 'docked' ? 'manual' : undefined"
       role="dialog"
       :aria-modal="layer.layout.value !== 'docked' ? 'true' : undefined"
-      :aria-labelledby="id + '-title'"
-      :aria-describedby="id + '-status'"
+      :aria-labelledby="title || slots.title ? id + '-title' : undefined"
+      :aria-describedby="
+        layer.shown.value && panelReported && panelMessage ? id + '-status' : undefined
+      "
       tabindex="-1"
       closedby="none"
       v-on="layer.listeners"
@@ -660,11 +681,13 @@ defineExpose<MdvDatePickerExpose>({
                   data-date-focus="confirm"
                   :disabled="!!candidate.issue || disabled || readonly"
                   @click="confirm"
-                  >{{ labels.save }}</MdvButton
                 >
+                  <template v-if="labels.save">{{ labels.save }}</template>
+                  <MdvIcon v-else :icon="checkIcon" />
+                </MdvButton>
               </div>
               <div class="mdv-date-picker__header-content">
-                <h2 :id="id + '-title'" class="mdv-date-picker__title">
+                <h2 v-if="$slots.title || title" :id="id + '-title'" class="mdv-date-picker__title">
                   <slot name="title">{{ title }}</slot>
                 </h2>
                 <div v-if="layer.layout.value !== 'docked'" class="mdv-date-picker__headline-row">
@@ -714,10 +737,10 @@ defineExpose<MdvDatePickerExpose>({
                 :id="id + '-draft-start'"
                 v-model="panelStart"
                 data-date-focus="draft-start"
-                :label="range ? startLabel || labels.startLabel : label || labels.dateLabel"
+                :label="range ? (startLabel ?? labels.startLabel) : (label ?? labels.dateLabel)"
                 :form="id + '-draft-form'"
                 :required="required"
-                :placeholder="format.hint"
+                :placeholder="placeholder"
                 :supporting-text="hint"
                 :error="panelReported && !!candidate.issue"
               />
@@ -726,10 +749,10 @@ defineExpose<MdvDatePickerExpose>({
                 :id="id + '-draft-end'"
                 v-model="panelEnd"
                 data-date-focus="draft-end"
-                :label="endLabel || labels.endLabel"
+                :label="endLabel ?? labels.endLabel"
                 :form="id + '-draft-form'"
                 :required="required"
-                :placeholder="format.hint"
+                :placeholder="placeholder"
                 :supporting-text="hint"
                 :error="panelReported && !!candidate.issue"
               />
@@ -753,16 +776,19 @@ defineExpose<MdvDatePickerExpose>({
               "
               class="mdv-date-picker__actions"
             >
-              <MdvButton variant="text" data-date-focus="cancel" @click="layer.close('cancel')">{{
-                labels.cancel
-              }}</MdvButton>
+              <MdvButton variant="text" data-date-focus="cancel" @click="layer.close('cancel')">
+                <template v-if="labels.cancel">{{ labels.cancel }}</template>
+                <MdvIcon v-else :icon="closeIcon" />
+              </MdvButton>
               <MdvButton
                 variant="text"
                 data-date-focus="confirm"
                 :disabled="!!candidate.issue || disabled || readonly"
                 @click="confirm"
-                >{{ labels.confirm }}</MdvButton
               >
+                <template v-if="labels.confirm">{{ labels.confirm }}</template>
+                <MdvIcon v-else :icon="checkIcon" />
+              </MdvButton>
             </footer>
           </div>
         </div>

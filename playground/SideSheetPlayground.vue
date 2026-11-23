@@ -90,6 +90,8 @@ async function beforeClose() {
         class="mt-5 h-[500px] overflow-hidden rounded-mdv-large border border-mdv-outline-variant"
       >
         <MdvSideSheetScaffold
+          close-label="关闭面板"
+          back-label="返回"
           v-model="standard"
           title="文件详情"
           :width="wide ? '400px' : '256px'"
@@ -140,6 +142,7 @@ async function beforeClose() {
         <div data-mdv-theme="dark">
           <MdvButton @click="theme = true">局部深色</MdvButton
           ><MdvSideSheet
+            close-label="关闭面板"
             v-model="theme"
             title="局部主题"
             description="颜色跟随所在区域，正文保留自己的主题。"
@@ -156,6 +159,8 @@ async function beforeClose() {
         class="mt-5 h-80 max-w-80 overflow-hidden rounded-mdv-large border border-mdv-outline-variant"
       >
         <MdvSideSheetScaffold
+          close-label="إغلاق اللوحة"
+          back-label="رجوع"
           v-model="narrow"
           title="تفاصيل الملف"
           width="400px"
@@ -180,6 +185,7 @@ async function beforeClose() {
     </section>
 
     <MdvSideSheet
+      close-label="关闭面板"
       v-model="basic"
       title="文件详情"
       description="侧边面板用来补充当前页面的内容。"
@@ -190,6 +196,8 @@ async function beforeClose() {
       ></MdvSideSheet
     >
     <MdvSideSheet
+      close-label="关闭面板"
+      back-label="返回"
       v-model="floating"
       title="分离式面板与比较长的标题 Long English headline"
       width="400px"
@@ -208,6 +216,8 @@ async function beforeClose() {
       ></MdvSideSheet
     >
     <MdvSideSheet
+      close-label="关闭面板"
+      back-label="返回"
       v-model="leading"
       title="起始侧面板"
       description="左右位置以逻辑方向决定。"
@@ -217,12 +227,15 @@ async function beforeClose() {
       @close="record"
     />
     <MdvSideSheet
+      close-label="关闭面板"
       v-model="noTitle"
       aria-label="辅助信息"
       description="省略标题时，关闭入口仍然存在。"
       @close="record"
     />
     <MdvSideSheet
+      close-label="إغلاق اللوحة"
+      back-label="رجوع"
       v-model="rtl"
       dir="rtl"
       title="تفاصيل المشروع وعنوان طويل"
@@ -237,6 +250,7 @@ async function beforeClose() {
       ></MdvSideSheet
     >
     <MdvSideSheet
+      close-label="关闭面板"
       v-model="guarded"
       title="未保存的更改"
       width="360px"
@@ -247,7 +261,14 @@ async function beforeClose() {
         {{ checking ? '正在检查…' : '取消勾选后可关闭。' }}
       </p></MdvSideSheet
     >
-    <MdvSideSheet v-model="form" title="编辑设置" width="400px" dividers @close="record">
+    <MdvSideSheet
+      close-label="关闭面板"
+      v-model="form"
+      title="编辑设置"
+      width="400px"
+      dividers
+      @close="record"
+    >
       <form id="side-sheet-form" method="dialog" class="space-y-6">
         <MdvTextField v-model="draft" label="名称" required autofocus /><MdvSlider
           v-model="volume"

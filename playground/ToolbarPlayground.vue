@@ -124,6 +124,8 @@ function acceptExpanded(value: boolean) {
           <p class="mt-3" role="status">{{ lastAction }}</p>
         </div>
         <MdvToolbar
+          expand-label="展开工具栏"
+          collapse-label="收起工具栏"
           v-model:expanded="expanded"
           :variant="variant"
           :color="color"
@@ -256,6 +258,8 @@ function acceptExpanded(value: boolean) {
           </article>
         </div>
         <MdvToolbar
+          expand-label="展开工具栏"
+          collapse-label="收起工具栏"
           v-model:expanded="scrollExpanded"
           variant="floating"
           color="vibrant"

@@ -228,15 +228,8 @@ let warning = ''
 function checkUsage() {
   if (!import.meta.env.DEV) return
   const messages = []
-  if (!props.menuButtonLabel?.trim()) messages.push('provide menuButtonLabel for related options')
   if (typeof props.menuButtonAttrs?.ref === 'string')
     messages.push('menuButtonAttrs.ref needs a function or a Vue ref')
-  if (
-    props.iconOnly &&
-    !props.actionAttrs?.['aria-label'] &&
-    !props.actionAttrs?.['aria-labelledby']
-  )
-    messages.push('iconOnly needs actionAttrs aria-label or aria-labelledby')
   if (props.color !== undefined && !colors.value)
     messages.push('color must be a Button preset or hex seed')
   const message = messages.join('; ')

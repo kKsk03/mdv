@@ -64,9 +64,15 @@ function example(
 }
 
 describe('MdvFullscreenDialog', () => {
+  it('does not inject a close action name when it is omitted', async () => {
+    const { dialog } = example({ modelValue: true, title: '示例' })
+    await settle()
+    expect(dialog.get('.mdv-fullscreen-dialog__close').attributes('aria-label')).toBeUndefined()
+  })
+
   it('renders a dedicated full-screen structure with an accessible close action and persistent content', async () => {
     const { dialog, config } = example(
-      { modelValue: true, title: '新建行程' },
+      { modelValue: true, title: '新建行程', closeLabel: '关闭对话框' },
       {
         default: () => [h('input', { autofocus: true })],
         actions: ({ close }) => [h('button', { onClick: () => close('saved') }, '保存')],

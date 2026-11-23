@@ -7,6 +7,14 @@ import type {
   MdvTimePickerView,
   MdvTimeValue,
 } from '@/index'
+import { timePickerCopy } from './picker-copy'
+
+const longTimePickerCopy = {
+  ...timePickerCopy,
+  title: '请选择适合您的预约时间 Select an appointment time',
+  cancel: '取消本次选择',
+  confirm: '确认预约时间',
+}
 
 const time = ref<MdvTimeValue>('13:05')
 const view = ref<MdvTimePickerView>('auto')
@@ -180,15 +188,7 @@ function submit(event: SubmitEvent) {
           :disabled="disabled"
           :readonly="readonly"
           :required="required"
-          :labels="
-            longLabels
-              ? {
-                  title: '请选择适合您的预约时间 Select an appointment time',
-                  cancel: '取消本次选择',
-                  confirm: '确认预约时间',
-                }
-              : undefined
-          "
+          :labels="longLabels ? longTimePickerCopy : timePickerCopy"
           label="预约时间"
           clearable
           @confirm="log(`确认 ${$event}`)"
@@ -204,6 +204,7 @@ function submit(event: SubmitEvent) {
       <h2 class="text-mdv-title-large">官方形态与 0 点／12 点</h2>
       <div class="flex flex-wrap gap-6">
         <MdvTimePicker
+          :labels="timePickerCopy"
           v-model="samples[0]"
           initial-view="dial"
           hour-cycle="h12"
@@ -211,18 +212,21 @@ function submit(event: SubmitEvent) {
           locale="en-US"
           label="12 小时纵向拨盘"
         /><MdvTimePicker
+          :labels="timePickerCopy"
           v-model="samples[1]"
           initial-view="dial"
           hour-cycle="h23"
           orientation="horizontal"
           label="24 小时横向双圈"
         /><MdvTimePicker
+          :labels="timePickerCopy"
           v-model="samples[2]"
           initial-view="input"
           hour-cycle="h12"
           locale="en-US"
           label="午夜 12:00 AM"
         /><MdvTimePicker
+          :labels="timePickerCopy"
           v-model="samples[3]"
           initial-view="input"
           hour-cycle="h12"
@@ -240,6 +244,7 @@ function submit(event: SubmitEvent) {
         /><MdvCheckbox v-model="rejectClose" label="拒绝关闭" />
       </div>
       <MdvTimePicker
+        :labels="timePickerCopy"
         :model-value="controlledValue"
         :open="controlledOpen"
         initial-view="input"
@@ -257,6 +262,7 @@ function submit(event: SubmitEvent) {
       <h2 class="text-mdv-title-large">表单、重置与外部关联</h2>
       <form :id="formId" class="space-y-4" @submit="submit">
         <MdvTimePicker
+          :labels="timePickerCopy"
           v-model="formTime"
           name="appointment"
           label="必填预约时间"
@@ -269,12 +275,18 @@ function submit(event: SubmitEvent) {
           ><MdvButton type="reset" variant="outlined">重置</MdvButton>
         </div>
       </form>
-      <MdvTimePicker v-model="customTime" name="reminder" :form="formId" label="外部关联提醒时间" />
+      <MdvTimePicker
+        :labels="timePickerCopy"
+        v-model="customTime"
+        name="reminder"
+        :form="formId"
+        label="外部关联提醒时间"
+      />
       <pre>{{ output }}</pre>
     </section>
     <section class="space-y-4 rounded-mdv-large border border-mdv-outline-variant p-4">
       <h2 class="text-mdv-title-large">自定义入口与 Dialog 组合</h2>
-      <MdvTimePicker v-model="customTime" label="提醒时间"
+      <MdvTimePicker :labels="timePickerCopy" v-model="customTime" label="提醒时间"
         ><template #trigger="{ triggerProps }"
           ><button v-bind="triggerProps" class="rounded-full px-3 py-2 text-mdv-primary">
             选择
@@ -282,7 +294,8 @@ function submit(event: SubmitEvent) {
         ></MdvTimePicker
       ><MdvButton @click="dialogOpen = true">在对话框内选择时间</MdvButton
       ><MdvDialog v-model="dialogOpen" title="编辑预约"
-        ><MdvTimePicker v-model="nestedTime" label="开始时间" /><template #actions="{ close }"
+        ><MdvTimePicker :labels="timePickerCopy" v-model="nestedTime" label="开始时间" /><template
+          #actions="{ close }"
           ><MdvButton variant="text" @click="close()">关闭</MdvButton></template
         ></MdvDialog
       >

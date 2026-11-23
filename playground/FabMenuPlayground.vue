@@ -69,7 +69,13 @@ const operations = [
         <div v-for="item in variants" :key="item" class="fab-menu-playground__canvas">
           <h3>{{ item === 'expressive' ? 'Expressive 胶囊操作项' : 'Web Baseline 普通菜单' }}</h3>
           <p>同一组相关操作，按各自的视觉与键盘规则呈现。</p>
-          <MdvFabMenu :variant="item" position="absolute" :offset="16" :label="`${item} 新建内容`">
+          <MdvFabMenu
+            close-label="关闭菜单"
+            :variant="item"
+            position="absolute"
+            :offset="16"
+            :label="`${item} 新建内容`"
+          >
             <MdvFabMenuItem
               v-for="operation in operations"
               :key="operation.label"
@@ -121,6 +127,7 @@ const operations = [
         <h3>自然宽度、顶部末端锚点</h3>
         <p>操作项保留各自宽度。较大入口展开后，关闭按钮保持原入口的顶部末端角。</p>
         <MdvFabMenu
+          close-label="关闭菜单"
           :variant="variant"
           :color="color"
           :size="size"
@@ -149,7 +156,7 @@ const operations = [
       <div class="fab-menu-playground__canvas fab-menu-playground__resizable">
         <h3>可调整高度的内容区</h3>
         <button type="button">菜单前的原生按钮</button>
-        <MdvFabMenu position="absolute" :offset="16" label="六项创建操作">
+        <MdvFabMenu close-label="关闭菜单" position="absolute" :offset="16" label="六项创建操作">
           <MdvFabMenuItem label="新建文档" :icon="noteIcon" @select="message = '文档'" />
           <MdvFabMenuItem label="新建表格" :icon="noteIcon" @select="message = '表格'" />
           <MdvFabMenuItem label="创建演示文稿" :icon="noteIcon" @select="message = '演示文稿'" />
@@ -175,6 +182,7 @@ const operations = [
       </p>
       <div class="fab-menu-playground__canvas">
         <MdvFabMenu
+          close-label="关闭菜单"
           :model-value="controlled"
           label="受控操作"
           position="absolute"
@@ -205,7 +213,13 @@ const operations = [
         <MdvButton @click="dialog = true">打开组合示例</MdvButton>
         <MdvCheckbox v-model="fixed">显示窗口右下角菜单</MdvCheckbox>
       </div>
-      <MdvFabMenu v-if="fixed" label="窗口操作" position="fixed" color="tertiary-container">
+      <MdvFabMenu
+        close-label="关闭菜单"
+        v-if="fixed"
+        label="窗口操作"
+        position="fixed"
+        color="tertiary-container"
+      >
         <MdvFabMenuItem
           label="新建文档"
           :icon="noteIcon"
@@ -217,7 +231,12 @@ const operations = [
         <p>菜单保留局部主题和 Dialog 的焦点边界；关闭菜单后不会把焦点移到对话框外。</p>
         <div class="fab-menu-playground__canvas">
           <input aria-label="工作空间名称" placeholder="输入名称" />
-          <MdvFabMenu label="添加到工作空间" position="absolute" :offset="16">
+          <MdvFabMenu
+            close-label="关闭菜单"
+            label="添加到工作空间"
+            position="absolute"
+            :offset="16"
+          >
             <template #icon><MdvIcon :icon="folderIcon" /></template>
             <MdvFabMenuItem label="添加文档" :icon="noteIcon" @select="message = '添加文档'" />
             <MdvFabMenuItem label="添加图片" :icon="imageIcon" @select="message = '添加图片'" />

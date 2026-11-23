@@ -382,26 +382,12 @@ describe('MdvIconButton', () => {
     }
   })
 
-  it('warns when an accessible action name is missing', async () => {
+  it('does not generate or require an accessible name when none is supplied', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    try {
-      const name = ref('')
-      const wrapper = mount(
-        defineComponent({
-          setup: () => () => h(MdvIconButton, { 'aria-label': name.value }),
-        }),
-      )
-
-      expect(warn).toHaveBeenCalledExactlyOnceWith(
-        expect.stringContaining('provide aria-label or aria-labelledby'),
-      )
-      name.value = '收藏'
-      await nextTick()
-      expect(wrapper.get('button').attributes('aria-label')).toBe('收藏')
-      expect(warn).toHaveBeenCalledOnce()
-    } finally {
-      warn.mockRestore()
-    }
+    const wrapper = mount(MdvIconButton)
+    expect(wrapper.get('button').attributes('aria-label')).toBeUndefined()
+    expect(warn).not.toHaveBeenCalled()
+    warn.mockRestore()
   })
 
   it('positions and releases ripples within the visible surface and clears them on disable', async () => {

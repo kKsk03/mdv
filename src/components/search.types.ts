@@ -36,7 +36,9 @@ export interface MdvSearchViewProps extends MdvSearchBarProps {
   beforeClose?: MdvSearchBeforeClose
   /** 输入的原生属性和事件；根 class/style/ARIA 保留在组件根节点。 */
   inputAttrs?: InputHTMLAttributes
-  /** 简短的结果状态播报，例如“找到 5 条结果”；不自动朗读整个列表。 */
+  /** Optional accessible name for the results region. */
+  resultsLabel?: string
+  /** Short result announcement; the list is not read automatically. */
   statusText?: string
 }
 

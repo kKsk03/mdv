@@ -9,7 +9,6 @@ defineOptions({ name: 'MdvLoadingIndicator', inheritAttrs: false })
 const props = withDefaults(defineProps<MdvLoadingIndicatorProps>(), {
   contained: false,
   size: 48,
-  label: '加载中',
   paused: false,
   decorative: false,
 })
@@ -37,7 +36,7 @@ function rootAttrs() {
   } else {
     result.role = 'progressbar'
     if (result['aria-label'] === undefined && !result['aria-labelledby']) {
-      result['aria-label'] = props.label.trim() || '加载中'
+      if (props.label?.trim()) result['aria-label'] = props.label.trim()
     }
   }
   return result

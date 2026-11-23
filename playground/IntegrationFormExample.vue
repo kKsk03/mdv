@@ -12,6 +12,7 @@ import {
   MdvTimePicker,
 } from '@/index'
 import type { MdvDateValue, MdvRadioModelValue, MdvSliderModelValue, MdvTimeValue } from '@/index'
+import { datePickerCopy, timePickerCopy } from './picker-copy'
 
 const emit = defineEmits<{ submitted: [entries: [string, string][]] }>()
 const name = ref('周末旅行')
@@ -57,6 +58,7 @@ function submit(event: SubmitEvent) {
         />
         <div class="grid gap-5 sm:grid-cols-2">
           <MdvDatePicker
+            :labels="datePickerCopy"
             v-model="date"
             name="date"
             label="出发日期"
@@ -64,7 +66,14 @@ function submit(event: SubmitEvent) {
             max="2026-12-31"
             required
           />
-          <MdvTimePicker v-model="time" name="time" label="出发时间" :minute-step="5" required />
+          <MdvTimePicker
+            :labels="timePickerCopy"
+            v-model="time"
+            name="time"
+            label="出发时间"
+            :minute-step="5"
+            required
+          />
         </div>
         <MdvRadioGroup v-model="transport" name="transport" label="出行方式" required>
           <MdvRadio value="train" label="火车" />

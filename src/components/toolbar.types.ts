@@ -36,7 +36,7 @@ export interface MdvToolbarProps {
 export interface MdvToolbarToggleProps {
   'aria-expanded': boolean
   'aria-controls': string
-  'aria-label': string
+  'aria-label'?: string
   onClick: () => void
 }
 

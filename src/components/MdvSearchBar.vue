@@ -24,11 +24,9 @@ import type { MdvSearchBarProps } from './search.types'
 
 defineOptions({ name: 'MdvSearchBar', inheritAttrs: false })
 const props = withDefaults(defineProps<MdvSearchBarProps>(), {
-  placeholder: '搜索',
   disabled: false,
   readonly: false,
   clearable: true,
-  clearLabel: '清空搜索',
   loading: false,
 })
 const emit = defineEmits<{

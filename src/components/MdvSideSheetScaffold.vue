@@ -34,8 +34,6 @@ const props = withDefaults(defineProps<MdvSideSheetScaffoldProps>(), {
   placement: 'end',
   detached: false,
   showBack: false,
-  backLabel: '返回',
-  closeLabel: '关闭面板',
   dividers: false,
   showDivider: true,
   destroyOnClose: false,
@@ -94,7 +92,6 @@ function panelAttrs() {
   )
   if (!result['aria-label'] && !result['aria-labelledby']) {
     if (props.title || slots.header) result['aria-labelledby'] = id + '-title'
-    else result['aria-label'] = '侧边面板'
   }
   if (!result['aria-describedby'] && !slots.sheet && props.description)
     result['aria-describedby'] = id + '-description'

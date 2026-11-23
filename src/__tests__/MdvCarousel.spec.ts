@@ -113,7 +113,9 @@ describe('Carousel key 模型、动态列表与事件', () => {
     expect(wrapper.find('[data-active]').exists()).toBe(false)
   })
   it('空列表加入项目后建立内部首项；清空后没有虚构 active', async () => {
-    const wrapper = track(mount(MdvCarousel, { props: { items: [] as typeof items } }))
+    const wrapper = track(
+      mount(MdvCarousel, { props: { items: [] as typeof items, labels: { empty: '暂无内容' } } }),
+    )
     await flushPromises()
     expect(wrapper.text()).toContain('暂无内容')
     expect(wrapper.find('[data-carousel-index]').exists()).toBe(false)
@@ -239,11 +241,41 @@ describe('Carousel 键盘、焦点与嵌套内容', () => {
     expect(document.activeElement).toBe(item(wrapper, 1).get('input').element)
     expect(wrapper.find('button button').exists()).toBe(false)
   })
+  it('omits navigation copy when labels are absent', () => {
+    const wrapper = track(mount(MdvCarousel, { props: { items } }))
+    expect(wrapper.attributes('aria-label')).toBeUndefined()
+    expect(item(wrapper, 0).attributes('aria-label')).toBeUndefined()
+    expect(wrapper.find('.mdv-carousel__skip').exists()).toBe(false)
+    expect(wrapper.findAll('.mdv-carousel__controls button')).toHaveLength(0)
+  })
+
+  it('preserves the empty-state container and passes optional copy to its slot', async () => {
+    const bare = track(mount(MdvCarousel, { props: { items: [] as typeof items } }))
+    expect(bare.get('.mdv-carousel__empty').text()).toBe('')
+
+    const wrapper = track(
+      mount(MdvCarousel, {
+        props: { items: [] as typeof items },
+        slots: { empty: ({ text }: { text?: string }) => h('p', text ?? '') },
+      }),
+    )
+    const container = wrapper.get('.mdv-carousel__empty').element
+    expect(wrapper.get('.mdv-carousel__empty p').text()).toBe('')
+    await wrapper.setProps({ labels: { empty: 'No photos yet' } })
+    expect(wrapper.get('.mdv-carousel__empty').element).toBe(container)
+    expect(wrapper.get('.mdv-carousel__empty p').text()).toBe('No photos yet')
+  })
+
   it('不在挂载时抢焦点；跳过链接移动到轮播后方', async () => {
     const outside = document.createElement('button')
     document.body.append(outside)
     outside.focus()
-    const wrapper = track(mount(MdvCarousel, { props: { items }, attachTo: document.body }))
+    const wrapper = track(
+      mount(MdvCarousel, {
+        props: { items, labels: { skip: '跳过轮播' } },
+        attachTo: document.body,
+      }),
+    )
     await flushPromises()
     expect(document.activeElement).toBe(outside)
     await wrapper.get('.mdv-carousel__skip').trigger('click')

@@ -4,6 +4,8 @@ import chevronLeft from '@iconify-icons/material-symbols/chevron-left'
 import chevronRight from '@iconify-icons/material-symbols/chevron-right'
 import arrowDropDown from '@iconify-icons/material-symbols/arrow-drop-down'
 import checkIcon from '@iconify-icons/material-symbols/check'
+import expandLess from '@iconify-icons/material-symbols/expand-less'
+import expandMore from '@iconify-icons/material-symbols/expand-more'
 import MdvIcon from './MdvIcon.vue'
 import {
   addDays,
@@ -32,7 +34,7 @@ const props = defineProps<{
   disabledDate?: (date: string) => boolean
   navigationDate?: string
   viewState?: DateCalendarViewState
-  labels: MdvDatePickerLabels
+  labels: Partial<MdvDatePickerLabels>
 }>()
 const emit = defineEmits<{
   select: [date: string]
@@ -167,7 +169,7 @@ function dateLabel(date: string) {
     unavailable(date) ? props.labels.unavailable : '',
   ]
     .filter(Boolean)
-    .join('，')
+    .join(', ')
 }
 function reveal(element: HTMLElement | null | undefined, center = false) {
   if (!element) return
@@ -523,7 +525,9 @@ defineExpose({ focus: () => focusDate(focused.value) })
           type="button"
           class="mdv-date-calendar__heading mdv-date-calendar__heading--combined"
           data-date-focus="year"
-          :aria-label="`${headingFormat.format(calendarDate(month))}，${labels.year}`"
+          :aria-label="
+            labels.year ? `${headingFormat.format(calendarDate(month))}, ${labels.year}` : undefined
+          "
           :aria-expanded="mode === 'years'"
           :aria-controls="id + '-choices'"
           @click="showMode('years')"
@@ -558,7 +562,7 @@ defineExpose({ focus: () => focusDate(focused.value) })
     <p class="mdv-date-picker__sr" aria-live="polite" aria-atomic="true">
       {{ headingFormat.format(calendarDate(month)) }}
     </p>
-    <p :id="id + '-hint'" class="mdv-date-picker__sr">
+    <p v-if="labels.keyboardHint" :id="id + '-hint'" class="mdv-date-picker__sr">
       {{ labels.keyboardHint }}
     </p>
     <div v-if="mode !== 'days'" class="mdv-date-calendar__chooser" @keydown="chooserKeydown">
@@ -652,7 +656,8 @@ defineExpose({ focus: () => focusDate(focused.value) })
         data-date-focus="earlier-months"
         @click="extend(true)"
       >
-        {{ labels.earlierMonths }}
+        <template v-if="labels.earlierMonths">{{ labels.earlierMonths }}</template>
+        <MdvIcon v-else :icon="expandLess" />
       </button>
       <div v-for="visibleMonth in months" :key="visibleMonth" class="mdv-date-calendar__month">
         <h3 v-if="range" :id="id + '-' + visibleMonth" class="mdv-date-calendar__month-title">
@@ -663,7 +668,7 @@ defineExpose({ focus: () => focusDate(focused.value) })
           :aria-label="headingFormat.format(calendarDate(visibleMonth))"
           :aria-labelledby="range ? id + '-' + visibleMonth : undefined"
           :aria-multiselectable="range || undefined"
-          :aria-describedby="id + '-hint'"
+          :aria-describedby="labels.keyboardHint ? id + '-hint' : undefined"
         >
           <div
             role="row"
@@ -732,7 +737,8 @@ defineExpose({ focus: () => focusDate(focused.value) })
         data-date-focus="later-months"
         @click="extend(false)"
       >
-        {{ labels.laterMonths }}
+        <template v-if="labels.laterMonths">{{ labels.laterMonths }}</template>
+        <MdvIcon v-else :icon="expandMore" />
       </button>
     </div>
   </div>

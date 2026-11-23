@@ -50,6 +50,7 @@ export interface MdvTimePickerProps {
   required?: boolean
   clearable?: boolean
   label?: string
+  placeholder?: string
   supportingText?: string
   error?: boolean
   errorText?: string
@@ -62,7 +63,7 @@ export interface MdvTimePickerTriggerProps {
   'aria-haspopup': 'dialog'
   'aria-expanded': boolean
   'aria-controls': string
-  'aria-label': string
+  'aria-label'?: string
   onClick: (event: MouseEvent) => void
 }
 export interface MdvTimePickerTriggerSlotProps {

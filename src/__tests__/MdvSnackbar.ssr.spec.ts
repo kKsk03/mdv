@@ -33,6 +33,7 @@ describe('MdvSnackbar SSR', () => {
         h(MdvSnackbar, {
           modelValue: true,
           message: '更改已保存',
+          closeLabel: '关闭通知',
           action: { label: '撤销' },
           dir: 'rtl',
         }),

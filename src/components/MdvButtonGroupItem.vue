@@ -222,8 +222,6 @@ function checkUsage() {
     messages.push('toggle items use button semantics; href is ignored')
   if (props.color !== undefined && !colors.value)
     messages.push('invalid color; using the default colors')
-  if (props.iconOnly && !String(attrs['aria-label'] ?? attrs['aria-labelledby'] ?? '').trim())
-    messages.push('icon-only items need aria-label or aria-labelledby')
   if (
     groupedSelection.value &&
     group &&

@@ -75,7 +75,6 @@ defineExpose({ element, contentElement })
       ref="contentElement"
       class="mdv-app-bar-scaffold__content"
       role="region"
-      aria-label="正文"
       tabindex="0"
       v-bind="props.contentAttrs"
     >
