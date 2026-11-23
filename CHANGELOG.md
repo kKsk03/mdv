@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.9
+
+### Patch Changes
+
+- d6b0b99: Align Select and Autocomplete option surfaces, selected corners, and ripples with the updated Menu spacing.
+
 ## 0.1.8
 
 ### Patch Changes
