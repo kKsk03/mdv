@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.8
+
+### Patch Changes
+
+- 01f96e6: Fix Navigation Drawer link foreground painting during theme color transitions.
+
 ## 0.1.7
 
 ### Patch Changes
