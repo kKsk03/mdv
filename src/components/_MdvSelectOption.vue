@@ -23,7 +23,9 @@ const element = useTemplateRef<HTMLElement>('element')
 const { ripple, showRipple, releaseRipple, finishRipple } = useButtonRipple({
   disabled: () => !!props.option.disabled,
   isLink: () => false,
-  surface: () => element.value,
+  surface: () =>
+    element.value?.querySelector<HTMLElement>('.mdv-select-control__option-surface') ??
+    element.value,
 })
 
 function preserveFocus(event: MouseEvent) {

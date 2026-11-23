@@ -5,6 +5,9 @@
   --mdv-select-menu-selected-background: var(--mdv-sys-color-tertiary-container);
   --mdv-select-menu-selected-foreground: var(--mdv-sys-color-on-tertiary-container);
   --mdv-select-menu-radius: 16px;
+  --mdv-select-menu-surface-inset: 2px;
+  --mdv-select-menu-option-surface-inset-block: 2px;
+  --mdv-select-menu-option-surface-inset-inline: 2px;
   --mdv-select-menu-icon-size: 20px;
 
   position: relative;
@@ -129,13 +132,15 @@
 }
 
 .mdv-select-control__viewport {
+  --mdv-select-menu-surface-radius: var(--mdv-select-menu-radius);
+
   position: relative;
   box-sizing: border-box;
   max-height: min(var(--mdv-select-menu-available-height, 360px), calc(100dvh - 16px));
   overflow: hidden auto;
   overscroll-behavior: contain;
   border-radius: inherit;
-  padding: 2px;
+  padding: var(--mdv-select-menu-surface-inset);
   scrollbar-color: var(--mdv-sys-color-outline) transparent;
   scrollbar-width: thin;
 }
@@ -146,15 +151,26 @@
 }
 
 .mdv-select-control__option {
+  --mdv-select-menu-item-edge-radius: max(
+    0px,
+    calc(var(--mdv-select-menu-surface-radius) - var(--mdv-select-menu-surface-inset))
+  );
+  --mdv-select-menu-item-edge-inline-radius: max(
+    0px,
+    calc(
+      var(--mdv-select-menu-item-edge-radius) - var(--mdv-select-menu-option-surface-inset-inline)
+    )
+  );
+
   position: relative;
   display: flex;
   box-sizing: border-box;
-  width: calc(100% - 4px);
+  width: 100%;
   min-width: 0;
   min-height: 48px;
   align-items: center;
   gap: 12px;
-  margin-inline: 2px;
+  margin: 0;
   border: 0;
   border-radius: 4px;
   padding: 8px 14px;
@@ -166,19 +182,27 @@
   text-align: start;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  transition:
-    border-radius var(--mdv-sys-motion-duration-medium-2) var(--mdv-sys-motion-easing-standard),
-    background-color var(--mdv-sys-motion-duration-short-2) var(--mdv-sys-motion-easing-standard);
+  transition: border-radius var(--mdv-sys-motion-duration-medium-2)
+    var(--mdv-sys-motion-easing-standard);
 }
 
 .mdv-select-control__option:where(:first-child) {
-  border-start-start-radius: calc(var(--mdv-select-menu-radius) - 2px);
-  border-start-end-radius: calc(var(--mdv-select-menu-radius) - 2px);
+  border-start-start-radius: var(--mdv-select-menu-item-edge-inline-radius)
+    var(--mdv-select-menu-item-edge-radius);
+  border-start-end-radius: var(--mdv-select-menu-item-edge-inline-radius)
+    var(--mdv-select-menu-item-edge-radius);
+}
+
+.mdv-select-control__listbox--after-status > .mdv-select-control__option:where(:first-child) {
+  --mdv-select-menu-item-edge-radius: 4px;
+  --mdv-select-menu-item-edge-inline-radius: 4px;
 }
 
 .mdv-select-control__option:where(:last-child) {
-  border-end-start-radius: calc(var(--mdv-select-menu-radius) - 2px);
-  border-end-end-radius: calc(var(--mdv-select-menu-radius) - 2px);
+  border-end-start-radius: var(--mdv-select-menu-item-edge-inline-radius)
+    var(--mdv-select-menu-item-edge-radius);
+  border-end-end-radius: var(--mdv-select-menu-item-edge-inline-radius)
+    var(--mdv-select-menu-item-edge-radius);
 }
 
 .mdv-select-control__option-content {
@@ -203,8 +227,11 @@
 
 .mdv-select-control__option.is-selected {
   border-radius: 12px;
-  background: var(--mdv-select-menu-selected-background);
   color: var(--mdv-select-menu-selected-foreground);
+}
+
+.mdv-select-control__option.is-selected > .mdv-select-control__option-surface {
+  background-color: var(--mdv-select-menu-selected-background);
 }
 
 .mdv-select-control__option:is(.is-selected, .is-disabled)
@@ -214,9 +241,13 @@
 
 .mdv-select-control__option-surface {
   position: absolute;
-  inset: 0;
+  inset: var(--mdv-select-menu-option-surface-inset-block)
+    var(--mdv-select-menu-option-surface-inset-inline);
   overflow: hidden;
   border-radius: inherit;
+  background-color: transparent;
+  transition: background-color var(--mdv-sys-motion-duration-short-2)
+    var(--mdv-sys-motion-easing-standard);
   pointer-events: none;
 }
 
@@ -310,13 +341,13 @@
 }
 
 .mdv-select-control--menu-baseline .mdv-select-control__option {
-  width: 100%;
-  margin: 0;
   border-radius: 0;
   padding-inline: 12px;
 }
 
 .mdv-select-control--menu-baseline {
+  --mdv-select-menu-option-surface-inset-block: 0px;
+  --mdv-select-menu-option-surface-inset-inline: 0px;
   --mdv-select-menu-background: var(--mdv-sys-color-surface-container);
   --mdv-select-menu-selected-background: var(--mdv-sys-color-surface-container-highest);
   --mdv-select-menu-selected-foreground: var(--mdv-sys-color-on-surface);
@@ -341,8 +372,11 @@
 }
 
 .mdv-select-control__option.is-selected.is-disabled {
-  background: color-mix(in srgb, var(--mdv-select-menu-selected-background) 38%, transparent);
   color: color-mix(in srgb, var(--mdv-select-menu-selected-foreground) 38%, transparent);
+}
+
+.mdv-select-control__option.is-selected.is-disabled > .mdv-select-control__option-surface {
+  background-color: color-mix(in srgb, var(--mdv-select-menu-selected-background) 38%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -350,6 +384,7 @@
   .mdv-select-control__panel,
   .mdv-select-control__option,
   .mdv-select-control__check,
+  .mdv-select-control__option-surface,
   .mdv-select-control__option-surface::before {
     transition: none;
   }

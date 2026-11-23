@@ -722,7 +722,7 @@ field.value?.focus({ preventScroll: true })
 
 `MdvSelect` 用于从固定选项中选择一个值；`MdvAutocomplete` 使用可编辑输入框显示建议，既可以选中建议值，也允许把任意输入文本作为模型值。两者直接组合 `MdvTextField`，共用其 Filled／Outlined 字段实现与样式。选项弹层使用独立的 listbox 实现，按本库 Menu 的 Expressive／Baseline 两套外观设计；不依赖 `MdvMenu`、`MdvMenuItem` 或其样式。
 
-Expressive 面板圆角为 16px，内部留白 2px，选中项使用 tertiary-container、12px 圆角及前置 20px 勾选图标；首尾未选中行的外侧圆角跟随面板。Baseline 面板圆角为 4px，内部仅保留上下 8px 留白，选项行铺满宽度，选中背景使用 surface-container-highest，前置图标为 24px。两者行高至少 48px，长标签和辅助文字自然换行；hover、pressed、键盘活动项与选中背景分层，鼠标打开时不会因初始活动项而额外加深选中底色。
+Expressive 面板圆角为 16px，内部留白 2px，选中项使用 tertiary-container、12px 圆角及前置 20px 勾选图标；首尾未选中行的外侧圆角跟随面板。选项交互区域保持完整，hover、pressed、选中底色和涟漪绘制在行内缩进 2px 的表面上。Baseline 面板圆角为 4px，内部仅保留上下 8px 留白，选项行及其状态表面铺满宽度，选中背景使用 surface-container-highest，前置图标为 24px。两者行高至少 48px，长标签和辅助文字自然换行；hover、pressed、键盘活动项与选中背景分层，鼠标打开时不会因初始活动项而额外加深选中底色。
 
 下拉面板采用与 Menu 相同的缩放与淡入／淡出节奏，展开 200ms、收起 130ms；快速反向从当前帧继续，退出结束后移除面板。Autocomplete 本地过滤模式下，选中建议后收起过程保留当前筛选结果，下次打开再恢复完整列表。独立内部视口处理高度限制与滚动，键盘浏览只滚动该视口，按压选项时保留输入框焦点。支持 reduced-motion、RTL 和 forced-colors；KeepAlive 停用时清理可见弹层，重新激活时依据 open 状态恢复。
 

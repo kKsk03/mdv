@@ -19,6 +19,51 @@ afterEach(() => {
 })
 
 describe('MdvSelect', () => {
+  it('positions ripples within the inset expressive option surface', async () => {
+    const platform = mockMenuPlatform()
+    const wrapper = mount(MdvSelect, {
+      attachTo: document.body,
+      props: { options },
+    })
+    try {
+      const input = wrapper.get('input')
+      await input.trigger('click')
+      await flushPromises()
+
+      const option = wrapper
+        .findAll<HTMLElement>('[role="option"]')
+        .find((candidate) => candidate.attributes('aria-disabled') !== 'true')
+      if (!option) throw new Error('Expected an enabled option')
+      const surface = option.get('.mdv-select-control__option-surface')
+      const bounds = vi
+        .spyOn(surface.element, 'getBoundingClientRect')
+        .mockReturnValue(new DOMRect(104, 102, 192, 44))
+      const event = new MouseEvent('pointerdown', {
+        bubbles: true,
+        cancelable: true,
+        button: 0,
+        clientX: 116,
+        clientY: 108,
+      })
+      Object.defineProperties(event, {
+        pointerType: { value: 'mouse' },
+        isPrimary: { value: true },
+      })
+      option.element.dispatchEvent(event)
+      await nextTick()
+
+      const wave = option.get<HTMLElement>('.mdv-select-control__ripple-wave')
+      expect(wave.element.style.left).toBe('12px')
+      expect(wave.element.style.top).toBe('6px')
+      expect(bounds).toHaveBeenCalled()
+    } finally {
+      wrapper.unmount()
+      platform.restore()
+      vi.restoreAllMocks()
+      vi.unstubAllGlobals()
+    }
+  })
+
   it('exposes a select-only combobox, skips disabled options and commits the active item', async () => {
     const wrapper = mount(MdvSelect, { props: { label: '选择项目', options } })
     const input = wrapper.get<HTMLInputElement>('input')
@@ -135,6 +180,25 @@ describe('MdvSelect', () => {
 })
 
 describe('MdvAutocomplete', () => {
+  it('keeps option edge styling away from the popup edge while a loading status precedes results', async () => {
+    const wrapper = mount(MdvAutocomplete, {
+      attachTo: document.body,
+      props: { options, filterMode: 'external', loading: true },
+    })
+    const input = wrapper.get('input')
+
+    await input.trigger('click')
+    await flushPromises()
+    expect(wrapper.get('[role="listbox"]').classes()).toContain(
+      'mdv-select-control__listbox--after-status',
+    )
+
+    await wrapper.setProps({ loading: false })
+    expect(wrapper.get('[role="listbox"]').classes()).not.toContain(
+      'mdv-select-control__listbox--after-status',
+    )
+  })
+
   it.each(['keyboard', 'pointer'] as const)(
     'keeps filtered options throughout the exit animation after %s selection',
     async (interaction) => {

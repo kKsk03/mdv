@@ -704,6 +704,7 @@ defineExpose({
         <div
           :id="listboxId"
           role="listbox"
+          :class="{ 'mdv-select-control__listbox--after-status': props.loading }"
           :aria-busy="props.loading ? 'true' : undefined"
           :aria-label="props.label || (attrs['aria-label'] as string | undefined) || undefined"
         >
